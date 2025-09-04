@@ -16,8 +16,11 @@ class MainApplication : Application(), ReactApplication {
       object : DefaultReactNativeHost(this) {
         override fun getPackages(): List<ReactPackage> =
             PackageList(this).packages.apply {
-                add(PCMRecorderPackage()) 
-                add(PCMPlayerPackage())   
+                // Add your custom native modules here
+                add(PCMRecorderPackage())
+                add(TwoWayAudioPackage())
+                add(CustomAudioPlayerPackage())
+                add(CustomAudioRecorderPackage())
             }
 
         override fun getJSMainModuleName(): String = "index"
@@ -33,6 +36,8 @@ class MainApplication : Application(), ReactApplication {
 
   override fun onCreate() {
     super.onCreate()
+    // Register lifecycle callbacks so audio pauses/resumes correctly
+    registerActivityLifecycleCallbacks(TwoWayAudioLifecycleCallbacks())
     loadReactNative(this)
   }
 }

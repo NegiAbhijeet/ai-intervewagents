@@ -10,9 +10,12 @@
     "test": "jest"
   },
   "dependencies": {
+    "@react-native/new-app-screen": "0.81.1",
+    "@speechmatics/expo-two-way-audio": "^0.1.2",
+    "expo-av": "^15.1.7",
+    "expo-modules-core": "^2.5.0",
     "react": "19.1.0",
     "react-native": "0.81.1",
-    "@react-native/new-app-screen": "0.81.1",
     "react-native-safe-area-context": "^5.5.2"
   },
   "devDependencies": {
