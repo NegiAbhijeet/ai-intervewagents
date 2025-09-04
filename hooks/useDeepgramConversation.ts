@@ -61,7 +61,7 @@ const useDeepgramConversation: UseConversationHook = ({
   onEnd,
   onError,
   onMessage,
-  proxyUrl = 'ws://0.tcp.in.ngrok.io:19623',
+  proxyUrl = 'ws://mobile.backend.aiinterviewagents.com',
 }: Props): { startSession: () => void; stopSession: () => void } => {
   const ws = useRef<WebSocket | null>(null)
   const keepAlive = useRef<NodeJS.Timeout | null>(null)
