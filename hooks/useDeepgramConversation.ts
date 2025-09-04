@@ -61,7 +61,7 @@ const useDeepgramConversation: UseConversationHook = ({
   onEnd,
   onError,
   onMessage,
-  proxyUrl = 'ws://0.tcp.in.ngrok.io:16463',
+  proxyUrl = 'ws://0.tcp.in.ngrok.io:19623',
 }: Props): { startSession: () => void; stopSession: () => void } => {
   const ws = useRef<WebSocket | null>(null)
   const keepAlive = useRef<NodeJS.Timeout | null>(null)
@@ -92,6 +92,7 @@ const useDeepgramConversation: UseConversationHook = ({
         },
         agent: {
           language: 'en',
+          greeting: "Hello and welcome! I'm here to listen, assist, and make your experience as smooth as possible. Take your time, and when you're ready, just start speaking — I'm all ears.",
           listen: {
             provider: { type: 'deepgram', model: 'nova-3', smart_format: false },
           },
@@ -101,7 +102,7 @@ const useDeepgramConversation: UseConversationHook = ({
           speak: {
             provider: { type: 'deepgram', model: 'aura-2-thalia-en' },
           },
-        },
+        }
       }
 
       const settingsMessage = JSON.stringify({ type: 'Settings', ...settingsConfig })
@@ -179,6 +180,7 @@ const useDeepgramConversation: UseConversationHook = ({
 
       ws.current.onerror = err => {
         console.error('WebSocket error:', err)
+        onError(err)
       }
 
       const vac: VoiceAgentController = {
