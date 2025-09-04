@@ -48,6 +48,11 @@ const requestMicPermission = async () => {
   }
   return true
 }
+async function setOutputProfile(profile: 'auto', volume = 1.0) {
+  CustomAudioPlayer?.setOutputProfile?.(profile)
+  CustomAudioPlayer?.setPlayerVolume?.(volume)
+}
+
 
 const useDeepgramConversation: UseConversationHook = ({
   onBeforeStarting,
@@ -75,6 +80,7 @@ const useDeepgramConversation: UseConversationHook = ({
       onBeforeStarting()
 
       const granted = await requestMicPermission()
+      await setOutputProfile('auto', 1.0)
       if (!granted) throw new Error('Microphone permission denied')
 
       ws.current = new WebSocket(proxyUrl)
