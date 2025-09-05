@@ -1,12 +1,20 @@
 // useDeepgramConversation.ts
-import type { AgentLiveSchema } from '@/types/agent-live-schema'
-import type { Message, UseConversationHook } from '@/types/use-conversation-hook'
-import type { VoiceAgentController } from '@/types/voice-agent-controller'
-import { useEffect, useRef } from 'react'
-import { NativeEventEmitter, NativeModules, PermissionsAndroid, Platform } from 'react-native'
+import type { AgentLiveSchema } from '@/types/agent-live-schema';
+import type {
+  Message,
+  UseConversationHook,
+} from '@/types/use-conversation-hook';
+import type { VoiceAgentController } from '@/types/voice-agent-controller';
+import { useEffect, useRef } from 'react';
+import {
+  NativeEventEmitter,
+  NativeModules,
+  PermissionsAndroid,
+  Platform,
+} from 'react-native';
 
-const { CustomAudioRecorder, CustomAudioPlayer } = NativeModules
-const recorderEmitter = new NativeEventEmitter(CustomAudioRecorder)
+const { CustomAudioRecorder, CustomAudioPlayer } = NativeModules;
+const recorderEmitter = new NativeEventEmitter(CustomAudioRecorder);
 
 export const AgentEvents = {
   SettingsApplied: 'SettingsApplied',
@@ -14,25 +22,26 @@ export const AgentEvents = {
   UserStartedSpeaking: 'UserStartedSpeaking',
   AgentThinking: 'AgentThinking',
   AgentStartedSpeaking: 'AgentStartedSpeaking',
-} as const
+} as const;
 
 const arrayBufferToBase64 = (buffer: ArrayBuffer) => {
-  const bytes = new Uint8Array(buffer)
-  let binary = ''
-  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i])
+  const bytes = new Uint8Array(buffer);
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++)
+    binary += String.fromCharCode(bytes[i]);
   // @ts-ignore
-  return global.btoa(binary)
-}
+  return global.btoa(binary);
+};
 
 type Props = {
-  onBeforeStarting: () => void
-  onStarted: (vac: VoiceAgentController) => void
-  onAfterStarted: () => void
-  onError: (err: unknown) => void
-  onEnd: () => void
-  onMessage: (event: Message) => void
-  proxyUrl?: string
-}
+  onBeforeStarting: () => void;
+  onStarted: (vac: VoiceAgentController) => void;
+  onAfterStarted: () => void;
+  onError: (err: unknown) => void;
+  onEnd: () => void;
+  onMessage: (event: Message) => void;
+  proxyUrl?: string;
+};
 
 const requestMicPermission = async () => {
   if (Platform.OS === 'android') {
@@ -42,199 +51,239 @@ const requestMicPermission = async () => {
         title: 'Microphone Permission',
         message: 'This app needs microphone access to record audio.',
         buttonPositive: 'OK',
-      }
-    )
-    return granted === PermissionsAndroid.RESULTS.GRANTED
+      },
+    );
+    return granted === PermissionsAndroid.RESULTS.GRANTED;
   }
-  return true
-}
+  return true;
+};
 async function setOutputProfile(profile: 'auto', volume = 1.0) {
-  CustomAudioPlayer?.setOutputProfile?.(profile)
-  CustomAudioPlayer?.setPlayerVolume?.(volume)
+  CustomAudioPlayer?.setOutputProfile?.(profile);
+  CustomAudioPlayer?.setPlayerVolume?.(volume);
 }
-
 
 const useDeepgramConversation: UseConversationHook = ({
+  systemPrompt,
+  greeting,
+  voiceName,
   onBeforeStarting,
   onStarted,
   onAfterStarted,
   onEnd,
   onError,
   onMessage,
-  proxyUrl = 'ws://mobile.backend.aiinterviewagents.com',
+  proxyUrl = 'ws://0.tcp.in.ngrok.io:10956',
 }: Props): { startSession: () => void; stopSession: () => void } => {
-  const ws = useRef<WebSocket | null>(null)
-  const keepAlive = useRef<NodeJS.Timeout | null>(null)
-  const subscription = useRef<null | { remove: () => void }>(null)
+  const ws = useRef<WebSocket | null>(null);
+  const keepAlive = useRef<NodeJS.Timeout | null>(null);
+  const subscription = useRef<null | { remove: () => void }>(null);
 
-  const conversationContext = useRef<{ role: 'user' | 'assistant'; content: string }[] | null>(null)
-  const instructions = useRef<string | null>(null)
+  const conversationContext = useRef<
+    { role: 'user' | 'assistant'; content: string }[] | null
+  >(null);
+  const instructions = useRef<string | null>(null);
 
   // Half-duplex gate
-  const TTS_SILENCE_HOLD_MS = 250
-  const isAgentPlaying = useRef(false)
-  const lastTtsAt = useRef(0)
+  const TTS_SILENCE_HOLD_MS = 250;
+  const isAgentPlaying = useRef(false);
+  const lastTtsAt = useRef(0);
 
   const startSession = async () => {
     try {
-      onBeforeStarting()
+      onBeforeStarting();
 
-      const granted = await requestMicPermission()
-      await setOutputProfile('auto', 1.0)
-      if (!granted) throw new Error('Microphone permission denied')
+      const granted = await requestMicPermission();
+      await setOutputProfile('auto', 1.0);
+      if (!granted) throw new Error('Microphone permission denied');
 
-      ws.current = new WebSocket(proxyUrl)
+      ws.current = new WebSocket(proxyUrl);
 
       const settingsConfig = {
         audio: {
           input: { encoding: 'linear16', sample_rate: 24000 },
-          output: { encoding: 'linear16', sample_rate: 24000, container: 'none' },
+          output: {
+            encoding: 'linear16',
+            sample_rate: 24000,
+            container: 'none',
+            // model: voiceName,
+          },
         },
         agent: {
           language: 'en',
-          greeting: "Hello and welcome! I'm here to listen, assist, and make your experience as smooth as possible. Take your time, and when you're ready, just start speaking — I'm all ears.",
+          greeting: greeting,
           listen: {
-            provider: { type: 'deepgram', model: 'nova-3', smart_format: false },
+            provider: {
+              type: 'deepgram',
+              model: 'nova-3',
+              smart_format: false,
+            },
           },
           think: {
-            provider: { type: 'open_ai', model: 'gpt-4o-mini', temperature: 0.7 },
+            prompt: systemPrompt,
+            provider: {
+              type: 'open_ai',
+              model: 'gpt-4o-mini',
+              temperature: 0.7,
+              
+            },
           },
           speak: {
             provider: { type: 'deepgram', model: 'aura-2-thalia-en' },
           },
-        }
-      }
+        },
+      };
 
-      const settingsMessage = JSON.stringify({ type: 'Settings', ...settingsConfig })
+      const settingsMessage = JSON.stringify({
+        type: 'Settings',
+        ...settingsConfig,
+      });
 
       ws.current.onopen = () => {
-        ws.current?.send(settingsMessage)
-      }
+        ws.current?.send(settingsMessage);
+      };
 
       ws.current.onmessage = (event: WebSocketMessageEvent) => {
         if (typeof event.data === 'string') {
-          const msgObj = JSON.parse(event.data)
-          const { type } = msgObj
+          const msgObj = JSON.parse(event.data);
+          const { type } = msgObj;
 
           switch (type) {
             case 'Welcome':
-              break
+              break;
             case AgentEvents.SettingsApplied: {
-              CustomAudioPlayer.startAudio()
-              CustomAudioRecorder.startRecording()
+              CustomAudioPlayer.startAudio();
+              CustomAudioRecorder.startRecording();
 
               if (!subscription.current) {
-                subscription.current = recorderEmitter.addListener('AudioChunk', (evt: { data: number[] | Uint8Array }) => {
-                  if (isAgentPlaying.current) return
-                  const byteArray = Array.isArray(evt.data) ? new Uint8Array(evt.data) : new Uint8Array(evt.data)
-                  ws.current?.send(byteArray)
-                })
+                subscription.current = recorderEmitter.addListener(
+                  'AudioChunk',
+                  (evt: { data: number[] | Uint8Array }) => {
+                    if (isAgentPlaying.current) return;
+                    const byteArray = Array.isArray(evt.data)
+                      ? new Uint8Array(evt.data)
+                      : new Uint8Array(evt.data);
+                    ws.current?.send(byteArray);
+                  },
+                );
               }
 
               if (!keepAlive.current) {
                 keepAlive.current = setInterval(() => {
-                  ws.current?.send(JSON.stringify({ type: 'KeepAlive' }))
-                }, 5000)
+                  ws.current?.send(JSON.stringify({ type: 'KeepAlive' }));
+                }, 5000);
               }
-              break
+              break;
             }
             case AgentEvents.ConversationText: {
-              const { role, content } = msgObj as { role: 'user' | 'assistant'; content: string }
-              onMessage({ role, content, timestamp: Date.now() })
-              break
+              const { role, content } = msgObj as {
+                role: 'user' | 'assistant';
+                content: string;
+              };
+              onMessage({ role, content, timestamp: Date.now() });
+              break;
             }
             case AgentEvents.UserStartedSpeaking:
             case AgentEvents.AgentThinking:
             case AgentEvents.AgentStartedSpeaking:
-              break
+              break;
             case 'Error':
-              console.error('Deepgram error:', msgObj.description, msgObj.code)
-              break
+              console.error('Deepgram error:', msgObj.description, msgObj.code);
+              break;
             default:
-              break
+              break;
           }
-          return
+          return;
         }
 
         // Binary = TTS audio from Deepgram
         if (event.data instanceof ArrayBuffer) {
-          lastTtsAt.current = Date.now()
-          isAgentPlaying.current = true
-          if (CustomAudioRecorder?.setMuted) CustomAudioRecorder.setMuted(true)
+          lastTtsAt.current = Date.now();
+          isAgentPlaying.current = true;
+          if (CustomAudioRecorder?.setMuted) CustomAudioRecorder.setMuted(true);
 
-          const base64 = arrayBufferToBase64(event.data)
-          CustomAudioPlayer.playAudioChunk(base64)
+          const base64 = arrayBufferToBase64(event.data);
+          CustomAudioPlayer.playAudioChunk(base64);
 
           setTimeout(() => {
             if (Date.now() - lastTtsAt.current >= TTS_SILENCE_HOLD_MS) {
-              isAgentPlaying.current = false
-              if (CustomAudioRecorder?.setMuted) CustomAudioRecorder.setMuted(false)
+              isAgentPlaying.current = false;
+              if (CustomAudioRecorder?.setMuted)
+                CustomAudioRecorder.setMuted(false);
             }
-          }, TTS_SILENCE_HOLD_MS + 20)
+          }, TTS_SILENCE_HOLD_MS + 20);
         }
-      }
+      };
 
       ws.current.onclose = event => {
-        console.log('WebSocket closed:', event.code, event.reason)
-      }
+        console.log('WebSocket closed:', event.code, event.reason);
+      };
 
       ws.current.onerror = err => {
-        console.error('WebSocket error:', err)
-        onError(err)
-      }
+        console.error('WebSocket error:', err);
+        onError(err);
+      };
 
       const vac: VoiceAgentController = {
         sendInitialIntructions: async (initialInstructions: string) => {
-          instructions.current = initialInstructions
+          instructions.current = initialInstructions;
         },
-        setInitialConversationPhrases: async (phrases: { role: 'user' | 'assistant'; text: string }[]) => {
-          conversationContext.current = phrases.map(p => ({ role: p.role, content: p.text }))
+        setInitialConversationPhrases: async (
+          phrases: { role: 'user' | 'assistant'; text: string }[],
+        ) => {
+          conversationContext.current = phrases.map(p => ({
+            role: p.role,
+            content: p.text,
+          }));
         },
         makeAgentSay: async (_text: string) => {},
         startConversation: async () => {},
-      }
+      };
 
-      onStarted(vac)
+      onStarted(vac);
     } catch (err) {
-      console.error('Error starting session:', err)
-      onError(err)
+      console.error('Error starting session:', err);
+      onError(err);
     } finally {
-      onAfterStarted()
+      onAfterStarted();
     }
-  }
+  };
 
   const stopSession = async () => {
     try {
-      subscription.current?.remove?.()
-      subscription.current = null
+      subscription.current?.remove?.();
+      subscription.current = null;
 
-      try { CustomAudioRecorder.stopRecording() } catch {}
-      try { CustomAudioPlayer.stopAudio() } catch {}
+      try {
+        CustomAudioRecorder.stopRecording();
+      } catch {}
+      try {
+        CustomAudioPlayer.stopAudio();
+      } catch {}
 
       if (keepAlive.current) {
-        clearInterval(keepAlive.current)
-        keepAlive.current = null
+        clearInterval(keepAlive.current);
+        keepAlive.current = null;
       }
 
       if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-        ws.current.close(1000, 'Component unmounted')
+        ws.current.close(1000, 'Component unmounted');
       }
-      ws.current = null
+      ws.current = null;
 
-      onEnd()
+      onEnd();
     } catch (err: any) {
-      console.error('Error stopping session:', err)
-      onError(err?.message || 'Error stopping session')
+      console.error('Error stopping session:', err);
+      onError(err?.message || 'Error stopping session');
     }
-  }
+  };
 
   useEffect(() => {
     return () => {
-      stopSession()
-    }
-  }, [])
+      stopSession();
+    };
+  }, []);
 
-  return { startSession, stopSession }
-}
+  return { startSession, stopSession };
+};
 
-export default useDeepgramConversation
+export default useDeepgramConversation;
