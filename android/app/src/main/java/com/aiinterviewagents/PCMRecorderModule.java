@@ -34,12 +34,18 @@ public class PCMRecorderModule extends ReactContextBaseJavaModule {
         );
 
         audioRecord = new AudioRecord(
-                MediaRecorder.AudioSource.MIC,
+                MediaRecorder.AudioSource.VOICE_COMMUNICATION, // <-- change here
                 sampleRate,
                 channelConfig,
                 AudioFormat.ENCODING_PCM_16BIT,
                 bufferSize
         );
+        if (android.media.audiofx.AcousticEchoCanceler.isAvailable()) {
+            android.media.audiofx.AcousticEchoCanceler aec = 
+                android.media.audiofx.AcousticEchoCanceler.create(audioRecord.getAudioSessionId());
+            aec.setEnabled(true);
+        }
+
 
         audioRecord.startRecording();
         isRecording = true;

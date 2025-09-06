@@ -18,6 +18,7 @@ class MainApplication : Application(), ReactApplication {
             PackageList(this).packages.apply {
                 // Add your custom native modules here
                 add(PCMRecorderPackage())
+                add(PCMPlayerPackage())
                 add(TwoWayAudioPackage())
                 add(CustomAudioPlayerPackage())
                 add(CustomAudioRecorderPackage())
