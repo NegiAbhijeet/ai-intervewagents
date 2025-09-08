@@ -242,7 +242,12 @@ export default function ScheduleInterviewScreen() {
   };
 
   return (
-    <ScrollView className="flex-1">
+    <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+      <Text className="text-2xl font-bold mb-1">Start Interview</Text>
+      <Text className="text-base text-gray-600 mb-4">
+        Begin your interview session by tapping the button below.
+      </Text>
+
       {showInterviewScreen && interviewData?.meetingId && (
         <InterviewScreen
           {...interviewData}
@@ -262,7 +267,7 @@ export default function ScheduleInterviewScreen() {
           onValueChange={itemValue => setInterviewType(itemValue)}
           className="text-slate-700 text-xs h-8"
         >
-          <Picker.Item label="Select Type" style={{fontSize:16}} value="" />
+          <Picker.Item label="Select Type" style={{ fontSize: 16 }} value="" />
           {typeOptions.map((item, index) => (
             <Picker.Item key={index} label={item?.label} value={item?.value} />
           ))}
@@ -335,12 +340,17 @@ export default function ScheduleInterviewScreen() {
       <TouchableOpacity
         onPress={handleSubmit}
         disabled={isLoading}
-        className={`mt-8 h-13 rounded-xl flex-row items-center justify-center ${
+        className={`mt-8 h-16 rounded-xl gap-2 flex-row items-center justify-center ${
           isLoading ? 'bg-slate-400' : 'bg-indigo-500'
         }`}
       >
         {isLoading ? (
-          <ActivityIndicator color="#fff" />
+          <>
+            <Text className="text-white font-semibold text-lg ml-2 py-4">
+              Please wait...
+            </Text>
+            <ActivityIndicator color="#fff" />
+          </>
         ) : (
           <>
             <Icon name="play" size={18} color="#fff" />

@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Alert,
+  Animated,
   Button,
+  Easing,
   Modal,
   PermissionsAndroid,
   Platform,
@@ -21,27 +23,24 @@ const CallUI = ({
   interviewType,
   adminId,
   interviewTime,
-uid,
+
   candidateName,
 
   showInterviewScreen,
   setShowInterviewScreen,
 }) => {
-  console.log("=============", agentId,
-  canId,
-  meetingId,
-  interviewType,
-  adminId,
-  interviewTime,
-
-  candidateName, "=============")
   const initialStartRef = useRef(null);
   const [isRecording, setIsRecording] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
-  const [autostartFailed, setAutostartFailed] = useState(false);
 
   const interviewDurationSeconds = Number(interviewTime);
-
+  function handleInterviewCompletion() {
+    stopAudioRecording();
+    stopAudioPlayer();
+    setIsRecording(false);
+    setHasStarted(false);
+    setShowInterviewScreen(false);
+  }
   const { startSession, addUserAudio, muteAgent, unmuteAgent } = useRealTime({
     agentId,
     canId,
@@ -53,8 +52,10 @@ uid,
     onWebSocketClose: () => {},
     onWebSocketError: () => {},
     onReceivedError: () => {},
+    onInterviewEndConfirmed: () => {
+      handleInterviewCompletion();
+    },
     onReceivedResponseAudioDelta: message => {
-      console.log(message?.delta, isRecording, 'isRecording===');
       if (message?.delta) {
         playAudio(message.delta);
       }
@@ -186,7 +187,6 @@ uid,
       startAudioRecording();
       setIsRecording(true);
       setHasStarted(true);
-      setAutostartFailed(false);
     } catch (err) {
       Alert.alert(
         'Error',
@@ -194,6 +194,30 @@ uid,
       );
     }
   };
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    if (isRecording) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(scaleAnim, {
+            toValue: 1.5,
+            duration: 1000,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: true,
+          }),
+          Animated.timing(scaleAnim, {
+            toValue: 1,
+            duration: 1000,
+            easing: Easing.in(Easing.ease),
+            useNativeDriver: true,
+          }),
+        ]),
+      ).start();
+    } else {
+      scaleAnim.setValue(1);
+    }
+  }, [isRecording]);
 
   return (
     <Modal
@@ -205,12 +229,65 @@ uid,
       <View
         style={{
           flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
           backgroundColor: 'white',
+          justifyContent: 'space-between',
+          padding: 20,
         }}
       >
-        <Button title="Start Interview" onPress={handleManualStart} />
+        {/* Animated Listening UI */}
+        {isRecording && (
+          <View
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Animated.View
+              style={{
+                width: 120,
+                height: 120,
+                borderRadius: 60,
+                backgroundColor: '#e0f7fa',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transform: [{ scale: scaleAnim }],
+                opacity: 0.8,
+              }}
+            >
+              <View
+                style={{
+                  width: 60,
+                  height: 60,
+                  borderRadius: 30,
+                  backgroundColor: '#00bcd4',
+                }}
+              />
+            </Animated.View>
+            <View style={{ marginTop: 20 }}>
+              <Button title="Listening..." disabled />
+            </View>
+          </View>
+        )}
+
+        {!hasStarted && (
+          <View
+            style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+          >
+            <Button title="Start Interview" onPress={handleManualStart} />
+          </View>
+        )}
+
+        {/* End Button at Bottom */}
+        {hasStarted && (
+          <View style={{ paddingBottom: 30 }}>
+            <Button
+              title="End Interview"
+              color="red"
+              onPress={handleInterviewCompletion}
+            />
+          </View>
+        )}
       </View>
     </Modal>
   );

@@ -7,7 +7,7 @@ const Layout = ({ children, user, onProfilePress }) => {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <TopBar user={user} onProfilePress={onProfilePress} />
-      <View className="flex-1 p-5">
+      <View className="flex-1 p-5 pb-0">
         {children}
       </View>
     </SafeAreaView>
