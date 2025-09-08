@@ -10,11 +10,27 @@ export type HistoryItem = {
     groundingFiles: GroundingFile[];
 };
 
+// Define a proper type for VAD payload
+export type TurnDetectionPayload = {
+    threshold: number;
+    prefix_padding_ms: number;
+    silence_duration_ms: number;
+
+    agentId: string;
+    canId: string;
+    meetingId: string;
+    interviewType: string;
+    adminId: string;
+    interviewTime: string;
+    value:string;
+};
+
 export type SessionUpdateCommand = {
     type: "session.update";
     session: {
         turn_detection?: {
             type: "server_vad" | "none";
+            payload?: TurnDetectionPayload;
         };
         input_audio_transcription?: {
             model: "whisper-1";
@@ -34,6 +50,19 @@ export type InputAudioBufferClearCommand = {
 export type Message = {
     type: string;
 };
+
+// export type TimerStatusMessage = {
+//     type: "timer.status";
+//     start_time: string;
+//     elapsed_seconds: number;
+// };
+
+export type MeetingEndByAgent = {
+    type: "interview.end.confirmed";
+    meetingId: string;
+    message: string;
+};
+
 
 export type ResponseAudioDelta = {
     type: "response.audio.delta";
@@ -71,4 +100,25 @@ export type ExtensionMiddleTierToolResponse = {
 
 export type ToolResult = {
     sources: { chunk_id: string; title: string; chunk: string }[];
+};
+
+export type InterviewCompletedCommand = {
+    type: "interview.completed";
+    meetingId: string;
+};
+
+
+export type MuteAgentCommand = {
+    type: "mute.agent";
+    meetingId: string;
+};
+
+export type UnmuteAgentCommand = {
+    type: "unmute.agent";
+    meetingId: string;
+};
+export type BroadcastTimer = {
+  type: "broadcasttimer";
+  startTime: string;
+  meetingId: string;
 };

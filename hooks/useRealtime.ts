@@ -1,20 +1,21 @@
-// useRealTime.ts (React Native)
-
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 import {
-    BroadcastTimer,
-    ExtensionMiddleTierToolResponse,
-    InputAudioBufferAppendCommand,
-    InputAudioBufferClearCommand,
-    InterviewCompletedCommand,
-    MeetingEndByAgent,
-    Message,
-    ResponseAudioDelta,
-    ResponseAudioTranscriptDelta,
-    ResponseDone,
-    ResponseInputAudioTranscriptionCompleted,
-    SessionUpdateCommand,
-} from "./types";
+  InputAudioBufferAppendCommand,
+  InputAudioBufferClearCommand,
+  Message,
+  ResponseAudioDelta,
+  ResponseAudioTranscriptDelta,
+  ResponseDone,
+  SessionUpdateCommand,
+  ExtensionMiddleTierToolResponse,
+  ResponseInputAudioTranscriptionCompleted,
+  // TimerStatusMessage,
+  InterviewCompletedCommand,
+  MeetingEndByAgent,
+  BroadcastTimer,
+  // MeetingEndByAgent
+} from './types';
+// import { useState } from "react";
 
 type Parameters = {
   useDirectAoaiApi?: boolean;
@@ -36,17 +37,23 @@ type Parameters = {
 
   onInterviewEndConfirmed?: (message: MeetingEndByAgent) => void;
   onReceivedExtensionMiddleTierToolResponse?: (
-    message: ExtensionMiddleTierToolResponse
+    message: ExtensionMiddleTierToolResponse,
   ) => void;
   onReceivedResponseAudioTranscriptDelta?: (
-    message: ResponseAudioTranscriptDelta
+    message: ResponseAudioTranscriptDelta,
   ) => void;
   onReceivedInputAudioTranscriptionCompleted?: (
-    message: ResponseInputAudioTranscriptionCompleted
+    message: ResponseInputAudioTranscriptionCompleted,
   ) => void;
   onReceivedError?: (message: Message) => void;
+  // onTimerStatus?: (timer: { start_time: string, elapsed_seconds: number }) => void;
 
+  agentId: string;
+  canId: string;
   meetingId: string;
+  interviewType: string;
+  adminId: string;
+  interviewTime: string;
 };
 
 export default function useRealTime({
@@ -69,11 +76,16 @@ export default function useRealTime({
   onReceivedInputAudioTranscriptionCompleted,
   onReceivedError,
   onBroadcastTimer,
-  meetingId ="asdasdf",
+  agentId,
+  canId,
+  meetingId,
+  interviewType,
+  adminId,
+  interviewTime,
 }: Parameters) {
   const wsRef = useRef<WebSocket | null>(null);
 
-  const wsEndpoint = `ws://openai.aiinterviewagents.com/realtime?meetingId=asdsadf`;
+  const wsEndpoint = `wss://room.aiinterviewagents.com/realtime?meetingId=${meetingId}`;
 
   useEffect(() => {
     const ws = new WebSocket(wsEndpoint);
@@ -90,11 +102,11 @@ export default function useRealTime({
       }, 1000);
     };
 
-    ws.onerror = (event) => {
+    ws.onerror = event => {
       onWebSocketError?.(event as unknown as Event);
     };
 
-    ws.onmessage = (event) => {
+    ws.onmessage = event => {
       onWebSocketMessage?.(event);
       onMessageReceived(event);
     };
@@ -114,14 +126,20 @@ export default function useRealTime({
 
   const startSession = (value: string) => {
     const command: SessionUpdateCommand = {
-      type: "session.update",
+      type: 'session.update',
       session: {
         turn_detection: {
-          type: "server_vad",
+          type: 'server_vad',
           payload: {
             threshold: 0.5,
             prefix_padding_ms: 300,
             silence_duration_ms: 400,
+            agentId,
+            canId,
+            meetingId,
+            interviewType,
+            adminId,
+            interviewTime,
             value,
           },
         },
@@ -130,7 +148,7 @@ export default function useRealTime({
 
     if (enableInputAudioTranscription) {
       command.session.input_audio_transcription = {
-        model: "whisper-1",
+        model: 'whisper-1',
       };
     }
 
@@ -139,7 +157,7 @@ export default function useRealTime({
 
   const sendInterviewCompleted = () => {
     const command: InterviewCompletedCommand = {
-      type: "interview.completed",
+      type: 'interview.completed',
       meetingId: meetingId,
     };
     sendJsonMessage(command);
@@ -147,7 +165,7 @@ export default function useRealTime({
 
   const addUserAudio = (base64Audio: string) => {
     const command: InputAudioBufferAppendCommand = {
-      type: "input_audio_buffer.append",
+      type: 'input_audio_buffer.append',
       audio: base64Audio,
     };
     sendJsonMessage(command);
@@ -155,7 +173,7 @@ export default function useRealTime({
 
   const muteAgent = () => {
     const command = {
-      type: "mute.agent",
+      type: 'mute.agent',
       meetingId,
     };
     sendJsonMessage(command);
@@ -163,7 +181,7 @@ export default function useRealTime({
 
   const unmuteAgent = () => {
     const command = {
-      type: "unmute.agent",
+      type: 'unmute.agent',
       meetingId,
     };
     sendJsonMessage(command);
@@ -171,14 +189,14 @@ export default function useRealTime({
 
   const inputAudioBufferClear = () => {
     const command: InputAudioBufferClearCommand = {
-      type: "input_audio_buffer.clear",
+      type: 'input_audio_buffer.clear',
     };
     sendJsonMessage(command);
   };
 
   const sendBroadcastTimer = (startTime: string) => {
     const command = {
-      type: "broadcasttimer",
+      type: 'broadcasttimer',
       startTime,
     };
     sendJsonMessage(command);
@@ -189,45 +207,45 @@ export default function useRealTime({
     try {
       message = JSON.parse(event.data);
     } catch (e) {
-      console.error("Failed to parse JSON message:", e);
+      console.error('Failed to parse JSON message:', e);
       throw e;
     }
     switch (message.type) {
-      case "broadcasttimer":
+      case 'broadcasttimer':
         onBroadcastTimer?.(message as BroadcastTimer);
         break;
-      case "interview.end.confirmed":
+      case 'interview.end.confirmed':
         onInterviewEndConfirmed?.(message as MeetingEndByAgent);
         break;
-      case "mute.agent":
-      case "unmute.agent":
+      case 'mute.agent':
+      case 'unmute.agent':
         onMicState?.(message);
         break;
-      case "response.done":
+      case 'response.done':
         onReceivedResponseDone?.(message as ResponseDone);
         break;
-      case "response.audio.delta":
+      case 'response.audio.delta':
         onReceivedResponseAudioDelta?.(message as ResponseAudioDelta);
         break;
-      case "response.audio_transcript.delta":
+      case 'response.audio_transcript.delta':
         onReceivedResponseAudioTranscriptDelta?.(
-          message as ResponseAudioTranscriptDelta
+          message as ResponseAudioTranscriptDelta,
         );
         break;
-      case "input_audio_buffer.speech_started":
+      case 'input_audio_buffer.speech_started':
         onReceivedInputAudioBufferSpeechStarted?.(message);
         break;
-      case "conversation.item.input_audio_transcription.completed":
+      case 'conversation.item.input_audio_transcription.completed':
         onReceivedInputAudioTranscriptionCompleted?.(
-          message as ResponseInputAudioTranscriptionCompleted
+          message as ResponseInputAudioTranscriptionCompleted,
         );
         break;
-      case "extension.middle_tier_tool_response":
+      case 'extension.middle_tier_tool_response':
         onReceivedExtensionMiddleTierToolResponse?.(
-          message as ExtensionMiddleTierToolResponse
+          message as ExtensionMiddleTierToolResponse,
         );
         break;
-      case "error":
+      case 'error':
         onReceivedError?.(message);
         break;
     }

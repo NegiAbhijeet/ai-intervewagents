@@ -1,99 +1,198 @@
-import useDeepgramConversation from '../hooks/useDeepgramConversation';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  NativeModules,
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  Platform,
+  Alert,
+  Button,
   Modal,
+  PermissionsAndroid,
+  Platform,
+  View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
-const { CustomAudioRecorder, CustomAudioPlayer } = NativeModules;
+// Import custom hooks (assumed to be properly typed)
+import useAudioPlayer from '../hooks/useAudioPlayer';
+import useAudioRecorder from '../hooks/useAudioRecorder';
+import useRealTime from '../hooks/useRealtime';
+// Define props interface
 
-const InterviewScreen = ({
-  systemPrompt,
-  greeting,
-  voiceName,
+const CallUI = ({
+  agentId,
+  canId,
+  meetingId,
+  interviewType,
+  adminId,
+  interviewTime,
+uid,
+  candidateName,
+
   showInterviewScreen,
   setShowInterviewScreen,
 }) => {
-  const [messages, setMessages] = useState([]);
+  console.log("=============", agentId,
+  canId,
+  meetingId,
+  interviewType,
+  adminId,
+  interviewTime,
+
+  candidateName, "=============")
+  const initialStartRef = useRef(null);
   const [isRecording, setIsRecording] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
+  const [autostartFailed, setAutostartFailed] = useState(false);
 
-  const { startSession, stopSession } = useDeepgramConversation({
-    systemPrompt,
-    greeting,
-    voiceName,
-    onBeforeStarting: () => console.log('Starting session...'),
-    onStarted: vac => {
-      console.log('Session started');
-      vac.startConversation();
-      setIsRecording(true);
+  const interviewDurationSeconds = Number(interviewTime);
+
+  const { startSession, addUserAudio, muteAgent, unmuteAgent } = useRealTime({
+    agentId,
+    canId,
+    meetingId,
+    interviewType,
+    adminId,
+    interviewTime,
+    onWebSocketOpen: () => {},
+    onWebSocketClose: () => {},
+    onWebSocketError: () => {},
+    onReceivedError: () => {},
+    onReceivedResponseAudioDelta: message => {
+      console.log(message?.delta, isRecording, 'isRecording===');
+      if (message?.delta) {
+        playAudio(message.delta);
+      }
     },
-
-    onEnd: () => {
-      console.log('Session ended');
-      setIsRecording(false);
+    onReceivedInputAudioBufferSpeechStarted: () => {
+      stopAudioPlayer();
     },
-
-    onError: err => {
-      console.error('Error:', err);
-      setIsRecording(false);
-    },
-
-    onAfterStarted: () => console.log('Session after started'),
-
-    onMessage: message => {
-      setMessages(prev => [
-        ...prev,
-        {
-          role: message.role,
-          content: message.content,
-          timestamp: message.timestamp ?? Date.now(),
-        },
-      ]);
-    },
-    CustomAudioRecorder,
-    CustomAudioPlayer,
+    onInterviewEndConfirmed: () => {},
   });
 
-  const onToggle = async () => {
-    try {
-      if (!isRecording) {
-        await startSession();
-      } else {
-        await stopSession();
+  const {
+    init: initAudioPlayer,
+    play: playAudio,
+    stop: stopAudioPlayer,
+  } = useAudioPlayer();
+
+  const { start: startAudioRecording, stop: stopAudioRecording } =
+    useAudioRecorder({
+      onAudioRecorded: addUserAudio,
+    });
+
+  // ✅ New: Request microphone permission
+  const requestMicrophonePermission = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+          {
+            title: 'Microphone Permission',
+            message: 'App needs access to your microphone for the interview.',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        );
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } catch (err) {
+        console.warn('Permission error:', err);
+        return false;
       }
-    } catch (e) {
-      console.error(e);
-      setIsRecording(false);
     }
+
+    // On iOS, permission is usually prompted when needed. Assume true for now.
+    return true;
   };
 
-  const renderItem = ({ item }) => {
-    const isUser = item.role === 'user';
-    return (
-      <View
-        style={[
-          styles.messageRow,
-          isUser ? styles.userRow : styles.assistantRow,
-        ]}
-      >
-        <View
-          style={[
-            styles.bubble,
-            isUser ? styles.userBubble : styles.assistantBubble,
-          ]}
-        >
-          <Text style={styles.roleLabel}>{isUser ? 'You' : 'Assistant'}</Text>
-          <Text style={styles.content}>{item.content}</Text>
-        </View>
-      </View>
+  // Interview timer and wrap-up logic
+  useEffect(() => {
+    if (!hasStarted || !isRecording || !interviewDurationSeconds) return;
+
+    initialStartRef.current = Date.now();
+
+    const skipSeconds = 4 * 60;
+    const maxRestarts = Math.floor(
+      (interviewDurationSeconds - 60) / skipSeconds,
     );
+    let restartCount = 0;
+
+    let wrapUpStartTime = null;
+    let wrapUpTriggerCount = 0;
+    const wrapUpMaxTriggers = 4;
+    const wrapUpIntervalSeconds = 5;
+
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const elapsed = Math.floor(
+        (now - (initialStartRef.current || now)) / 1000,
+      );
+      const remaining = interviewDurationSeconds - elapsed;
+
+      if (remaining <= 60) {
+        if (!wrapUpStartTime) {
+          console.log('Entering wrap-up phase: value:3');
+          wrapUpStartTime = now;
+          startSession('3');
+          wrapUpTriggerCount = 1;
+        } else {
+          const wrapUpElapsed = Math.floor((now - wrapUpStartTime) / 1000);
+          if (
+            wrapUpTriggerCount < wrapUpMaxTriggers &&
+            wrapUpElapsed >= wrapUpTriggerCount * wrapUpIntervalSeconds
+          ) {
+            console.log(`Wrap-up repeat #${wrapUpTriggerCount + 1}: value:3`);
+            startSession('3');
+            wrapUpTriggerCount++;
+          }
+        }
+        return;
+      }
+
+      if (
+        elapsed > 0 &&
+        elapsed % skipSeconds === 0 &&
+        restartCount < maxRestarts
+      ) {
+        console.log(
+          `Restarting at ${elapsed}s (restart #${restartCount + 1}) value:2`,
+        );
+        startSession('2');
+        restartCount++;
+      }
+    }, 1000);
+
+    const timeout = setTimeout(
+      () => {
+        console.log('Interview complete finalizing');
+      },
+      (interviewDurationSeconds + 40) * 1000,
+    );
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeout);
+    };
+  }, [hasStarted, isRecording, interviewDurationSeconds]);
+
+  const handleManualStart = async () => {
+    try {
+      const hasPermission = await requestMicrophonePermission();
+      if (!hasPermission) {
+        Alert.alert(
+          'Permission Denied',
+          'Microphone permission is required to start the interview.',
+        );
+        return;
+      }
+
+      startSession('1');
+      startAudioRecording();
+      setIsRecording(true);
+      setHasStarted(true);
+      setAutostartFailed(false);
+    } catch (err) {
+      Alert.alert(
+        'Error',
+        'Microphone permission denied or error starting session.',
+      );
+    }
   };
 
   return (
@@ -103,129 +202,18 @@ const InterviewScreen = ({
       visible={showInterviewScreen}
       onRequestClose={() => setShowInterviewScreen(false)}
     >
-      <SafeAreaView style={styles.safe}>
-        <View style={styles.container}>
-          <Text style={styles.header}>Transcript</Text>
-          <FlatList
-            data={messages}
-            keyExtractor={(item, index) =>
-              `${item.timestamp ?? index}-${index}`
-            }
-            renderItem={renderItem}
-            contentContainerStyle={styles.listContent}
-            showsVerticalScrollIndicator
-          />
-
-          <View pointerEvents="box-none" style={styles.fabContainer}>
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={onToggle}
-              style={[styles.fab, isRecording ? styles.fabActive : null]}
-            >
-              <Text style={styles.fabText}>
-                {isRecording ? 'Stop' : 'Start'}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </SafeAreaView>
+      <View
+        style={{
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: 'white',
+        }}
+      >
+        <Button title="Start Interview" onPress={handleManualStart} />
+      </View>
     </Modal>
   );
 };
 
-export default InterviewScreen;
-
-const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: '#0B1220',
-  },
-  container: {
-    flex: 1,
-    paddingHorizontal: 16,
-    paddingTop: 8,
-  },
-  header: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#F3F5F7',
-    marginBottom: 8,
-  },
-  listContent: {
-    paddingBottom: 120,
-  },
-  messageRow: {
-    width: '100%',
-    marginBottom: 10,
-    flexDirection: 'row',
-  },
-  userRow: {
-    justifyContent: 'flex-end',
-  },
-  assistantRow: {
-    justifyContent: 'flex-start',
-  },
-  bubble: {
-    maxWidth: '86%',
-    borderRadius: 16,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
-    ...Platform.select({
-      android: { elevation: 2 },
-    }),
-  },
-  userBubble: {
-    backgroundColor: '#2E5BFF',
-  },
-  assistantBubble: {
-    backgroundColor: '#1C2536',
-  },
-  roleLabel: {
-    fontSize: 11,
-    color: '#C9D2E1',
-    marginBottom: 4,
-  },
-  content: {
-    fontSize: 15,
-    color: '#F3F5F7',
-    lineHeight: 20,
-  },
-  fabContainer: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  fab: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#2E5BFF',
-    borderRadius: 32,
-    paddingHorizontal: 20,
-    height: 56,
-    minWidth: 140,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 },
-    ...Platform.select({
-      android: { elevation: 6 },
-    }),
-  },
-  fabActive: {
-    backgroundColor: '#EF4444',
-  },
-  fabText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '700',
-    marginLeft: 10,
-  },
-});
+export default CallUI;
