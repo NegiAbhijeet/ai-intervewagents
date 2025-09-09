@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import Layout from './Layout';
+import fetchWithAuth from '../libs/fetchWithAuth';
+import { JAVA_API_URL } from '../components/config';
+import { AppStateContext } from '../components/AppContext';
 
 const reportData = [
   {
@@ -56,6 +59,40 @@ const reportData = [
 ];
 
 const Reports = () => {
+  const { userProfile } = useContext(AppStateContext);
+  const [meetings, setMeetings] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchMeetings = async () => {
+    setLoading(true);
+    try {
+      const response = await fetchWithAuth(
+        `${JAVA_API_URL}/api/meetings/uid/${userProfile.uid}`,
+      );
+      const data = await response.json();
+      if (data?.data) {
+        const finalMeetings = data.data.filter(
+          item => item.status === 'Completed',
+        );
+        const sortedMeetings = finalMeetings.sort((a, b) => {
+          const dateTimeA = new Date(`${a.interviewDate}T${a.interviewTime}`);
+          const dateTimeB = new Date(`${b.interviewDate}T${b.interviewTime}`);
+          return dateTimeB - dateTimeA;
+        });
+        setMeetings(sortedMeetings);
+      }
+    } catch (error) {
+      console.error('Failed to fetch meetings:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (userProfile?.uid) {
+      fetchMeetings();
+    }
+  }, [userProfile]);
   return (
     <Layout>
       <ScrollView showsVerticalScrollIndicator={false}>

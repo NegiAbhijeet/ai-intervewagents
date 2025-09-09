@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "611623329833",
+    "project_id": "interviewly-ai",
+    "storage_bucket": "interviewly-ai.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:611623329833:android:25570ad66e929e17913c38",
+        "android_client_info": {
+          "package_name": "com.aiinterviewagents"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "611623329833-80n7aoi05g12m4qf7qdgd6uq2ci5ggk5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aiinterviewagents",
+            "certificate_hash": "1483fbcca4b5b95b0ce8519f9e204d1dfb37119c"
+          }
+        },
+        {
+          "client_id": "611623329833-4t054i14kdj2u7ccdvtb4b5tsev1jgfr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBogx6sPYQw319wg-VQxItKGY_b04u-6qI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "611623329833-4t054i14kdj2u7ccdvtb4b5tsev1jgfr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
