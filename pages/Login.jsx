@@ -1,6 +1,6 @@
 // app/screens/LoginScreen.tsx
 
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   Text,
   TextInput,
@@ -12,7 +12,6 @@ import Toast from 'react-native-toast-message';
 import { useNavigation } from '@react-navigation/native';
 import { auth } from '../libs/firebase';
 import {
-  getAuth,
   signInWithEmailAndPassword,
   signInWithCredential,
   GoogleAuthProvider,
@@ -36,13 +35,6 @@ const LoginScreen = () => {
   const [password, setPassword] = useState('');
   const [isEmailLoading, setIsEmailLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-
-  useEffect(() => {
-    GoogleSignin.configure({
-      webClientId:
-        '611623329833-4t054i14kdj2u7ccdvtb4b5tsev1jgfr.apps.googleusercontent.com',
-    });
-  }, []);
 
   const loginWithGoogle = async () => {
     setIsGoogleLoading(true);
@@ -224,8 +216,6 @@ const LoginScreen = () => {
           </Text>
         )}
       </TouchableOpacity>
-
-      <Toast />
     </View>
   );
 };

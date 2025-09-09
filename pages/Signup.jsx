@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react"
+import React, { useState, useEffect, useContext } from 'react';
 import {
   View,
   Text,
@@ -6,93 +6,92 @@ import {
   Pressable,
   TouchableOpacity,
   ActivityIndicator,
-  Linking
-} from "react-native"
+  Linking,
+} from 'react-native';
 // import { Eye, EyeOff } from "lucide-react-native"
 
-import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth"
-import { useNavigation } from "@react-navigation/native"
-import { AppStateContext } from "../components/AppContext"
-import fetchWithAuth from "../libs/fetchWithAuth"
-import { API_URL } from "../components/config"
-import Toast from "react-native-toast-message"
-
+import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import { useNavigation } from '@react-navigation/native';
+import { AppStateContext } from '../components/AppContext';
+import fetchWithAuth from '../libs/fetchWithAuth';
+import { API_URL } from '../components/config';
+import Toast from 'react-native-toast-message';
 
 const SignupScreen = ({ setActiveTab }) => {
-  const { setUserProfile, userProfile } = useContext(AppStateContext)
-  const navigation = useNavigation()
+  const { setUserProfile, userProfile } = useContext(AppStateContext);
+  const navigation = useNavigation();
 
-  const [fullName, setFullName] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [cPassword, setCPassword] = useState("")
-  const [termsCheckbox, setTermsCheckbox] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
-  const [isEmailSignupLoading, setIsEmailSignupLoading] = useState(false)
-  const [isGoogleSignupLoading, setIsGoogleSignupLoading] = useState(false)
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [cPassword, setCPassword] = useState('');
+  const [termsCheckbox, setTermsCheckbox] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [isEmailSignupLoading, setIsEmailSignupLoading] = useState(false);
+  const [isGoogleSignupLoading, setIsGoogleSignupLoading] = useState(false);
 
   const isFormValid =
-    fullName.trim() !== "" &&
-    email.trim() !== "" &&
-    password !== "" &&
-    cPassword !== "" &&
-    termsCheckbox
+    fullName.trim() !== '' &&
+    email.trim() !== '' &&
+    password !== '' &&
+    cPassword !== '' &&
+    termsCheckbox;
 
   const handleSubmit = async () => {
     if (password !== cPassword) {
-    //   Toast.error("Passwords do not match")
-      return
+      //   Toast.error("Passwords do not match")
+      return;
     }
 
     try {
-      setIsEmailSignupLoading(true)
-      const [first_name, ...last] = fullName.trim().split(" ")
-      const last_name = last.join(" ")
+      setIsEmailSignupLoading(true);
+      const [first_name, ...last] = fullName.trim().split(' ');
+      const last_name = last.join(' ');
 
       const payload = {
         email,
         password,
         first_name,
         last_name,
-        uid: userProfile?.uid
-      }
+        uid: userProfile?.uid,
+      };
 
       const res = await fetchWithAuth(`${API_URL}/signup/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      })
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
 
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || "Failed to create profile")
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to create profile');
 
-    //   toast.success("Account created successfully.")
-      setActiveTab("login")
+      //   toast.success("Account created successfully.")
+      setActiveTab('login');
     } catch (err) {
-      console.error(err)
-    //   toast.error(err.message || "Signup error.")
+      console.error(err);
+      //   toast.error(err.message || "Signup error.")
     } finally {
-      setIsEmailSignupLoading(false)
+      setIsEmailSignupLoading(false);
     }
-  }
+  };
 
   const loginWithGoogle = async () => {
     try {
-      const provider = new GoogleAuthProvider()
-      const result = await signInWithPopup(auth, provider)
-      setIsGoogleSignupLoading(true)
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      setIsGoogleSignupLoading(true);
 
-      const signedInUser = result.user
-      const token = await signedInUser.getIdToken()
-      const displayName = signedInUser.displayName || ""
-      const [first_name, ...last] = displayName.trim().split(" ")
-      const last_name = last.join(" ")
+      const signedInUser = result.user;
+      const token = await signedInUser.getIdToken();
+      const displayName = signedInUser.displayName || '';
+      const [first_name, ...last] = displayName.trim().split(' ');
+      const last_name = last.join(' ');
 
       const response = await fetchWithAuth(`${API_URL}/profiles/`, {
-        method: "POST",
+        method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           uid: signedInUser.uid,
@@ -101,28 +100,30 @@ const SignupScreen = ({ setActiveTab }) => {
           last_name,
           plan: 1,
           image_url: signedInUser?.photoURL,
-          role: ""
-        })
-      })
+          role: '',
+        }),
+      });
 
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData?.error || "Failed to create profile")
+        const errorData = await response.json();
+        throw new Error(errorData?.error || 'Failed to create profile');
       }
 
-      await fetchUserDetails(signedInUser, setUserProfile, navigation)
+      await fetchUserDetails(signedInUser, setUserProfile, navigation);
     } catch (error) {
-      console.error("Google sign-in error:", error)
-      setIsGoogleSignupLoading(false)
-    //   toast.error(error.message || "Login failed.")
-      await signOut(auth)
+      console.error('Google sign-in error:', error);
+      setIsGoogleSignupLoading(false);
+      //   toast.error(error.message || "Login failed.")
+      await signOut(auth);
     }
-  }
+  };
 
   return (
     <View className="px-6 py-8 bg-white rounded-lg shadow-md">
       <Text className="text-2xl font-bold mb-1">Sign Up</Text>
-      <Text className="text-gray-500 mb-4">Create a new account to get started</Text>
+      <Text className="text-gray-500 mb-4">
+        Create a new account to get started
+      </Text>
 
       {/* Full Name */}
       <View className="mb-4">
@@ -170,7 +171,9 @@ const SignupScreen = ({ setActiveTab }) => {
             )} */}
           </Pressable>
         </View>
-        <Text className="text-xs text-gray-500 mt-1">Must be at least 8 characters long</Text>
+        <Text className="text-xs text-gray-500 mt-1">
+          Must be at least 8 characters long
+        </Text>
       </View>
 
       {/* Confirm Password */}
@@ -194,12 +197,12 @@ const SignupScreen = ({ setActiveTab }) => {
           {termsCheckbox && <Text>✓</Text>}
         </TouchableOpacity>
         <Text className="text-sm text-gray-600">
-          I agree to the{" "}
-          <Text className="text-blue-600" onPress={() => Linking.openURL("#")}>
+          I agree to the{' '}
+          <Text className="text-blue-600" onPress={() => Linking.openURL('#')}>
             Terms of Service
-          </Text>{" "}
-          and{" "}
-          <Text className="text-blue-600" onPress={() => Linking.openURL("#")}>
+          </Text>{' '}
+          and{' '}
+          <Text className="text-blue-600" onPress={() => Linking.openURL('#')}>
             Privacy Policy
           </Text>
         </Text>
@@ -209,8 +212,8 @@ const SignupScreen = ({ setActiveTab }) => {
       <TouchableOpacity
         className={`w-full p-3 rounded-md items-center justify-center ${
           !isFormValid || isEmailSignupLoading || isGoogleSignupLoading
-            ? "bg-gray-300"
-            : "bg-gradient-to-r from-blue-400/60 to-pink-500/70"
+            ? 'bg-gray-300'
+            : 'bg-gradient-to-r from-blue-400/60 to-pink-500/70'
         }`}
         disabled={!isFormValid || isEmailSignupLoading || isGoogleSignupLoading}
         onPress={handleSubmit}
@@ -225,7 +228,9 @@ const SignupScreen = ({ setActiveTab }) => {
       {/* Divider */}
       <View className="flex-row items-center my-6">
         <View className="flex-1 h-px bg-gray-300" />
-        <Text className="px-2 text-gray-500 text-xs uppercase">Or continue with</Text>
+        <Text className="px-2 text-gray-500 text-xs uppercase">
+          Or continue with
+        </Text>
         <View className="flex-1 h-px bg-gray-300" />
       </View>
 
@@ -244,10 +249,8 @@ const SignupScreen = ({ setActiveTab }) => {
           </>
         )}
       </TouchableOpacity>
-      
-            <Toast />
     </View>
-  )
-}
+  );
+};
 
-export default SignupScreen
+export default SignupScreen;
