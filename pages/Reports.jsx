@@ -1,62 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import Layout from './Layout';
-import fetchWithAuth from '../libs/fetchWithAuth';
-import { JAVA_API_URL } from '../components/config';
-import { AppStateContext } from '../components/AppContext';
-
-const reportData = [
-  {
-    id: 1,
-    name: 'John Smith',
-    role: 'Frontend Developer',
-    date: 'Dec 15, 2023 - 2:30 PM',
-    status: 'Completed',
-    percentage: '85%',
-    color: 'bg-green-100 text-green-700',
-    pdfAvailable: true,
-  },
-  {
-    id: 2,
-    name: 'Anna Martinez',
-    role: 'UX Designer',
-    date: 'Dec 14, 2023 - 11:45 AM',
-    status: 'Pending',
-    percentage: '',
-    color: 'bg-yellow-100 text-yellow-700',
-    pdfAvailable: false,
-  },
-  {
-    id: 3,
-    name: 'Michael Johnson',
-    role: 'Backend Developer',
-    date: 'Dec 13, 2023 - 4:15 PM',
-    status: 'Completed',
-    percentage: '92%',
-    color: 'bg-green-100 text-green-700',
-    pdfAvailable: true,
-  },
-  {
-    id: 4,
-    name: 'Emily Wilson',
-    role: 'Product Manager',
-    date: 'Dec 12, 2023 - 9:20 AM',
-    status: 'Incomplete',
-    percentage: '',
-    color: 'bg-red-100 text-red-700',
-    pdfAvailable: false,
-  },
-  {
-    id: 5,
-    name: 'David Thompson',
-    role: 'Data Scientist',
-    date: 'Dec 11, 2023 - 3:45 PM',
-    status: 'Completed',
-    percentage: '78%',
-    color: 'bg-green-100 text-green-700',
-    pdfAvailable: true,
-  },
-];
+import React, { useContext, useEffect, useState } from "react";
+import { ScrollView, Text, TouchableOpacity, View, Image } from "react-native";
+import Layout from "./Layout";
+import { AppStateContext } from "../components/AppContext";
+import { JAVA_API_URL } from "../components/config";
+import fetchWithAuth from "../libs/fetchWithAuth";
 
 const Reports = () => {
   const { userProfile } = useContext(AppStateContext);
@@ -66,14 +13,10 @@ const Reports = () => {
   const fetchMeetings = async () => {
     setLoading(true);
     try {
-      const response = await fetchWithAuth(
-        `${JAVA_API_URL}/api/meetings/uid/${userProfile.uid}`,
-      );
+      const response = await fetchWithAuth(`${JAVA_API_URL}/api/meetings/uid/${userProfile.uid}`);
       const data = await response.json();
       if (data?.data) {
-        const finalMeetings = data.data.filter(
-          item => item.status === 'Completed',
-        );
+        const finalMeetings = data.data.filter(item => item.status === "Completed");
         const sortedMeetings = finalMeetings.sort((a, b) => {
           const dateTimeA = new Date(`${a.interviewDate}T${a.interviewTime}`);
           const dateTimeB = new Date(`${b.interviewDate}T${b.interviewTime}`);
@@ -82,91 +25,137 @@ const Reports = () => {
         setMeetings(sortedMeetings);
       }
     } catch (error) {
-      console.error('Failed to fetch meetings:', error);
+      console.error("Failed to fetch meetings:", error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (userProfile?.uid) {
-      fetchMeetings();
-    }
+    if (userProfile?.uid) fetchMeetings();
   }, [userProfile]);
+
+  const calculatePercentage = (report) => {
+    const rawScores = [
+      report?.feedback?.report?.problem_solving?.score,
+      report?.feedback?.report?.communication?.score,
+      report?.feedback?.report?.cultural_fit_and_mindset?.score,
+      report?.feedback?.report?.leadership_potential?.score,
+      report?.feedback?.report?.motivation_and_engagement?.score,
+      report?.feedback?.report?.behaviour_competency?.score,
+      report?.feedback?.report?.technical_skills?.score,
+      report?.feedback?.report?.technical_proficiency?.score,
+    ];
+    const validScores = rawScores.filter(score => typeof score === "number" && !isNaN(score));
+    const average = validScores.length ? validScores.reduce((a, b) => a + b, 0) / validScores.length : 0;
+    return Math.round((average / 10) * 100);
+  };
+
+  const formatDateTime = (dateStr, timeStr) => {
+    const dateTime = new Date(`${dateStr}T${timeStr}`);
+    return dateTime.toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
+
+  if (loading) {
+    return (
+      <Layout>
+        <Text>Loading reports...</Text>
+      </Layout>
+    );
+  }
+
+  if (!loading && meetings.length === 0) {
+    return (
+      <Layout>
+        <Text>No Interview Reports Found</Text>
+        <Text>Complete some interviews to see reports here.</Text>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Text className="text-2xl font-bold mb-1">Interview Reports</Text>
-        <Text className="text-base text-gray-600 mb-4">
-          You can view your reports here.
-        </Text>
-        {reportData.map(report => (
-          <View
-            key={report.id}
-            className="bg-gray-50 p-4 mb-4 rounded-lg border border-gray-200"
-          >
-            {/* Avatar and Info */}
-            <View className="flex-row items-center justify-between">
-              <View className="flex-row items-center">
-                <View className="w-10 h-10 rounded-full bg-gray-300 justify-center items-center mr-3">
-                  <Text className="text-white font-bold">
-                    {report.name
-                      .split(' ')
-                      .map(n => n[0])
-                      .join('')
-                      .toUpperCase()}
-                  </Text>
+        {meetings.map((report) => {
+          const candidate = report.candidateDetails || {};
+          const percentage = calculatePercentage(report);
+
+          return (
+            <View key={report.meetingId} style={{ backgroundColor: "#F9FAFB", padding: 16, marginBottom: 12, borderRadius: 12, borderWidth: 1, borderColor: "#E5E7EB" }}>
+              {/* Avatar & Info */}
+              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <View style={{ width: 50, height: 50, borderRadius: 25, backgroundColor: "#D1D5DB", justifyContent: "center", alignItems: "center", marginRight: 12 }}>
+                    <Text style={{ color: "white", fontWeight: "bold" }}>
+                      {`${candidate?.firstName?.[0] || "C"}${candidate?.lastName?.[0] || "A"}`.toUpperCase()}
+                    </Text>
+                  </View>
+                  <View>
+                    <Text style={{ fontWeight: "600" }}>{candidate?.firstName} {candidate?.lastName}</Text>
+                    <Text style={{ color: "#6B7280" }}>{report.position}</Text>
+                  </View>
                 </View>
-                <View>
-                  <Text className="font-semibold">{report.name}</Text>
-                  <Text className="text-gray-500 text-sm">{report.role}</Text>
+
+                <View style={{
+                  paddingHorizontal: 8,
+                  paddingVertical: 4,
+                  borderRadius: 6,
+                  backgroundColor: percentage >= 85 ? "#DCFCE7" : percentage >= 70 ? "#FEF3C7" : "#FEE2E2",
+                  borderWidth: 1,
+                  borderColor: percentage >= 85 ? "#BBF7D0" : percentage >= 70 ? "#FCD34D" : "#FECACA"
+                }}>
+                  <Text style={{ fontSize: 12, fontWeight: "500", color: percentage >= 85 ? "#166534" : percentage >= 70 ? "#B45309" : "#991B1B" }}>
+                    {percentage}% Match
+                  </Text>
                 </View>
               </View>
-              {report.percentage ? (
-                <View
-                  className={`px-2 py-1 rounded-md ${report.color} text-xs`}
+
+              {/* Date */}
+              <Text style={{ color: "#9CA3AF", fontSize: 12, marginTop: 8 }}>
+                {formatDateTime(report.interviewDate, report.interviewTime)}
+              </Text>
+
+              {/* Action Buttons */}
+              <View style={{ flexDirection: "row", marginTop: 12, gap: 8 }}>
+                <TouchableOpacity
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#059669",
+                    paddingVertical: 10,
+                    borderRadius: 8,
+                    justifyContent: "center",
+                    alignItems: "center"
+                  }}
+                  onPress={() => console.log("Download PDF", report.meetingId)}
+                  disabled={!report.pdfAvailable}
                 >
-                  <Text className="text-xs font-medium">
-                    {report.percentage}
-                  </Text>
-                </View>
-              ) : (
-                <View className={`px-2 py-1 rounded-md ${report.color}`}>
-                  <Text className="text-xs font-medium">{report.status}</Text>
-                </View>
-              )}
-            </View>
+                  <Text style={{ color: "white", fontWeight: "600" }}>PDF</Text>
+                </TouchableOpacity>
 
-            {/* Date */}
-            <Text className="text-gray-400 text-xs mt-2">{report.date}</Text>
-
-            {/* Action Buttons */}
-            <View className="flex-row mt-3 gap-2">
-              <TouchableOpacity
-                className={`flex-1 px-4 py-2 rounded-md border ${
-                  report.pdfAvailable
-                    ? 'bg-green-500 border-green-500'
-                    : 'bg-gray-200 border-gray-300'
-                }`}
-                disabled={!report.pdfAvailable}
-              >
-                <Text
-                  className={`text-center text-sm font-semibold ${
-                    report.pdfAvailable ? 'text-white' : 'text-gray-500'
-                  }`}
+                <TouchableOpacity
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#2563EB",
+                    paddingVertical: 10,
+                    borderRadius: 8,
+                    justifyContent: "center",
+                    alignItems: "center"
+                  }}
+                  onPress={() => console.log("View Report", report.meetingId)}
                 >
-                  PDF
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity className="flex-1 px-4 py-2 rounded-md border border-blue-500">
-                <Text className="text-center text-sm font-semibold text-blue-500">
-                  Report
-                </Text>
-              </TouchableOpacity>
+                  <Text style={{ color: "white", fontWeight: "600" }}>Report</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-        ))}
+          );
+        })}
       </ScrollView>
     </Layout>
   );
