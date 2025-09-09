@@ -8,8 +8,9 @@ import {
   Pressable,
 } from 'react-native';
 import { AppStateContext } from './AppContext';
-import { signOut } from '@react-native-firebase/auth';
 import { auth } from '../libs/firebase';
+import { signOut } from 'firebase/auth';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 const TopBar = () => {
   const { userProfile, setUserProfile } = useContext(AppStateContext);
@@ -23,13 +24,22 @@ const TopBar = () => {
   const logout = async () => {
     try {
       setModalVisible(false);
+
+      // Clear Google sign-in cache
+      await GoogleSignin.revokeAccess();
+      await GoogleSignin.signOut(); // Ensures account picker shows next time
+
+      // Clear Firebase session
+      await signOut(auth);
+
+      // Reset app context
       setUserProfile(null);
-      signOut(auth).then(() => {console.log("Confirm")});
+
+      console.log('[Logout] User successfully logged out');
     } catch (err) {
       console.error('Error signing out:', err);
     }
   };
-
   return (
     <View className="flex-row justify-between items-center px-5 pt-4 pb-3 bg-white border-b border-gray-200 shadow-md">
       <Image
