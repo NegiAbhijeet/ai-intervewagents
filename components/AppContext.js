@@ -28,10 +28,8 @@ const AppStateProvider = ({ children }) => {
       setUserProfile,
       totalMinutes,
       usedMinutes,
-      totalSeconds,
-      usedSeconds,
     }),
-    [userProfile, totalMinutes, usedMinutes, totalSeconds, usedSeconds],
+    [userProfile, totalMinutes, usedMinutes],
   );
 
   return (
