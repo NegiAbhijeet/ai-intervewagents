@@ -1,9 +1,10 @@
-import React, { useContext, useEffect, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View, Image } from "react-native";
-import Layout from "./Layout";
-import { AppStateContext } from "../components/AppContext";
-import { JAVA_API_URL } from "../components/config";
-import fetchWithAuth from "../libs/fetchWithAuth";
+import React, { useContext, useEffect, useState } from 'react';
+import { ScrollView, Text, TouchableOpacity, View, Image } from 'react-native';
+import Layout from './Layout';
+import { AppStateContext } from '../components/AppContext';
+import { JAVA_API_URL } from '../components/config';
+import fetchWithAuth from '../libs/fetchWithAuth';
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 
 const Reports = () => {
   const { userProfile } = useContext(AppStateContext);
@@ -13,10 +14,14 @@ const Reports = () => {
   const fetchMeetings = async () => {
     setLoading(true);
     try {
-      const response = await fetchWithAuth(`${JAVA_API_URL}/api/meetings/uid/${userProfile.uid}`);
+      const response = await fetchWithAuth(
+        `${JAVA_API_URL}/api/meetings/uid/${userProfile.uid}`,
+      );
       const data = await response.json();
       if (data?.data) {
-        const finalMeetings = data.data.filter(item => item.status === "Completed");
+        const finalMeetings = data.data.filter(
+          item => item.status === 'Completed',
+        );
         const sortedMeetings = finalMeetings.sort((a, b) => {
           const dateTimeA = new Date(`${a.interviewDate}T${a.interviewTime}`);
           const dateTimeB = new Date(`${b.interviewDate}T${b.interviewTime}`);
@@ -25,7 +30,7 @@ const Reports = () => {
         setMeetings(sortedMeetings);
       }
     } catch (error) {
-      console.error("Failed to fetch meetings:", error);
+      console.error('Failed to fetch meetings:', error);
     } finally {
       setLoading(false);
     }
@@ -35,7 +40,7 @@ const Reports = () => {
     if (userProfile?.uid) fetchMeetings();
   }, [userProfile]);
 
-  const calculatePercentage = (report) => {
+  const calculatePercentage = report => {
     const rawScores = [
       report?.feedback?.report?.problem_solving?.score,
       report?.feedback?.report?.communication?.score,
@@ -46,19 +51,23 @@ const Reports = () => {
       report?.feedback?.report?.technical_skills?.score,
       report?.feedback?.report?.technical_proficiency?.score,
     ];
-    const validScores = rawScores.filter(score => typeof score === "number" && !isNaN(score));
-    const average = validScores.length ? validScores.reduce((a, b) => a + b, 0) / validScores.length : 0;
+    const validScores = rawScores.filter(
+      score => typeof score === 'number' && !isNaN(score),
+    );
+    const average = validScores.length
+      ? validScores.reduce((a, b) => a + b, 0) / validScores.length
+      : 0;
     return Math.round((average / 10) * 100);
   };
 
   const formatDateTime = (dateStr, timeStr) => {
     const dateTime = new Date(`${dateStr}T${timeStr}`);
-    return dateTime.toLocaleString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
+    return dateTime.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
       hour12: true,
     });
   };
@@ -66,7 +75,87 @@ const Reports = () => {
   if (loading) {
     return (
       <Layout>
-        <Text>Loading reports...</Text>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <SkeletonPlaceholder borderRadius={12}>
+            {[...Array(4)].map((_, index) => (
+              <SkeletonPlaceholder.Item
+                key={index}
+                width="100%"
+                marginBottom={12}
+                padding={16}
+                borderRadius={12}
+                borderWidth={1}
+                borderColor="#E5E7EB"
+                backgroundColor="#F9FAFB"
+              >
+                {/* Top Row: Avatar + Text + Badge */}
+                <SkeletonPlaceholder.Item
+                  flexDirection="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  {/* Avatar & Info */}
+                  <SkeletonPlaceholder.Item
+                    flexDirection="row"
+                    alignItems="center"
+                  >
+                    <SkeletonPlaceholder.Item
+                      width={50}
+                      height={50}
+                      borderRadius={25}
+                    />
+                    <SkeletonPlaceholder.Item marginLeft={12}>
+                      <SkeletonPlaceholder.Item
+                        width={120}
+                        height={16}
+                        borderRadius={4}
+                      />
+                      <SkeletonPlaceholder.Item
+                        marginTop={6}
+                        width={100}
+                        height={14}
+                        borderRadius={4}
+                      />
+                    </SkeletonPlaceholder.Item>
+                  </SkeletonPlaceholder.Item>
+
+                  {/* Badge */}
+                  <SkeletonPlaceholder.Item
+                    width={60}
+                    height={20}
+                    borderRadius={6}
+                  />
+                </SkeletonPlaceholder.Item>
+
+                {/* Date */}
+                <SkeletonPlaceholder.Item
+                  marginTop={12}
+                  width={100}
+                  height={12}
+                  borderRadius={4}
+                />
+
+                {/* Action Buttons */}
+                <SkeletonPlaceholder.Item
+                  flexDirection="row"
+                  marginTop={12}
+                  justifyContent="space-between"
+                >
+                  <SkeletonPlaceholder.Item
+                    width="48%"
+                    height={40}
+                    borderRadius={8}
+                  />
+                  <SkeletonPlaceholder.Item
+                    width="48%"
+                    height={40}
+                    borderRadius={8}
+                  />
+                </SkeletonPlaceholder.Item>
+              </SkeletonPlaceholder.Item>
+            ))}
+          </SkeletonPlaceholder>
+        </ScrollView>
       </Layout>
     );
   }
@@ -83,74 +172,127 @@ const Reports = () => {
   return (
     <Layout>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {meetings.map((report) => {
+        {meetings.map(report => {
           const candidate = report.candidateDetails || {};
           const percentage = calculatePercentage(report);
 
           return (
-            <View key={report.meetingId} style={{ backgroundColor: "#F9FAFB", padding: 16, marginBottom: 12, borderRadius: 12, borderWidth: 1, borderColor: "#E5E7EB" }}>
+            <View
+              key={report.meetingId}
+              style={{
+                backgroundColor: '#F9FAFB',
+                padding: 16,
+                marginBottom: 12,
+                borderRadius: 12,
+                borderWidth: 1,
+                borderColor: '#E5E7EB',
+              }}
+            >
               {/* Avatar & Info */}
-              <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <View style={{ width: 50, height: 50, borderRadius: 25, backgroundColor: "#D1D5DB", justifyContent: "center", alignItems: "center", marginRight: 12 }}>
-                    <Text style={{ color: "white", fontWeight: "bold" }}>
-                      {`${candidate?.firstName?.[0] || "C"}${candidate?.lastName?.[0] || "A"}`.toUpperCase()}
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <View
+                    style={{
+                      width: 50,
+                      height: 50,
+                      borderRadius: 25,
+                      backgroundColor: '#D1D5DB',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginRight: 12,
+                    }}
+                  >
+                    <Text style={{ color: 'white', fontWeight: 'bold' }}>
+                      {`${candidate?.firstName?.[0] || 'C'}${candidate?.lastName?.[0] || 'A'}`.toUpperCase()}
                     </Text>
                   </View>
                   <View>
-                    <Text style={{ fontWeight: "600" }}>{candidate?.firstName} {candidate?.lastName}</Text>
-                    <Text style={{ color: "#6B7280" }}>{report.position}</Text>
+                    <Text style={{ fontWeight: '600' }}>
+                      {candidate?.firstName} {candidate?.lastName}
+                    </Text>
+                    <Text style={{ color: '#6B7280' }}>{report.position}</Text>
                   </View>
                 </View>
 
-                <View style={{
-                  paddingHorizontal: 8,
-                  paddingVertical: 4,
-                  borderRadius: 6,
-                  backgroundColor: percentage >= 85 ? "#DCFCE7" : percentage >= 70 ? "#FEF3C7" : "#FEE2E2",
-                  borderWidth: 1,
-                  borderColor: percentage >= 85 ? "#BBF7D0" : percentage >= 70 ? "#FCD34D" : "#FECACA"
-                }}>
-                  <Text style={{ fontSize: 12, fontWeight: "500", color: percentage >= 85 ? "#166534" : percentage >= 70 ? "#B45309" : "#991B1B" }}>
+                <View
+                  style={{
+                    paddingHorizontal: 8,
+                    paddingVertical: 4,
+                    borderRadius: 6,
+                    backgroundColor:
+                      percentage >= 85
+                        ? '#DCFCE7'
+                        : percentage >= 70
+                          ? '#FEF3C7'
+                          : '#FEE2E2',
+                    borderWidth: 1,
+                    borderColor:
+                      percentage >= 85
+                        ? '#BBF7D0'
+                        : percentage >= 70
+                          ? '#FCD34D'
+                          : '#FECACA',
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      fontWeight: '500',
+                      color:
+                        percentage >= 85
+                          ? '#166534'
+                          : percentage >= 70
+                            ? '#B45309'
+                            : '#991B1B',
+                    }}
+                  >
                     {percentage}% Match
                   </Text>
                 </View>
               </View>
 
               {/* Date */}
-              <Text style={{ color: "#9CA3AF", fontSize: 12, marginTop: 8 }}>
+              <Text style={{ color: '#9CA3AF', fontSize: 12, marginTop: 8 }}>
                 {formatDateTime(report.interviewDate, report.interviewTime)}
               </Text>
 
               {/* Action Buttons */}
-              <View style={{ flexDirection: "row", marginTop: 12, gap: 8 }}>
+              <View style={{ flexDirection: 'row', marginTop: 12, gap: 8 }}>
                 <TouchableOpacity
                   style={{
                     flex: 1,
-                    backgroundColor: "#059669",
+                    backgroundColor: '#059669',
                     paddingVertical: 10,
                     borderRadius: 8,
-                    justifyContent: "center",
-                    alignItems: "center"
+                    justifyContent: 'center',
+                    alignItems: 'center',
                   }}
-                  onPress={() => console.log("Download PDF", report.meetingId)}
+                  onPress={() => console.log('Download PDF', report.meetingId)}
                   disabled={!report.pdfAvailable}
                 >
-                  <Text style={{ color: "white", fontWeight: "600" }}>PDF</Text>
+                  <Text style={{ color: 'white', fontWeight: '600' }}>PDF</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   style={{
                     flex: 1,
-                    backgroundColor: "#2563EB",
+                    backgroundColor: '#2563EB',
                     paddingVertical: 10,
                     borderRadius: 8,
-                    justifyContent: "center",
-                    alignItems: "center"
+                    justifyContent: 'center',
+                    alignItems: 'center',
                   }}
-                  onPress={() => console.log("View Report", report.meetingId)}
+                  onPress={() => console.log('View Report', report.meetingId)}
                 >
-                  <Text style={{ color: "white", fontWeight: "600" }}>Report</Text>
+                  <Text style={{ color: 'white', fontWeight: '600' }}>
+                    Report
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>

@@ -5,7 +5,43 @@ import StatsCard from '../components/StatsCard';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import { AppStateContext } from '../components/AppContext';
 import { JAVA_API_URL } from '../components/config';
-
+const StatsSkeleton = () => {
+  return (
+    <SkeletonPlaceholder borderRadius={8}>
+      <SkeletonPlaceholder.Item
+        flexDirection="row"
+        flexWrap="wrap"
+        justifyContent="space-between"
+      >
+        {/* 4 Placeholder Cards - 2 per row */}
+        <SkeletonPlaceholder.Item
+          width="48%"
+          height={96}
+          marginBottom={16}
+          borderRadius={12}
+        />
+        <SkeletonPlaceholder.Item
+          width="48%"
+          height={96}
+          marginBottom={16}
+          borderRadius={12}
+        />
+        <SkeletonPlaceholder.Item
+          width="48%"
+          height={96}
+          marginBottom={16}
+          borderRadius={12}
+        />
+        <SkeletonPlaceholder.Item
+          width="48%"
+          height={96}
+          marginBottom={16}
+          borderRadius={12}
+        />
+      </SkeletonPlaceholder.Item>
+    </SkeletonPlaceholder>
+  );
+};
 const Home = () => {
   const { userProfile, usedMinutes } = useContext(AppStateContext);
   const [meetings, setMeetings] = useState([]);
@@ -76,14 +112,7 @@ const Home = () => {
 
         {/* Stats */}
         {isLoading ? (
-          <SkeletonPlaceholder>
-            <View className="flex-row flex-wrap justify-between mb-6">
-              <View className="w-[48%] h-24 mb-4 rounded-lg" />
-              <View className="w-[48%] h-24 mb-4 rounded-lg" />
-              <View className="w-[48%] h-24 mb-4 rounded-lg" />
-              <View className="w-[48%] h-24 mb-4 rounded-lg" />
-            </View>
-          </SkeletonPlaceholder>
+          <StatsSkeleton />
         ) : (
           <View className="flex-row flex-wrap justify-between mb-6">
             <StatsCard
