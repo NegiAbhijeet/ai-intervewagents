@@ -69,7 +69,7 @@ const Home = () => {
 
   return (
     <Layout>
-      <ScrollView showsVerticalScrollIndicator={false} className="px-4">
+      <ScrollView showsVerticalScrollIndicator={false}>
         <Text className="text-2xl font-semibold mb-4">
           Welcome back, {userProfile?.first_name || 'User'} 👋
         </Text>
