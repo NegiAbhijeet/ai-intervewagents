@@ -1,55 +1,112 @@
-// src/screens/Home.tsx
 import Layout from './Layout';
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
-import ActionButton from '../components/ActionButton';
-import SessionItem from '../components/SessionItem';
 import StatsCard from '../components/StatsCard';
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+import { AppStateContext } from '../components/AppContext';
+import { JAVA_API_URL } from '../components/config';
 
 const Home = () => {
+  const { userProfile, usedMinutes } = useContext(AppStateContext);
+  const [meetings, setMeetings] = useState([]);
+  const [overallScore, setOverallScore] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function fetchMeetings() {
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `${JAVA_API_URL}/api/meetings/uid/${userProfile?.uid}`,
+        {
+          headers: {
+            Authorization: `Bearer ${userProfile?.token}`,
+          },
+        },
+      );
+      if (!response.ok)
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      const data = await response.json();
+
+      const sortedMeetings = data?.data.sort((a, b) => {
+        const dateTimeA = new Date(`${a.interviewDate}T${a.interviewTime}`);
+        const dateTimeB = new Date(`${b.interviewDate}T${b.interviewTime}`);
+        return dateTimeB - dateTimeA;
+      });
+
+      const completedMeetings = sortedMeetings.filter(
+        item => item?.status === 'Completed',
+      );
+      setMeetings(completedMeetings);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (userProfile) {
+      fetchMeetings();
+    }
+  }, [userProfile]);
+
+  useEffect(() => {
+    if (meetings.length > 0) {
+      const totalScore = meetings.reduce(
+        (acc, item) => acc + (item.feedback?.averagePercentage ?? 0),
+        0,
+      );
+      const calculatedScore = parseFloat(
+        (totalScore / meetings.length).toFixed(2),
+      );
+      setOverallScore(calculatedScore);
+    }
+  }, [meetings]);
+
+  const totalInterviews = meetings.length;
+
+  const leaderboardRank = 15; // Replace with actual API if available
+
   return (
     <Layout>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false} className="px-4">
         <Text className="text-2xl font-semibold mb-4">
-          Welcome back, Sarah 👋
+          Welcome back, {userProfile?.first_name || 'User'} 👋
         </Text>
 
         {/* Stats */}
-        <View className="flex-row flex-wrap justify-between mb-6">
-          <StatsCard label="Total Interviews" value="24" />
-          <StatsCard label="Average Score" value="8.5" color="green" />
-          <StatsCard label="Time Practiced" value="12h" color="purple" />
-          <StatsCard label="Leaderboard Rank" value="#15" color="yellow" />
-        </View>
-
-        {/* Actions */}
-        <ActionButton
-          label="Practice Interview"
-          description="Mock interview sessions"
-          buttonText="Start Practice"
-        />
-        <ActionButton
-          label="Revise Interview"
-          description="Review past responses"
-          buttonText="Start Review"
-          color="green"
-        />
-
-        {/* Recent Sessions */}
-        <Text className="text-lg font-semibold mt-8 mb-2">Recent Sessions</Text>
-        <View className="gap-2">
-          <SessionItem
-            title="Frontend Developer"
-            date="Dec 15, 2024"
-            score="8.5"
-          />
-          <SessionItem
-            title="Product Manager"
-            date="Dec 12, 2024"
-            score="7.8"
-          />
-          <SessionItem title="Data Scientist" date="Dec 10, 2024" score="9.2" />
-        </View>
+        {isLoading ? (
+          <SkeletonPlaceholder>
+            <View className="flex-row flex-wrap justify-between mb-6">
+              <View className="w-[48%] h-24 mb-4 rounded-lg" />
+              <View className="w-[48%] h-24 mb-4 rounded-lg" />
+              <View className="w-[48%] h-24 mb-4 rounded-lg" />
+              <View className="w-[48%] h-24 mb-4 rounded-lg" />
+            </View>
+          </SkeletonPlaceholder>
+        ) : (
+          <View className="flex-row flex-wrap justify-between mb-6">
+            <StatsCard
+              label="Total Interviews"
+              value={totalInterviews.toString()}
+            />
+            <StatsCard
+              label="Average Score"
+              value={overallScore.toString()}
+              color="green"
+            />
+            <StatsCard
+              label="Time Practiced"
+              value={`${usedMinutes}h`}
+              color="purple"
+            />
+            <StatsCard
+              label="Leaderboard Rank"
+              value={`#${leaderboardRank}`}
+              color="yellow"
+            />
+          </View>
+        )}
       </ScrollView>
     </Layout>
   );
