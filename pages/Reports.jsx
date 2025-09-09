@@ -5,11 +5,13 @@ import { AppStateContext } from '../components/AppContext';
 import { JAVA_API_URL } from '../components/config';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+import { useNavigation } from '@react-navigation/native';
 
 const Reports = () => {
   const { userProfile } = useContext(AppStateContext);
   const [meetings, setMeetings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigation = useNavigation();
 
   const fetchMeetings = async () => {
     setLoading(true);
@@ -288,7 +290,11 @@ const Reports = () => {
                     justifyContent: 'center',
                     alignItems: 'center',
                   }}
-                  onPress={() => console.log('View Report', report.meetingId)}
+                  onPress={() =>
+                    navigation.navigate('ReportDetail', {
+                      meetingId: report.meetingId,
+                    })
+                  }
                 >
                   <Text style={{ color: 'white', fontWeight: '600' }}>
                     Report

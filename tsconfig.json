@@ -4,7 +4,7 @@
     "**/*.ts",
     "**/*.tsx",
     "nativewind-env.d.ts"
-  ],
+, "components/ui/badge.js", "components/ui/avatar.js", "components/ui/tabs.js", "components/ui/card.js"  ],
   "exclude": [
     "**/node_modules",
     "**/Pods"
