@@ -7,6 +7,7 @@ import {
   View,
   TouchableOpacity,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { useNavigation } from '@react-navigation/native';
@@ -20,7 +21,6 @@ import fetchUserDetails from '../libs/fetchUser';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import { API_URL } from '../components/config';
 import { AppStateContext } from '../components/AppContext';
-import LinearGradient from 'react-native-linear-gradient';
 import {
   GoogleSignin,
   statusCodes,
@@ -137,84 +137,88 @@ const LoginScreen = () => {
 
   return (
     <View className="flex-1 justify-center px-6 bg-white">
-      <Text className="text-3xl font-bold text-gray-800 mb-2 text-center">
-        Welcome Back!
+      <Text className="text-4xl font-bold text-black mb-1">Login</Text>
+      <Text className="text-gray-500 mb-6 text-lg">
+        Welcome back to the app
       </Text>
-      <Text className="text-gray-500 text-center mb-6">
-        Enter your email and password to access your account
-      </Text>
-
       <View className="mb-4">
-        <Text className="text-sm font-medium text-gray-700 mb-1">Email</Text>
+        <Text className="font-medium text-gray-700 mb-2">Email Address</Text>
         <TextInput
-          placeholder="name@example.com"
-          placeholderTextColor="#aaa"
-          className="bg-blue-50 px-4 py-2 rounded-xl text-gray-800 border border-blue-200"
-          value={email}
-          onChangeText={setEmail}
+          placeholder="hello@example.com"
+          placeholderTextColor="#bbb"
+          className="bg-white px-4 h-16 rounded-xl border border-gray-300 text-base"
           keyboardType="email-address"
           autoCapitalize="none"
+          value={email}
+          onChangeText={setEmail}
         />
       </View>
 
-      <View className="mb-4">
-        <View className="flex-row justify-between mb-1">
-          <Text className="text-sm font-medium text-gray-700">Password</Text>
-          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-            <Text className="text-xs text-blue-500">
-              {showPassword ? 'Hide' : 'Show'}
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View className="flex-row items-center bg-blue-50 rounded-xl px-3 border border-blue-200">
+      <View className="mb-8">
+        <Text className="font-medium text-gray-700 mb-2">Password</Text>
+        <View className="flex-row items-center h-16 border border-gray-300 rounded-xl px-3 bg-white">
           <TextInput
             placeholder="••••••••"
             placeholderTextColor="#aaa"
-            className="flex-1 py-2 text-gray-800"
             secureTextEntry={!showPassword}
+            className="flex-1 text-base text-black"
             value={password}
             onChangeText={setPassword}
+            style={{ paddingVertical: 0 }} // prevents overflow
           />
+          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+            {/* Insert Icon here if needed */}
+          </TouchableOpacity>
         </View>
       </View>
-      <View className="rounded-md overflow-hidden h-16">
-        <LinearGradient
-          colors={['#60a5fa', '#ec4899']} // blue to pink
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          className="rounded-md mb-4 h-full pt-4"
-        >
-          <TouchableOpacity
-            className="flex-row justify-center items-center"
-            disabled={isEmailLoading || isGoogleLoading}
-            onPress={handleSubmit}
-          >
-            {isEmailLoading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text className="text-white font-semibold text-xl">Login</Text>
-            )}
-          </TouchableOpacity>
-        </LinearGradient>
-      </View>
+      <TouchableOpacity
+        className="h-14 rounded-full bg-blue-500 flex-row items-center justify-center"
+        onPress={handleSubmit}
+        disabled={isEmailLoading}
+      >
+        {isEmailLoading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text className="text-white text-center text-lg font-semibold">
+            Login
+          </Text>
+        )}
+      </TouchableOpacity>
       <View className="flex-row items-center my-4">
         <View className="flex-1 h-px bg-gray-300" />
-        <Text className="mx-2 text-xs text-gray-400">OR</Text>
+        <Text className="mx-2 text-sm text-gray-400">or sign in with</Text>
         <View className="flex-1 h-px bg-gray-300" />
       </View>
 
       <TouchableOpacity
-        className="bg-white py-3 rounded-xl flex-row justify-center items-center border border-gray-300 shadow-sm"
+        className="bg-gray-100 h-14 rounded-full flex-row justify-center items-center border border-gray-300 mb-4 "
         onPress={loginWithGoogle}
-        disabled={isEmailLoading || isGoogleLoading}
+        disabled={isGoogleLoading}
       >
         {isGoogleLoading ? (
           <ActivityIndicator />
         ) : (
-          <Text className="text-black font-semibold text-lg">
-            Continue with Google
-          </Text>
+          <>
+            <Image
+              source={require('../assets/images/google.png')}
+              style={{ width: 20, height: 20, marginRight: 8 }}
+            />
+            <Text className="text-black font-semibold text-base">
+              Continue with Google
+            </Text>
+          </>
         )}
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        className="mt-2"
+        onPress={() => {
+          navigation.reset({ index: 0, routes: [{ name: 'Signup' }] });
+        }}
+      >
+        <Text className="text-blue-600 text-center font-semibold">
+          Create an account
+        </Text>
       </TouchableOpacity>
     </View>
   );

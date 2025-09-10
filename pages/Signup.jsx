@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Linking,
+  Image,
 } from 'react-native';
 // import { Eye, EyeOff } from "lucide-react-native"
 
@@ -119,18 +120,19 @@ const SignupScreen = ({ setActiveTab }) => {
   };
 
   return (
-    <View className="px-6 py-8 bg-white rounded-lg shadow-md">
-      <Text className="text-2xl font-bold mb-1">Sign Up</Text>
-      <Text className="text-gray-500 mb-4">
+    <View className="flex-1 justify-center px-6 bg-white">
+      {/* Title */}
+      <Text className="text-4xl font-bold text-black mb-1">Sign Up</Text>
+      <Text className="text-gray-500 mb-6 text-lg">
         Create a new account to get started
       </Text>
 
       {/* Full Name */}
       <View className="mb-4">
-        <Text className="mb-1 text-sm font-medium">Full Name</Text>
+        <Text className="font-medium text-gray-700 mb-2">Full Name</Text>
         <TextInput
-          className="bg-gray-100 p-3 rounded-md"
-          placeholder="Full name here"
+          placeholder="John Doe"
+          className="bg-white px-4 h-16 rounded-xl border border-gray-300 text-base"
           value={fullName}
           onChangeText={setFullName}
         />
@@ -138,10 +140,11 @@ const SignupScreen = ({ setActiveTab }) => {
 
       {/* Email */}
       <View className="mb-4">
-        <Text className="mb-1 text-sm font-medium">Email</Text>
+        <Text className="font-medium text-gray-700 mb-2">Email Address</Text>
         <TextInput
-          className="bg-gray-100 p-3 rounded-md"
-          placeholder="Email"
+          placeholder="hello@example.com"
+          placeholderTextColor="#bbb"
+          className="bg-white px-4 h-16 rounded-xl border border-gray-300 text-base"
           keyboardType="email-address"
           autoCapitalize="none"
           value={email}
@@ -151,25 +154,20 @@ const SignupScreen = ({ setActiveTab }) => {
 
       {/* Password */}
       <View className="mb-4">
-        <Text className="mb-1 text-sm font-medium">Password</Text>
-        <View className="relative">
+        <Text className="font-medium text-gray-700 mb-2">Password</Text>
+        <View className="flex-row items-center h-16 border border-gray-300 rounded-xl px-3 bg-white">
           <TextInput
-            className="bg-gray-100 p-3 pr-10 rounded-md"
-            secureTextEntry={!showPassword}
             placeholder="••••••••"
+            placeholderTextColor="#aaa"
+            secureTextEntry={!showPassword}
+            className="flex-1 text-base text-black"
             value={password}
             onChangeText={setPassword}
+            style={{ paddingVertical: 0 }}
           />
-          <Pressable
-            className="absolute right-3 top-3"
-            onPress={() => setShowPassword(!showPassword)}
-          >
-            {/* {showPassword ? (
-              <EyeOff size={20} color="#555" />
-            ) : (
-              <Eye size={20} color="#555" />
-            )} */}
-          </Pressable>
+          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+            {/* Optional eye icon */}
+          </TouchableOpacity>
         </View>
         <Text className="text-xs text-gray-500 mt-1">
           Must be at least 8 characters long
@@ -178,25 +176,26 @@ const SignupScreen = ({ setActiveTab }) => {
 
       {/* Confirm Password */}
       <View className="mb-4">
-        <Text className="mb-1 text-sm font-medium">Confirm Password</Text>
+        <Text className="font-medium text-gray-700 mb-2">Confirm Password</Text>
         <TextInput
-          className="bg-gray-100 p-3 rounded-md"
-          secureTextEntry={!showPassword}
           placeholder="••••••••"
+          placeholderTextColor="#aaa"
+          secureTextEntry={!showPassword}
+          className="bg-white px-4 h-16 rounded-xl border border-gray-300 text-base"
           value={cPassword}
           onChangeText={setCPassword}
         />
       </View>
 
-      {/* Terms Checkbox */}
-      <View className="flex-row items-center mb-4">
+      {/* Terms and Conditions */}
+      <View className="flex-row items-start mb-6">
         <TouchableOpacity
-          className="h-5 w-5 border border-gray-400 rounded mr-2 items-center justify-center"
+          className="h-5 w-5 border border-gray-400 rounded mr-3 items-center justify-center"
           onPress={() => setTermsCheckbox(!termsCheckbox)}
         >
           {termsCheckbox && <Text>✓</Text>}
         </TouchableOpacity>
-        <Text className="text-sm text-gray-600">
+        <Text className="text-sm text-gray-600 flex-1">
           I agree to the{' '}
           <Text className="text-blue-600" onPress={() => Linking.openURL('#')}>
             Terms of Service
@@ -210,10 +209,10 @@ const SignupScreen = ({ setActiveTab }) => {
 
       {/* Submit Button */}
       <TouchableOpacity
-        className={`w-full p-3 rounded-md items-center justify-center ${
+        className={`h-14 rounded-full flex-row items-center justify-center ${
           !isFormValid || isEmailSignupLoading || isGoogleSignupLoading
             ? 'bg-gray-300'
-            : 'bg-gradient-to-r from-blue-400/60 to-pink-500/70'
+            : 'bg-blue-500'
         }`}
         disabled={!isFormValid || isEmailSignupLoading || isGoogleSignupLoading}
         onPress={handleSubmit}
@@ -221,33 +220,22 @@ const SignupScreen = ({ setActiveTab }) => {
         {isEmailSignupLoading ? (
           <ActivityIndicator color="#fff" />
         ) : (
-          <Text className="text-white font-semibold">Create Account</Text>
+          <Text className="text-white text-center text-lg font-semibold">
+            Create Account
+          </Text>
         )}
       </TouchableOpacity>
 
-      {/* Divider */}
-      <View className="flex-row items-center my-6">
-        <View className="flex-1 h-px bg-gray-300" />
-        <Text className="px-2 text-gray-500 text-xs uppercase">
-          Or continue with
-        </Text>
-        <View className="flex-1 h-px bg-gray-300" />
-      </View>
-
-      {/* Google Signup */}
+      {/* Link to Login */}
       <TouchableOpacity
-        className="flex-row items-center justify-center w-full bg-white border border-gray-300 rounded-md p-3"
-        onPress={loginWithGoogle}
-        disabled={isGoogleSignupLoading || isEmailSignupLoading}
+        className="mt-6"
+        onPress={() => {
+          navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
+        }}
       >
-        {isGoogleSignupLoading ? (
-          <ActivityIndicator />
-        ) : (
-          <>
-            <Text className="mr-2">🌐</Text>
-            <Text className="text-sm font-medium text-gray-700">Google</Text>
-          </>
-        )}
+        <Text className="text-blue-600 text-center font-semibold">
+          Already have an account? Login
+        </Text>
       </TouchableOpacity>
     </View>
   );
