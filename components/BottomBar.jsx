@@ -2,23 +2,24 @@ import React from 'react';
 import { View, Pressable, Text, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
+import { Ionicons } from '@react-native-vector-icons/ionicons';
 
 const TABS = [
   {
     name: 'index',
     label: 'Home',
-    icon: '🏠',
+    iconName: 'home',
   },
   {
     name: 'interview',
     label: 'Interview',
-    icon: '🎤',
+    iconName: 'mic',
     isCenter: true,
   },
   {
     name: 'reports',
     label: 'Reports',
-    icon: '📄',
+    iconName: 'document-text',
   },
 ];
 
@@ -54,7 +55,9 @@ const BottomTabBar = ({ state, descriptors, navigation }) => {
           }
         };
 
-        // Special center button (Interview)
+        const iconColor = isFocused ? '#3B82F6' : '#9CA3AF';
+
+        // Center button (Interview)
         if (tab.isCenter) {
           return (
             <View
@@ -80,7 +83,7 @@ const BottomTabBar = ({ state, descriptors, navigation }) => {
                 }}
               >
                 <LinearGradient
-colors={['#B3E5FC', '#3B82F6']}
+                  colors={['#B3E5FC', '#3B82F6']}
                   style={{
                     flex: 1,
                     justifyContent: 'center',
@@ -88,7 +91,7 @@ colors={['#B3E5FC', '#3B82F6']}
                     borderRadius: 32,
                   }}
                 >
-                  <Text style={{ fontSize: 24 }}>🎤</Text>
+                  <Ionicons name={tab.iconName} size={30} color="#fff" />
                 </LinearGradient>
               </Pressable>
               <Text
@@ -105,7 +108,7 @@ colors={['#B3E5FC', '#3B82F6']}
           );
         }
 
-        // Left and right tabs (Home, Reports)
+        // Regular tabs (Home, Reports)
         return (
           <Pressable
             key={tab.name}
@@ -116,16 +119,12 @@ colors={['#B3E5FC', '#3B82F6']}
               justifyContent: 'center',
             }}
           >
-            <Text
-              style={{ fontSize: 20, color: isFocused ? '#3B82F6' : '#9CA3AF' }}
-            >
-              {tab.icon}
-            </Text>
+            <Ionicons name={tab.iconName} size={24} color={iconColor} />
             <Text
               style={{
                 marginTop: 4,
                 fontSize: 12,
-                color: isFocused ? '#3B82F6' : '#9CA3AF',
+                color: iconColor,
                 fontWeight: isFocused ? '600' : '400',
               }}
             >

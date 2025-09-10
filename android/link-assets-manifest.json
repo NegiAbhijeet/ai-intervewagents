@@ -1,0 +1,21 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "node_modules/@react-native-vector-icons/fontawesome6/Fonts/FontAwesome6_Brands.ttf",
+      "sha1": "da6f537cd597b76d264970f1c95e4beebc82fde9"
+    },
+    {
+      "path": "node_modules/@react-native-vector-icons/fontawesome6/Fonts/FontAwesome6_Regular.ttf",
+      "sha1": "6e7f0651059eea9783ea8b28892b2c979c2f7f30"
+    },
+    {
+      "path": "node_modules/@react-native-vector-icons/fontawesome6/Fonts/FontAwesome6_Solid.ttf",
+      "sha1": "780a8ff16ebb681f85d5d30fac94ebe845a12b5e"
+    },
+    {
+      "path": "node_modules/@react-native-vector-icons/ionicons/Fonts/Ionicons.ttf",
+      "sha1": "3a656ee69b64ccb1e57f1721f7659b50c1fb56ef"
+    }
+  ]
+}
