@@ -4,7 +4,7 @@ const AppStateContext = createContext();
 
 const AppStateProvider = ({ children }) => {
   const [userProfile, setUserProfile] = useState(null);
-
+  const [firebaseUser, setFirebaseUser] = useState(null);
   // Determine if the user is on a free plan
   const isFreePlan = userProfile?.plan?.id === 1;
 
@@ -28,8 +28,10 @@ const AppStateProvider = ({ children }) => {
       setUserProfile,
       totalMinutes,
       usedMinutes,
+      firebaseUser,
+      setFirebaseUser,
     }),
-    [userProfile, totalMinutes, usedMinutes],
+    [userProfile, totalMinutes, usedMinutes, firebaseUser],
   );
 
   return (

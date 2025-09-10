@@ -6,10 +6,12 @@ import { AppStateContext } from '../components/AppContext';
 import { auth } from './firebase';
 import Toast from 'react-native-toast-message';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { useNavigation } from '@react-navigation/native';
 
 const ContextGate = ({ children }) => {
-  const { setUserProfile } = useContext(AppStateContext);
-  const [loading, setLoading] = useState(true);
+  const { setUserProfile, setFirebaseUser } = useContext(AppStateContext);
+  const [authLoading, setAuthLoading] = useState(true);
+  const navigation = useNavigation();
 
   useEffect(() => {
     GoogleSignin.configure({
@@ -21,37 +23,36 @@ const ContextGate = ({ children }) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async user => {
-      if (user?.uid) {
-        try {
-          const profile = await fetchUserDetails(user.uid);
-          if (profile) {
-            setUserProfile(profile);
-          } else {
-            setUserProfile(null);
-            navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
-          }
-        } catch (err) {
-          setUserProfile(null);
-          navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
-        } finally {
-          setLoading(false);
+      setAuthLoading(false);
+      setFirebaseUser(user);
+      let profile = null;
+
+      try {
+        if (user?.uid) {
+          profile = await fetchUserDetails(user.uid);
         }
+      } catch (err) {
+        // fail silently here; we handle it below
+      }
+
+      if (profile) {
+        setUserProfile(profile);
       } else {
         setUserProfile(null);
-        setLoading(false);
-        navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Login' }],
+        });
       }
     });
 
-    return () => {
-      unsubscribe();
-    };
+    return () => unsubscribe();
   }, []);
 
   return (
     <View className="flex-1">
       <Toast />
-      {loading ? (
+      {authLoading ? (
         <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color="#000" />
         </View>

@@ -47,7 +47,7 @@ const Home = () => {
   const [meetings, setMeetings] = useState([]);
   const [overallScore, setOverallScore] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-
+  const finalLoading = isLoading || !userProfile;
   async function fetchMeetings() {
     setIsLoading(true);
     try {
@@ -107,11 +107,11 @@ const Home = () => {
     <Layout>
       <ScrollView showsVerticalScrollIndicator={false}>
         <Text className="text-2xl font-semibold mb-4">
-          Welcome back, {userProfile?.first_name || 'User'} 👋
+          Welcome back, {userProfile?.first_name || '_'} 👋
         </Text>
 
         {/* Stats */}
-        {isLoading ? (
+        {finalLoading ? (
           <StatsSkeleton />
         ) : (
           <View className="flex-row flex-wrap justify-between mb-6">
