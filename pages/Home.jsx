@@ -101,15 +101,20 @@ const Home = () => {
 
   const totalInterviews = meetings.length;
 
-  const leaderboardRank = 15; // Replace with actual API if available
-
+  const leaderboardRank = 15; 
   return (
     <Layout>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Text className="text-2xl font-semibold mb-4">
-          Welcome back, {userProfile?.first_name || '_'} 👋
-        </Text>
-
+            
+        {!userProfile ? (
+          <SkeletonPlaceholder borderRadius={8}>
+            <SkeletonPlaceholder.Item width={200} height={28} marginBottom={16} />
+          </SkeletonPlaceholder>
+        ) : (
+          <Text className="text-2xl font-semibold mb-4">
+            Welcome back, {userProfile?.first_name || '_'} 👋
+          </Text>
+        )}
         {/* Stats */}
         {finalLoading ? (
           <StatsSkeleton />
