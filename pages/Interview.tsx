@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Layout from './Layout';
-import { ScrollView } from 'react-native';
 import ScheduleInterviewScreen from '../components/ScheduleInterviewScreen';
+import { AppStateContext } from '../components/AppContext';
 const Interview = () => {
+  const {userProfile}=useContext(AppStateContext)
   return (
     <Layout>
-      <ScheduleInterviewScreen />
+      <ScheduleInterviewScreen userProfile={userProfile} />
     </Layout>
   );
 };

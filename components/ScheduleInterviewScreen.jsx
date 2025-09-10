@@ -18,10 +18,8 @@ const typeOptions = [
   { label: 'Technical', value: 'Technical' },
   { label: 'Behavioral', value: 'Behavioral' },
 ];
-const uid = 'hirMjzjfRiW0DGzPal4lzOCN2wg2';
-const userEmail = 'abhijeetnegi.ab@gmail.com';
 
-export default function ScheduleInterviewScreen() {
+export default function ScheduleInterviewScreen({ userProfile }) {
   const [interviewType, setInterviewType] = useState(null);
   const [selectedPosition, setSelectedPosition] = useState('');
   const [currentSkill, setCurrentSkill] = useState('');
@@ -82,9 +80,7 @@ export default function ScheduleInterviewScreen() {
 
   const fetchAgents = async () => {
     try {
-      const planId = 1;
-      const userId =
-        planId === '1' || planId === 1 ? 'user2026' : 'deepgramuser2026';
+      const userId = 'user2026';
 
       const res = await fetch(`${JAVA_API_URL}/api/agent/uid/${userId}`);
       if (!res.ok) throw new Error('Failed to fetch agents');
@@ -100,7 +96,9 @@ export default function ScheduleInterviewScreen() {
 
   const fetchCandidatedata = async () => {
     try {
-      const response = await fetch(`${JAVA_API_URL}/api/candidates/uid/${uid}`);
+      const response = await fetch(
+        `${JAVA_API_URL}/api/candidates/uid/${userProfile?.uid}`,
+      );
       const data = await response.json();
       if (data?.data && data?.data.length > 0) {
         setMyCandidate(data.data[0]);
@@ -111,9 +109,11 @@ export default function ScheduleInterviewScreen() {
   };
 
   useEffect(() => {
-    fetchCandidatedata();
-    fetchAgents();
-  }, []);
+    if (userProfile?.uid) {
+      fetchCandidatedata();
+      fetchAgents();
+    }
+  }, [userProfile]);
 
   // ✅ Skill Suggestion Based on Position
   const fetchSkillsForPosition = async position => {
@@ -122,9 +122,8 @@ export default function ScheduleInterviewScreen() {
       const body = {
         position,
         experience: myCandidate?.experienceYears || 0,
-        uid: uid,
+        uid: userProfile?.uid,
       };
-      console.log(body, '===', `${API_URL}/generate-skills/`);
 
       const response = await fetch(`${API_URL}/generate-skills/`, {
         method: 'POST',
@@ -156,7 +155,7 @@ export default function ScheduleInterviewScreen() {
         fetchSkillsForPosition(value.trim());
       }
     }, 500),
-    [myCandidate, uid],
+    [myCandidate, userProfile?.uid],
   );
 
   const handlePositionChange = value => {
@@ -173,7 +172,7 @@ export default function ScheduleInterviewScreen() {
       const myAgent = agents.find(item => item?.agId === selectedAgent);
 
       const payload = {
-        uid,
+        uid: userProfile?.uid,
         hour,
         minute,
         date,
@@ -181,7 +180,7 @@ export default function ScheduleInterviewScreen() {
         position: selectedPosition || '',
         role: 'candidate',
         candidateId: myCandidate?.canId || '',
-        canEmail: userEmail || '',
+        canEmail: userProfile?.email || userProfile?.user_email || '',
         agentId: myAgent?.agId,
         interviewers: [myAgent?.name] || [],
         interviewType: interviewType || '',
@@ -252,7 +251,7 @@ export default function ScheduleInterviewScreen() {
         <InterviewScreen
           {...interviewData}
           candidateName={candidateName}
-          adminId={uid}
+          adminId={userProfile?.uid}
           showInterviewScreen={showInterviewScreen}
           setShowInterviewScreen={setShowInterviewScreen}
         />
