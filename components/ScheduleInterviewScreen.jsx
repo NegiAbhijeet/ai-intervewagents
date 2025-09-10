@@ -138,7 +138,6 @@ export default function ScheduleInterviewScreen({ userProfile }) {
       }
 
       const data = await response.json();
-      console.log(data, '====');
       const newSkills = data.skills || [];
       const limitedSkills = newSkills.slice(0, 10);
       setSkills(limitedSkills);
@@ -191,8 +190,6 @@ export default function ScheduleInterviewScreen({ userProfile }) {
         experience: myCandidate?.experienceYears || 0,
       };
 
-      console.log(payload);
-
       const response = await fetch(`${API_URL}/interview-agent/`, {
         method: 'POST',
         headers: {
@@ -207,7 +204,6 @@ export default function ScheduleInterviewScreen({ userProfile }) {
       }
 
       const result = await response.json();
-      console.log('Meeting scheduled:', result);
 
       const meetingUrl = result?.meeting_url;
 
@@ -227,7 +223,6 @@ export default function ScheduleInterviewScreen({ userProfile }) {
           interviewType: interviewType,
           interviewTime: interviewTime,
         };
-        console.log(payload, '==');
 
         setInterviewData(payload);
         setCandidateName(candidateName);
@@ -242,10 +237,7 @@ export default function ScheduleInterviewScreen({ userProfile }) {
 
   return (
     <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-      <Text className="text-2xl font-bold mb-1">Start Interview</Text>
-      <Text className="text-base text-gray-600 mb-4">
-        Begin your interview session by tapping the button below.
-      </Text>
+      <Text className="text-2xl font-bold mb-4">Start Interview</Text>
 
       {showInterviewScreen && interviewData?.meetingId && (
         <InterviewScreen
@@ -257,14 +249,16 @@ export default function ScheduleInterviewScreen({ userProfile }) {
         />
       )}
 
-      <Text className="text-lg font-semibold text-slate-700 mt-4 mb-2">
+      <Text className="text-lg font-semibold text-slate-700 mb-2">
         <Icon name="zap" size={18} color="#10b981" /> Interview Type *
       </Text>
       <View className="border border-slate-300 rounded-xl bg-white mb-3 px-1">
         <Picker
           selectedValue={interviewType}
           onValueChange={itemValue => setInterviewType(itemValue)}
-          className="text-slate-700 text-xs h-8"
+          style={{ color: '#334155' }} 
+          itemStyle={{ color: '#334155'}} 
+          dropdownIconColor="#334155" 
         >
           <Picker.Item label="Select Type" style={{ fontSize: 16 }} value="" />
           {typeOptions.map((item, index) => (
@@ -280,7 +274,7 @@ export default function ScheduleInterviewScreen({ userProfile }) {
         value={selectedPosition}
         onChangeText={handlePositionChange}
         placeholder="Type a position..."
-        className="h-16 bg-white rounded-xl border border-slate-300 px-3 text-lg"
+        className="h-16 bg-white rounded-xl border border-slate-300 px-3 text-lg text-black"
       />
 
       <Text className="text-lg font-semibold text-slate-700 mt-4 mb-2">
@@ -291,14 +285,14 @@ export default function ScheduleInterviewScreen({ userProfile }) {
           value={currentSkill}
           onChangeText={setCurrentSkill}
           placeholder="e.g. JavaScript, React"
-          className="flex-1 h-16 bg-white rounded-xl border border-slate-300 px-3 text-lg"
+          className="flex-1 h-16 bg-white rounded-xl border border-slate-300 px-3 text-lg text-black"
           onSubmitEditing={addSkill}
         />
         <TouchableOpacity
           onPress={addSkill}
-          className="ml-3 bg-blue-500 p-3 rounded-xl h-16 w-16 flex items-center justify-center"
+          className="ml-3 bg-gray-100 border border-slate-300 p-3 rounded-xl h-16 w-16 flex items-center justify-center"
         >
-          <Text className="text-white text-2xl">+</Text>
+          <Text className="text-2xl">+</Text>
         </TouchableOpacity>
       </View>
 
@@ -328,19 +322,20 @@ export default function ScheduleInterviewScreen({ userProfile }) {
       <TextInput
         value={duration.toString()}
         onChangeText={val => {
-          const num = parseInt(val, 10);
-          if (!isNaN(num) && num >= 1 && num <= 30) setDuration(num);
+          // const num = parseInt(val, 10);
+          // if (!isNaN(num) && num >= 0 && num <= 60) setDuration(num); check while validation
+          setDuration(val);
         }}
         keyboardType="numeric"
         placeholder="15 or 30"
-        className="h-16 bg-white rounded-xl border border-slate-300 px-3 text-lg"
+        className="h-16 bg-white rounded-xl border border-slate-300 px-3 text-lg text-black"
       />
 
       <TouchableOpacity
         onPress={handleSubmit}
         disabled={isLoading}
         className={`mt-8 h-16 rounded-xl gap-2 flex-row items-center justify-center ${
-          isLoading ? 'bg-slate-400' : 'bg-indigo-500'
+          isLoading ? 'bg-slate-400' : 'bg-blue-500'
         }`}
       >
         {isLoading ? (

@@ -80,7 +80,7 @@ const BottomTabBar = ({ state, descriptors, navigation }) => {
                 }}
               >
                 <LinearGradient
-                  colors={['#facc15', '#f97316']}
+colors={['#B3E5FC', '#3B82F6']}
                   style={{
                     flex: 1,
                     justifyContent: 'center',
