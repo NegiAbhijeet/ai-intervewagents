@@ -19,8 +19,8 @@ import {
   TabsTrigger,
 } from '../components/ui/tabs';
 // import { Download } from 'lucide-react';
-// import { InterviewTranscript } from '@/components/interview-transcript';
-// import { SkillAssessment } from '@/components/skill-assessment';
+import { InterviewTranscript } from '../components/ui/InterviewTranscript';
+import { SkillAssessment } from '../components/ui/skill-assessment';
 // import { FeedbackCards } from '@/components/FeedbackCards';
 // import FullWidthideo from '@/components/FullWidthVideo';
 import { AppStateContext } from '../components/AppContext';
@@ -133,10 +133,7 @@ const ReportDetailScreen = ({ route }) => {
                 </View>
               </View>
             </View>
-            <Button
-              title=' Download Report' />
-         
-        
+            <Button title="📥" onPress={() => {}} />
           </View>
         </CardHeader>
 
@@ -149,9 +146,6 @@ const ReportDetailScreen = ({ route }) => {
               </TabsTrigger>
               <TabsTrigger value="skills">
                 <Text>Skills</Text>
-              </TabsTrigger>
-              <TabsTrigger value="recording">
-                <Text>Recording</Text>
               </TabsTrigger>
               <TabsTrigger value="transcript">
                 <Text>Transcript</Text>
@@ -204,14 +198,11 @@ const ReportDetailScreen = ({ route }) => {
             </TabsContent>
 
             <TabsContent value="skills">
-              {/* <SkillAssessment
+              <SkillAssessment
                 skills={reportData?.feedback?.report?.technical_skills}
-              /> */}
+              />
             </TabsContent>
 
-            <TabsContent value="recording">
-              {/* <FullWidthVideo videoUrl={reportData?.meetingVideo || ''} /> */}
-            </TabsContent>
 
             <TabsContent value="transcript">
               <Card>
@@ -223,11 +214,11 @@ const ReportDetailScreen = ({ route }) => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {/* <InterviewTranscript
+                  <InterviewTranscript
                     messages={reportData?.feedback?.transcript}
                     interviewerName={reportData?.interviewers?.[0]}
                     candidateName={`${candidate?.firstName} ${candidate?.lastName}`}
-                  /> */}
+                  />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -236,7 +227,7 @@ const ReportDetailScreen = ({ route }) => {
       </Card>
 
       {/* Sidebar - Interview Details */}
-      <Card style={{ marginTop: 16 }}>
+      <Card className="my-4 mb-8">
         <CardHeader>
           <CardTitle>Interview Details</CardTitle>
         </CardHeader>
@@ -250,8 +241,7 @@ const ReportDetailScreen = ({ route }) => {
           </Text>
           <Text>AI Agent: {reportData?.interviewers?.[0]}</Text>
           <Text>Position: {reportData?.position}</Text>
-          <Button
-              title=' Download Full Report' />
+          <Button title=" Download Full Report" />
         </CardContent>
       </Card>
     </ScrollView>

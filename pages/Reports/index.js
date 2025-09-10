@@ -11,12 +11,12 @@ const Reports = () => {
       <Stack.Screen
         name="ReportsHome"
         component={ReportsHome}
-        options={{ title: 'Reports' }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="ReportDetail"
         component={ReportDetail}
-        options={{ title: '' }}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );
