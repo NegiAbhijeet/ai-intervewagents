@@ -39,10 +39,10 @@ const ContextGate = ({ children }) => {
         setUserProfile(profile);
       } else {
         setUserProfile(null);
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Login' }],
-        });
+        // navigation.reset({
+        //   index: 0,
+        //   routes: [{ name: 'Login' }],
+        // });
       }
     });
 

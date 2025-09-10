@@ -25,6 +25,7 @@ import {
   GoogleSignin,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
+import Ionicons from '@react-native-vector-icons/ionicons';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -164,10 +165,14 @@ const LoginScreen = () => {
             className="flex-1 text-base text-black"
             value={password}
             onChangeText={setPassword}
-            style={{ paddingVertical: 0 }} // prevents overflow
+            style={{ paddingVertical: 0 }}
           />
           <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-            {/* Insert Icon here if needed */}
+            {showPassword ? (
+              <Ionicons name="eye-off-outline" size={24} color="#64748b" />
+            ) : (
+              <Ionicons name="eye-outline" size={24} color="#64748b" />
+            )}
           </TouchableOpacity>
         </View>
       </View>

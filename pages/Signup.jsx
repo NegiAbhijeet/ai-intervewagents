@@ -17,6 +17,7 @@ import { AppStateContext } from '../components/AppContext';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import { API_URL } from '../components/config';
 import Toast from 'react-native-toast-message';
+import Ionicons from '@react-native-vector-icons/ionicons';
 
 const SignupScreen = ({ setActiveTab }) => {
   const { setUserProfile, userProfile } = useContext(AppStateContext);
@@ -153,26 +154,31 @@ const SignupScreen = ({ setActiveTab }) => {
       </View>
 
       {/* Password */}
-      <View className="mb-4">
-        <Text className="font-medium text-gray-700 mb-2">Password</Text>
-        <View className="flex-row items-center h-16 border border-gray-300 rounded-xl px-3 bg-white">
-          <TextInput
-            placeholder="••••••••"
-            placeholderTextColor="#aaa"
-            secureTextEntry={!showPassword}
-            className="flex-1 text-base text-black"
-            value={password}
-            onChangeText={setPassword}
-            style={{ paddingVertical: 0 }}
-          />
-          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-            {/* Optional eye icon */}
-          </TouchableOpacity>
-        </View>
-        <Text className="text-xs text-gray-500 mt-1">
-          Must be at least 8 characters long
-        </Text>
-      </View>
+      {/* Password */}
+<View className="mb-4">
+  <Text className="font-medium text-gray-700 mb-2">Password</Text>
+  <View className="flex-row items-center h-16 border border-gray-300 rounded-xl px-3 bg-white">
+    <TextInput
+      placeholder="••••••••"
+      placeholderTextColor="#aaa"
+      secureTextEntry={!showPassword}
+      className="flex-1 text-base text-black"
+      value={password}
+      onChangeText={setPassword}
+      style={{ paddingVertical: 0 }}
+    />
+    <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+      {showPassword ? (
+        <Ionicons name="eye-off-outline" size={24} color="#64748b" />
+      ) : (
+        <Ionicons name="eye-outline" size={24} color="#64748b" />
+      )}
+    </TouchableOpacity>
+  </View>
+  <Text className="text-xs text-gray-500 mt-1">
+    Must be at least 8 characters long
+  </Text>
+</View>
 
       {/* Confirm Password */}
       <View className="mb-4">

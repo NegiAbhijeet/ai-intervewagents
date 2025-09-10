@@ -347,7 +347,7 @@ export default function ScheduleInterviewScreen({ userProfile }) {
     ) : (
       <>
         <Ionicons name="play-circle-outline" size={22} color="#fff" />
-        <Text className="text-white font-semibold text-lg ml-2 py-4">
+        <Text className="text-white font-semibold text-lg ml-0 py-4">
           Start Interview
         </Text>
       </>
