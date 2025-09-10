@@ -130,10 +130,16 @@ export default function useRealTime({
       session: {
         turn_detection: {
           type: 'server_vad',
+          threshold: 0.4,
+          prefix_padding_ms: 300,
+          silence_duration_ms:1000,
+          create_response: true,
           payload: {
-            threshold: 0.5,
+            type: 'server_vad',
+            threshold: 0.4,
             prefix_padding_ms: 300,
-            silence_duration_ms: 400,
+            silence_duration_ms: 1000,
+            create_response: true,
             agentId,
             canId,
             meetingId,
