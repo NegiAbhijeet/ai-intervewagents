@@ -4,6 +4,8 @@ import RootNavigator from './components/RootNavigator';
 import { AppStateProvider } from './components/AppContext';
 import './global.css';
 import ContextGate from './libs/contextGate';
+import Toast from 'react-native-toast-message';
+import toastConfig from './libs/toastConfig';
 export default function App() {
   return (
     <AppStateProvider>
@@ -12,6 +14,7 @@ export default function App() {
           <RootNavigator />
         </ContextGate>
       </NavigationContainer>
+      <Toast topOffset={70} config={toastConfig} />
     </AppStateProvider>
   );
 }

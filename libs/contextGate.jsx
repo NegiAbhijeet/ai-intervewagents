@@ -4,14 +4,12 @@ import { onAuthStateChanged } from 'firebase/auth';
 import fetchUserDetails from './fetchUser';
 import { AppStateContext } from '../components/AppContext';
 import { auth } from './firebase';
-import Toast from 'react-native-toast-message';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { useNavigation } from '@react-navigation/native';
 
 const ContextGate = ({ children }) => {
   const { setUserProfile, setFirebaseUser } = useContext(AppStateContext);
   const [authLoading, setAuthLoading] = useState(true);
-  const navigation = useNavigation();
 
   useEffect(() => {
     GoogleSignin.configure({
@@ -39,10 +37,6 @@ const ContextGate = ({ children }) => {
         setUserProfile(profile);
       } else {
         setUserProfile(null);
-        // navigation.reset({
-        //   index: 0,
-        //   routes: [{ name: 'Login' }],
-        // });
       }
     });
 
@@ -51,7 +45,6 @@ const ContextGate = ({ children }) => {
 
   return (
     <View className="flex-1">
-      <Toast />
       {authLoading ? (
         <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color="#000" />
