@@ -1,26 +1,19 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   TextInput,
-  Pressable,
   TouchableOpacity,
   ActivityIndicator,
   Linking,
-  Image,
 } from 'react-native';
-// import { Eye, EyeOff } from "lucide-react-native"
-
-import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
-import { AppStateContext } from '../components/AppContext';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import { API_URL } from '../components/config';
 import Toast from 'react-native-toast-message';
 import Ionicons from '@react-native-vector-icons/ionicons';
 
-const SignupScreen = ({ setActiveTab }) => {
-  const { setUserProfile, userProfile } = useContext(AppStateContext);
+const SignupScreen = () => {
   const navigation = useNavigation();
 
   const [fullName, setFullName] = useState('');
@@ -30,7 +23,6 @@ const SignupScreen = ({ setActiveTab }) => {
   const [termsCheckbox, setTermsCheckbox] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isEmailSignupLoading, setIsEmailSignupLoading] = useState(false);
-  const [isGoogleSignupLoading, setIsGoogleSignupLoading] = useState(false);
 
   const isFormValid =
     fullName.trim() !== '' &&
@@ -40,13 +32,27 @@ const SignupScreen = ({ setActiveTab }) => {
     termsCheckbox;
 
   const handleSubmit = async () => {
-    if (password !== cPassword) {
-      //   Toast.error("Passwords do not match")
+    if (!isFormValid) {
+      Toast.show({
+        type: 'error',
+        text1: 'Missing fields',
+        text2: 'Please complete all fields and agree to the terms.',
+      });
       return;
     }
 
+    if (password !== cPassword) {
+      Toast.show({
+        type: 'error',
+        text1: 'Password mismatch',
+        text2: 'Passwords do not match. Please try again.',
+      });
+      return;
+    }
+
+    setIsEmailSignupLoading(true);
+
     try {
-      setIsEmailSignupLoading(true);
       const [first_name, ...last] = fullName.trim().split(' ');
       const last_name = last.join(' ');
 
@@ -55,7 +61,6 @@ const SignupScreen = ({ setActiveTab }) => {
         password,
         first_name,
         last_name,
-        uid: userProfile?.uid,
       };
 
       const res = await fetchWithAuth(`${API_URL}/signup/`, {
@@ -65,58 +70,29 @@ const SignupScreen = ({ setActiveTab }) => {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to create profile');
 
-      //   toast.success("Account created successfully.")
-      setActiveTab('login');
-    } catch (err) {
-      console.error(err);
-      //   toast.error(err.message || "Signup error.")
-    } finally {
-      setIsEmailSignupLoading(false);
-    }
-  };
-
-  const loginWithGoogle = async () => {
-    try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      setIsGoogleSignupLoading(true);
-
-      const signedInUser = result.user;
-      const token = await signedInUser.getIdToken();
-      const displayName = signedInUser.displayName || '';
-      const [first_name, ...last] = displayName.trim().split(' ');
-      const last_name = last.join(' ');
-
-      const response = await fetchWithAuth(`${API_URL}/profiles/`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          uid: signedInUser.uid,
-          email: signedInUser.email,
-          first_name,
-          last_name,
-          plan: 1,
-          image_url: signedInUser?.photoURL,
-          role: '',
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData?.error || 'Failed to create profile');
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to create profile');
       }
 
-      await fetchUserDetails(signedInUser, setUserProfile, navigation);
-    } catch (error) {
-      console.error('Google sign-in error:', error);
-      setIsGoogleSignupLoading(false);
-      //   toast.error(error.message || "Login failed.")
-      await signOut(auth);
+      Toast.show({
+        type: 'success',
+        text1: 'Account created',
+        text2: 'You can now log in with your credentials.',
+      });
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
+      });
+    } catch (err) {
+      console.error('Signup error:', err.message);
+      Toast.show({
+        type: 'error',
+        text1: 'Signup failed',
+        text2: err.message || 'Something went wrong. Please try again.',
+      });
+    } finally {
+      setIsEmailSignupLoading(false);
     }
   };
 
@@ -155,30 +131,30 @@ const SignupScreen = ({ setActiveTab }) => {
 
       {/* Password */}
       {/* Password */}
-<View className="mb-4">
-  <Text className="font-medium text-gray-700 mb-2">Password</Text>
-  <View className="flex-row items-center h-16 border border-gray-300 rounded-xl px-3 bg-white">
-    <TextInput
-      placeholder="••••••••"
-      placeholderTextColor="#aaa"
-      secureTextEntry={!showPassword}
-      className="flex-1 text-base text-black"
-      value={password}
-      onChangeText={setPassword}
-      style={{ paddingVertical: 0 }}
-    />
-    <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-      {showPassword ? (
-        <Ionicons name="eye-off-outline" size={24} color="#64748b" />
-      ) : (
-        <Ionicons name="eye-outline" size={24} color="#64748b" />
-      )}
-    </TouchableOpacity>
-  </View>
-  <Text className="text-xs text-gray-500 mt-1">
-    Must be at least 8 characters long
-  </Text>
-</View>
+      <View className="mb-4">
+        <Text className="font-medium text-gray-700 mb-2">Password</Text>
+        <View className="flex-row items-center h-16 border border-gray-300 rounded-xl px-3 bg-white">
+          <TextInput
+            placeholder="••••••••"
+            placeholderTextColor="#aaa"
+            secureTextEntry={!showPassword}
+            className="flex-1 text-base text-black"
+            value={password}
+            onChangeText={setPassword}
+            style={{ paddingVertical: 0 }}
+          />
+          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+            {showPassword ? (
+              <Ionicons name="eye-off-outline" size={24} color="#64748b" />
+            ) : (
+              <Ionicons name="eye-outline" size={24} color="#64748b" />
+            )}
+          </TouchableOpacity>
+        </View>
+        <Text className="text-xs text-gray-500 mt-1">
+          Must be at least 8 characters long
+        </Text>
+      </View>
 
       {/* Confirm Password */}
       <View className="mb-4">
@@ -186,7 +162,7 @@ const SignupScreen = ({ setActiveTab }) => {
         <TextInput
           placeholder="••••••••"
           placeholderTextColor="#aaa"
-          secureTextEntry={!showPassword}
+          secureTextEntry={true}
           className="bg-white px-4 h-16 rounded-xl border border-gray-300 text-base"
           value={cPassword}
           onChangeText={setCPassword}
@@ -216,11 +192,9 @@ const SignupScreen = ({ setActiveTab }) => {
       {/* Submit Button */}
       <TouchableOpacity
         className={`h-14 rounded-full flex-row items-center justify-center ${
-          !isFormValid || isEmailSignupLoading || isGoogleSignupLoading
-            ? 'bg-gray-300'
-            : 'bg-blue-500'
+          !isFormValid || isEmailSignupLoading ? 'bg-gray-300' : 'bg-blue-500'
         }`}
-        disabled={!isFormValid || isEmailSignupLoading || isGoogleSignupLoading}
+        disabled={!isFormValid || isEmailSignupLoading}
         onPress={handleSubmit}
       >
         {isEmailSignupLoading ? (

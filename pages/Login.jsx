@@ -122,15 +122,14 @@ const LoginScreen = () => {
       if (user) {
         const final = await fetchUserDetails(user.uid);
         setUserProfile(final);
-        console.log('[Email Sign-In] Login successful');
-        // navigation.reset({
-        //   index: 0,
-        //   routes: [{ name: 'AppTabs' }],
-        // });
       }
     } catch (err) {
       console.error('Login error:', err.message);
-      Toast.show({ type: 'error', text1: 'Invalid credentials' });
+      Toast.show({
+        type: 'error',
+        text1: 'Invalid credentials',
+        text2: 'Please enter valid credentials.',
+      });
     } finally {
       setIsEmailLoading(false);
     }
