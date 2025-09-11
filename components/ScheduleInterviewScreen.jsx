@@ -21,7 +21,7 @@ const typeOptions = [
   { label: 'Behavioral', value: 'Behavioral' },
 ];
 
-export default function ScheduleInterviewScreen({ userProfile }) {
+export default function ScheduleInterviewScreen({ userProfile, type }) {
   const [interviewType, setInterviewType] = useState(null);
   const [selectedPosition, setSelectedPosition] = useState('');
   const [currentSkill, setCurrentSkill] = useState('');
@@ -42,7 +42,7 @@ export default function ScheduleInterviewScreen({ userProfile }) {
     interviewTime: null,
   });
 
-  const type = 'revise'; // Or derive dynamically if needed
+  const practiceOrRevise = type || 'practice'; // Or derive dynamically if needed
 
   const addSkill = () => {
     if (currentSkill) {
@@ -224,7 +224,7 @@ export default function ScheduleInterviewScreen({ userProfile }) {
         agentId: myAgent?.agId,
         interviewers: [myAgent?.name] || [],
         interviewType: interviewType || '',
-        type,
+        type: practiceOrRevise,
         requiredSkills: skills,
         jobDescription: '',
         resumeText: myCandidate?.resumeText || '',
@@ -288,8 +288,8 @@ export default function ScheduleInterviewScreen({ userProfile }) {
   const buttonBgColor = isButtonDisabled ? 'bg-slate-400' : 'bg-blue-500';
 
   return (
-    <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-      <Text className="text-2xl font-bold mb-4">Start Interview</Text>
+    <ScrollView className="flex-1 py-5" showsVerticalScrollIndicator={false}>
+      <Text className="text-2xl font-semibold mb-4">Start Interview</Text>
 
       {showInterviewScreen && interviewData?.meetingId && (
         <InterviewScreen
@@ -301,9 +301,15 @@ export default function ScheduleInterviewScreen({ userProfile }) {
         />
       )}
 
-      <Text className="text-lg font-semibold text-slate-700 mb-2">
-        <Ionicons name="layers-outline" size={18} color="#10b981" /> Interview
-        Type *
+      <Text className="text-lg font-semibold text-slate-700 mb-2 gap-2">
+        <View
+          style={{
+            transform: [{ translateY: 4 }],
+          }}
+        >
+          <Ionicons name="layers-outline" size={18} color="black" />
+        </View>{' '}
+        Interview Type *
       </Text>
       <View className="border border-slate-300 rounded-xl bg-white mb-3 px-1">
         <Picker
@@ -321,8 +327,19 @@ export default function ScheduleInterviewScreen({ userProfile }) {
       </View>
 
       <Text className="text-lg font-semibold text-slate-700 mt-4 mb-2">
-        <Ionicons name="briefcase-outline" size={18} color="#10b981" /> Position
-        *
+        <View
+          style={{
+            transform: [{ translateY: 4 }],
+          }}
+        >
+          <Ionicons
+            name="briefcase-outline"
+            size={18}
+            color="black"
+            className="mt-1"
+          />
+        </View>{' '}
+        Position *
       </Text>
       <TextInput
         value={selectedPosition}
@@ -332,8 +349,14 @@ export default function ScheduleInterviewScreen({ userProfile }) {
       />
 
       <Text className="text-lg font-semibold text-slate-700 mt-4 mb-2">
-        <Ionicons name="code-slash-outline" size={18} color="#10b981" /> Add
-        Skills *
+        <View
+          style={{
+            transform: [{ translateY: 4 }],
+          }}
+        >
+          <Ionicons name="code-slash-outline" size={18} color="black" />
+        </View>{' '}
+        Add Skills *
       </Text>
       <View className="flex-row items-center">
         <TextInput
@@ -370,8 +393,14 @@ export default function ScheduleInterviewScreen({ userProfile }) {
       )}
 
       <Text className="text-lg font-semibold text-slate-700 mt-4 mb-2">
-        <Ionicons name="time-outline" size={18} color="#10b981" /> Duration (in
-        minutes) *
+        <View
+          style={{
+            transform: [{ translateY: 4 }],
+          }}
+        >
+          <Ionicons name="time-outline" size={18} color="black" />
+        </View>{' '}
+        Duration (in minutes) *
       </Text>
       <TextInput
         value={duration.toString()}

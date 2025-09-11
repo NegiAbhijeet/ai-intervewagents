@@ -8,7 +8,7 @@ const Layout = ({ children }) => {
   return (
     <AppStateProvider>
       <SafeAreaView className="flex-1 bg-white">
-        <View className="flex-1 p-5 pb-0">{children}</View>
+        <View className="flex-1 px-5">{children}</View>
       </SafeAreaView>
     </AppStateProvider>
   );

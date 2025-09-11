@@ -77,7 +77,8 @@ const Reports = () => {
   if (loading) {
     return (
       <Layout>
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView showsVerticalScrollIndicator={false} className="py-5">
+          <Text className="text-2xl font-semibold mb-4">Interview Reports</Text>
           <SkeletonPlaceholder borderRadius={12}>
             {[...Array(4)].map((_, index) => (
               <SkeletonPlaceholder.Item
@@ -165,48 +166,51 @@ const Reports = () => {
   if (!loading && meetings.length === 0) {
     return (
       <Layout>
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderWidth: 1,
-            borderColor: '#ddd',
-            borderRadius: 12,
-            backgroundColor: '#fff',
-            height: 200,
-          }}
-        >
-          <Text
+        <ScrollView showsVerticalScrollIndicator={false} className="py-5">
+          <Text className="text-2xl font-semibold mb-4">Interview Reports</Text>
+          <View
             style={{
-              fontSize: 22,
-              fontWeight: '700',
-              color: '#111',
-              textAlign: 'center',
-              marginBottom: 12,
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderWidth: 1,
+              borderColor: '#ddd',
+              borderRadius: 12,
+              backgroundColor: '#fff',
+              height: 200,
             }}
           >
-            No Interview Reports Found
-          </Text>
-          <Text
-            style={{
-              fontSize: 16,
-              color: '#555',
-              textAlign: 'center',
-              lineHeight: 22,
-            }}
-          >
-            Complete some interviews to see reports here.
-          </Text>
-        </View>
+            <Text
+              style={{
+                fontSize: 22,
+                fontWeight: '700',
+                color: '#111',
+                textAlign: 'center',
+                marginBottom: 12,
+              }}
+            >
+              No Interview Reports Found
+            </Text>
+            <Text
+              style={{
+                fontSize: 16,
+                color: '#555',
+                textAlign: 'center',
+                lineHeight: 22,
+              }}
+            >
+              Complete some interviews to see reports here.
+            </Text>
+          </View>
+        </ScrollView>
       </Layout>
     );
   }
 
   return (
     <Layout>
-      <Text className="text-2xl font-bold mb-4">Interview Reports</Text>
+      <ScrollView showsVerticalScrollIndicator={false} className="py-5">
+        <Text className="text-2xl font-semibold mb-4">Interview Reports</Text>
 
-      <ScrollView showsVerticalScrollIndicator={false}>
         {meetings.map(report => {
           const candidate = report.candidateDetails || {};
           const percentage = calculatePercentage(report);
