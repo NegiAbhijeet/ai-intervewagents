@@ -165,14 +165,47 @@ const Reports = () => {
   if (!loading && meetings.length === 0) {
     return (
       <Layout>
-        <Text>No Interview Reports Found</Text>
-        <Text>Complete some interviews to see reports here.</Text>
+        <View
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderWidth: 1,
+            borderColor: '#ddd',
+            borderRadius: 12,
+            backgroundColor: '#fff',
+            height: 200,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 22,
+              fontWeight: '700',
+              color: '#111',
+              textAlign: 'center',
+              marginBottom: 12,
+            }}
+          >
+            No Interview Reports Found
+          </Text>
+          <Text
+            style={{
+              fontSize: 16,
+              color: '#555',
+              textAlign: 'center',
+              lineHeight: 22,
+            }}
+          >
+            Complete some interviews to see reports here.
+          </Text>
+        </View>
       </Layout>
     );
   }
 
   return (
     <Layout>
+      <Text className="text-2xl font-bold mb-4">Interview Reports</Text>
+
       <ScrollView showsVerticalScrollIndicator={false}>
         {meetings.map(report => {
           const candidate = report.candidateDetails || {};
@@ -211,7 +244,9 @@ const Reports = () => {
                     }}
                   >
                     <Text style={{ color: 'white', fontWeight: 'bold' }}>
-                      {`${candidate?.firstName?.[0] || 'C'}${candidate?.lastName?.[0] || 'A'}`.toUpperCase()}
+                      {`${candidate?.firstName?.[0] || 'C'}${
+                        candidate?.lastName?.[0] || 'A'
+                      }`.toUpperCase()}
                     </Text>
                   </View>
                   <View>
@@ -231,15 +266,15 @@ const Reports = () => {
                       percentage >= 85
                         ? '#DCFCE7'
                         : percentage >= 70
-                          ? '#FEF3C7'
-                          : '#FEE2E2',
+                        ? '#FEF3C7'
+                        : '#FEE2E2',
                     borderWidth: 1,
                     borderColor:
                       percentage >= 85
                         ? '#BBF7D0'
                         : percentage >= 70
-                          ? '#FCD34D'
-                          : '#FECACA',
+                        ? '#FCD34D'
+                        : '#FECACA',
                   }}
                 >
                   <Text
@@ -250,8 +285,8 @@ const Reports = () => {
                         percentage >= 85
                           ? '#166534'
                           : percentage >= 70
-                            ? '#B45309'
-                            : '#991B1B',
+                          ? '#B45309'
+                          : '#991B1B',
                     }}
                   >
                     {percentage}% Match
