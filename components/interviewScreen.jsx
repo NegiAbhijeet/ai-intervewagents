@@ -37,11 +37,12 @@ const CallUI = ({
   function handleInterviewCompletion() {
     stopAudioRecording();
     stopAudioPlayer();
+    sendInterviewCompleted();
     setIsRecording(false);
     setHasStarted(false);
     setShowInterviewScreen(false);
   }
-  const { startSession, addUserAudio, muteAgent, unmuteAgent } = useRealTime({
+  const { startSession, addUserAudio, sendInterviewCompleted } = useRealTime({
     agentId,
     canId,
     meetingId,
@@ -159,12 +160,9 @@ const CallUI = ({
       }
     }, 1000);
 
-    const timeout = setTimeout(
-      () => {
-        console.log('Interview complete finalizing');
-      },
-      (interviewDurationSeconds + 40) * 1000,
-    );
+    const timeout = setTimeout(() => {
+      console.log('Interview complete finalizing');
+    }, (interviewDurationSeconds + 40) * 1000);
 
     return () => {
       clearInterval(interval);
