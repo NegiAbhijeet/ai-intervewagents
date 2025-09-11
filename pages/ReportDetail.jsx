@@ -26,9 +26,12 @@ import { SkillAssessment } from '../components/ui/skill-assessment';
 import { AppStateContext } from '../components/AppContext';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import { JAVA_API_URL } from '../components/config';
+import { Ionicons } from '@react-native-vector-icons/ionicons';
+import { useNavigation } from '@react-navigation/native';
 
 const ReportDetailScreen = ({ route }) => {
   const { meetingId } = route.params;
+  const navigation = useNavigation();
   const { userProfile } = useContext(AppStateContext);
   const [reportData, setReportData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -102,8 +105,14 @@ const ReportDetailScreen = ({ route }) => {
   }
 
   return (
-    <ScrollView style={{ flex: 1, padding: 16 }}>
+    <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingTop: 8 }}>
       {/* Main Card */}
+      <TouchableOpacity
+        onPress={() => navigation.goBack()}
+        style={{ marginBottom: 16 }}
+      >
+        <Ionicons name="arrow-back" size={24} color={'black'} />
+      </TouchableOpacity>
       <Card>
         <CardHeader>
           <View
@@ -133,12 +142,21 @@ const ReportDetailScreen = ({ route }) => {
                 </View>
               </View>
             </View>
-            <Button title="📥" onPress={() => {}} />
+            <TouchableOpacity
+              onPress={() => {}}
+              style={{
+                padding: 10,
+                borderRadius: 8,
+                backgroundColor: '#3B82F6',
+                justifyContent: 'center',
+              }}
+            >
+              <Ionicons name="download" size={20} color="#fff" />
+            </TouchableOpacity>
           </View>
         </CardHeader>
 
         <CardContent>
-          {/* Tabs */}
           <Tabs defaultValue="summary">
             <TabsList>
               <TabsTrigger value="summary">
@@ -203,7 +221,6 @@ const ReportDetailScreen = ({ route }) => {
               />
             </TabsContent>
 
-
             <TabsContent value="transcript">
               <Card>
                 <CardHeader>
@@ -232,16 +249,27 @@ const ReportDetailScreen = ({ route }) => {
           <CardTitle>Interview Details</CardTitle>
         </CardHeader>
         <CardContent>
-          <Text>
-            Candidate Name: {candidate?.firstName} {candidate?.lastName}
+          <Text style={{ marginBottom: 8 }}>
+            <Text style={{ fontWeight: 'bold' }}>Candidate Name: </Text>
+            {candidate?.firstName} {candidate?.lastName}
           </Text>
-          <Text>
-            Date & Time: {reportData?.interviewDate},{' '}
-            {reportData?.interviewTime}
+
+          <Text style={{ marginBottom: 8 }}>
+            <Text style={{ fontWeight: 'bold' }}>Date & Time: </Text>
+            {reportData?.interviewDate}, {reportData?.interviewTime}
           </Text>
-          <Text>AI Agent: {reportData?.interviewers?.[0]}</Text>
-          <Text>Position: {reportData?.position}</Text>
-          <Button title=" Download Full Report" />
+
+          <Text style={{ marginBottom: 8 }}>
+            <Text style={{ fontWeight: 'bold' }}>AI Agent: </Text>
+            {reportData?.interviewers?.[0]}
+          </Text>
+
+          <Text style={{ marginBottom: 16 }}>
+            <Text style={{ fontWeight: 'bold' }}>Position: </Text>
+            {reportData?.position}
+          </Text>
+
+          <Button title="View Full Report" />
         </CardContent>
       </Card>
     </ScrollView>

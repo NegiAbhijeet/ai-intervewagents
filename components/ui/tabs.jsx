@@ -20,7 +20,16 @@ export const Tabs = ({ defaultValue, children }) => {
 // Horizontal tab list (button container)
 export const TabsList = ({ children }) => {
   return (
-    <View style={{ flexDirection: 'row', backgroundColor: '#E5E7EB', borderRadius: 8, padding: 4, marginVertical: 8 }}>
+    <View
+      style={{
+        flexDirection: 'row',
+        backgroundColor: '#E5E7EB',
+        borderRadius: 8,
+        paddingHorizontal: 6,
+        paddingVertical:8,
+        marginVertical: 8,
+      }}
+    >
       {children}
     </View>
   );
@@ -34,17 +43,25 @@ export const TabsTrigger = ({ value, children }) => {
   return (
     <TouchableOpacity
       style={{
+        flex: 1,
         paddingVertical: 8,
         paddingHorizontal: 16,
         borderRadius: 6,
-        width:"33%",
-        marginHorizontal: 4,
+        marginHorizontal: 2, 
         backgroundColor: isActive ? '#FFFFFF' : 'transparent',
         elevation: isActive ? 2 : 0,
       }}
       onPress={() => setValue(value)}
     >
-      <Text style={{ fontWeight: '500', color: isActive ? '#111827' : '#6B7280', textAlign:"center" }}>{children}</Text>
+      <Text
+        style={{
+          fontWeight: '500',
+          color: isActive ? '#111827' : '#6B7280',
+          textAlign: 'center',
+        }}
+      >
+        {children}
+      </Text>
     </TouchableOpacity>
   );
 };
