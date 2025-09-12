@@ -171,47 +171,164 @@ const ReportDetailScreen = ({ route }) => {
             </TabsList>
 
             <TabsContent value="summary">
-              <Text style={{ fontWeight: '600', marginBottom: 8 }}>
-                Interview Summary
-              </Text>
-              <Text>{reportData?.feedback?.report?.analysis_summary}</Text>
-
-              {/* Strengths & Weaknesses */}
-              <View
-                style={{
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
-                  marginTop: 16,
-                }}
-              >
-                <View style={{ flex: 1, marginRight: 8 }}>
-                  <Text style={{ fontWeight: '600' }}>Strengths</Text>
-                  {reportData?.feedback?.report?.strengths?.map((s, i) => (
-                    <Text key={i}>• {s}</Text>
-                  ))}
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={{ fontWeight: '600' }}>
-                    Areas for Improvement
-                  </Text>
-                  {reportData?.feedback?.report?.weaknesses?.map((w, i) => (
-                    <Text key={i}>• {w}</Text>
-                  ))}
-                </View>
-              </View>
-
-              {/* <FeedbackCards report={reportData?.feedback?.report} /> */}
-
-              {/* Next Steps */}
-              <View style={{ marginTop: 16 }}>
-                <Text style={{ fontWeight: '600', marginBottom: 8 }}>
-                  Next Steps
+              <View style={{ padding: 0 }}>
+                <Text
+                  style={{
+                    fontWeight: '600',
+                    fontSize: 18,
+                    marginBottom: 12,
+                    color: '#333',
+                  }}
+                >
+                  Interview Summary
                 </Text>
-                {reportData?.feedback?.nextSteps?.map((step, index) => (
-                  <View key={index} style={{ marginBottom: 8 }}>
-                    <Text>{step.step}</Text>
+                <Text style={{ fontSize: 16, color: '#555' }}>
+                  {reportData?.feedback?.report?.analysis_summary ||
+                    'No summary available.'}
+                </Text>
+
+                {/* Strengths & Weaknesses */}
+                {(reportData?.feedback?.report?.strengths.length > 0 ||
+                  reportData?.feedback?.report?.weaknesses.length > 0) && (
+                  <View style={{ marginTop: 24 }}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        flexWrap: 'wrap',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      {/* Strengths */}
+                      {reportData?.feedback?.report?.strengths.length > 0 && (
+                        <View
+                          style={{ flex: 1, marginRight: 12, minWidth: '45%' }}
+                        >
+                          <Text
+                            style={{
+                              fontWeight: '700',
+                              fontSize: 16,
+                              marginBottom: 8,
+                              color: '#333',
+                            }}
+                          >
+                            Strengths
+                          </Text>
+                          {reportData?.feedback?.report?.strengths.map(
+                            (s, i) => (
+                              <View
+                                key={i}
+                                style={{
+                                  flexDirection: 'row',
+                                  marginBottom: 6,
+                                }}
+                              >
+                                <Text
+                                  style={{
+                                    fontSize: 16,
+                                    color: '#555',
+                                    marginRight: 6,
+                                  }}
+                                >
+                                  •
+                                </Text>
+                                <Text
+                                  style={{
+                                    flex: 1,
+                                    fontSize: 16,
+                                    color: '#555',
+                                  }}
+                                >
+                                  {s}
+                                </Text>
+                              </View>
+                            ),
+                          )}
+                        </View>
+                      )}
+
+                      {/* Areas for Improvement */}
+                      {reportData?.feedback?.report?.weaknesses.length > 0 && (
+                        <View style={{ flex: 1, minWidth: '45%' }}>
+                          <Text
+                            style={{
+                              fontWeight: '700',
+                              fontSize: 16,
+                              marginBottom: 8,
+                              color: '#333',
+                            }}
+                          >
+                            Areas for Improvement
+                          </Text>
+                          {reportData?.feedback?.report?.weaknesses.map(
+                            (w, i) => (
+                              <View
+                                key={i}
+                                style={{
+                                  flexDirection: 'row',
+                                  marginBottom: 6,
+                                }}
+                              >
+                                <Text
+                                  style={{
+                                    fontSize: 16,
+                                    color: '#555',
+                                    marginRight: 6,
+                                  }}
+                                >
+                                  •
+                                </Text>
+                                <Text
+                                  style={{
+                                    flex: 1,
+                                    fontSize: 16,
+                                    color: '#555',
+                                  }}
+                                >
+                                  {w}
+                                </Text>
+                              </View>
+                            ),
+                          )}
+                        </View>
+                      )}
+                    </View>
                   </View>
-                ))}
+                )}
+
+                {/* Next Steps */}
+                {reportData?.feedback?.nextSteps?.length > 0 && (
+                  <View style={{ marginTop: 24 }}>
+                    <Text
+                      style={{
+                        fontWeight: '700',
+                        fontSize: 18,
+                        marginBottom: 12,
+                        color: '#333',
+                      }}
+                    >
+                      Next Steps
+                    </Text>
+                    {reportData?.feedback?.nextSteps.map((step, index) => (
+                      <View
+                        key={index}
+                        style={{ flexDirection: 'row', marginBottom: 12 }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            color: '#555',
+                            marginRight: 8,
+                          }}
+                        >
+                          {index + 1}.
+                        </Text>
+                        <Text style={{ flex: 1, fontSize: 16, color: '#555' }}>
+                          {step.step}
+                        </Text>
+                      </View>
+                    ))}
+                  </View>
+                )}
               </View>
             </TabsContent>
 

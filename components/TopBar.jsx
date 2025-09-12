@@ -42,11 +42,13 @@ const TopBar = () => {
   };
   return (
     <View className="flex-row justify-between items-center px-5 pt-4 pb-3 bg-white border-b border-gray-200 shadow-md">
-      <Image
-        source={require('../assets/images/logo.png')}
-        className="w-9 h-9 rounded-full"
-      />
-
+      <TouchableOpacity onPress={() => setModalVisible(true)} className='flex-row items-center gap-2'>
+        <Image
+          source={require('../assets/images/logo.png')}
+          className="w-9 h-9 rounded-full"
+        />
+        <Text className='font-semibold text-xl'>AI Interview Agents</Text>
+      </TouchableOpacity>
       <TouchableOpacity onPress={() => setModalVisible(true)}>
         {userProfile?.image_url ? (
           <Image

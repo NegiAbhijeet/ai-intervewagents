@@ -22,7 +22,7 @@ const typeOptions = [
 ];
 
 export default function ScheduleInterviewScreen({ userProfile, type }) {
-  const [interviewType, setInterviewType] = useState(null);
+  const [interviewType, setInterviewType] = useState('Behavioral');
   const [selectedPosition, setSelectedPosition] = useState('');
   const [currentSkill, setCurrentSkill] = useState('');
   const [skills, setSkills] = useState([]);
@@ -286,7 +286,7 @@ export default function ScheduleInterviewScreen({ userProfile, type }) {
   };
   const isButtonDisabled = isLoading || loadingSkills;
   const buttonBgColor = isButtonDisabled ? 'bg-slate-400' : 'bg-blue-500';
-
+  const maxDuration = 15;
   return (
     <ScrollView className="flex-1 py-5" showsVerticalScrollIndicator={false}>
       <Text className="text-2xl font-semibold mb-4">Start Interview</Text>
@@ -311,7 +311,7 @@ export default function ScheduleInterviewScreen({ userProfile, type }) {
         </View>{' '}
         Interview Type *
       </Text>
-      <View className="border border-slate-300 rounded-xl bg-white mb-3 px-1">
+      <View className="border border-slate-300 rounded-xl bg-white px-1">
         <Picker
           selectedValue={interviewType}
           onValueChange={itemValue => setInterviewType(itemValue)}
@@ -376,6 +376,8 @@ export default function ScheduleInterviewScreen({ userProfile, type }) {
 
       {loadingSkills ? (
         <ActivityIndicator color="#3b82f6" className="my-3" />
+      ) : skills.length === 0 ? (
+        <></>
       ) : (
         <View className="flex-row flex-wrap mt-3">
           {skills.map(skill => (
@@ -400,15 +402,27 @@ export default function ScheduleInterviewScreen({ userProfile, type }) {
         >
           <Ionicons name="time-outline" size={18} color="black" />
         </View>{' '}
-        Duration (in minutes) *
+        Duration (in minutes, max {maxDuration}) *
       </Text>
+
       <TextInput
         value={duration.toString()}
-        onChangeText={val => setDuration(val)}
-        // const num = parseInt(val, 10);
-        // if (!isNaN(num) && num >= 0 && num <= 60) setDuration(num); check while validation
+        onChangeText={val => {
+          const num = parseInt(val, 10);
+          if (val === '') {
+            setDuration('');
+            return;
+          }
+          if (!isNaN(num)) {
+            if (num >= 0 && num <= maxDuration) {
+              setDuration(num);
+            } else if (num > maxDuration) {
+              setDuration(maxDuration);
+            }
+          }
+        }}
         keyboardType="numeric"
-        placeholder="15 or 30"
+        placeholder={`Enter duration (max ${maxDuration})`}
         className="h-16 bg-white rounded-xl border border-slate-300 px-3 text-lg text-black"
       />
 

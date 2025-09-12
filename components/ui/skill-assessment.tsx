@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 
 import {
   Card,
@@ -26,48 +26,111 @@ export function SkillAssessment({ skills }: SkillAssessmentProps) {
       <CardHeader>
         <CardTitle>Skills Assessment</CardTitle>
         <CardDescription>
-          Evaluation of technical and soft skills based on interview responses
+          Evaluation of technical and soft skills based on interview responses.
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <View className="space-y-6">
-          {Object.entries(validSkills).map(([skillName, { score = 0, description }]) => {
-            const percentage = (score / 10) * 100;
+        <View style={styles.container}>
+          {Object.entries(validSkills).length > 0 ? (
+            Object.entries(validSkills).map(([skillName, { score = 0, description }]) => {
+              const percentage = Math.min(Math.max((score / 10) * 100, 0), 100);
 
-            const scoreTextColor =
-              percentage >= 70
-                ? "text-green-600"
-                : percentage >= 50
-                ? "text-amber-600"
-                : "text-red-600";
+              const scoreTextColor =
+                percentage >= 70
+                  ? styles.textGreen
+                  : percentage >= 50
+                  ? styles.textAmber
+                  : styles.textRed;
 
-            const progressBarColor =
-              percentage >= 85
-                ? "bg-green-500"
-                : percentage >= 70
-                ? "bg-amber-500"
-                : "bg-red-500";
+              const progressBarColor =
+                percentage >= 85
+                  ? styles.bgGreen
+                  : percentage >= 70
+                  ? styles.bgAmber
+                  : styles.bgRed;
 
-            return (
-              <View key={skillName} className="space-y-2">
-                <View className="flex-row items-center justify-between">
-                  <Text className="font-medium">{skillName}</Text>
-                  <Text className={scoreTextColor}>{percentage}%</Text>
+              return (
+                <View key={skillName} style={styles.skillBlock}>
+                  <View style={styles.skillHeader}>
+                    <Text style={styles.skillName}>{skillName}</Text>
+                    <Text style={[styles.scoreText, scoreTextColor]}>
+                      {percentage.toFixed(0)}%
+                    </Text>
+                  </View>
+
+                  <View style={styles.progressBackground}>
+                    <View style={[styles.progressBar, progressBarColor, { width: `${percentage}%` }]} />
+                  </View>
+
+                  <Text style={styles.descriptionText}>{description || "No description provided."}</Text>
                 </View>
-
-                <View className="h-2 w-full rounded-full bg-gray-100">
-                  <View
-                    className={`h-2 rounded-full ${progressBarColor}`}
-                    style={{ width: `${percentage}%` }}
-                  />
-                </View>
-
-                <Text className="text-sm text-gray-500">{description}</Text>
-              </View>
-            );
-          })}
+              );
+            })
+          ) : (
+            <Text style={styles.noSkillsText}>No skills data available.</Text>
+          )}
         </View>
       </CardContent>
     </Card>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    gap: 24,
+  },
+  skillBlock: {
+    gap: 8,
+  },
+  skillHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  skillName: {
+    fontWeight: "500",
+    fontSize: 16,
+    color: "#333",
+  },
+  scoreText: {
+    fontSize: 16,
+    fontWeight: "500",
+  },
+  textGreen: {
+    color: "#16a34a", // green-600
+  },
+  textAmber: {
+    color: "#d97706", // amber-600
+  },
+  textRed: {
+    color: "#dc2626", // red-600
+  },
+  progressBackground: {
+    height: 8,
+    backgroundColor: "#e5e7eb", // gray-200
+    borderRadius: 4,
+    overflow: "hidden",
+  },
+  progressBar: {
+    height: 8,
+    borderRadius: 4,
+  },
+  bgGreen: {
+    backgroundColor: "#22c55e", // green-500
+  },
+  bgAmber: {
+    backgroundColor: "#f59e0b", // amber-500
+  },
+  bgRed: {
+    backgroundColor: "#ef4444", // red-500
+  },
+  descriptionText: {
+    fontSize: 14,
+    color: "#6b7280", // gray-500
+  },
+  noSkillsText: {
+    fontSize: 16,
+    color: "#6b7280",
+    textAlign: "center",
+  },
+});

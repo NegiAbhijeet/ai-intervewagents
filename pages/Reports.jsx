@@ -73,6 +73,23 @@ const Reports = () => {
       hour12: true,
     });
   };
+  const formatDuration = duration => {
+    if (!duration) return '0 min';
+
+    let seconds = 0;
+
+    if (typeof duration === 'string') {
+      seconds = parseInt(duration, 10);
+      if (isNaN(seconds)) return '0 min';
+    } else if (typeof duration === 'number') {
+      seconds = duration;
+    } else {
+      return '0 min';
+    }
+
+    const minutes = Math.floor(seconds / 60);
+    return `${minutes} min`;
+  };
 
   if (loading) {
     return (
@@ -102,12 +119,7 @@ const Reports = () => {
                     flexDirection="row"
                     alignItems="center"
                   >
-                    <SkeletonPlaceholder.Item
-                      width={50}
-                      height={50}
-                      borderRadius={25}
-                    />
-                    <SkeletonPlaceholder.Item marginLeft={12}>
+                    <SkeletonPlaceholder.Item>
                       <SkeletonPlaceholder.Item
                         width={120}
                         height={16}
@@ -212,7 +224,6 @@ const Reports = () => {
         <Text className="text-2xl font-semibold mb-4">Interview Reports</Text>
 
         {meetings.map(report => {
-          const candidate = report.candidateDetails || {};
           const percentage = calculatePercentage(report);
 
           return (
@@ -236,28 +247,18 @@ const Reports = () => {
                 }}
               >
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <View
-                    style={{
-                      width: 50,
-                      height: 50,
-                      borderRadius: 25,
-                      backgroundColor: '#D1D5DB',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      marginRight: 12,
-                    }}
-                  >
-                    <Text style={{ color: 'white', fontWeight: 'bold' }}>
-                      {`${candidate?.firstName?.[0] || 'C'}${
-                        candidate?.lastName?.[0] || 'A'
-                      }`.toUpperCase()}
-                    </Text>
-                  </View>
                   <View>
-                    <Text style={{ fontWeight: '600' }}>
-                      {candidate?.firstName} {candidate?.lastName}
+                    <Text style={{ fontWeight: '600', fontSize: 16 }}>
+                      {report.position}
                     </Text>
-                    <Text style={{ color: '#6B7280' }}>{report.position}</Text>
+                    <View
+                      style={{ flexDirection: 'row', alignItems: 'center' }}
+                    >
+                      <Text style={{ fontWeight: '500' }}>Duration: </Text>
+                      <Text style={{ fontWeight: '500', color: '#6B7280' }}>
+                        {formatDuration(report.duration)}
+                      </Text>
+                    </View>
                   </View>
                 </View>
 
@@ -305,21 +306,6 @@ const Reports = () => {
 
               {/* Action Buttons */}
               <View style={{ flexDirection: 'row', marginTop: 12, gap: 8 }}>
-                <TouchableOpacity
-                  style={{
-                    flex: 1,
-                    backgroundColor: '#059669',
-                    paddingVertical: 10,
-                    borderRadius: 8,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                  onPress={() => console.log('Download PDF', report.meetingId)}
-                  disabled={!report.pdfAvailable}
-                >
-                  <Text style={{ color: 'white', fontWeight: '600' }}>PDF</Text>
-                </TouchableOpacity>
-
                 <TouchableOpacity
                   style={{
                     flex: 1,

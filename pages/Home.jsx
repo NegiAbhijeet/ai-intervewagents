@@ -10,28 +10,25 @@ import { useNavigation } from '@react-navigation/native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 const interviews = [
   {
-    title: 'Practice Interview',
+    title: 'Real Interview',
     description:
-      'Includes both technical and behavioral questions to simulate a real interview experience.',
-    duration: '30-45 minutes',
+      'Mock interviews with instant feedback to boost your skills & confidence.',
     icon: 'laptop-outline',
     gradient: 'blue',
-    link: 'InterviewPrepPractice',
     action: 'Start',
     value: 'Practice',
   },
   {
-    title: 'Revise Interview',
+    title: 'Trainer Interview',
     description:
-      'Asks technical or behavioral questions. If an answer is incorrect, the system explains the correct one and then re-asks the same question to reinforce learning.',
-    duration: '20-30 minutes',
+      'Trainer mode guides you like a coach correcting errors, completing answers, and teaching you how to respond confidently every time.',
     icon: 'checkmark-circle-outline',
     gradient: 'purple',
-    link: 'InterviewPrepRevise',
     action: 'Start',
     value: 'Revise',
   },
 ];
+
 const StatsSkeleton = () => {
   return (
     <SkeletonPlaceholder borderRadius={8}>
@@ -176,19 +173,7 @@ const Home = () => {
           <Text className="text-lg font-semibold mb-2">Interview Type</Text>
 
           {interviews.map(
-            (
-              {
-                title,
-                description,
-                duration,
-                icon,
-                gradient,
-                link,
-                action,
-                value,
-              },
-              index,
-            ) => (
+            ({ title, description, icon, gradient, action, value }, index) => (
               <Pressable
                 key={index}
                 onPress={() =>
@@ -215,14 +200,15 @@ const Home = () => {
                     <Text className="text-base text-black mb-4">
                       {description}
                     </Text>
-                    <Text className="text-sm text-black">
-                      Duration: {duration}
-                    </Text>
                   </View>
 
                   <View className="flex-row justify-end items-center mt-4">
                     <Pressable
-                      onPress={() => navigation.navigate(link)}
+                      onPress={() =>
+                        navigation.navigate('interview', {
+                          type: value,
+                        })
+                      }
                       className="flex-row items-center bg-white/20 hover:bg-white/30 transition-colors duration-200 border border-white/30 rounded-md px-3 py-1 gap-2"
                     >
                       <Text className="text-base text-black">{action}</Text>
