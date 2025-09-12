@@ -17,9 +17,10 @@ const AppTabs = () => {
       <Tab.Screen name="index" component={Home} />
       <Tab.Screen name="interview" component={Interview} />
       <Tab.Screen name="reports" component={Reports} />
-      <Tab.Screen name="profile" component={Profile} />
+      {/* Profile removed from tab navigator */}
     </Tab.Navigator>
   );
 };
+
 
 export default AppTabs;

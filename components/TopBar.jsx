@@ -42,7 +42,7 @@ const TopBar = () => {
 
   const goToProfile = () => {
     setModalVisible(false);
-    navigation.navigate('profile');
+    navigation.navigate('Profile');
   };
 
   return (

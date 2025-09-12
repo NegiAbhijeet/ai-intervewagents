@@ -8,7 +8,6 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
-  Switch,
 } from 'react-native';
 import { AppStateContext } from '../components/AppContext';
 
@@ -25,26 +24,11 @@ export default function ProfileScreen() {
       .toUpperCase() || '';
 
   return (
-    <ScrollView className="space-y-8 p-4 bg-white">
-      {/* Header */}
-      <View className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-        <View>
-          <Text className="text-3xl font-bold text-indigo-600">My Profile</Text>
-          <Text className="text-gray-500">
-            Manage your account information and settings.
-          </Text>
-        </View>
-      </View>
-
+    <ScrollView className="py-4">
       {/* Profile Tabs */}
-      <View className="space-y-6">
-        {/* Profile Picture Card */}
+      <View className="gap-6 px-4 pb-10">
         <View className="bg-white rounded-lg shadow-md p-4">
-          <Text className="text-lg font-bold">Profile Picture</Text>
-          <Text className="text-sm text-gray-500 mb-4">
-            Your profile photo will be visible to your team members.
-          </Text>
-          <View className="items-center mb-6">
+          <View className="items-center py-2">
             {firebaseUser?.photoURL ? (
               <Image
                 source={{ uri: firebaseUser.photoURL }}
@@ -63,89 +47,98 @@ export default function ProfileScreen() {
         </View>
 
         {/* Personal Information Card */}
-        <View className="bg-white rounded-lg shadow-md p-4">
-          <Text className="text-lg font-bold">Personal Information</Text>
-          <Text className="text-sm text-gray-500 mb-4">
+        <View className="bg-white rounded-xl shadow-lg p-4">
+          <Text className="text-xl font-semibold text-gray-900 mb-2">
+            Personal Information
+          </Text>
+          <Text className="text-sm text-gray-500 mb-6">
             Update your personal details and public profile.
           </Text>
 
-          <View className="space-y-4">
-            <View>
-              <Text className="text-sm text-gray-700 mb-1">First Name</Text>
+          <View className="gap-4">
+            <View className="">
+              <Text className="text-sm text-gray-700 mb-2">First Name</Text>
               <TextInput
-                className="bg-gray-50 border border-gray-300 rounded p-2"
+                className="bg-gray-100 border border-gray-300 rounded-md px-3 py-2 text-base"
                 value={firebaseUser?.displayName?.split(' ')[0] || ''}
                 editable={false}
               />
             </View>
+
+            {/* Last Name */}
             <View>
-              <Text className="text-sm text-gray-700 mb-1">Last Name</Text>
+              <Text className="text-sm text-gray-700 mb-2">Last Name</Text>
               <TextInput
-                className="bg-gray-50 border border-gray-300 rounded p-2"
+                className="bg-gray-100 border border-gray-300 rounded-md px-3 py-2 text-base"
                 value={
                   firebaseUser?.displayName?.split(' ').slice(1).join(' ') || ''
                 }
                 editable={false}
               />
             </View>
+
+            {/* Email */}
             <View>
-              <Text className="text-sm text-gray-700 mb-1">Email</Text>
+              <Text className="text-sm text-gray-700 mb-2">Email</Text>
               <TextInput
-                className="bg-gray-50 border border-gray-300 rounded p-2"
+                className="bg-gray-100 border border-gray-300 rounded-md px-3 py-2 text-base"
                 value={firebaseUser?.email || ''}
                 editable={false}
               />
             </View>
 
+            {/* Bio (if exists) */}
             {userProfile?.bio && (
               <View>
-                <Text className="text-sm text-gray-700 mb-1">Bio</Text>
+                <Text className="text-sm text-gray-700 mb-2">Bio</Text>
                 <TextInput
-                  className="bg-gray-50 border border-gray-300 rounded p-2 min-h-[100px]"
+                  className="bg-gray-100 border border-gray-300 rounded-md px-3 py-2 text-base min-h-[120px]"
                   value={userProfile.bio}
                   multiline
                 />
               </View>
             )}
 
-            <View className="grid grid-cols-2 gap-4">
+            {/* Minutes Info */}
+            <View className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <View>
-                <Text className="text-sm text-gray-700 mb-1">
+                <Text className="text-sm text-gray-700 mb-2">
                   Total Minutes
                 </Text>
                 <TextInput
-                  className="bg-gray-50 border border-gray-300 rounded p-2"
+                  className="bg-gray-100 border border-gray-300 rounded-md px-3 py-2 text-base"
                   value={String(totalMinutes)}
                   editable={false}
                 />
               </View>
               <View>
-                <Text className="text-sm text-gray-700 mb-1">Used Minutes</Text>
+                <Text className="text-sm text-gray-700 mb-2">Used Minutes</Text>
                 <TextInput
-                  className="bg-gray-50 border border-gray-300 rounded p-2"
+                  className="bg-gray-100 border border-gray-300 rounded-md px-3 py-2 text-base"
                   value={String(usedMinutes)}
                   editable={false}
                 />
               </View>
             </View>
 
-            <View className="grid grid-cols-2 gap-4">
+            {/* Sessions Info */}
+            <View className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <View>
-                <Text className="text-sm text-gray-700 mb-1">
+                <Text className="text-sm text-gray-700 mb-2">
                   Total Sessions
                 </Text>
                 <TextInput
-                  className="bg-gray-50 border border-gray-300 rounded p-2"
+                  className="bg-gray-100 border border-gray-300 rounded-md px-3 py-2 text-base"
                   value={String(userProfile?.plan?.max_sessions || 0)}
                   editable={false}
                 />
               </View>
               <View>
-                <Text className="text-sm text-gray-700 mb-1">
+                <Text className="text-sm text-gray-700 mb-2">
                   Attended Sessions
                 </Text>
                 <TextInput
-                  className="bg-gray-50 border border-gray-300 rounded p-2"
+                  className="bg-gray-100 border border-gray-300 rounded-md px-3 py-2 text-base"
                   value={String(userProfile?.sessions_used || 0)}
                   editable={false}
                 />
@@ -160,6 +153,7 @@ export default function ProfileScreen() {
           <Text className="text-sm text-gray-500 mb-4">
             Your current plan and billing information.
           </Text>
+
           <View className="bg-indigo-50 rounded-lg p-4 mb-4">
             <View className="flex-row justify-between items-center">
               <View>
@@ -170,15 +164,27 @@ export default function ProfileScreen() {
                 <Text className="text-xs text-indigo-800">Active</Text>
               </View>
             </View>
+
             <Text className="text-sm text-gray-600 mt-2">
-              <Text className="font-bold">3</Text> of{' '}
-              <Text className="font-bold">3</Text> projects used
+              <Text className="font-bold">{usedMinutes}</Text> of{' '}
+              <Text className="font-bold">{totalMinutes}</Text> minutes used
             </Text>
+
             <View className="mt-2 h-2 w-full rounded-full bg-indigo-100 overflow-hidden">
-              <View className="h-full w-full bg-indigo-600" />
+              <View
+                className="h-full bg-indigo-600"
+                style={{
+                  width: `${Math.max(5, (usedMinutes / totalMinutes) * 100)}%`,
+                }}
+              />
             </View>
+
+            <Text className="text-xs text-gray-500 text-center mt-2">
+              {totalMinutes - usedMinutes} minutes left
+            </Text>
           </View>
-          <TouchableOpacity className="bg-gradient-to-r from-indigo-600 to-indigo-800 rounded p-3 items-center">
+
+          <TouchableOpacity className="bg-blue-500 p-3 items-center rounded-md">
             <Text className="text-white font-bold">Upgrade to Pro</Text>
           </TouchableOpacity>
         </View>

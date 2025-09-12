@@ -1,16 +1,26 @@
-import React, { useContext, useEffect, useState } from 'react';
-import AuthStack from './navigation/AuthStack';
+import React, { useContext } from 'react';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AppTabs from './navigation/AppTabs';
+import Profile from '../pages/Profile';
+import AuthStack from './navigation/AuthStack';
 import { AppStateContext } from './AppContext';
+
+const Stack = createNativeStackNavigator();
 
 const RootNavigator = () => {
   const { firebaseUser } = useContext(AppStateContext);
-  return firebaseUser ? (
-    <>
-      <AppTabs />
-    </>
-  ) : (
-    <AuthStack />
+
+  if (!firebaseUser) return <AuthStack />;
+
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="AppTabs" component={AppTabs} />
+      <Stack.Screen
+        name="Profile"
+        component={Profile}
+        options={{ headerShown: true, title: 'Your Profile' }} // or false, if you want no header
+      />
+    </Stack.Navigator>
   );
 };
 
