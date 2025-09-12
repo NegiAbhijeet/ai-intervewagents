@@ -6,12 +6,14 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Linking,
+  Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import { API_URL } from '../components/config';
 import Toast from 'react-native-toast-message';
 import Ionicons from '@react-native-vector-icons/ionicons';
+import LinearGradient from 'react-native-linear-gradient';
 
 const SignupScreen = () => {
   const navigation = useNavigation();
@@ -97,45 +99,77 @@ const SignupScreen = () => {
   };
 
   return (
-    <View className="flex-1 justify-center px-6 bg-white">
-      {/* Title */}
-      <Text className="text-4xl font-bold text-black mb-1">Sign Up</Text>
-      <Text className="text-gray-500 mb-6 text-lg">
-        Create a new account to get started
-      </Text>
-
-      {/* Full Name */}
-      <View className="mb-4">
-        <Text className="font-medium text-gray-700 mb-2">Full Name</Text>
-        <TextInput
-          placeholder="John Doe"
-          className="bg-white px-4 h-16 rounded-xl border border-gray-300 text-base"
-          value={fullName}
-          onChangeText={setFullName}
-        />
+    <View className="flex-1 bg-gray-100 relative">
+      {/* Gradient Header */}
+      <View className="h-[35vh] w-full max-h-[300px]">
+        <LinearGradient
+          colors={['#3b82f6', 'purple']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          className={`rounded-xl p-4 w-full h-full flex items-center justify-center`}
+        >
+          <View className="bg-white rounded-xl p-2 mb-6">
+            <Image
+              source={require('../assets/images/logo.png')}
+              className="w-16 h-16"
+            />
+          </View>
+          <Text className="text-4xl text-white font-bold mb-1">Sign Up</Text>
+          <Text className="text-white mb-6 text-lg text-center w-[80%]">
+            Create a new account to get started
+          </Text>
+        </LinearGradient>
       </View>
-
-      {/* Email */}
-      <View className="mb-4">
-        <Text className="font-medium text-gray-700 mb-2">Email Address</Text>
-        <TextInput
-          placeholder="hello@example.com"
-          placeholderTextColor="#bbb"
-          className="bg-white px-4 h-16 rounded-xl border border-gray-300 text-base"
-          keyboardType="email-address"
-          autoCapitalize="none"
-          value={email}
-          onChangeText={setEmail}
-        />
-      </View>
-
-      {/* Password */}
-      {/* Password */}
-      <View className="mb-4">
-        <Text className="font-medium text-gray-700 mb-2">Password</Text>
-        <View className="flex-row items-center h-16 border border-gray-300 rounded-xl px-3 bg-white">
+      {/* Form Card */}
+      <View className="mx-auto w-[90%] bg-white p-6 elevation-xl py-8 rounded-3xl -translate-y-10">
+        {/* Full Name */}
+        <View className="flex-row items-center px-4 h-16 border border-gray-300 rounded-xl mb-6">
+          <Ionicons
+            name="person-outline"
+            size={22}
+            color="#64748b"
+            style={{ marginRight: 12 }}
+          />
           <TextInput
-            placeholder="••••••••"
+            placeholder="Full Name"
+            placeholderTextColor="#bbb"
+            className="flex-1 text-base text-black"
+            value={fullName}
+            onChangeText={setFullName}
+            style={{ paddingVertical: 0 }}
+          />
+        </View>
+
+        {/* Email */}
+        <View className="flex-row items-center px-4 h-16 border border-gray-300 rounded-xl mb-6">
+          <Ionicons
+            name="mail-outline"
+            size={22}
+            color="#64748b"
+            style={{ marginRight: 12 }}
+          />
+          <TextInput
+            placeholder="Email Address"
+            placeholderTextColor="#bbb"
+            className="flex-1 text-base text-black"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            value={email}
+            onChangeText={setEmail}
+            style={{ paddingVertical: 0 }}
+          />
+        </View>
+
+        {/* Password */}
+        <View className="flex-row items-center px-4 h-16 border border-gray-300 rounded-xl mb-6">
+          <Ionicons
+            name="lock-closed-outline"
+            size={22}
+            color="#64748b"
+            style={{ marginRight: 12 }}
+          />
+          <TextInput
+            placeholder="Password"
             placeholderTextColor="#aaa"
             secureTextEntry={!showPassword}
             className="flex-1 text-base text-black"
@@ -151,70 +185,77 @@ const SignupScreen = () => {
             )}
           </TouchableOpacity>
         </View>
-        <Text className="text-xs text-gray-500 mt-1">
-          Must be at least 8 characters long
-        </Text>
-      </View>
 
-      {/* Confirm Password */}
-      <View className="mb-4">
-        <Text className="font-medium text-gray-700 mb-2">Confirm Password</Text>
-        <TextInput
-          placeholder="••••••••"
-          placeholderTextColor="#aaa"
-          secureTextEntry={true}
-          className="bg-white px-4 h-16 rounded-xl border border-gray-300 text-base"
-          value={cPassword}
-          onChangeText={setCPassword}
-        />
-      </View>
-
-      {/* Terms and Conditions */}
-      <View className="flex-row items-start mb-6">
+        {/* Confirm Password */}
+        <View className="flex-row items-center px-4 h-16 border border-gray-300 rounded-xl mb-6">
+          <Ionicons
+            name="lock-closed-outline"
+            size={22}
+            color="#64748b"
+            style={{ marginRight: 12 }}
+          />
+          <TextInput
+            placeholder="Confirm Password"
+            placeholderTextColor="#aaa"
+            secureTextEntry={true}
+            className="flex-1 text-base text-black"
+            value={cPassword}
+            onChangeText={setCPassword}
+            style={{ paddingVertical: 0 }}
+          />
+        </View>
+        <View className="flex-row items-start mb-6">
+          <TouchableOpacity
+            className="h-5 w-5 border border-gray-400 rounded mr-3 items-center justify-center"
+            onPress={() => setTermsCheckbox(!termsCheckbox)}
+          >
+            {termsCheckbox && <Text>✓</Text>}
+          </TouchableOpacity>
+          <Text className="text-sm text-gray-600 flex-1">
+            I agree to the{' '}
+            <Text
+              className="text-blue-600"
+              onPress={() => Linking.openURL('#')}
+            >
+              Terms of Service
+            </Text>{' '}
+            and{' '}
+            <Text
+              className="text-blue-600"
+              onPress={() => Linking.openURL('#')}
+            >
+              Privacy Policy
+            </Text>
+          </Text>
+        </View>
+        {/* Submit Button */}
         <TouchableOpacity
-          className="h-5 w-5 border border-gray-400 rounded mr-3 items-center justify-center"
-          onPress={() => setTermsCheckbox(!termsCheckbox)}
+          className={`h-14 rounded-xl flex-row items-center justify-center ${
+            !isFormValid || isEmailSignupLoading ? 'bg-gray-300' : 'bg-blue-500'
+          }`}
+          disabled={!isFormValid || isEmailSignupLoading}
+          onPress={handleSubmit}
         >
-          {termsCheckbox && <Text>✓</Text>}
+          {isEmailSignupLoading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text className="text-white text-center text-lg font-semibold">
+              Create Account
+            </Text>
+          )}
         </TouchableOpacity>
-        <Text className="text-sm text-gray-600 flex-1">
-          I agree to the{' '}
-          <Text className="text-blue-600" onPress={() => Linking.openURL('#')}>
-            Terms of Service
-          </Text>{' '}
-          and{' '}
-          <Text className="text-blue-600" onPress={() => Linking.openURL('#')}>
-            Privacy Policy
-          </Text>
-        </Text>
       </View>
-
-      {/* Submit Button */}
-      <TouchableOpacity
-        className={`h-14 rounded-full flex-row items-center justify-center ${
-          !isFormValid || isEmailSignupLoading ? 'bg-gray-300' : 'bg-blue-500'
-        }`}
-        disabled={!isFormValid || isEmailSignupLoading}
-        onPress={handleSubmit}
-      >
-        {isEmailSignupLoading ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text className="text-white text-center text-lg font-semibold">
-            Create Account
-          </Text>
-        )}
-      </TouchableOpacity>
 
       {/* Link to Login */}
       <TouchableOpacity
-        className="mt-6"
+        className="flex-row items-center justify-center"
         onPress={() => {
           navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
         }}
       >
-        <Text className="text-blue-600 text-center font-semibold">
-          Already have an account? Login
+        <Text className="text-base">Already have an account? </Text>
+        <Text className="text-blue-600 text-center font-semibold text-base">
+          Login
         </Text>
       </TouchableOpacity>
     </View>
