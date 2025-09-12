@@ -9,13 +9,12 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Feather';
-import { Picker } from '@react-native-picker/picker';
 import debounce from 'lodash.debounce';
 import { JAVA_API_URL, API_URL } from './config';
 import InterviewScreen from './interviewScreen';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import Toast from 'react-native-toast-message';
+import InterviewTypeDropdown from './InterviewTypeDropdown';
 const typeOptions = [
   { label: 'Technical', value: 'Technical' },
   { label: 'Behavioral', value: 'Behavioral' },
@@ -312,18 +311,11 @@ export default function ScheduleInterviewScreen({ userProfile, type }) {
         Interview Type *
       </Text>
       <View className="border border-slate-300 rounded-xl bg-white px-1">
-        <Picker
-          selectedValue={interviewType}
-          onValueChange={itemValue => setInterviewType(itemValue)}
-          style={{ color: '#334155' }}
-          itemStyle={{ color: '#334155' }}
-          dropdownIconColor="#334155"
-        >
-          <Picker.Item label="Select Type" style={{ fontSize: 16 }} value="" />
-          {typeOptions.map((item, index) => (
-            <Picker.Item key={index} label={item?.label} value={item?.value} />
-          ))}
-        </Picker>
+        <InterviewTypeDropdown
+          interviewType={interviewType}
+          setInterviewType={setInterviewType}
+          typeOptions={typeOptions}
+        />
       </View>
 
       <Text className="text-lg font-semibold text-slate-700 mt-4 mb-2">

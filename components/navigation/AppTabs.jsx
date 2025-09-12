@@ -4,6 +4,7 @@ import BottomTabBar from '../BottomBar';
 import Home from '../../pages/Home';
 import Interview from '../../pages/Interview';
 import Reports from '../../pages/Reports/index';
+import Profile from '../../pages/Profile';
 
 const Tab = createBottomTabNavigator();
 
@@ -16,6 +17,7 @@ const AppTabs = () => {
       <Tab.Screen name="index" component={Home} />
       <Tab.Screen name="interview" component={Interview} />
       <Tab.Screen name="reports" component={Reports} />
+      <Tab.Screen name="profile" component={Profile} />
     </Tab.Navigator>
   );
 };

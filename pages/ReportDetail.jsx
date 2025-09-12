@@ -106,13 +106,6 @@ const ReportDetailScreen = ({ route }) => {
 
   return (
     <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingTop: 8 }}>
-      {/* Main Card */}
-      <TouchableOpacity
-        onPress={() => navigation.goBack()}
-        style={{ marginBottom: 16 }}
-      >
-        <Ionicons name="arrow-back" size={24} color={'black'} />
-      </TouchableOpacity>
       <Card>
         <CardHeader>
           <View

@@ -11,11 +11,13 @@ import { AppStateContext } from './AppContext';
 import { auth } from '../libs/firebase';
 import { signOut } from 'firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import Ionicons from '@react-native-vector-icons/ionicons';
+import { useNavigation } from '@react-navigation/native';
 
 const TopBar = () => {
   const { userProfile, setUserProfile } = useContext(AppStateContext);
   const [modalVisible, setModalVisible] = useState(false);
-
+  const navigation = useNavigation();
   const getInitial = name => {
     if (!name) return '?';
     return name.charAt(0).toUpperCase();
@@ -25,14 +27,11 @@ const TopBar = () => {
     try {
       setModalVisible(false);
 
-      // Clear Google sign-in cache
       await GoogleSignin.revokeAccess();
-      await GoogleSignin.signOut(); // Ensures account picker shows next time
+      await GoogleSignin.signOut();
 
-      // Clear Firebase session
       await signOut(auth);
 
-      // Reset app context
       setUserProfile(null);
 
       console.log('[Logout] User successfully logged out');
@@ -40,14 +39,23 @@ const TopBar = () => {
       console.error('Error signing out:', err);
     }
   };
+
+  const goToProfile = () => {
+    setModalVisible(false);
+    navigation.navigate('profile');
+  };
+
   return (
-    <View className="flex-row justify-between items-center px-5 pt-4 pb-3 bg-white border-b border-gray-200 shadow-md">
-      <TouchableOpacity onPress={() => setModalVisible(true)} className='flex-row items-center gap-2'>
+    <View className="flex-row justify-between items-center px-4 pt-4 pb-3 bg-white border-b border-gray-200 shadow-md">
+      <TouchableOpacity
+        onPress={() => setModalVisible(true)}
+        className="flex-row items-center gap-2"
+      >
         <Image
           source={require('../assets/images/logo.png')}
           className="w-9 h-9 rounded-full"
         />
-        <Text className='font-semibold text-xl'>AI Interview Agents</Text>
+        <Text className="font-semibold text-xl">AI Interview Agents</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => setModalVisible(true)}>
         {userProfile?.image_url ? (
@@ -87,17 +95,54 @@ const TopBar = () => {
               backgroundColor: 'white',
               borderRadius: 10,
               paddingVertical: 10,
-              paddingHorizontal: 20,
+
               elevation: 5,
-              width: 150,
+              width: 180,
             }}
           >
-            <TouchableOpacity onPress={logout}>
-              <Text
-                style={{ fontSize: 16, paddingVertical: 10, color: '#333' }}
-              >
-                Logout
-              </Text>
+            <TouchableOpacity
+              onPress={goToProfile}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingVertical: 8,
+                paddingHorizontal: 16,
+              }}
+            >
+              <Ionicons
+                name="person-circle-outline"
+                size={20}
+                color="#333"
+                style={{ marginRight: 10 }}
+              />
+              <Text style={{ fontSize: 16, color: '#333' }}>Profile</Text>
+            </TouchableOpacity>
+
+            {/* Divider line */}
+            <View
+              style={{
+                height: 1,
+                backgroundColor: '#e5e7eb',
+                marginVertical: 5,
+              }}
+            />
+
+            <TouchableOpacity
+              onPress={logout}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingVertical: 8,
+                paddingHorizontal: 16,
+              }}
+            >
+              <Ionicons
+                name="log-out-outline"
+                size={20}
+                color="#333"
+                style={{ marginRight: 10 }}
+              />
+              <Text style={{ fontSize: 16, color: '#333' }}>Logout</Text>
             </TouchableOpacity>
           </View>
         </Pressable>
