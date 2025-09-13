@@ -35,20 +35,19 @@ const CallUI = ({
   setShowInterviewScreen,
 }) => {
   const initialStartRef = useRef(null);
-  const [isRecording, setIsRecording] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [cameraOn, setCameraOn] = useState(true); // ✅ Camera toggle state
   const [micOn, setMicOn] = useState(true); // ✅ Mic toggle state
   const navigation = useNavigation();
   const [hasCameraPermission, setHasCameraPermission] = useState(false);
-
+  const [interviewEnded, setInterviewEnded] = useState(false);
   const interviewDurationSeconds = Number(interviewTime);
   function handleInterviewCompletion() {
+    setInterviewEnded(true);
     stopAudioRecording();
     stopAudioPlayer();
     sendInterviewCompleted();
-    setIsRecording(false);
     setHasStarted(false);
     setShowInterviewScreen(false);
     navigation.navigate('reports');
@@ -130,19 +129,23 @@ const CallUI = ({
 
   // Interview timer and wrap-up logic
   useEffect(() => {
-    if (!hasStarted || !isRecording || !interviewDurationSeconds) return;
+    if (!hasStarted || interviewEnded || !interviewDurationSeconds) return;
 
-    initialStartRef.current = Date.now();
+    // Set real start time only once
+    if (!initialStartRef.current) {
+      initialStartRef.current = Date.now();
+    }
 
-    const skipSeconds = 4 * 60;
+    const skipSeconds = 3 * 60;
     const maxRestarts = Math.floor(
       (interviewDurationSeconds - 60) / skipSeconds,
     );
     let restartCount = 0;
 
+    // Wrap-up control
     let wrapUpStartTime = null;
     let wrapUpTriggerCount = 0;
-    const wrapUpMaxTriggers = 4;
+    const wrapUpMaxTriggers = 3; // Call wrap-up 4 times
     const wrapUpIntervalSeconds = 5;
 
     const interval = setInterval(() => {
@@ -169,7 +172,7 @@ const CallUI = ({
             wrapUpTriggerCount++;
           }
         }
-        return;
+        return; // Don't allow restarts during wrap-up
       }
 
       if (
@@ -187,13 +190,14 @@ const CallUI = ({
 
     const timeout = setTimeout(() => {
       console.log('Interview complete finalizing');
-    }, (interviewDurationSeconds + 40) * 1000);
+      handleInterviewCompletion();
+    }, (interviewDurationSeconds + 20) * 1000);
 
     return () => {
       clearInterval(interval);
       clearTimeout(timeout);
     };
-  }, [hasStarted, isRecording, interviewDurationSeconds]);
+  }, [hasStarted, interviewEnded, interviewDurationSeconds]);
 
   const handleManualStart = async () => {
     try {
@@ -208,7 +212,6 @@ const CallUI = ({
 
       startSession('1');
       startAudioRecording();
-      setIsRecording(true);
       setHasStarted(true);
     } catch (err) {
       Alert.alert(
@@ -217,31 +220,6 @@ const CallUI = ({
       );
     }
   };
-
-  const scaleAnim = useRef(new Animated.Value(1)).current;
-
-  useEffect(() => {
-    if (isRecording) {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(scaleAnim, {
-            toValue: 1.5,
-            duration: 1000,
-            easing: Easing.out(Easing.ease),
-            useNativeDriver: true,
-          }),
-          Animated.timing(scaleAnim, {
-            toValue: 1,
-            duration: 1000,
-            easing: Easing.in(Easing.ease),
-            useNativeDriver: true,
-          }),
-        ]),
-      ).start();
-    } else {
-      scaleAnim.setValue(1);
-    }
-  }, [isRecording]);
 
   return (
     <Modal
