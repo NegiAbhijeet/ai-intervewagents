@@ -8,13 +8,18 @@ import {
   PermissionsAndroid,
   Platform,
   View,
+  TouchableOpacity,
+  Text,
 } from 'react-native';
 
-// Import custom hooks (assumed to be properly typed)
+import { Camera, useCameraDevices } from 'react-native-vision-camera'; // ✅ Camera
 import useAudioPlayer from '../hooks/useAudioPlayer';
 import useAudioRecorder from '../hooks/useAudioRecorder';
 import useRealTime from '../hooks/useRealtime';
-// Define props interface
+import Ionicons from '@react-native-vector-icons/ionicons';
+import Timer from './timer';
+import AIAgent from './AIAgent';
+import { useNavigation } from '@react-navigation/native';
 
 const CallUI = ({
   agentId,
@@ -32,6 +37,11 @@ const CallUI = ({
   const initialStartRef = useRef(null);
   const [isRecording, setIsRecording] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [cameraOn, setCameraOn] = useState(true); // ✅ Camera toggle state
+  const [micOn, setMicOn] = useState(true); // ✅ Mic toggle state
+  const navigation = useNavigation();
+  const [hasCameraPermission, setHasCameraPermission] = useState(false);
 
   const interviewDurationSeconds = Number(interviewTime);
   function handleInterviewCompletion() {
@@ -41,6 +51,7 @@ const CallUI = ({
     setIsRecording(false);
     setHasStarted(false);
     setShowInterviewScreen(false);
+    navigation.navigate('reports');
   }
   const { startSession, addUserAudio, sendInterviewCompleted } = useRealTime({
     agentId,
@@ -78,7 +89,21 @@ const CallUI = ({
       onAudioRecorded: addUserAudio,
     });
 
-  // ✅ New: Request microphone permission
+  const devices = useCameraDevices();
+  const cameraDevice = devices.front; // Use front-facing camera
+
+  useEffect(() => {
+    const requestPermissions = async () => {
+      const cameraPermission = await Camera.requestCameraPermission();
+      const micPermission = await requestMicrophonePermission();
+      setHasCameraPermission(cameraPermission === 'authorized');
+    };
+
+    if (showInterviewScreen) {
+      requestPermissions();
+    }
+  }, [showInterviewScreen]);
+
   const requestMicrophonePermission = async () => {
     if (Platform.OS === 'android') {
       try {
@@ -192,6 +217,7 @@ const CallUI = ({
       );
     }
   };
+
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
@@ -224,68 +250,95 @@ const CallUI = ({
       visible={showInterviewScreen}
       onRequestClose={() => setShowInterviewScreen(false)}
     >
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: 'white',
-          justifyContent: 'space-between',
-          padding: 20,
-        }}
-      >
-        {/* Animated Listening UI */}
-        {isRecording && (
+      <View style={{ flex: 1, backgroundColor: 'black' }}>
+        {hasStarted && (
+          <>
+            <Timer
+              elapsedSeconds={elapsedSeconds}
+              setElapsedSeconds={setElapsedSeconds}
+              sessionDurationSeconds={interviewTime - 60}
+              terminateSession={() => {}}
+            />
+            <AIAgent isAgentSpeaking={true} />
+          </>
+        )}
+
+        {/* ✅ Fullscreen Camera */}
+        {cameraOn && cameraDevice && hasCameraPermission && (
+          <Camera
+            style={{ flex: 1 }}
+            device={cameraDevice}
+            isActive={cameraOn && showInterviewScreen}
+          />
+        )}
+
+        {/* ✅ Bottom Controls */}
+        <View
+          style={{
+            position: 'absolute',
+            bottom: 30,
+            width: '100%',
+            paddingHorizontal: 20,
+          }}
+        >
           <View
             style={{
-              flex: 1,
-              alignItems: 'center',
+              flexDirection: 'row',
               justifyContent: 'center',
+              gap: 16,
+              alignItems: 'center',
             }}
           >
-            <Animated.View
+            {/* ✅ Camera Toggle */}
+            <TouchableOpacity
+              onPress={() => setCameraOn(prev => !prev)}
               style={{
-                width: 120,
-                height: 120,
-                borderRadius: 60,
-                backgroundColor: '#e0f7fa',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transform: [{ scale: scaleAnim }],
-                opacity: 0.8,
+                padding: 15,
+                backgroundColor: cameraOn ? '#4caf50' : '#f44336',
+                borderRadius: 50,
               }}
             >
-              <View
-                style={{
-                  width: 60,
-                  height: 60,
-                  borderRadius: 30,
-                  backgroundColor: '#00bcd4',
-                }}
+              <Ionicons
+                name={cameraOn ? 'videocam' : 'videocam-off'}
+                size={24}
+                color="white"
               />
-            </Animated.View>
-            <View style={{ marginTop: 20 }}>
-              <Button title="Listening..." disabled />
-            </View>
-          </View>
-        )}
+            </TouchableOpacity>
 
-        {!hasStarted && (
-          <View
-            style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-          >
-            <Button title="Start Interview" onPress={handleManualStart} />
-          </View>
-        )}
+            {/* ✅ Mic Toggle */}
+            <TouchableOpacity
+              onPress={() => setMicOn(prev => !prev)}
+              style={{
+                padding: 15,
+                backgroundColor: micOn ? '#4caf50' : '#f44336',
+                borderRadius: 50,
+              }}
+            >
+              <Ionicons
+                name={micOn ? 'mic' : 'mic-off'}
+                size={24}
+                color="white"
+              />
+            </TouchableOpacity>
 
-        {/* End Button at Bottom */}
-        {hasStarted && (
-          <View style={{ paddingBottom: 30 }}>
-            <Button
-              title="End Interview"
-              color="red"
-              onPress={handleInterviewCompletion}
-            />
+            {/* ✅ Start/End Button */}
+            <TouchableOpacity
+              onPress={
+                hasStarted ? handleInterviewCompletion : handleManualStart
+              }
+              style={{
+                paddingVertical: 10,
+                paddingHorizontal: 20,
+                backgroundColor: hasStarted ? '#d32f2f' : '#1976d2',
+                borderRadius: 10,
+              }}
+            >
+              <Text style={{ color: 'white', fontWeight: 'bold' }}>
+                {hasStarted ? 'End Interview' : 'Start Interview'}
+              </Text>
+            </TouchableOpacity>
           </View>
-        )}
+        </View>
       </View>
     </Modal>
   );
