@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Modal,
   Pressable,
+  Button,
 } from 'react-native';
 import { AppStateContext } from './AppContext';
 import { auth } from '../libs/firebase';
@@ -57,21 +58,41 @@ const TopBar = () => {
         />
         <Text className="font-semibold text-xl">AI Interview Agents</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => setModalVisible(true)}>
-        {userProfile?.image_url ? (
-          <Image
-            source={{ uri: userProfile?.image_url }}
-            className="w-9 h-9 rounded-full bg-gray-200"
-          />
-        ) : (
-          <View className="w-9 h-9 rounded-full bg-blue-500 justify-center items-center">
-            <Text className="text-white font-bold text-base">
-              {getInitial(userProfile?.first_name)}
+      <View className="flex-row items-center gap-3">
+        <TouchableOpacity
+          onPress={() => navigation.navigate('leaderBoard')}
+          className="flex-row items-center gap-2"
+        >
+          <View
+            className="flex-row items-center justify-center gap-2 border border-gray-300 rounded-full px-3 h-10"
+            style={{ overflow: 'hidden' }} // ensures border-radius works properly
+          >
+            <Text className="text-xl font-semibold">
+              {userProfile?.current_streak || 0}
             </Text>
+            <Image
+              source={require('../assets/images/flame.png')}
+              className="w-6 h-6"
+              resizeMode="contain"
+            />
           </View>
-        )}
-      </TouchableOpacity>
+        </TouchableOpacity>
 
+        <TouchableOpacity onPress={() => setModalVisible(true)}>
+          {userProfile?.image_url ? (
+            <Image
+              source={{ uri: userProfile?.image_url }}
+              className="w-9 h-9 rounded-full bg-gray-200"
+            />
+          ) : (
+            <View className="w-9 h-9 rounded-full bg-blue-500 justify-center items-center">
+              <Text className="text-white font-bold text-base">
+                {getInitial(userProfile?.first_name)}
+              </Text>
+            </View>
+          )}
+        </TouchableOpacity>
+      </View>
       {/* Side Popup Modal */}
       <Modal
         animationType="fade"

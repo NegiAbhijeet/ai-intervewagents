@@ -4,7 +4,7 @@ import AppTabs from './navigation/AppTabs';
 import Profile from '../pages/Profile';
 import AuthStack from './navigation/AuthStack';
 import { AppStateContext } from './AppContext';
-
+import Leaderboard from "../pages/leaderBoard"
 const Stack = createNativeStackNavigator();
 
 const RootNavigator = () => {
@@ -19,6 +19,11 @@ const RootNavigator = () => {
         name="Profile"
         component={Profile}
         options={{ headerShown: true, title: 'Your Profile' }} // or false, if you want no header
+      />
+      <Stack.Screen
+        name="leaderBoard"
+        component={Leaderboard}
+        options={{ headerShown: true, title: 'Leaderboard' }} // or false, if you want no header
       />
     </Stack.Navigator>
   );
