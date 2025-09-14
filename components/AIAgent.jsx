@@ -6,11 +6,14 @@ import {
   Animated,
   Easing,
   Platform,
+  Image,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 const AIAgent = ({ isAgentSpeaking = true }) => {
-  const scaleAnim = useRef(new Animated.Value(isAgentSpeaking ? 1.1 : 1.0)).current;
+  const scaleAnim = useRef(
+    new Animated.Value(isAgentSpeaking ? 1.1 : 1.0),
+  ).current;
   const pingAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -28,7 +31,7 @@ const AIAgent = ({ isAgentSpeaking = true }) => {
           duration: 1500,
           easing: Easing.out(Easing.ease),
           useNativeDriver: true,
-        })
+        }),
       ).start();
     } else {
       pingAnim.stopAnimation();
@@ -59,16 +62,17 @@ const AIAgent = ({ isAgentSpeaking = true }) => {
         {/* Center Animated Circle */}
         <View style={styles.centered}>
           <Animated.View
-            style={[
-              styles.iconWrapper,
-              { transform: [{ scale: scaleAnim }] },
-            ]}
+            style={[styles.iconWrapper, { transform: [{ scale: scaleAnim }] }]}
           >
             <LinearGradient
               colors={['#60a5fa', '#a78bfa']}
               style={styles.gradientCircle}
             >
-              <Text style={styles.iconText}>🤖</Text>
+              <Image
+                source={require('../assets/images/logo.png')}
+                resizeMode="contain"
+                style={{ width: 25, height: 25 }}
+              />
             </LinearGradient>
           </Animated.View>
         </View>
@@ -89,13 +93,6 @@ const AIAgent = ({ isAgentSpeaking = true }) => {
         {/* Footer */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>AI InterviewAgent</Text>
-          {isAgentSpeaking && (
-            <View style={styles.voiceBars}>
-              <View style={styles.voiceBar(4)} />
-              <View style={styles.voiceBar(6)} />
-              <View style={styles.voiceBar(5)} />
-            </View>
-          )}
         </View>
 
         {/* Top-left badge */}
@@ -117,8 +114,8 @@ const styles = StyleSheet.create({
   agentContainer: {
     borderRadius: 20,
     overflow: 'hidden',
-    width: 120,
-    height: 120,
+    width: 140,
+    height: 140,
     backgroundColor: '#1e293b', // slate-900
     justifyContent: 'center',
     alignItems: 'center',
@@ -144,8 +141,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   gradientCircle: {
-    width: 60,
-    height: 60,
+    width: 50,
+    height: 50,
     borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
@@ -172,18 +169,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    width: '100%',
   },
   footerText: {
     color: '#ffffff',
     fontSize: 12,
+    textAlign: 'center',
     fontWeight: '600',
+    width: '100%',
   },
   voiceBars: {
     flexDirection: 'row',
     alignItems: 'flex-end',
     gap: 2,
   },
-  voiceBar: (height) => ({
+  voiceBar: height => ({
     width: 2,
     height,
     backgroundColor: '#4ade80',
