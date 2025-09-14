@@ -5,7 +5,7 @@ import fetchUserDetails from './fetchUser';
 import { AppStateContext } from '../components/AppContext';
 import { auth } from './firebase';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { useNavigation } from '@react-navigation/native';
+import SplashScreen from '../components/SplashScreen';
 
 const ContextGate = ({ children }) => {
   const { setUserProfile, setFirebaseUser } = useContext(AppStateContext);
@@ -47,7 +47,7 @@ const ContextGate = ({ children }) => {
     <View className="flex-1">
       {authLoading ? (
         <View className="flex-1 justify-center items-center">
-          <ActivityIndicator size="large" color="#000" />
+          <SplashScreen />
         </View>
       ) : (
         <View className="flex-1">{children}</View>
