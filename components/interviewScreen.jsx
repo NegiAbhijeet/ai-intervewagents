@@ -283,22 +283,64 @@ const CallUI = ({
           </>
         )}
 
-        {/* ✅ Fullscreen Camera */}
-        {cameraOn && cameraDevice && hasCameraPermission && (
-          <Camera
-            style={{ flex: 1 }}
-            device={cameraDevice}
-            isActive={cameraOn && showInterviewScreen}
-          />
-        )}
+        {/* ✅ Main Area */}
+        <View style={{ flex: 1, padding: 20 }}>
+          <View
+            style={{
+              flex: 1,
+              borderRadius: 16,
+              overflow: 'hidden',
+              backgroundColor: 'black', // just in case camera fails to load
+            }}
+          >
+            {cameraOn && cameraDevice && hasCameraPermission ? (
+              <Camera
+                style={{
+                  flex: 1,
+                  borderRadius: 16,
+                  overflow: 'hidden',
+                  width: '100%',
+                }}
+                device={cameraDevice}
+                isActive={cameraOn && showInterviewScreen}
+              />
+            ) : (
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  padding: 24,
+                  backgroundColor: 'gray',
+                }}
+              >
+                <Text
+                  style={{
+                    color: 'white',
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                    marginBottom: 12,
+                  }}
+                >
+                  Camera is Off
+                </Text>
+                <Text
+                  style={{ color: '#ccc', fontSize: 16, textAlign: 'center' }}
+                >
+                  Please turn on your camera.
+                </Text>
+              </View>
+            )}
+          </View>
+        </View>
 
         {/* ✅ Bottom Controls */}
         <View
           style={{
-            position: 'absolute',
-            bottom: 30,
-            width: '100%',
             paddingHorizontal: 20,
+            paddingBottom: 30,
+            paddingTop: 16,
+            backgroundColor: 'black',
           }}
         >
           <View
@@ -309,7 +351,7 @@ const CallUI = ({
               alignItems: 'center',
             }}
           >
-            {/* ✅ Camera Toggle */}
+            {/* Camera Toggle */}
             <TouchableOpacity
               onPress={handleCameraToggle}
               style={{
@@ -325,7 +367,7 @@ const CallUI = ({
               />
             </TouchableOpacity>
 
-            {/* ✅ Mic Toggle */}
+            {/* Mic Toggle */}
             <TouchableOpacity
               onPress={handleMicToggle}
               style={{
@@ -341,7 +383,7 @@ const CallUI = ({
               />
             </TouchableOpacity>
 
-            {/* ✅ Start/End Button */}
+            {/* Start/End Button */}
             <TouchableOpacity
               onPress={
                 hasStarted ? handleInterviewCompletion : handleManualStart
