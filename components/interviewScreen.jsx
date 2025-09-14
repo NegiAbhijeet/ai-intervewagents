@@ -37,10 +37,12 @@ const CallUI = ({
   const initialStartRef = useRef(null);
   const [hasStarted, setHasStarted] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
-  const [cameraOn, setCameraOn] = useState(true); // ✅ Camera toggle state
-  const [micOn, setMicOn] = useState(true); // ✅ Mic toggle state
+  const [cameraOn, setCameraOn] = useState(false); // ✅ Camera toggle state
+  const [micOn, setMicOn] = useState(false); // ✅ Mic toggle state
   const navigation = useNavigation();
   const [hasCameraPermission, setHasCameraPermission] = useState(false);
+  const [hasMicPermission, setHasMicPermission] = useState(false);
+
   const [interviewEnded, setInterviewEnded] = useState(false);
   const interviewDurationSeconds = Number(interviewTime);
   function handleInterviewCompletion() {
@@ -89,13 +91,15 @@ const CallUI = ({
     });
 
   const devices = useCameraDevices();
-  const cameraDevice = devices.front; // Use front-facing camera
+
+  const cameraDevice = devices.find(d => d.position === 'front');
 
   useEffect(() => {
     const requestPermissions = async () => {
       const cameraPermission = await Camera.requestCameraPermission();
       const micPermission = await requestMicrophonePermission();
-      setHasCameraPermission(cameraPermission === 'authorized');
+      setHasCameraPermission(cameraPermission === 'granted');
+      setHasMicPermission(micPermission);
     };
 
     if (showInterviewScreen) {
@@ -198,6 +202,44 @@ const CallUI = ({
       clearTimeout(timeout);
     };
   }, [hasStarted, interviewEnded, interviewDurationSeconds]);
+  const handleCameraToggle = async () => {
+    if (!hasCameraPermission) {
+      const permission = await Camera.requestCameraPermission();
+      const granted = permission === 'granted';
+      setHasCameraPermission(granted);
+
+      if (!granted) {
+        Alert.alert(
+          'Camera Permission Denied',
+          'Please enable camera access from Settings to use this feature.',
+        );
+        return;
+      }
+    }
+
+    setCameraOn(prev => !prev);
+  };
+  const handleMicToggle = async () => {
+    if (!hasMicPermission) {
+      console.log('===11');
+      const granted = await requestMicrophonePermission();
+      setHasMicPermission(granted);
+      if (!granted) {
+        Alert.alert(
+          'Microphone Permission Denied',
+          'Please enable microphone access from Settings to use this feature.',
+        );
+        return;
+      }
+    }
+
+    setMicOn(prev => !prev);
+    if (!micOn) {
+      startAudioRecording();
+    } else {
+      stopAudioRecording();
+    }
+  };
 
   const handleManualStart = async () => {
     try {
@@ -269,7 +311,7 @@ const CallUI = ({
           >
             {/* ✅ Camera Toggle */}
             <TouchableOpacity
-              onPress={() => setCameraOn(prev => !prev)}
+              onPress={handleCameraToggle}
               style={{
                 padding: 15,
                 backgroundColor: cameraOn ? '#4caf50' : '#f44336',
@@ -285,7 +327,7 @@ const CallUI = ({
 
             {/* ✅ Mic Toggle */}
             <TouchableOpacity
-              onPress={() => setMicOn(prev => !prev)}
+              onPress={handleMicToggle}
               style={{
                 padding: 15,
                 backgroundColor: micOn ? '#4caf50' : '#f44336',
