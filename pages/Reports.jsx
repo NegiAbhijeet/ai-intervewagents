@@ -251,7 +251,7 @@ const Reports = () => {
                     >
                       <Text style={{ fontWeight: '500' }}>Duration: </Text>
                       <Text style={{ fontWeight: '500', color: '#6B7280' }}>
-                        {formatDuration(report.duration)}
+                        {formatDuration(report.interviewDuration)}
                       </Text>
                     </View>
                   </View>

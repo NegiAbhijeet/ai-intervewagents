@@ -27,7 +27,7 @@ export default function ProfileScreen() {
     <ScrollView className="py-4">
       {/* Profile Tabs */}
       <View className="gap-6 px-4 pb-10">
-        <View className="bg-white rounded-lg shadow-md p-4">
+        <View className="bg-white rounded-xl shadow-md p-4">
           <View className="items-center py-2">
             {firebaseUser?.photoURL ? (
               <Image
@@ -47,19 +47,24 @@ export default function ProfileScreen() {
         </View>
 
         {/* Personal Information Card */}
-        <View className="bg-white rounded-xl shadow-lg p-4">
-          <Text className="text-xl font-semibold text-gray-900 mb-2">
-            Personal Information
-          </Text>
-          <Text className="text-sm text-gray-500 mb-6">
-            Update your personal details and public profile.
-          </Text>
+        <View className="bg-white rounded-xl shadow-lg p-6 gap-6">
+          {/* Header */}
+          <View>
+            <Text className="text-xl font-semibold text-gray-900">
+              Personal Information
+            </Text>
+            <Text className="text-sm text-gray-500 mt-1">
+              Update your personal details and public profile.
+            </Text>
+          </View>
 
+          {/* Name Fields */}
           <View className="gap-4">
-            <View className="">
-              <Text className="text-sm text-gray-700 mb-2">First Name</Text>
+            {/* First Name */}
+            <View>
+              <Text className="text-sm text-gray-700 mb-1">First Name</Text>
               <TextInput
-                className="bg-gray-100 border border-gray-300 rounded-md px-3 py-2 text-base"
+                className="bg-gray-100 border border-gray-300 rounded-md px-4 py-2 text-base"
                 value={firebaseUser?.displayName?.split(' ')[0] || ''}
                 editable={false}
               />
@@ -67,9 +72,9 @@ export default function ProfileScreen() {
 
             {/* Last Name */}
             <View>
-              <Text className="text-sm text-gray-700 mb-2">Last Name</Text>
+              <Text className="text-sm text-gray-700 mb-1">Last Name</Text>
               <TextInput
-                className="bg-gray-100 border border-gray-300 rounded-md px-3 py-2 text-base"
+                className="bg-gray-100 border border-gray-300 rounded-md px-4 py-2 text-base"
                 value={
                   firebaseUser?.displayName?.split(' ').slice(1).join(' ') || ''
                 }
@@ -79,76 +84,72 @@ export default function ProfileScreen() {
 
             {/* Email */}
             <View>
-              <Text className="text-sm text-gray-700 mb-2">Email</Text>
+              <Text className="text-sm text-gray-700 mb-1">Email</Text>
               <TextInput
-                className="bg-gray-100 border border-gray-300 rounded-md px-3 py-2 text-base"
+                className="bg-gray-100 border border-gray-300 rounded-md px-4 py-2 text-base"
                 value={firebaseUser?.email || ''}
                 editable={false}
               />
             </View>
+          </View>
 
-            {/* Bio (if exists) */}
-            {userProfile?.bio && (
-              <View>
-                <Text className="text-sm text-gray-700 mb-2">Bio</Text>
-                <TextInput
-                  className="bg-gray-100 border border-gray-300 rounded-md px-3 py-2 text-base min-h-[120px]"
-                  value={userProfile.bio}
-                  multiline
-                />
-              </View>
-            )}
-
-            {/* Minutes Info */}
-            <View className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <View>
-                <Text className="text-sm text-gray-700 mb-2">
-                  Total Minutes
-                </Text>
-                <TextInput
-                  className="bg-gray-100 border border-gray-300 rounded-md px-3 py-2 text-base"
-                  value={String(totalMinutes)}
-                  editable={false}
-                />
-              </View>
-              <View>
-                <Text className="text-sm text-gray-700 mb-2">Used Minutes</Text>
-                <TextInput
-                  className="bg-gray-100 border border-gray-300 rounded-md px-3 py-2 text-base"
-                  value={String(usedMinutes)}
-                  editable={false}
-                />
-              </View>
+          {/* Bio (optional) */}
+          {userProfile?.bio && (
+            <View>
+              <Text className="text-sm text-gray-700 mb-1">Bio</Text>
+              <TextInput
+                className="bg-gray-100 border border-gray-300 rounded-md px-4 py-2 text-base min-h-[100px]"
+                value={userProfile.bio}
+                multiline
+              />
             </View>
+          )}
 
-            {/* Sessions Info */}
-            <View className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <View>
-                <Text className="text-sm text-gray-700 mb-2">
-                  Total Sessions
-                </Text>
-                <TextInput
-                  className="bg-gray-100 border border-gray-300 rounded-md px-3 py-2 text-base"
-                  value={String(userProfile?.plan?.max_sessions || 0)}
-                  editable={false}
-                />
-              </View>
-              <View>
-                <Text className="text-sm text-gray-700 mb-2">
-                  Attended Sessions
-                </Text>
-                <TextInput
-                  className="bg-gray-100 border border-gray-300 rounded-md px-3 py-2 text-base"
-                  value={String(userProfile?.sessions_used || 0)}
-                  editable={false}
-                />
-              </View>
+          {/* Minutes Info */}
+          <View className="flex-row justify-between gap-4">
+            <View className="flex-1">
+              <Text className="text-sm text-gray-700 mb-1">Total Minutes</Text>
+              <TextInput
+                className="bg-gray-100 border border-gray-300 rounded-md px-4 py-2 text-base"
+                value={String(totalMinutes)}
+                editable={false}
+              />
+            </View>
+            <View className="flex-1">
+              <Text className="text-sm text-gray-700 mb-1">Used Minutes</Text>
+              <TextInput
+                className="bg-gray-100 border border-gray-300 rounded-md px-4 py-2 text-base"
+                value={String(usedMinutes)}
+                editable={false}
+              />
+            </View>
+          </View>
+
+          {/* Sessions Info */}
+          <View className="flex-row justify-between gap-4">
+            <View className="flex-1">
+              <Text className="text-sm text-gray-700 mb-1">Total Sessions</Text>
+              <TextInput
+                className="bg-gray-100 border border-gray-300 rounded-md px-4 py-2 text-base"
+                value={String(userProfile?.plan?.max_sessions || 0)}
+                editable={false}
+              />
+            </View>
+            <View className="flex-1">
+              <Text className="text-sm text-gray-700 mb-1">
+                Attended Sessions
+              </Text>
+              <TextInput
+                className="bg-gray-100 border border-gray-300 rounded-md px-4 py-2 text-base"
+                value={String(userProfile?.sessions_used || 0)}
+                editable={false}
+              />
             </View>
           </View>
         </View>
 
         {/* Subscription */}
-        <View className="bg-white rounded-lg shadow-md p-4">
+        <View className="bg-white rounded-xl shadow-md p-4">
           <Text className="text-lg font-bold">Subscription</Text>
           <Text className="text-sm text-gray-500 mb-4">
             Your current plan and billing information.
@@ -184,13 +185,13 @@ export default function ProfileScreen() {
             </Text>
           </View>
 
-          <TouchableOpacity className="bg-blue-500 p-3 items-center rounded-md">
+          <TouchableOpacity className="bg-blue-500 p-3 items-center rounded-xl">
             <Text className="text-white font-bold">Upgrade to Pro</Text>
           </TouchableOpacity>
         </View>
 
         {/* Danger Zone */}
-        <View className="bg-white rounded-lg shadow-md p-4">
+        <View className="bg-white rounded-xl shadow-md p-4">
           <Text className="text-lg font-bold mb-2">Danger Zone</Text>
           <Text className="text-sm text-gray-500 mb-4">
             Irreversible account actions.
@@ -200,7 +201,7 @@ export default function ProfileScreen() {
             Permanently delete your account and all associated data. This action
             cannot be undone.
           </Text>
-          <TouchableOpacity className="bg-red-600 rounded p-3 items-center">
+          <TouchableOpacity className="bg-red-600 rounded-xl p-3 items-center">
             <Text className="text-white font-bold">Delete Account</Text>
           </TouchableOpacity>
         </View>
