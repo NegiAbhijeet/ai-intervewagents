@@ -21,7 +21,6 @@ const ContextGate = ({ children }) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async user => {
-      setAuthLoading(false);
       setFirebaseUser(user);
       let profile = null;
 
@@ -38,6 +37,7 @@ const ContextGate = ({ children }) => {
       } else {
         setUserProfile(null);
       }
+      setAuthLoading(false);
     });
 
     return () => unsubscribe();

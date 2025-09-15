@@ -4,13 +4,23 @@ import AppTabs from './navigation/AppTabs';
 import Profile from '../pages/Profile';
 import AuthStack from './navigation/AuthStack';
 import { AppStateContext } from './AppContext';
-import Leaderboard from "../pages/leaderBoard"
+import Leaderboard from '../pages/leaderBoard';
+import GetStartedScreen from './GetStartedScreen';
+
 const Stack = createNativeStackNavigator();
 
 const RootNavigator = () => {
-  const { firebaseUser } = useContext(AppStateContext);
+  const { firebaseUser, userProfile } = useContext(AppStateContext);
 
   if (!firebaseUser) return <AuthStack />;
+
+  if (firebaseUser && userProfile && !userProfile.role) {
+    return (
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="GetStarted" component={GetStartedScreen} />
+      </Stack.Navigator>
+    );
+  }
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -18,12 +28,12 @@ const RootNavigator = () => {
       <Stack.Screen
         name="Profile"
         component={Profile}
-        options={{ headerShown: true, title: 'Your Profile' }} // or false, if you want no header
+        options={{ headerShown: true, title: 'Your Profile' }}
       />
       <Stack.Screen
         name="leaderBoard"
         component={Leaderboard}
-        options={{ headerShown: true, title: 'Leaderboard' }} // or false, if you want no header
+        options={{ headerShown: true, title: 'Leaderboard' }}
       />
     </Stack.Navigator>
   );

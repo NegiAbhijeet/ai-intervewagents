@@ -4,7 +4,6 @@ import BottomTabBar from '../BottomBar';
 import Home from '../../pages/Home';
 import Interview from '../../pages/Interview';
 import Reports from '../../pages/Reports/index';
-import Profile from '../../pages/Profile';
 
 const Tab = createBottomTabNavigator();
 

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Button } from 'react-native';
-// import downloadPdf from '@/components/downloadPdf';
+import downloadPdf from '../libs/downloadPdf';
 
 // Placeholder components (implement them later)
 import { Avatar, AvatarFallback } from '../components/ui/avatar';
@@ -18,7 +18,6 @@ import {
   TabsList,
   TabsTrigger,
 } from '../components/ui/tabs';
-// import { Download } from 'lucide-react';
 import { InterviewTranscript } from '../components/ui/InterviewTranscript';
 import { SkillAssessment } from '../components/ui/skill-assessment';
 // import { FeedbackCards } from '@/components/FeedbackCards';
@@ -136,7 +135,7 @@ const ReportDetailScreen = ({ route }) => {
               </View>
             </View>
             <TouchableOpacity
-              onPress={() => {}}
+              onPress={downloadPdf}
               style={{
                 padding: 10,
                 borderRadius: 8,
@@ -379,7 +378,7 @@ const ReportDetailScreen = ({ route }) => {
             {reportData?.position}
           </Text>
 
-          <Button title="View Full Report" />
+          <Button title="View Full Report" onPress={downloadPdf} />
         </CardContent>
       </Card>
     </ScrollView>

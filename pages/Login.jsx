@@ -77,7 +77,7 @@ const LoginScreen = () => {
           last_name,
           plan: 1,
           image_url: user.photoURL || '',
-          role: 'candidate',
+          role: '',
         }),
       });
 
