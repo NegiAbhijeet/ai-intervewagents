@@ -1,6 +1,4 @@
-'use client';
-
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   View,
   Text,
@@ -8,12 +6,32 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
+  ActivityIndicator,
+  Alert,
+  Linking,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { signOut } from 'firebase/auth';
 import { AppStateContext } from '../components/AppContext';
+import { auth } from '../libs/firebase';
+import {
+  API_URL,
+  PRIVACY_POILCY_URL,
+  TERMS_OF_USE_URL,
+} from '../components/config';
 
 export default function ProfileScreen() {
-  const { userProfile, totalMinutes, usedMinutes, firebaseUser } =
-    useContext(AppStateContext);
+  const {
+    userProfile,
+    totalMinutes,
+    usedMinutes,
+    firebaseUser,
+    setUserProfile,
+  } = useContext(AppStateContext);
+
+  const navigation = useNavigation();
+  const [loading, setLoading] = useState(false);
 
   const initials =
     firebaseUser?.displayName
@@ -23,10 +41,63 @@ export default function ProfileScreen() {
       .join('')
       .toUpperCase() || '';
 
+  const logout = async () => {
+    try {
+      setLoading(true);
+
+      await GoogleSignin.revokeAccess();
+      await GoogleSignin.signOut();
+      await signOut(auth);
+
+      setUserProfile(null);
+
+      console.log('[Logout] User successfully logged out');
+    } catch (err) {
+      console.error('Error signing out:', err);
+      Alert.alert('Error', 'Failed to log out. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    Alert.alert(
+      'Confirm Deletion',
+      'Are you sure you want to permanently delete your account?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              setLoading(true);
+              const res = await fetch(
+                `${API_URL}/profile/${userProfile.uid}/delete/`,
+                { method: 'DELETE' },
+              );
+
+              if (res.ok) {
+                console.log('[Delete] Account deleted successfully');
+                await logout();
+              } else {
+                throw new Error('Delete request failed');
+              }
+            } catch (err) {
+              console.error('[Delete Error]', err);
+              Alert.alert('Error', 'Failed to delete account.');
+              setLoading(false);
+            }
+          },
+        },
+      ],
+    );
+  };
+
   return (
     <ScrollView className="py-4">
-      {/* Profile Tabs */}
       <View className="gap-6 px-4 pb-10">
+        {/* Profile Card */}
         <View className="bg-white rounded-xl shadow-md p-4">
           <View className="items-center py-2">
             {firebaseUser?.photoURL ? (
@@ -46,9 +117,8 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {/* Personal Information Card */}
+        {/* Personal Info */}
         <View className="bg-white rounded-xl shadow-lg p-6 gap-6">
-          {/* Header */}
           <View>
             <Text className="text-xl font-semibold text-gray-900">
               Personal Information
@@ -58,7 +128,6 @@ export default function ProfileScreen() {
             </Text>
           </View>
 
-          {/* Name Fields */}
           <View className="gap-4">
             {/* First Name */}
             <View>
@@ -93,7 +162,7 @@ export default function ProfileScreen() {
             </View>
           </View>
 
-          {/* Bio (optional) */}
+          {/* Bio */}
           {userProfile?.bio && (
             <View>
               <Text className="text-sm text-gray-700 mb-1">Bio</Text>
@@ -101,6 +170,7 @@ export default function ProfileScreen() {
                 className="bg-gray-100 border border-gray-300 rounded-md px-4 py-2 text-base min-h-[100px]"
                 value={userProfile.bio}
                 multiline
+                editable={false}
               />
             </View>
           )}
@@ -190,6 +260,27 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </View>
 
+        {/* Links Section */}
+        <View className="items-center">
+          <Text className="text-sm text-gray-600">
+            By using this app, you agree to our{' '}
+            <Text
+              className="text-blue-600"
+              onPress={() => Linking.openURL(TERMS_OF_USE_URL)}
+            >
+              Terms of Service
+            </Text>{' '}
+            and{' '}
+            <Text
+              className="text-blue-600"
+              onPress={() => Linking.openURL(PRIVACY_POILCY_URL)}
+            >
+              Privacy Policy
+            </Text>
+            .
+          </Text>
+        </View>
+
         {/* Danger Zone */}
         <View className="bg-white rounded-xl shadow-md p-4">
           <Text className="text-lg font-bold mb-2">Danger Zone</Text>
@@ -201,8 +292,16 @@ export default function ProfileScreen() {
             Permanently delete your account and all associated data. This action
             cannot be undone.
           </Text>
-          <TouchableOpacity className="bg-red-600 rounded-xl p-3 items-center">
-            <Text className="text-white font-bold">Delete Account</Text>
+          <TouchableOpacity
+            className="bg-red-600 rounded-xl p-3 items-center"
+            onPress={handleDeleteAccount}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color="white" />
+            ) : (
+              <Text className="text-white font-bold">Delete Account</Text>
+            )}
           </TouchableOpacity>
         </View>
       </View>

@@ -10,7 +10,11 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import fetchWithAuth from '../libs/fetchWithAuth';
-import { API_URL } from '../components/config';
+import {
+  API_URL,
+  PRIVACY_POILCY_URL,
+  TERMS_OF_USE_URL,
+} from '../components/config';
 import Toast from 'react-native-toast-message';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import LinearGradient from 'react-native-linear-gradient';
@@ -215,17 +219,18 @@ const SignupScreen = () => {
             I agree to the{' '}
             <Text
               className="text-blue-600"
-              onPress={() => Linking.openURL('#')}
+              onPress={() => Linking.openURL(TERMS_OF_USE_URL)}
             >
               Terms of Service
             </Text>{' '}
             and{' '}
             <Text
               className="text-blue-600"
-              onPress={() => Linking.openURL('#')}
+              onPress={() => Linking.openURL(PRIVACY_POILCY_URL)}
             >
               Privacy Policy
             </Text>
+            .
           </Text>
         </View>
         {/* Submit Button */}
