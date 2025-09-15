@@ -105,7 +105,7 @@ export default function Leaderboard() {
           ? 'bg-gray-200 text-gray-800'
           : 'bg-amber-200 text-amber-800';
 
-        const avatarSize = isFirst ? 20 : 16;
+        const avatarSize = isFirst ? 16 : 16;
         const borderWidth = isFirst ? 4 : 2;
 
         const textColor = isFirst
@@ -122,18 +122,17 @@ export default function Leaderboard() {
           >
             <View className="relative">
               <View
-                className={`w-${avatarSize} h-${avatarSize} rounded-full border-${borderWidth} border-${
-                  isFirst ? 'yellow-400' : isSecond ? 'gray-300' : 'amber-400'
+                className={`w-${avatarSize} h-${avatarSize} rounded-full 
                 }`}
               >
                 {user.image ? (
                   <Image
                     source={{ uri: user.image }}
-                    className={`w-16 h-16 rounded-full`}
+                    className={`w-${avatarSize} h-${avatarSize} rounded-full`}
                   />
                 ) : (
                   <View
-                    className={`flex-1 justify-center items-center ${fallbackBg} rounded-full`}
+                    className={`w-${avatarSize} h-${avatarSize} justify-center items-center ${fallbackBg} rounded-full`}
                   >
                     <Text className="text-2xl font-bold">
                       {getInitials(user.user_name)}
