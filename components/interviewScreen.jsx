@@ -38,22 +38,45 @@ const CallUI = ({
   const [hasStarted, setHasStarted] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [cameraOn, setCameraOn] = useState(false); // ✅ Camera toggle state
-  const [micOn, setMicOn] = useState(false); // ✅ Mic toggle state
+  const [micOn, setMicOn] = useState(true); // ✅ Mic toggle state
   const navigation = useNavigation();
   const [hasCameraPermission, setHasCameraPermission] = useState(false);
   const [hasMicPermission, setHasMicPermission] = useState(false);
 
   const [interviewEnded, setInterviewEnded] = useState(false);
   const interviewDurationSeconds = Number(interviewTime);
+
+  const [isLoading, setIsLoading] = useState(false);
+
   function handleInterviewCompletion() {
+    setIsLoading(true);
     setInterviewEnded(true);
     stopAudioRecording();
     stopAudioPlayer();
-    sendInterviewCompleted();
-    setHasStarted(false);
-    setShowInterviewScreen(false);
-    navigation.navigate('reports');
+
+    fetch(
+      `https://interview.java.docsightai.com/api/meetings/update/${meetingId}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ interviewDuration: elapsedSeconds }),
+      },
+    )
+      .catch(error => {
+        console.error('Error updating meeting:', error);
+      })
+      .finally(() => {
+        sendInterviewCompleted();
+        setHasStarted(false);
+        setShowInterviewScreen(false);
+        setIsLoading(false);
+
+        navigation.navigate('reports');
+      });
   }
+
   const { startSession, addUserAudio, sendInterviewCompleted } = useRealTime({
     agentId,
     canId,
@@ -96,10 +119,9 @@ const CallUI = ({
 
   useEffect(() => {
     const requestPermissions = async () => {
-      const cameraPermission = await Camera.requestCameraPermission();
       const micPermission = await requestMicrophonePermission();
-      setHasCameraPermission(cameraPermission === 'granted');
       setHasMicPermission(micPermission);
+      setMicOn(micPermission);
     };
 
     if (showInterviewScreen) {
@@ -396,7 +418,11 @@ const CallUI = ({
               }}
             >
               <Text style={{ color: 'white', fontWeight: 'bold' }}>
-                {hasStarted ? 'End Interview' : 'Start Interview'}
+                {hasStarted
+                  ? isLoading
+                    ? 'Please wait...'
+                    : 'End Interview'
+                  : 'Start Interview'}
               </Text>
             </TouchableOpacity>
           </View>
