@@ -6,15 +6,18 @@ import './global.css';
 import ContextGate from './libs/contextGate';
 import Toast from 'react-native-toast-message';
 import toastConfig from './libs/toastConfig';
+import { SafeAreaView } from 'react-native-safe-area-context';
 export default function App() {
   return (
-    <AppStateProvider>
-      <NavigationContainer>
-        <ContextGate>
-          <RootNavigator />
-        </ContextGate>
-      </NavigationContainer>
-      <Toast topOffset={70} config={toastConfig} />
-    </AppStateProvider>
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+      <AppStateProvider>
+        <NavigationContainer>
+          <ContextGate>
+            <RootNavigator />
+          </ContextGate>
+        </NavigationContainer>
+        <Toast topOffset={70} config={toastConfig} />
+      </AppStateProvider>
+    </SafeAreaView>
   );
 }

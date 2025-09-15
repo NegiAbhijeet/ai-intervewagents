@@ -157,12 +157,7 @@ const Reports = () => {
                   justifyContent="space-between"
                 >
                   <SkeletonPlaceholder.Item
-                    width="48%"
-                    height={40}
-                    borderRadius={8}
-                  />
-                  <SkeletonPlaceholder.Item
-                    width="48%"
+                    width="96%"
                     height={40}
                     borderRadius={8}
                   />

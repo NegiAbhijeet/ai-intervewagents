@@ -93,12 +93,13 @@ const TopBar = () => {
           )}
         </TouchableOpacity>
       </View>
-      {/* Side Popup Modal */}
+
       <Modal
         animationType="fade"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
+        style={{ zIndex: 1111 }}
       >
         <Pressable
           style={{
