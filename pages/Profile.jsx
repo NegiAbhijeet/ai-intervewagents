@@ -118,7 +118,7 @@ export default function ProfileScreen() {
         </View>
 
         {/* Personal Info */}
-        <View className="bg-white rounded-xl shadow-lg p-6 gap-6">
+        <View className="bg-white rounded-xl shadow-lg p-4 gap-6">
           <View>
             <Text className="text-xl font-semibold text-gray-900">
               Personal Information
