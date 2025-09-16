@@ -101,7 +101,7 @@ const LoginScreen = () => {
 
       Toast.show({
         type: 'error',
-        text1: error.message || 'Google Sign-In failed. Please try again.',
+        text1: 'Google Sign-In failed. Please try again.',
       });
     } finally {
       setIsGoogleLoading(false);

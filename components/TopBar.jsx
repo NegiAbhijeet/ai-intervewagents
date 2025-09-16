@@ -14,6 +14,7 @@ import { signOut } from 'firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { useNavigation } from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 
 const TopBar = () => {
   const { userProfile, setUserProfile } = useContext(AppStateContext);
@@ -28,16 +29,32 @@ const TopBar = () => {
     try {
       setModalVisible(false);
 
-      await GoogleSignin.revokeAccess();
-      await GoogleSignin.signOut();
+      const currentUser = auth.currentUser;
+
+      // if no currentUser, still attempt to clear state
+      if (currentUser) {
+        const isGoogleProvider = currentUser.providerData?.some(
+          p => p.providerId === 'google.com',
+        );
+
+        if (isGoogleProvider) {
+          // only call Google APIs when provider is google
+          await GoogleSignin.revokeAccess();
+          await GoogleSignin.signOut();
+        }
+      }
 
       await signOut(auth);
-
       setUserProfile(null);
 
       console.log('[Logout] User successfully logged out');
     } catch (err) {
       console.error('Error signing out:', err);
+      Toast.show({
+        type: 'error',
+        text1: 'Logout failed',
+        text2: 'Something went wrong while signing out. Please try again.',
+      });
     }
   };
 
