@@ -22,6 +22,7 @@ class MainApplication : Application(), ReactApplication {
                 add(TwoWayAudioPackage())
                 add(CustomAudioPlayerPackage())
                 add(CustomAudioRecorderPackage())
+                add(MediaStorePackage())
             }
 
         override fun getJSMainModuleName(): String = "index"

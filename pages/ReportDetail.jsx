@@ -135,7 +135,13 @@ const ReportDetailScreen = ({ route }) => {
               </View>
             </View>
             <TouchableOpacity
-              onPress={downloadPdf}
+              onPress={() =>
+                downloadPdf(
+                  reportData,
+                  reportData?.candidateDetails,
+                  overallScore,
+                )
+              }
               style={{
                 padding: 10,
                 borderRadius: 8,
@@ -378,7 +384,16 @@ const ReportDetailScreen = ({ route }) => {
             {reportData?.position}
           </Text>
 
-          <Button title="View Full Report" onPress={downloadPdf} />
+          <Button
+            title="View Full Report"
+            onPress={() =>
+              downloadPdf(
+                reportData,
+                reportData?.candidateDetails,
+                overallScore,
+              )
+            }
+          />
         </CardContent>
       </Card>
     </ScrollView>
