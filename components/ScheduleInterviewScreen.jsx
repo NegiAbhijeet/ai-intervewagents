@@ -290,15 +290,19 @@ export default function ScheduleInterviewScreen({ userProfile, type }) {
     <ScrollView className="flex-1 py-5" showsVerticalScrollIndicator={false}>
       <Text className="text-2xl font-semibold mb-4">Start Interview</Text>
 
-      {showInterviewScreen && interviewData?.meetingId && (
-        <InterviewScreen
-          {...interviewData}
-          candidateName={candidateName}
-          adminId={userProfile?.uid}
-          showInterviewScreen={showInterviewScreen}
-          setShowInterviewScreen={setShowInterviewScreen}
-        />
-      )}
+      {showInterviewScreen &&
+        interviewData?.meetingId &&
+        interviewData?.agentId &&
+        interviewData?.canId &&
+        interviewData?.interviewTime && (
+          <InterviewScreen
+            {...interviewData}
+            candidateName={candidateName}
+            adminId={userProfile?.uid}
+            showInterviewScreen={showInterviewScreen}
+            setShowInterviewScreen={setShowInterviewScreen}
+          />
+        )}
 
       <Text className="text-lg font-semibold text-slate-700 mb-2 gap-2">
         <View

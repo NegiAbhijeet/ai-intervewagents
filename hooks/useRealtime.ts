@@ -217,6 +217,9 @@ export default function useRealTime({
       throw e;
     }
     switch (message.type) {
+      case "interview.completed":
+        onInterviewEndConfirmed?.(message);
+        break;
       case 'broadcasttimer':
         onBroadcastTimer?.(message as BroadcastTimer);
         break;

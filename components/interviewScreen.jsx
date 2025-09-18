@@ -10,6 +10,7 @@ import {
   View,
   TouchableOpacity,
   Text,
+  ActivityIndicator,
 } from 'react-native';
 
 import { Camera, useCameraDevices } from 'react-native-vision-camera'; // ✅ Camera
@@ -47,7 +48,7 @@ const CallUI = ({
   const interviewDurationSeconds = Number(interviewTime);
 
   const [isLoading, setIsLoading] = useState(false);
-
+  const [isFetching, setIsFetching] = useState(false);
   function handleInterviewCompletion() {
     setIsLoading(true);
     setInterviewEnded(true);
@@ -99,7 +100,6 @@ const CallUI = ({
     onReceivedInputAudioBufferSpeechStarted: () => {
       stopAudioPlayer();
     },
-    onInterviewEndConfirmed: () => {},
   });
 
   const {
@@ -265,23 +265,62 @@ const CallUI = ({
 
   const handleManualStart = async () => {
     try {
-      const hasPermission = await requestMicrophonePermission();
-      if (!hasPermission) {
-        Alert.alert(
-          'Permission Denied',
-          'Microphone permission is required to start the interview.',
-        );
-        return;
+      setIsFetching(true);
+
+      const res = await fetch(
+        'https://python.backend.aiinterviewagents.com/api/verify-meeting/',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            source: 'azure',
+            meetingId: meetingId,
+            candidateId: canId,
+            agentId: agentId,
+            duration: interviewTime,
+            role: 'candidate',
+          }),
+        },
+      );
+
+      if (!res.ok) {
+        let errorMsg = 'Failed to connect. Please refresh or try again later.';
+        try {
+          const errorJson = await res.json();
+          if (errorJson?.message) errorMsg = errorJson.message;
+        } catch (e) {
+          // keep default errorMsg if parsing fails
+        }
+        throw new Error(errorMsg);
       }
 
-      startSession('1');
-      startAudioRecording();
-      setHasStarted(true);
+      try {
+        const hasPermission = await requestMicrophonePermission();
+        if (!hasPermission) {
+          Alert.alert(
+            'Permission Denied',
+            'Microphone permission is required to start the interview.',
+          );
+          return;
+        }
+
+        startSession('1');
+        startAudioRecording();
+        setHasStarted(true);
+      } catch (err) {
+        console.error('Microphone/setup failed:', err);
+        Alert.alert(
+          'Error',
+          'Microphone permission denied or error starting session.',
+        );
+        // optionally update UI error state too
+        setError(err.message || 'Error starting audio session');
+      }
     } catch (err) {
-      Alert.alert(
-        'Error',
-        'Microphone permission denied or error starting session.',
-      );
+      console.error('Setup failed:', err);
+      setError(err.message || 'Unexpected error occurred.');
+    } finally {
+      setIsFetching(false);
     }
   };
 
@@ -388,7 +427,6 @@ const CallUI = ({
                 color="white"
               />
             </TouchableOpacity>
-
             {/* Mic Toggle */}
             <TouchableOpacity
               onPress={handleMicToggle}
@@ -405,8 +443,8 @@ const CallUI = ({
               />
             </TouchableOpacity>
 
-            {/* Start/End Button */}
             <TouchableOpacity
+              disabled={isLoading || isFetching}
               onPress={
                 hasStarted ? handleInterviewCompletion : handleManualStart
               }
@@ -415,15 +453,30 @@ const CallUI = ({
                 paddingHorizontal: 20,
                 backgroundColor: hasStarted ? '#d32f2f' : '#1976d2',
                 borderRadius: 10,
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                opacity: isLoading || isFetching ? 0.6 : 1,
               }}
             >
-              <Text style={{ color: 'white', fontWeight: 'bold' }}>
-                {hasStarted
-                  ? isLoading
-                    ? 'Please wait...'
-                    : 'End Interview'
-                  : 'Start Interview'}
-              </Text>
+              {isLoading || isFetching ? (
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <ActivityIndicator size="small" color="#fff" />
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontWeight: 'bold',
+                      marginLeft: 8,
+                    }}
+                  >
+                    Please wait...
+                  </Text>
+                </View>
+              ) : (
+                <Text style={{ color: 'white', fontWeight: 'bold' }}>
+                  {hasStarted ? 'End Interview' : 'Start Interview'}
+                </Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>
