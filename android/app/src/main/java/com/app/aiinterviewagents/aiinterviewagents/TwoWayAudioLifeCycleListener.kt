@@ -1,4 +1,4 @@
-package com.aiinterviewagents
+package com.app.aiinterviewagents
 
 import android.app.Activity
 import android.app.Application

@@ -1,4 +1,4 @@
-package com.aiinterviewagents
+package com.app.aiinterviewagents
 
 import com.facebook.react.bridge.*
 import android.media.AudioAttributes

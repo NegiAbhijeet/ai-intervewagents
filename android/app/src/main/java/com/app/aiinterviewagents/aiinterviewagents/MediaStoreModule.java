@@ -1,4 +1,4 @@
-package com.aiinterviewagents;
+package com.app.aiinterviewagents;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;

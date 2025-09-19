@@ -1,4 +1,4 @@
-package com.aiinterviewagents
+package com.app.aiinterviewagents
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

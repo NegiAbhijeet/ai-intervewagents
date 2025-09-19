@@ -15,7 +15,7 @@ const firebaseConfig = {
   projectId: "interviewly-ai",
   storageBucket: "interviewly-ai.firebasestorage.app",
   messagingSenderId: "611623329833",
-  appId: "1:611623329833:android:25570ad66e929e17913c38",
+  appId: "1:611623329833:android:ee7436effa1f71e3913c38",
 };
 
 const firebaseApp = initializeApp(firebaseConfig);

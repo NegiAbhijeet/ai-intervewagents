@@ -14,11 +14,27 @@
       },
       "oauth_client": [
         {
-          "client_id": "611623329833-80n7aoi05g12m4qf7qdgd6uq2ci5ggk5.apps.googleusercontent.com",
+          "client_id": "611623329833-duuojf9hsvhlbvn3foa0r7gdv9k6lqcr.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.aiinterviewagents",
-            "certificate_hash": "1483fbcca4b5b95b0ce8519f9e204d1dfb37119c"
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "611623329833-me5fjbouv7gsjduet8c8jhpu199m02mi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aiinterviewagents",
+            "certificate_hash": "0552ec7801f3032771e3a304954ac94e33d3da42"
+          }
+        },
+        {
+          "client_id": "611623329833-v79t95r9lrls3p6b1d717a3294p8rcd9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aiinterviewagents",
+            "certificate_hash": "f7ed8e2463dd9656731884f22739065565f0a997"
           }
         },
         {
@@ -29,6 +45,49 @@
       "api_key": [
         {
           "current_key": "AIzaSyBogx6sPYQw319wg-VQxItKGY_b04u-6qI"
+        },
+        {
+          "current_key": "AIzaSyDGXbIZ_1wYic9bnUC0kMF6KFaoxuQm9P0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "611623329833-4t054i14kdj2u7ccdvtb4b5tsev1jgfr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:611623329833:android:ee7436effa1f71e3913c38",
+        "android_client_info": {
+          "package_name": "com.app.aiinterviewagents"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "611623329833-pghv42p9obd7ch4o99ro1e10oqpjoeg4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.aiinterviewagents",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "611623329833-4t054i14kdj2u7ccdvtb4b5tsev1jgfr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBogx6sPYQw319wg-VQxItKGY_b04u-6qI"
+        },
+        {
+          "current_key": "AIzaSyDGXbIZ_1wYic9bnUC0kMF6KFaoxuQm9P0"
         }
       ],
       "services": {
