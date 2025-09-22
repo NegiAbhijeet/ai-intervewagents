@@ -162,7 +162,7 @@ const Home = () => {
               />
               <StatsCard
                 label="Time Practiced"
-                value={`${usedMinutes}h`}
+                value={`${usedMinutes} Minutes`}
                 color="purple"
               />
               <StatsCard

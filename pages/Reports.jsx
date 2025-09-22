@@ -1,17 +1,43 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { ScrollView, Text, TouchableOpacity, View, Image } from 'react-native';
+import React, { useContext, useEffect, useState, useRef } from 'react';
+import {
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+  Animated,
+  RefreshControl,
+} from 'react-native';
 import Layout from './Layout';
 import { AppStateContext } from '../components/AppContext';
 import { JAVA_API_URL } from '../components/config';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import { useNavigation } from '@react-navigation/native';
+import Ionicons from '@react-native-vector-icons/ionicons';
 
 const Reports = () => {
   const { userProfile } = useContext(AppStateContext);
   const [meetings, setMeetings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
+
+  // small animated rotation for the refresh icon when active
+  const rotateAnim = useRef(new Animated.Value(0)).current;
+
+  const startRotate = () => {
+    Animated.loop(
+      Animated.timing(rotateAnim, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+    ).start();
+  };
+
+  const stopRotate = () => {
+    rotateAnim.stopAnimation(() => rotateAnim.setValue(0));
+  };
 
   const fetchMeetings = async () => {
     setLoading(true);
@@ -30,11 +56,16 @@ const Reports = () => {
           return dateTimeB - dateTimeA;
         });
         setMeetings(sortedMeetings);
+      } else {
+        setMeetings([]);
       }
     } catch (error) {
       console.error('Failed to fetch meetings:', error);
+      setMeetings([]);
     } finally {
       setLoading(false);
+      setRefreshing(false);
+      stopRotate();
     }
   };
 
@@ -42,24 +73,10 @@ const Reports = () => {
     if (userProfile?.uid) fetchMeetings();
   }, [userProfile]);
 
-  const calculatePercentage = report => {
-    const rawScores = [
-      report?.feedback?.report?.problem_solving?.score,
-      report?.feedback?.report?.communication?.score,
-      report?.feedback?.report?.cultural_fit_and_mindset?.score,
-      report?.feedback?.report?.leadership_potential?.score,
-      report?.feedback?.report?.motivation_and_engagement?.score,
-      report?.feedback?.report?.behaviour_competency?.score,
-      report?.feedback?.report?.technical_skills?.score,
-      report?.feedback?.report?.technical_proficiency?.score,
-    ];
-    const validScores = rawScores.filter(
-      score => typeof score === 'number' && !isNaN(score),
-    );
-    const average = validScores.length
-      ? validScores.reduce((a, b) => a + b, 0) / validScores.length
-      : 0;
-    return Math.round((average / 10) * 100);
+  const onRefresh = () => {
+    setRefreshing(true);
+    startRotate();
+    fetchMeetings();
   };
 
   const formatDateTime = (dateStr, timeStr) => {
@@ -73,11 +90,10 @@ const Reports = () => {
       hour12: true,
     });
   };
+
   const formatDuration = duration => {
     if (!duration) return '0 min';
-
     let seconds = 0;
-
     if (typeof duration === 'string') {
       seconds = parseInt(duration, 10);
       if (isNaN(seconds)) return '0 min';
@@ -86,16 +102,78 @@ const Reports = () => {
     } else {
       return '0 min';
     }
-
     const minutes = Math.floor(seconds / 60);
     return `${minutes} min`;
   };
 
-  if (loading) {
-    return (
-      <Layout>
-        <ScrollView showsVerticalScrollIndicator={false} className="py-5">
-          <Text className="text-2xl font-semibold mb-4">Interview Reports</Text>
+  const rotateInterpolate = rotateAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
+
+  // Single return. Child areas are conditional inside the layout.
+  return (
+    <Layout>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        className="py-5"
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        <View className="flex-row justify-between items-center mb-4">
+          <Text className="text-2xl font-semibold">
+            Interview Reports
+          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <TouchableOpacity
+              onPress={onRefresh}
+              style={{
+                paddingHorizontal: 12,
+                paddingVertical: 8,
+                borderRadius: 8,
+                backgroundColor: '#EFF6FF',
+                borderWidth: 1,
+                borderColor: '#DBEAFE',
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 6,
+              }}
+            >
+              <Animated.View
+                style={{ transform: [{ rotate: rotateInterpolate }] }}
+              >
+                <Ionicons name="refresh" size={18} />
+              </Animated.View>
+              <Text style={{ fontWeight: '600' }}>Refresh</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Top user-friendly status banner */}
+        <View
+          style={{
+            // flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: 12,
+            marginBottom: 12,
+            backgroundColor: '#FFF7ED',
+            borderRadius: 10,
+            borderWidth: 1,
+            borderColor: '#FDE3BF',
+            gap: 10,
+          }}
+        >
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Text style={{ fontSize: 14 }}>
+              Your reports may take a moment to load
+            </Text>
+          </View>
+        </View>
+
+        {/* Loading skeleton block (visible when loading) */}
+        {loading && (
           <SkeletonPlaceholder borderRadius={12}>
             {[...Array(4)].map((_, index) => (
               <SkeletonPlaceholder.Item
@@ -108,13 +186,11 @@ const Reports = () => {
                 borderColor="#E5E7EB"
                 backgroundColor="#F9FAFB"
               >
-                {/* Top Row: Avatar + Text + Badge */}
                 <SkeletonPlaceholder.Item
                   flexDirection="row"
                   justifyContent="space-between"
                   alignItems="center"
                 >
-                  {/* Avatar & Info */}
                   <SkeletonPlaceholder.Item
                     flexDirection="row"
                     alignItems="center"
@@ -134,7 +210,6 @@ const Reports = () => {
                     </SkeletonPlaceholder.Item>
                   </SkeletonPlaceholder.Item>
 
-                  {/* Badge */}
                   <SkeletonPlaceholder.Item
                     width={60}
                     height={20}
@@ -142,7 +217,6 @@ const Reports = () => {
                   />
                 </SkeletonPlaceholder.Item>
 
-                {/* Date */}
                 <SkeletonPlaceholder.Item
                   marginTop={12}
                   width={100}
@@ -150,7 +224,6 @@ const Reports = () => {
                   borderRadius={4}
                 />
 
-                {/* Action Buttons */}
                 <SkeletonPlaceholder.Item
                   flexDirection="row"
                   marginTop={12}
@@ -165,16 +238,10 @@ const Reports = () => {
               </SkeletonPlaceholder.Item>
             ))}
           </SkeletonPlaceholder>
-        </ScrollView>
-      </Layout>
-    );
-  }
+        )}
 
-  if (!loading && meetings.length === 0) {
-    return (
-      <Layout>
-        <ScrollView showsVerticalScrollIndicator={false} className="py-5">
-          <Text className="text-2xl font-semibold mb-4">Interview Reports</Text>
+        {/* Empty state (visible when not loading and no meetings) */}
+        {!loading && meetings.length === 0 && (
           <View
             style={{
               justifyContent: 'center',
@@ -184,6 +251,7 @@ const Reports = () => {
               borderRadius: 12,
               backgroundColor: '#fff',
               height: 200,
+              padding: 16,
             }}
           >
             <Text
@@ -208,122 +276,119 @@ const Reports = () => {
               Complete some interviews to see reports here.
             </Text>
           </View>
-        </ScrollView>
-      </Layout>
-    );
-  }
+        )}
 
-  return (
-    <Layout>
-      <ScrollView showsVerticalScrollIndicator={false} className="py-5">
-        <Text className="text-2xl font-semibold mb-4">Interview Reports</Text>
-
-        {meetings.map(report => {
-          const percentage = calculatePercentage(report);
-
-          return (
-            <View
-              key={report.meetingId}
-              style={{
-                backgroundColor: '#F9FAFB',
-                padding: 16,
-                marginBottom: 12,
-                borderRadius: 12,
-                borderWidth: 1,
-                borderColor: '#E5E7EB',
-              }}
-            >
-              {/* Avatar & Info */}
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}
-              >
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <View>
-                    <Text style={{ fontWeight: '600', fontSize: 16 }}>
-                      {report.position}
-                    </Text>
+        {/* Content list (visible when not loading and there are meetings) */}
+        {!loading && meetings.length > 0 && (
+          <>
+            {meetings.map(report => {
+              const percentage = report?.feedback?.averagePercentage || 0;
+              return (
+                <View
+                  key={report.meetingId}
+                  style={{
+                    backgroundColor: '#F9FAFB',
+                    padding: 16,
+                    marginBottom: 12,
+                    borderRadius: 12,
+                    borderWidth: 1,
+                    borderColor: '#E5E7EB',
+                  }}
+                >
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
                     <View
                       style={{ flexDirection: 'row', alignItems: 'center' }}
                     >
-                      <Text style={{ fontWeight: '500' }}>Duration: </Text>
-                      <Text style={{ fontWeight: '500', color: '#6B7280' }}>
-                        {formatDuration(report.interviewDuration)}
+                      <View>
+                        <Text style={{ fontWeight: '600', fontSize: 16 }}>
+                          {report.position}
+                        </Text>
+                        <View
+                          style={{ flexDirection: 'row', alignItems: 'center' }}
+                        >
+                          <Text style={{ fontWeight: '500' }}>Duration: </Text>
+                          <Text style={{ fontWeight: '500', color: '#6B7280' }}>
+                            {formatDuration(report.interviewDuration)}
+                          </Text>
+                        </View>
+                      </View>
+                    </View>
+
+                    <View
+                      style={{
+                        paddingHorizontal: 8,
+                        paddingVertical: 4,
+                        borderRadius: 6,
+                        backgroundColor:
+                          percentage >= 85
+                            ? '#DCFCE7'
+                            : percentage >= 70
+                            ? '#FEF3C7'
+                            : '#FEE2E2',
+                        borderWidth: 1,
+                        borderColor:
+                          percentage >= 85
+                            ? '#BBF7D0'
+                            : percentage >= 70
+                            ? '#FCD34D'
+                            : '#FECACA',
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          fontWeight: '500',
+                          color:
+                            percentage >= 85
+                              ? '#166534'
+                              : percentage >= 70
+                              ? '#B45309'
+                              : '#991B1B',
+                        }}
+                      >
+                        {percentage}% Match
                       </Text>
                     </View>
                   </View>
-                </View>
 
-                <View
-                  style={{
-                    paddingHorizontal: 8,
-                    paddingVertical: 4,
-                    borderRadius: 6,
-                    backgroundColor:
-                      percentage >= 85
-                        ? '#DCFCE7'
-                        : percentage >= 70
-                        ? '#FEF3C7'
-                        : '#FEE2E2',
-                    borderWidth: 1,
-                    borderColor:
-                      percentage >= 85
-                        ? '#BBF7D0'
-                        : percentage >= 70
-                        ? '#FCD34D'
-                        : '#FECACA',
-                  }}
-                >
                   <Text
-                    style={{
-                      fontSize: 12,
-                      fontWeight: '500',
-                      color:
-                        percentage >= 85
-                          ? '#166534'
-                          : percentage >= 70
-                          ? '#B45309'
-                          : '#991B1B',
-                    }}
+                    style={{ color: '#9CA3AF', fontSize: 12, marginTop: 8 }}
                   >
-                    {percentage}% Match
+                    {formatDateTime(report.interviewDate, report.interviewTime)}
                   </Text>
+
+                  <View style={{ flexDirection: 'row', marginTop: 12, gap: 8 }}>
+                    <TouchableOpacity
+                      style={{
+                        flex: 1,
+                        backgroundColor: '#2563EB',
+                        paddingVertical: 10,
+                        borderRadius: 8,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}
+                      onPress={() =>
+                        navigation.navigate('ReportDetail', {
+                          meetingId: report.meetingId,
+                        })
+                      }
+                    >
+                      <Text style={{ color: 'white', fontWeight: '600' }}>
+                        Report
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
-
-              {/* Date */}
-              <Text style={{ color: '#9CA3AF', fontSize: 12, marginTop: 8 }}>
-                {formatDateTime(report.interviewDate, report.interviewTime)}
-              </Text>
-
-              {/* Action Buttons */}
-              <View style={{ flexDirection: 'row', marginTop: 12, gap: 8 }}>
-                <TouchableOpacity
-                  style={{
-                    flex: 1,
-                    backgroundColor: '#2563EB',
-                    paddingVertical: 10,
-                    borderRadius: 8,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                  onPress={() =>
-                    navigation.navigate('ReportDetail', {
-                      meetingId: report.meetingId,
-                    })
-                  }
-                >
-                  <Text style={{ color: 'white', fontWeight: '600' }}>
-                    Report
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          );
-        })}
+              );
+            })}
+          </>
+        )}
       </ScrollView>
     </Layout>
   );

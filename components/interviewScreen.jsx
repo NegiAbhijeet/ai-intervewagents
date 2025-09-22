@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
   Alert,
   Animated,
@@ -21,6 +21,7 @@ import Ionicons from '@react-native-vector-icons/ionicons';
 import Timer from './timer';
 import AIAgent from './AIAgent';
 import { useNavigation } from '@react-navigation/native';
+import { AppStateContext } from './AppContext';
 
 const CallUI = ({
   agentId,
@@ -35,6 +36,7 @@ const CallUI = ({
   showInterviewScreen,
   setShowInterviewScreen,
 }) => {
+  const { userProfile, setUserProfile } = useContext(AppStateContext);
   const initialStartRef = useRef(null);
   const [hasStarted, setHasStarted] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -73,6 +75,18 @@ const CallUI = ({
         setHasStarted(false);
         setShowInterviewScreen(false);
         setIsLoading(false);
+
+        const isFreePlan = userProfile?.plan?.id === 1;
+
+        setUserProfile(prev => ({
+          ...prev,
+          ...(isFreePlan
+            ? {
+                free_seconds_used_today:
+                  (prev?.free_seconds_used_today || 0) + elapsedSeconds,
+              }
+            : { seconds_used: (prev?.seconds_used || 0) + elapsedSeconds }),
+        }));
 
         navigation.navigate('reports');
       });
@@ -338,7 +352,7 @@ const CallUI = ({
               elapsedSeconds={elapsedSeconds}
               setElapsedSeconds={setElapsedSeconds}
               sessionDurationSeconds={interviewTime - 60}
-              terminateSession={() => {}}
+              terminateSession={handleInterviewCompletion}
             />
             <AIAgent isAgentSpeaking={true} />
           </>
