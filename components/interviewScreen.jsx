@@ -80,12 +80,7 @@ const CallUI = ({
 
         setUserProfile(prev => ({
           ...prev,
-          ...(isFreePlan
-            ? {
-                free_seconds_used_today:
-                  (prev?.free_seconds_used_today || 0) + elapsedSeconds,
-              }
-            : { seconds_used: (prev?.seconds_used || 0) + elapsedSeconds }),
+          seconds_used: (prev?.seconds_used || 0) + elapsedSeconds,
         }));
 
         navigation.navigate('reports');

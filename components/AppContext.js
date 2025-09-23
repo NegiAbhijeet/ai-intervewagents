@@ -13,9 +13,7 @@ const AppStateProvider = ({ children }) => {
     ? userProfile?.plan?.free_seconds || 0
     : userProfile?.plan?.total_seconds || 0;
 
-  const usedSeconds = isFreePlan
-    ? userProfile?.free_seconds_used_today || 0
-    : userProfile?.seconds_used || 0;
+  const usedSeconds = userProfile?.seconds_used || 0;
 
   // Round UP to the nearest minute
   const totalMinutes = Math.ceil(totalSeconds / 60);

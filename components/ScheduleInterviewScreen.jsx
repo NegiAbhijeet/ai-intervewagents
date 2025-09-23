@@ -38,14 +38,13 @@ export default function ScheduleInterviewScreen({ userProfile, type }) {
   const [showInterviewScreen, setShowInterviewScreen] = useState(false);
   const [candidateName, setCandidateName] = useState('');
   const [interviewData, setInterviewData] = useState({
-    agentId: null,
     canId: null,
     meetingId: null,
     interviewType: null,
     interviewTime: null,
   });
 
-  const practiceOrRevise = type || 'practice'; // Or derive dynamically if needed
+  const practiceOrRevise = type || 'practice';
 
   const addSkill = () => {
     if (currentSkill) {
@@ -224,7 +223,6 @@ export default function ScheduleInterviewScreen({ userProfile, type }) {
         role: 'candidate',
         candidateId: myCandidate?.canId || '',
         canEmail: userProfile?.email || userProfile?.user_email || '',
-        agentId: myAgent?.agId,
         interviewers: [myAgent?.name] || [],
         interviewType: interviewType || '',
         type: practiceOrRevise,
@@ -255,13 +253,10 @@ export default function ScheduleInterviewScreen({ userProfile, type }) {
 
         const meetingId = urlParams.get('meetingId');
         const canId = urlParams.get('canId');
-        const agentId = urlParams.get('agentId');
         const interviewType = urlParams.get('interviewType');
         const candidateName = urlParams.get('candidateName') || 'User';
         const interviewTime = urlParams.get('interviewTime');
-
         setInterviewData({
-          agentId,
           canId,
           meetingId,
           interviewType,
@@ -311,7 +306,6 @@ export default function ScheduleInterviewScreen({ userProfile, type }) {
 
         {showInterviewScreen &&
           interviewData?.meetingId &&
-          interviewData?.agentId &&
           interviewData?.canId &&
           interviewData?.interviewTime && (
             <InterviewScreen
