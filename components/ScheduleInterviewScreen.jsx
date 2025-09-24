@@ -32,8 +32,6 @@ export default function ScheduleInterviewScreen({ userProfile, type }) {
   const [duration, setDuration] = useState('');
   const [loadingSkills, setLoadingSkills] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [agents, setAgents] = useState([]);
-  const [selectedAgent, setSelectedAgent] = useState('');
   const [myCandidate, setMyCandidate] = useState(null);
   const [showInterviewScreen, setShowInterviewScreen] = useState(false);
   const [candidateName, setCandidateName] = useState('');
@@ -82,22 +80,6 @@ export default function ScheduleInterviewScreen({ userProfile, type }) {
     };
   };
 
-  const fetchAgents = async () => {
-    try {
-      const userId = 'user2026';
-
-      const res = await fetch(`${JAVA_API_URL}/api/agent/uid/${userId}`);
-      if (!res.ok) throw new Error('Failed to fetch agents');
-      const data = await res.json();
-      if (data?.data) {
-        setSelectedAgent(data?.data[0]?.agId || '');
-        setAgents(data?.data || []);
-      }
-    } catch (err) {
-      console.error('Error fetching agents:', err);
-    }
-  };
-
   const fetchCandidatedata = async () => {
     try {
       const response = await fetch(
@@ -115,7 +97,6 @@ export default function ScheduleInterviewScreen({ userProfile, type }) {
   useEffect(() => {
     if (userProfile?.uid) {
       fetchCandidatedata();
-      fetchAgents();
     }
   }, [userProfile]);
 
@@ -211,8 +192,6 @@ export default function ScheduleInterviewScreen({ userProfile, type }) {
       const now = new Date();
       const { date, hour, minute } = extractMeetingDateTimeParts(now);
 
-      const myAgent = agents.find(item => item?.agId === selectedAgent);
-
       const payload = {
         uid: userProfile?.uid,
         hour,
@@ -223,7 +202,6 @@ export default function ScheduleInterviewScreen({ userProfile, type }) {
         role: 'candidate',
         candidateId: myCandidate?.canId || '',
         canEmail: userProfile?.email || userProfile?.user_email || '',
-        interviewers: [myAgent?.name] || [],
         interviewType: interviewType || '',
         type: practiceOrRevise,
         requiredSkills: skills,

@@ -191,7 +191,7 @@ const downloadPdf = async (
     addField('Role:', reportData.position || 'N/A');
     addField('Date:', reportData.interviewDate || 'N/A');
     addField('Time:', reportData.interviewTime || 'N/A');
-    addField('Interviewer:', reportData.interviewers?.[0] || 'N/A');
+    addField('Interviewer:', 'Nova');
     addField('Overall Score:', `${overallScore} %`);
     addSpace(15);
 

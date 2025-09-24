@@ -126,7 +126,7 @@ const ReportDetailScreen = ({ route }) => {
                   {candidate?.firstName} {candidate?.lastName}
                 </CardTitle>
                 <CardDescription>{reportData?.position}</CardDescription>
-                <View style={{ flexDirection: 'row', marginTop: 8 }}>
+                <View style={{ flexDirection: 'row', marginTop: 8, gap: 8 }}>
                   <Badge variant="outline">{overallScore}% Overall Match</Badge>
                   <Badge variant="outline" style={{ marginLeft: 8 }}>
                     {reportData?.interviewDate}
@@ -348,7 +348,7 @@ const ReportDetailScreen = ({ route }) => {
                 <CardContent>
                   <InterviewTranscript
                     messages={reportData?.feedback?.transcript}
-                    interviewerName={reportData?.interviewers?.[0]}
+                    interviewerName={'Nova'}
                     candidateName={`${candidate?.firstName} ${candidate?.lastName}`}
                   />
                 </CardContent>
@@ -376,7 +376,7 @@ const ReportDetailScreen = ({ route }) => {
 
           <Text style={{ marginBottom: 8 }}>
             <Text style={{ fontWeight: 'bold' }}>AI Agent: </Text>
-            {reportData?.interviewers?.[0]}
+            Nova
           </Text>
 
           <Text style={{ marginBottom: 16 }}>
