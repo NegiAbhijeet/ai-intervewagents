@@ -360,10 +360,67 @@ const CallUI = ({
               flex: 1,
               borderRadius: 16,
               overflow: 'hidden',
-              backgroundColor: 'black', // just in case camera fails to load
+              backgroundColor: 'black',
             }}
           >
-            {cameraOn && cameraDevice && hasCameraPermission ? (
+            {!hasStarted ? (
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                 
+                  padding: 28,
+                  backgroundColor: '#3a3a3a',
+                }}
+              >
+                <Text
+                  style={{
+                    color: 'white',
+                    fontSize: 26,
+                    fontWeight: '700',
+                    marginBottom: 20,
+                  
+                  }}
+                >
+                  Interview Instructions
+                </Text>
+
+                <Text
+                  style={{
+                    color: '#e0e0e0',
+                    fontSize: 16,
+                    marginBottom: 10,
+                    textAlign: 'left',
+                    width: '100%',
+                  }}
+                >
+                  1. Start the interview by saying Hello
+                </Text>
+
+                <Text
+                  style={{
+                    color: '#e0e0e0',
+                    fontSize: 16,
+                    marginBottom: 10,
+                    textAlign: 'left',
+                    width: '100%',
+                  }}
+                >
+                  2. Sit in a quiet place without any background noise
+                </Text>
+                <Text
+                  style={{
+                    color: '#e0e0e0',
+                    fontSize: 16,
+                    marginBottom: 10,
+                    textAlign: 'left',
+                    width: '100%',
+                  }}
+                >
+                  3. Ensure a stable internet connection for the best experience
+                </Text>
+              </View>
+            ) : cameraOn && cameraDevice && hasCameraPermission ? (
               <Camera
                 style={{
                   flex: 1,
@@ -395,7 +452,11 @@ const CallUI = ({
                   Camera is Off
                 </Text>
                 <Text
-                  style={{ color: '#ccc', fontSize: 16, textAlign: 'center' }}
+                  style={{
+                    color: '#ffecec',
+                    fontSize: 16,
+                    textAlign: 'center',
+                  }}
                 >
                   Please turn on your camera.
                 </Text>

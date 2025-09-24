@@ -48,8 +48,8 @@ const Timer = ({
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: 10,
-    left: 10,
+    top: 25,
+    left: 25,
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
     paddingVertical: 8,
     paddingHorizontal: 16,
