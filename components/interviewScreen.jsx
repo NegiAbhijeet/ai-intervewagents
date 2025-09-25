@@ -354,11 +354,11 @@ const CallUI = ({
         )}
 
         {/* ✅ Main Area */}
-        <View style={{ flex: 1, padding: 20 }}>
+        <View style={{ flex: 1, padding: hasStarted && cameraOn ? 0 : 20 }}>
           <View
             style={{
               flex: 1,
-              borderRadius: 16,
+              borderRadius: hasStarted && cameraOn ? 0 : 16,
               overflow: 'hidden',
               backgroundColor: 'black',
             }}
@@ -368,9 +368,9 @@ const CallUI = ({
                 style={{
                   flex: 1,
                   justifyContent: 'center',
-                 
+
                   padding: 28,
-                  backgroundColor: '#3a3a3a',
+                  backgroundColor: '#141414',
                 }}
               >
                 <Text
@@ -379,7 +379,6 @@ const CallUI = ({
                     fontSize: 26,
                     fontWeight: '700',
                     marginBottom: 20,
-                  
                   }}
                 >
                   Interview Instructions
@@ -419,6 +418,19 @@ const CallUI = ({
                 >
                   3. Ensure a stable internet connection for the best experience
                 </Text>
+                <Text
+                  style={{
+                    color: '#ffffff',
+                    fontSize: 17,
+                    fontWeight: '700',
+                    marginBottom: 10,
+                    textAlign: 'left',
+                    width: '100%',
+                    fontStyle: 'italic',
+                  }}
+                >
+                  4. Sit in a quiet and well-lit place
+                </Text>
               </View>
             ) : cameraOn && cameraDevice && hasCameraPermission ? (
               <Camera
@@ -438,7 +450,7 @@ const CallUI = ({
                   justifyContent: 'center',
                   alignItems: 'center',
                   padding: 24,
-                  backgroundColor: 'gray',
+                  backgroundColor: '#141414',
                 }}
               >
                 <Text
@@ -471,7 +483,10 @@ const CallUI = ({
             paddingHorizontal: 20,
             paddingBottom: 30,
             paddingTop: 16,
-            backgroundColor: 'black',
+            position: 'absolute',
+            bottom: 10,
+            left: 0,
+            right: 0,
           }}
         >
           <View
