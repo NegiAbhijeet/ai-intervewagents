@@ -25,7 +25,7 @@ const typeOptions = [
 
 export default function ScheduleInterviewScreen({ userProfile, type }) {
   const insets = useSafeAreaInsets();
-  const [interviewType, setInterviewType] = useState('Behavioral');
+  const [interviewType, setInterviewType] = useState('Technical');
   const [selectedPosition, setSelectedPosition] = useState('');
   const [currentSkill, setCurrentSkill] = useState('');
   const [skills, setSkills] = useState([]);
