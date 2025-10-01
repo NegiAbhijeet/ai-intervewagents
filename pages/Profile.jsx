@@ -278,7 +278,13 @@ export default function ProfileScreen() {
                 </Text>
               </View>
 
-              <TouchableOpacity className="bg-blue-500 p-3 items-center rounded-xl">
+              <TouchableOpacity
+                onPress={() =>
+                  Linking.openURL('https://aiinterviewagents.com/pricing')
+                }
+                className="bg-blue-500 p-3 items-center rounded-xl"
+                activeOpacity={0.8}
+              >
                 <Text className="text-white font-bold">Upgrade to Pro</Text>
               </TouchableOpacity>
             </View>
