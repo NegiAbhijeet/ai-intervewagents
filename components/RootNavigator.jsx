@@ -7,6 +7,7 @@ import AuthStack from './navigation/AuthStack';
 import { AppStateContext } from './AppContext';
 import Leaderboard from '../pages/leaderBoard';
 import GetStartedScreen from './GetStartedScreen';
+import JobDetailPage from '../pages/JobDetailPage';
 
 const Stack = createNativeStackNavigator();
 
@@ -35,6 +36,11 @@ const RootNavigator = () => {
         name="jobs"
         component={Jobs}
         options={{ headerShown: true, title: 'Job Recommendations' }}
+      />
+      <Stack.Screen
+        name="jobDetails"
+        component={JobDetailPage}
+        options={{ headerShown: true, title: 'Job Details' }}
       />
       <Stack.Screen
         name="leaderBoard"
