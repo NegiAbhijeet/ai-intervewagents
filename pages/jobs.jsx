@@ -236,7 +236,7 @@ export default function JobsPage() {
           <View className="space-y-6 sm:space-y-8 mt-4">
             <View className="flex-row items-center gap-3">
               <View className="flex-1">
-                <View className="h-12 border border-gray-200 rounded-lg overflow-hidden justify-center px-3">
+                <View className="h-12 border border-gray-300 rounded-lg overflow-hidden justify-center px-3 bg-white">
                   <Picker
                     mode="dropdown"
                     selectedValue={jobTypeFilter}
@@ -253,7 +253,7 @@ export default function JobsPage() {
               </View>
 
               <View className="flex-1">
-                <View className="h-12 border border-gray-200 rounded-lg overflow-hidden justify-center px-3">
+                <View className="h-12 border border-gray-300 rounded-lg overflow-hidden justify-center px-3 bg-white">
                   <Picker
                     mode="dropdown"
                     selectedValue={locationFilter}
