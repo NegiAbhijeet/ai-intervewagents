@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AppTabs from './navigation/AppTabs';
 import Profile from '../pages/Profile';
+import Jobs from '../pages/jobs';
 import AuthStack from './navigation/AuthStack';
 import { AppStateContext } from './AppContext';
 import Leaderboard from '../pages/leaderBoard';
@@ -26,9 +27,14 @@ const RootNavigator = () => {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="AppTabs" component={AppTabs} />
       <Stack.Screen
-        name="Profile"
+        name="profile"
         component={Profile}
         options={{ headerShown: true, title: 'Your Profile' }}
+      />
+      <Stack.Screen
+        name="jobs"
+        component={Jobs}
+        options={{ headerShown: true, title: 'Job Recommendations' }}
       />
       <Stack.Screen
         name="leaderBoard"

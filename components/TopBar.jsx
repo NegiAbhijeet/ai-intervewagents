@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState } from 'react'
 import {
   View,
   Text,
@@ -6,67 +6,79 @@ import {
   TouchableOpacity,
   Modal,
   Pressable,
-  Button,
-} from 'react-native';
-import { AppStateContext } from './AppContext';
-import { auth } from '../libs/firebase';
-import { signOut } from 'firebase/auth';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import Ionicons from '@react-native-vector-icons/ionicons';
-import { useNavigation } from '@react-navigation/native';
-import Toast from 'react-native-toast-message';
+  ActivityIndicator,
+  Alert,
+} from 'react-native'
+import { AppStateContext } from './AppContext'
+import { auth } from '../libs/firebase'
+import { signOut } from 'firebase/auth'
+import { GoogleSignin } from '@react-native-google-signin/google-signin'
+import Ionicons from '@react-native-vector-icons/ionicons'
+import { useNavigation } from '@react-navigation/native'
+import Toast from 'react-native-toast-message'
 
 const TopBar = () => {
-  const { userProfile, setUserProfile } = useContext(AppStateContext);
-  const [modalVisible, setModalVisible] = useState(false);
-  const navigation = useNavigation();
+  const { userProfile, setUserProfile } = useContext(AppStateContext)
+  const [menuVisible, setMenuVisible] = useState(false)
+  const [confirmVisible, setConfirmVisible] = useState(false)
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const navigation = useNavigation()
+
   const getInitial = name => {
-    if (!name) return '?';
-    return name.charAt(0).toUpperCase();
-  };
+    if (!name) return '?'
+    return name.charAt(0).toUpperCase()
+  }
 
-  const logout = async () => {
+  const performLogout = async () => {
+    setIsLoggingOut(true)
+
     try {
-      setModalVisible(false);
+      setConfirmVisible(false)
+      setMenuVisible(false)
 
-      const currentUser = auth.currentUser;
+      const currentUser = auth.currentUser
 
-      // if no currentUser, still attempt to clear state
       if (currentUser) {
         const isGoogleProvider = currentUser.providerData?.some(
-          p => p.providerId === 'google.com',
-        );
+          p => p.providerId === 'google.com'
+        )
 
         if (isGoogleProvider) {
-          // only call Google APIs when provider is google
-          await GoogleSignin.revokeAccess();
-          await GoogleSignin.signOut();
+          await GoogleSignin.revokeAccess()
+          await GoogleSignin.signOut()
         }
       }
 
-      await signOut(auth);
-      setUserProfile(null);
+      await signOut(auth)
+      setUserProfile(null)
 
-      console.log('[Logout] User successfully logged out');
+      console.log('[Logout] User successfully logged out')
     } catch (err) {
-      console.error('Error signing out:', err);
+      console.error('Error signing out:', err)
       Toast.show({
         type: 'error',
         text1: 'Logout failed',
         text2: 'Something went wrong while signing out. Please try again.',
-      });
+      })
+    } finally {
+      setIsLoggingOut(false)
     }
-  };
+  }
 
-  const goToProfile = () => {
-    setModalVisible(false);
-    navigation.navigate('Profile');
-  };
+  const onLogoutPress = () => {
+    // show confirmation dialog/modal first
+    setConfirmVisible(true)
+  }
+
+  // const goToProfile = () => {
+  //   setMenuVisible(false)
+  //   navigation.navigate('Profile')
+  // }
 
   return (
     <View className="flex-row justify-between items-center px-4 pt-4 pb-3 bg-white border-b border-gray-200 shadow-md">
       <TouchableOpacity
-        onPress={() => setModalVisible(true)}
+        onPress={() => setMenuVisible(true)}
         className="flex-row items-center gap-2"
       >
         <Image
@@ -75,6 +87,7 @@ const TopBar = () => {
         />
         <Text className="font-semibold text-xl">AI Interview Agents</Text>
       </TouchableOpacity>
+
       <View className="flex-row items-center gap-3">
         <TouchableOpacity
           onPress={() => navigation.navigate('leaderBoard')}
@@ -82,7 +95,7 @@ const TopBar = () => {
         >
           <View
             className="flex-row items-center justify-center gap-2 border border-gray-300 rounded-full px-3 h-10"
-            style={{ overflow: 'hidden' }} // ensures border-radius works properly
+            style={{ overflow: 'hidden' }}
           >
             <Text className="text-xl font-semibold">
               {userProfile?.current_streak || 0}
@@ -95,7 +108,7 @@ const TopBar = () => {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => setModalVisible(true)}>
+        <TouchableOpacity onPress={() => setMenuVisible(true)}>
           {userProfile?.image_url ? (
             <Image
               source={{ uri: userProfile?.image_url }}
@@ -111,12 +124,12 @@ const TopBar = () => {
         </TouchableOpacity>
       </View>
 
+      {/* Menu Modal */}
       <Modal
         animationType="fade"
         transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-        style={{ zIndex: 1111 }}
+        visible={menuVisible}
+        onRequestClose={() => setMenuVisible(false)}
       >
         <Pressable
           style={{
@@ -127,24 +140,23 @@ const TopBar = () => {
             paddingTop: 60,
             paddingRight: 20,
           }}
-          onPress={() => setModalVisible(false)}
+          onPress={() => setMenuVisible(false)}
         >
           <View
             style={{
               backgroundColor: 'white',
               borderRadius: 10,
-              paddingVertical: 10,
-
+              paddingVertical: 6,
               elevation: 5,
               width: 180,
             }}
           >
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={goToProfile}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
-                paddingVertical: 8,
+                paddingVertical: 10,
                 paddingHorizontal: 16,
               }}
             >
@@ -155,24 +167,25 @@ const TopBar = () => {
                 style={{ marginRight: 10 }}
               />
               <Text style={{ fontSize: 16, color: '#333' }}>Profile</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
-            {/* Divider line */}
-            <View
+            {/* <View
               style={{
                 height: 1,
                 backgroundColor: '#e5e7eb',
-                marginVertical: 5,
+                marginVertical: 4,
               }}
-            />
+            /> */}
 
             <TouchableOpacity
-              onPress={logout}
+              onPress={onLogoutPress}
+              disabled={isLoggingOut}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
-                paddingVertical: 8,
+                paddingVertical: 10,
                 paddingHorizontal: 16,
+                opacity: isLoggingOut ? 0.6 : 1,
               }}
             >
               <Ionicons
@@ -186,8 +199,86 @@ const TopBar = () => {
           </View>
         </Pressable>
       </Modal>
-    </View>
-  );
-};
 
-export default TopBar;
+      {/* Confirm Modal */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={confirmVisible}
+        onRequestClose={() => {
+          if (!isLoggingOut) setConfirmVisible(false)
+        }}
+      >
+        <Pressable
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0,0,0,0.3)',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: 20,
+          }}
+          onPress={() => {
+            if (!isLoggingOut) setConfirmVisible(false)
+          }}
+        >
+          <View
+            style={{
+              width: '90%',
+              maxWidth: 320,
+              backgroundColor: 'white',
+              borderRadius: 10,
+              padding: 20,
+              elevation: 6,
+            }}
+          >
+            <Text style={{ fontSize: 18, fontWeight: '600', marginBottom: 8 }}>
+              Are you sure you want to logout?
+            </Text>
+            <Text style={{ fontSize: 14, color: '#4b5563', marginBottom: 18 }}>
+              You will need to sign in again to continue
+            </Text>
+
+            <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+              <TouchableOpacity
+                onPress={() => {
+                  if (!isLoggingOut) setConfirmVisible(false)
+                }}
+                style={{
+                  paddingVertical: 10,
+                  paddingHorizontal: 14,
+                  marginRight: 8,
+                }}
+                disabled={isLoggingOut}
+              >
+                <Text style={{ fontSize: 16, color: '#374151' }}>Cancel</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={performLogout}
+                style={{
+                  paddingVertical: 10,
+                  paddingHorizontal: 14,
+                  backgroundColor: '#ef4444',
+                  borderRadius: 6,
+                  minWidth: 110,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexDirection: 'row',
+                }}
+                disabled={isLoggingOut}
+              >
+                {isLoggingOut ? (
+                  <ActivityIndicator size="small" />
+                ) : (
+                  <Text style={{ fontSize: 16, color: '#fff' }}>Logout</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Pressable>
+      </Modal>
+    </View>
+  )
+}
+
+export default TopBar

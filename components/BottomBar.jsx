@@ -2,25 +2,14 @@ import React from 'react';
 import { View, Pressable, Text, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
-import { Ionicons } from '@react-native-vector-icons/ionicons';
+import Ionicons from '@react-native-vector-icons/ionicons';
 
 const TABS = [
-  {
-    name: 'index',
-    label: 'Home',
-    iconName: 'home',
-  },
-  {
-    name: 'interview',
-    label: 'Interview',
-    iconName: 'mic',
-    isCenter: true,
-  },
-  {
-    name: 'reports',
-    label: 'Reports',
-    iconName: 'document-text',
-  },
+  { name: 'index', label: 'Home', iconName: 'home' },
+  { name: 'jobs', label: 'Jobs', iconName: 'briefcase' },
+  { name: 'interview', label: 'Interview', iconName: 'mic', isCenter: true },
+  { name: 'reports', label: 'Reports', iconName: 'document-text' },
+  { name: 'profile', label: 'Profile', iconName: 'person' },
 ];
 
 const BottomTabBar = ({ state, descriptors, navigation }) => {
@@ -40,13 +29,17 @@ const BottomTabBar = ({ state, descriptors, navigation }) => {
         height: Platform.OS === 'ios' ? 80 : 70,
       }}
     >
-      {TABS.map((tab, index) => {
-        const isFocused = state.index === index;
+      {TABS.map(tab => {
+        const focusedRoute = state.routes[state.index];
+        const isFocused = focusedRoute?.name === tab.name;
 
         const onPress = () => {
+          const route = state.routes.find(r => r.name === tab.name);
+          const targetKey = route ? route.key : state.routes[state.index].key;
+
           const event = navigation.emit({
             type: 'tabPress',
-            target: state.routes[index].key,
+            target: targetKey,
             canPreventDefault: true,
           });
 
@@ -57,7 +50,6 @@ const BottomTabBar = ({ state, descriptors, navigation }) => {
 
         const iconColor = isFocused ? '#3B82F6' : '#9CA3AF';
 
-        // Center button (Interview)
         if (tab.isCenter) {
           return (
             <View
@@ -108,7 +100,6 @@ const BottomTabBar = ({ state, descriptors, navigation }) => {
           );
         }
 
-        // Regular tabs (Home, Reports)
         return (
           <Pressable
             key={tab.name}
