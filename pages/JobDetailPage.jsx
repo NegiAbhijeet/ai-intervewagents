@@ -1,5 +1,5 @@
 // JobDetailPage.native.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import {
   View,
   Text,
@@ -14,8 +14,10 @@ import fetchWithAuth from '../libs/fetchWithAuth';
 import { API_URL, JAVA_API_URL } from '../components/config';
 import LearningMaterials from '../components/learning-materials';
 import Ionicons from '@react-native-vector-icons/ionicons';
+import { AppStateContext } from '../components/AppContext';
 
 export default function JobDetailPage() {
+  const { setJobs } = useContext(AppStateContext);
   const navigation = useNavigation();
   const route = useRoute();
   // expecting route.params?.id
@@ -35,7 +37,6 @@ export default function JobDetailPage() {
     const fetchJobData = async () => {
       try {
         setIsLoading(true);
-        console.log('======', id);
         const response = await fetchWithAuth(`${API_URL}/job-details/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -48,7 +49,6 @@ export default function JobDetailPage() {
 
         const res = await response.json();
         const data = res?.jobDetails;
-        console.log(data, '++++');
         setIsApplied(Boolean(data?.applied));
         setStatus(data?.status || null);
         setJobData(data);
@@ -162,6 +162,11 @@ export default function JobDetailPage() {
       }
 
       setStatus(status ? null : 'saved');
+      setJobs(prevJobs =>
+        prevJobs.map(job =>
+          job.job_id === id ? { ...job, status: status ? '' : 'saved' } : job,
+        ),
+      );
     } catch (error) {
       console.error('Error updating job status:', error);
     } finally {
