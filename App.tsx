@@ -26,7 +26,7 @@ export default function App() {
               logLevel: Clarity.LogLevel.Verbose,
             };
 
-            Clarity.initialize('<project-id>', clarityConfig);
+            Clarity.initialize('sfa6haegob', clarityConfig);
             Clarity.setCurrentScreenName(routeNameRef.current);
           }}
         >
