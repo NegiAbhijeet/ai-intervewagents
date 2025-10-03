@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   // Linking,
   ScrollView,
+  Linking,
 } from 'react-native';
 
 export function LearningMaterials({ jobData, materialLoading }) {
@@ -16,9 +17,9 @@ export function LearningMaterials({ jobData, materialLoading }) {
 
   const openLink = url => {
     if (!url) return;
-    // Linking.openURL(url).catch(err =>
-    //   console.error('Failed to open link', err),
-    // );
+    Linking.openURL(url).catch(err =>
+      console.error('Failed to open link', err),
+    );
   };
 
   const PlaceholderLine = ({ width = '3/4' }) => (

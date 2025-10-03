@@ -280,7 +280,18 @@ export default function JobDetailPage() {
           )}
         </View>
       </View>
-
+      <View className="mb-6">
+        <View className="flex-row items-center mb-3">
+          <Ionicons name="book-outline" size={20} color="#16a34a" />
+          <Text className="text-xl font-bold text-gray-900 ml-3">
+            Learning Materials
+          </Text>
+        </View>
+        <LearningMaterials
+          jobData={jobData}
+          materialLoading={materialLoading}
+        />
+      </View>
       {/* Apply Section */}
       <View className="mb-6">
         <View className="flex-row items-center mb-3">
