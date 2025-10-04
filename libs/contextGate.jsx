@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View, StatusBar } from 'react-native';
 import { onAuthStateChanged } from 'firebase/auth';
 import fetchUserDetails from './fetchUser';
 import { AppStateContext } from '../components/AppContext';
@@ -46,6 +46,11 @@ const ContextGate = ({ children }) => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor={authLoading ? '#4f46e5' : 'white'}
+        translucent={false}
+      />
       {authLoading ? (
         <View className="flex-1 justify-center items-center">
           <SplashScreen />
