@@ -10,7 +10,6 @@ import {
   Alert,
   Linking,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { signOut } from 'firebase/auth';
 import { AppStateContext } from '../components/AppContext';
@@ -28,11 +27,13 @@ export default function ProfileScreen() {
     userProfile,
     totalMinutes,
     usedMinutes,
+    usedFreeMinutes,
     firebaseUser,
     setUserProfile,
+    isFreePlan,
   } = useContext(AppStateContext);
+  const activeUsedMinutes = isFreePlan ? usedFreeMinutes : usedMinutes;
 
-  const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
 
   const initials =
@@ -203,7 +204,7 @@ export default function ProfileScreen() {
                   </Text>
                   <TextInput
                     className="bg-gray-100 border border-gray-300 rounded-md px-4 py-2 text-base"
-                    value={String(usedMinutes)}
+                    value={String(activeUsedMinutes)}
                     editable={false}
                   />
                 </View>
@@ -257,7 +258,7 @@ export default function ProfileScreen() {
                 </View>
 
                 <Text className="text-sm text-gray-600 mt-2">
-                  <Text className="font-bold">{usedMinutes}</Text> of{' '}
+                  <Text className="font-bold">{activeUsedMinutes}</Text> of
                   <Text className="font-bold">{totalMinutes}</Text> minutes used
                 </Text>
 
@@ -267,14 +268,14 @@ export default function ProfileScreen() {
                     style={{
                       width: `${Math.max(
                         5,
-                        (usedMinutes / totalMinutes) * 100,
+                        (activeUsedMinutes / totalMinutes) * 100,
                       )}%`,
                     }}
                   />
                 </View>
 
                 <Text className="text-xs text-gray-500 text-center mt-2">
-                  {totalMinutes - usedMinutes} minutes left
+                  {totalMinutes - activeUsedMinutes} minutes left
                 </Text>
               </View>
 
@@ -292,14 +293,14 @@ export default function ProfileScreen() {
             {/* Links Section */}
             <View className="items-center">
               <Text className="text-sm text-gray-600">
-                By using this app, you agree to our{' '}
+                By using this app, you agree to our
                 <Text
                   className="text-blue-600"
                   onPress={() => Linking.openURL(TERMS_OF_USE_URL)}
                 >
                   Terms of Service
-                </Text>{' '}
-                and{' '}
+                </Text>
+                and
                 <Text
                   className="text-blue-600"
                   onPress={() => Linking.openURL(PRIVACY_POILCY_URL)}

@@ -6,6 +6,7 @@ import { AppStateContext } from '../components/AppContext';
 import { auth } from './firebase';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import SplashScreen from '../components/SplashScreen';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const ContextGate = ({ children }) => {
   const { setUserProfile, setFirebaseUser } = useContext(AppStateContext);
@@ -44,7 +45,7 @@ const ContextGate = ({ children }) => {
   }, []);
 
   return (
-    <View className="flex-1">
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       {authLoading ? (
         <View className="flex-1 justify-center items-center">
           <SplashScreen />
@@ -52,7 +53,7 @@ const ContextGate = ({ children }) => {
       ) : (
         <View className="flex-1">{children}</View>
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 

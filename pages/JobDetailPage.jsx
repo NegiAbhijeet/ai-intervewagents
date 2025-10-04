@@ -360,7 +360,7 @@ export default function JobDetailPage() {
               </View>
             </View>
 
-            <View className="rounded-[24px] overflow-hidden py-4 bg-gradient-to-r from-blue-400/60 to-pink-500/70">
+            <View className="py-4">
               <View className="items-center w-full">
                 <View className="mb-3 w-full">
                   <Text className="text-xl font-semibold text-black text-center">
@@ -369,7 +369,12 @@ export default function JobDetailPage() {
                 </View>
 
                 <TouchableOpacity
-                  onPress={() => navigation.navigate('interview')}
+                  onPress={() =>
+                    navigation.navigate('AppTabs', {
+                      screen: 'interview',
+                      params: { position: jobData.title },
+                    })
+                  }
                   className="bg-blue-600 px-6 py-3 rounded items-center justify-center w-full"
                   activeOpacity={0.8}
                 >

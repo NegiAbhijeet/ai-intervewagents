@@ -16,26 +16,24 @@ export default function App() {
   const routeNameRef = React.useRef();
   const navigationRef = useNavigationContainerRef();
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-      <AppStateProvider>
-        <NavigationContainer
-          ref={navigationRef}
-          onReady={() => {
-            routeNameRef.current = navigationRef.getCurrentRoute().name;
-            const clarityConfig = {
-              logLevel: Clarity.LogLevel.Verbose,
-            };
+    <AppStateProvider>
+      <NavigationContainer
+        ref={navigationRef}
+        onReady={() => {
+          routeNameRef.current = navigationRef.getCurrentRoute().name;
+          const clarityConfig = {
+            logLevel: Clarity.LogLevel.Verbose,
+          };
 
-            Clarity.initialize('sfa6haegob', clarityConfig);
-            Clarity.setCurrentScreenName(routeNameRef.current);
-          }}
-        >
-          <ContextGate>
-            <RootNavigator />
-          </ContextGate>
-        </NavigationContainer>
-        <Toast topOffset={70} config={toastConfig} />
-      </AppStateProvider>
-    </SafeAreaView>
+          Clarity.initialize('sfa6haegob', clarityConfig);
+          Clarity.setCurrentScreenName(routeNameRef.current);
+        }}
+      >
+        <ContextGate>
+          <RootNavigator />
+        </ContextGate>
+      </NavigationContainer>
+      <Toast topOffset={70} config={toastConfig} />
+    </AppStateProvider>
   );
 }

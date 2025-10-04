@@ -23,10 +23,15 @@ const typeOptions = [
   { label: 'Behavioral', value: 'Behavioral' },
 ];
 
-export default function ScheduleInterviewScreen({ userProfile, type }) {
+export default function ScheduleInterviewScreen({
+  routePosition,
+  userProfile,
+  type,
+  isFromJob,
+}) {
   const insets = useSafeAreaInsets();
   const [interviewType, setInterviewType] = useState('Technical');
-  const [selectedPosition, setSelectedPosition] = useState('');
+  const [selectedPosition, setSelectedPosition] = useState(routePosition || '');
   const [currentSkill, setCurrentSkill] = useState('');
   const [skills, setSkills] = useState([]);
   const [duration, setDuration] = useState('');
@@ -99,7 +104,11 @@ export default function ScheduleInterviewScreen({ userProfile, type }) {
       fetchCandidatedata();
     }
   }, [userProfile]);
-
+  useEffect(() => {
+    if (isFromJob && routePosition) {
+      fetchSkillsForPosition(routePosition);
+    }
+  }, [isFromJob, routePosition]);
   // ✅ Skill Suggestion Based on Position
   const fetchSkillsForPosition = async position => {
     setLoadingSkills(true);
