@@ -190,107 +190,124 @@ export default function JobsPage() {
     );
   };
 
-  if (openPopup) {
-    return (
-      <JobsFormDetails
-        uid={userProfile?.uid}
-        canId={candidate?.canId}
-        fetchJobs={fetchJobs}
-        setJobs={setJobs}
-        setOpenPopup={setOpenPopup}
-      />
-    );
-  }
+  // if (!openPopup) {
+  //   return (
+  //     <JobsFormDetails
+  //       uid={userProfile?.uid}
+  //       canId={candidate?.canId}
+  //       fetchJobs={fetchJobs}
+  //       setJobs={setJobs}
+  //       setOpenPopup={setOpenPopup}
+  //     />
+  //   );
+  // }
 
   return (
     <>
       <TopBar />
       <Layout>
-        <ScrollView showsVerticalScrollIndicator={false} className="py-5">
-          {/* Header */}
-          <View className="flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <DashboardHeader
-              title="Recommended Jobs"
-              description="View and apply for jobs matched to you."
-              extraText="(Upcoming job update in 12 hours)"
-            />
+        {openPopup ? (
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            className="py-5"
+          >
+            <View className="flex-1 items-center justify-center w-full">
+              <JobsFormDetails
+                uid={userProfile?.uid}
+                canId={candidate?.canId}
+                fetchJobs={fetchJobs}
+                setJobs={setJobs}
+                setOpenPopup={setOpenPopup}
+              />
+            </View>
+          </ScrollView>
+        ) : (
+          <ScrollView showsVerticalScrollIndicator={false} className="py-5">
+            {/* Header */}
+            <View className="flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <DashboardHeader
+                title="Recommended Jobs"
+                description="View and apply for jobs matched to you."
+                extraText="(Upcoming job update in 12 hours)"
+              />
 
-            <TouchableOpacity
-              onPress={() => setShowSavedOnly(prev => !prev)}
-              className="flex-row items-center justify-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg w-full sm:w-auto"
-            >
-              <Text className="text-lg">
-                {showSavedOnly ? 'All Jobs' : 'Saved Jobs'}
-              </Text>
-              <View className="ml-2" style={{ width: 18, height: 18 }}>
-                <Ionicons
-                  name={showSavedOnly ? 'bookmark' : 'bookmark-outline'}
-                  size={18}
-                  color="#000000"
-                />
-              </View>
-            </TouchableOpacity>
-          </View>
-
-          {/* Filters */}
-          <View className="space-y-6 sm:space-y-8 mt-4">
-            <View className="flex-row items-center gap-3">
-              <View className="flex-1">
-                <View className="h-12 border border-gray-300 rounded-lg overflow-hidden justify-center px-3 bg-white">
-                  <Picker
-                    mode="dropdown"
-                    selectedValue={jobTypeFilter}
-                    onValueChange={val => setJobTypeFilter(val)}
-                    style={{ width: '100%', paddingVertical: 6 }}
-                    itemStyle={{ fontSize: 15 }}
-                  >
-                    <Picker.Item label="All Types" value="" />
-                    <Picker.Item label="Full Time" value="full time" />
-                    <Picker.Item label="Hybrid" value="Hybrid" />
-                    <Picker.Item label="Remote" value="Remote" />
-                  </Picker>
+              <TouchableOpacity
+                onPress={() => setShowSavedOnly(prev => !prev)}
+                className="flex-row items-center justify-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg w-full sm:w-auto"
+              >
+                <Text className="text-lg">
+                  {showSavedOnly ? 'All Jobs' : 'Saved Jobs'}
+                </Text>
+                <View className="ml-2" style={{ width: 18, height: 18 }}>
+                  <Ionicons
+                    name={showSavedOnly ? 'bookmark' : 'bookmark-outline'}
+                    size={18}
+                    color="#000000"
+                  />
                 </View>
-              </View>
-
-              <View className="flex-1">
-                <View className="h-12 border border-gray-300 rounded-lg overflow-hidden justify-center px-3 bg-white">
-                  <Picker
-                    mode="dropdown"
-                    selectedValue={locationFilter}
-                    onValueChange={val => setLocationFilter(val)}
-                    style={{ width: '100%', paddingVertical: 6 }}
-                    itemStyle={{ fontSize: 15 }}
-                  >
-                    <Picker.Item label="All Locations" value="" />
-                    {uniqueLocations.map((loc, idx) => (
-                      <Picker.Item key={idx} label={loc} value={loc} />
-                    ))}
-                  </Picker>
-                </View>
-              </View>
+              </TouchableOpacity>
             </View>
 
-            {/* Job List */}
-            <View className="mt-4">
-              {loading ? (
-                <View className="w-full items-center justify-center py-16">
-                  <View className="flex-row items-center gap-3">
-                    <ActivityIndicator size="large" />
-                    <Text className="text-sm text-gray-600 font-medium">
-                      {loaderText}
-                    </Text>
+            {/* Filters */}
+            <View className="space-y-6 sm:space-y-8 mt-4">
+              <View className="flex-row items-center gap-3">
+                <View className="flex-1">
+                  <View className="h-12 border border-gray-300 rounded-lg overflow-hidden justify-center px-3 bg-white">
+                    <Picker
+                      mode="dropdown"
+                      selectedValue={jobTypeFilter}
+                      onValueChange={val => setJobTypeFilter(val)}
+                      style={{ width: '100%', paddingVertical: 6 }}
+                      itemStyle={{ fontSize: 15 }}
+                    >
+                      <Picker.Item label="All Types" value="" />
+                      <Picker.Item label="Full Time" value="full time" />
+                      <Picker.Item label="Hybrid" value="Hybrid" />
+                      <Picker.Item label="Remote" value="Remote" />
+                    </Picker>
                   </View>
                 </View>
-              ) : (
-                filteredJobs.map((job, index) => (
-                  <View key={job.job_id || index} className="mb-3">
-                    {renderJob({ item: job })}
+
+                <View className="flex-1">
+                  <View className="h-12 border border-gray-300 rounded-lg overflow-hidden justify-center px-3 bg-white">
+                    <Picker
+                      mode="dropdown"
+                      selectedValue={locationFilter}
+                      onValueChange={val => setLocationFilter(val)}
+                      style={{ width: '100%', paddingVertical: 6 }}
+                      itemStyle={{ fontSize: 15 }}
+                    >
+                      <Picker.Item label="All Locations" value="" />
+                      {uniqueLocations.map((loc, idx) => (
+                        <Picker.Item key={idx} label={loc} value={loc} />
+                      ))}
+                    </Picker>
                   </View>
-                ))
-              )}
+                </View>
+              </View>
+
+              {/* Job List */}
+              <View className="mt-4">
+                {loading ? (
+                  <View className="w-full items-center justify-center py-16">
+                    <View className="flex-row items-center gap-3">
+                      <ActivityIndicator size="large" />
+                      <Text className="text-sm text-gray-600 font-medium">
+                        {loaderText}
+                      </Text>
+                    </View>
+                  </View>
+                ) : (
+                  filteredJobs.map((job, index) => (
+                    <View key={job.job_id || index} className="mb-3">
+                      {renderJob({ item: job })}
+                    </View>
+                  ))
+                )}
+              </View>
             </View>
-          </View>
-        </ScrollView>
+          </ScrollView>
+        )}
       </Layout>
     </>
   );

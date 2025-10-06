@@ -25,7 +25,7 @@ export default function App() {
             logLevel: Clarity.LogLevel.Verbose,
           };
 
-          Clarity.initialize('sfa6haegob', clarityConfig);
+          Clarity.initialize('tlsi9652zl', clarityConfig);
           Clarity.setCurrentScreenName(routeNameRef.current);
         }}
       >
