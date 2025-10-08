@@ -66,7 +66,7 @@ const GetStartedScreen = () => {
         style={styles.logo}
         resizeMode="contain"
       />
-
+<Text style={styles.logoTitle}>AI Interview Agents</Text>
       <Text style={styles.title}>Welcome to Our App</Text>
       <Text style={styles.subtitle}>
         Choose your role and let's get started!
@@ -94,7 +94,12 @@ const styles = StyleSheet.create({
   logo: {
     width: 180,
     height: 180,
-    marginBottom: 30,
+    // marginBottom: 30,
+  },
+  logoTitle:{
+    fontSize:20,
+    color:"#5C6EF8",
+marginBottom: 30,
   },
   title: {
     fontSize: 28,
