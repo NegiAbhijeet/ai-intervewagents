@@ -62,7 +62,7 @@ const TopBar = () => {
     if (userProfile?.uid) {
       fetchNotifications();
     }
-  }, [userProfile?.uid]);
+  }, [userProfile?.uid, unreadNotification]);
   const getInitial = name => {
     if (!name) return '?';
     return name.charAt(0).toUpperCase();
