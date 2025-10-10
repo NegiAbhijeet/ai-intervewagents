@@ -4,7 +4,11 @@ import messaging from '@react-native-firebase/messaging';
 import axios from 'axios';
 import { API_URL } from '../components/config';
 
-export const useNotification = (userId) => {
+export const useNotification = (
+  userId,
+  fcmTokenUpdated,
+  setFcmTokenUpdated,
+) => {
   useEffect(() => {
     if (!userId) return;
 
@@ -28,11 +32,12 @@ export const useNotification = (userId) => {
       }
     };
 
-    const sendTokenToServer = async (token) => {
-      if (!userId || !token) return;
+    const sendTokenToServer = async token => {
+      if (!userId || !token || fcmTokenUpdated) return;
       try {
         await axios.put(`${API_URL}/profile/${userId}/fcm-token/`, { token });
         console.log('Token sent to server');
+        setFcmTokenUpdated(true);
       } catch (err) {
         console.error('Error sending token to server:', err.message || err);
       }
@@ -56,7 +61,7 @@ export const useNotification = (userId) => {
         console.error('Error initializing notifications:', err);
       }
 
-      messaging().onTokenRefresh(async (newToken) => {
+      messaging().onTokenRefresh(async newToken => {
         console.log('Token refreshed, sending to server');
         await sendTokenToServer(newToken);
       });

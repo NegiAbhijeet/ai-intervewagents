@@ -9,6 +9,7 @@ import GradientCard from '../components/GradientCard';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import TopBar from '../components/TopBar';
+import { useNotification } from '../hooks/useNotifications';
 const interviews = [
   {
     title: 'Real Interview',
@@ -69,7 +70,8 @@ const StatsSkeleton = () => {
 };
 const Home = () => {
   const navigation = useNavigation();
-  const { userProfile, usedMinutes } = useContext(AppStateContext);
+  const { userProfile, usedMinutes, fcmTokenUpdated, setFcmTokenUpdated } =
+    useContext(AppStateContext);
   const [meetings, setMeetings] = useState([]);
   const [overallScore, setOverallScore] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -105,12 +107,13 @@ const Home = () => {
       setIsLoading(false);
     }
   }
+  useNotification(userProfile?.uid, fcmTokenUpdated, setFcmTokenUpdated);
 
   useEffect(() => {
-    if (userProfile) {
+    if (userProfile?.uid) {
       fetchMeetings();
     }
-  }, [userProfile]);
+  }, [userProfile?.uid]);
 
   useEffect(() => {
     if (meetings.length > 0) {

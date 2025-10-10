@@ -7,7 +7,6 @@ import { auth } from './firebase';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import SplashScreen from '../components/SplashScreen';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNotification } from '../hooks/useNotifications';
 import messaging from '@react-native-firebase/messaging';
 import Toast from 'react-native-toast-message';
 
@@ -20,8 +19,6 @@ const ContextGate = ({ children }) => {
   } = useContext(AppStateContext);
 
   const [authLoading, setAuthLoading] = useState(true);
-  const [userId, setUserId] = useState(null);
-  const [fcmToken, setFcmToken] = useState(null);
   // subscribe to foreground messages and increment unread count
   useEffect(() => {
     if (!userProfile?.uid) return;
@@ -84,12 +81,8 @@ const ContextGate = ({ children }) => {
 
       if (profile) {
         setUserProfile(profile);
-        setUserId(user.uid);
-        setFcmToken(profile?.fcm_token);
       } else {
         setUserProfile(null);
-        setUserId(null);
-        setFcmToken(null);
       }
 
       setAuthLoading(false);
@@ -97,8 +90,6 @@ const ContextGate = ({ children }) => {
 
     return () => unsubscribe();
   }, []);
-
-  useNotification(userId, fcmToken);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>

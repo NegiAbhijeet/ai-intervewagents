@@ -9,6 +9,7 @@ const AppStateProvider = ({ children }) => {
   const [isNotificationDraweron, setIsNotificationDrawerOn] = useState(false);
   const [jobs, setJobs] = useState([]);
   const [unreadNotification, setUnreadNotification] = useState(0);
+  const [fcmTokenUpdated, setFcmTokenUpdated] = useState(false);
   // Determine if the user is on a free plan
   const isFreePlan = userProfile?.plan?.id === 1;
 
@@ -44,6 +45,8 @@ const AppStateProvider = ({ children }) => {
       setUnreadNotification,
       notifications,
       setNotifications,
+      fcmTokenUpdated,
+      setFcmTokenUpdated,
     }),
     [
       userProfile,
@@ -56,6 +59,7 @@ const AppStateProvider = ({ children }) => {
       isNotificationDraweron,
       unreadNotification,
       notifications,
+      fcmTokenUpdated,
     ],
   );
 
