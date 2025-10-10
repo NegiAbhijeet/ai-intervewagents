@@ -5,7 +5,9 @@ const AppStateContext = createContext();
 const AppStateProvider = ({ children }) => {
   const [userProfile, setUserProfile] = useState(null);
   const [firebaseUser, setFirebaseUser] = useState(null);
+  const [isNotificationDraweron, setIsNotificationDrawerOn] = useState(false);
   const [jobs, setJobs] = useState([]);
+  const [unreadNotification, setUnreadNotification] = useState(0);
   // Determine if the user is on a free plan
   const isFreePlan = userProfile?.plan?.id === 1;
 
@@ -35,6 +37,10 @@ const AppStateProvider = ({ children }) => {
       setJobs,
       usedFreeMinutes,
       isFreePlan,
+      isNotificationDraweron,
+      setIsNotificationDrawerOn,
+      unreadNotification,
+      setUnreadNotification,
     }),
     [
       userProfile,
@@ -44,6 +50,8 @@ const AppStateProvider = ({ children }) => {
       jobs,
       usedFreeMinutes,
       isFreePlan,
+      isNotificationDraweron,
+      unreadNotification,
     ],
   );
 
