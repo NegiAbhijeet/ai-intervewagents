@@ -5,6 +5,7 @@ const AppStateContext = createContext();
 const AppStateProvider = ({ children }) => {
   const [userProfile, setUserProfile] = useState(null);
   const [firebaseUser, setFirebaseUser] = useState(null);
+  const [notifications, setNotifications] = useState(null);
   const [isNotificationDraweron, setIsNotificationDrawerOn] = useState(false);
   const [jobs, setJobs] = useState([]);
   const [unreadNotification, setUnreadNotification] = useState(0);
@@ -41,6 +42,8 @@ const AppStateProvider = ({ children }) => {
       setIsNotificationDrawerOn,
       unreadNotification,
       setUnreadNotification,
+      notifications,
+      setNotifications,
     }),
     [
       userProfile,
@@ -52,6 +55,7 @@ const AppStateProvider = ({ children }) => {
       isFreePlan,
       isNotificationDraweron,
       unreadNotification,
+      notifications,
     ],
   );
 

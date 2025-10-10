@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
 import { PermissionsAndroid, Platform } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { API_URL } from '../components/config';
 
-export const useNotification = (userId, profileFcmToken) => {
+export const useNotification = (userId) => {
   useEffect(() => {
+    if (!userId) return;
+
     const requestNotificationPermission = async () => {
       try {
         if (Platform.OS === 'android') {
@@ -15,7 +16,7 @@ export const useNotification = (userId, profileFcmToken) => {
           );
           return granted === PermissionsAndroid.RESULTS.GRANTED;
         }
-        // iOS permissions handled by messaging().requestPermission()
+
         const authStatus = await messaging().requestPermission();
         return (
           authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
@@ -27,73 +28,40 @@ export const useNotification = (userId, profileFcmToken) => {
       }
     };
 
-    const sendTokenToServer = async token => {
-      if (!userId || !token) return false;
+    const sendTokenToServer = async (token) => {
+      if (!userId || !token) return;
       try {
         await axios.put(`${API_URL}/profile/${userId}/fcm-token/`, { token });
-        console.log('Token synced to server');
-        return true;
+        console.log('Token sent to server');
       } catch (err) {
-        console.error('Error syncing token:', err.message || err);
-        return false;
+        console.error('Error sending token to server:', err.message || err);
       }
     };
 
-    const syncToken = async () => {
-      try {
-        await messaging().registerDeviceForRemoteMessages();
-        const newToken = await messaging().getToken();
-        const storedToken = await AsyncStorage.getItem('fcm_token');
-
-        if (!storedToken || storedToken !== newToken) {
-          console.log('New or changed token detected, syncing to server');
-          const ok = await sendTokenToServer(newToken);
-          if (ok) {
-            await AsyncStorage.setItem('fcm_token', newToken);
-            console.log('Token saved locally after successful sync');
-          } else {
-            console.log('Server sync failed, token not saved locally');
-          }
-        }
-
-        if (storedToken && !profileFcmToken) {
-          console.log('Profile missing token, syncing stored token');
-          await sendTokenToServer(storedToken);
-        }
-      } catch (err) {
-        console.error('Error syncing token:', err);
-      }
-    };
-
-    const handleTokenRefresh = async newToken => {
-      console.log('Token refreshed, syncing to server');
-      const ok = await sendTokenToServer(newToken);
-      if (ok) {
-        await AsyncStorage.setItem('fcm_token', newToken);
-        console.log('Refreshed token saved locally');
-      }
-    };
-
-    const initNotifications = async () => {
+    const init = async () => {
       const permissionGranted = await requestNotificationPermission();
       if (!permissionGranted) {
-        console.log('Notification permission not granted, skipping setup');
+        console.log('Notification permission not granted');
         return;
       }
 
-      await syncToken();
+      try {
+        await messaging().registerDeviceForRemoteMessages();
+        const token = await messaging().getToken();
+        if (token) {
+          console.log('Sending token to server on init');
+          await sendTokenToServer(token);
+        }
+      } catch (err) {
+        console.error('Error initializing notifications:', err);
+      }
 
-      const unsubscribe = messaging().onTokenRefresh(handleTokenRefresh);
-      return unsubscribe;
+      messaging().onTokenRefresh(async (newToken) => {
+        console.log('Token refreshed, sending to server');
+        await sendTokenToServer(newToken);
+      });
     };
 
-    let unsubscribe;
-    initNotifications().then(unsub => {
-      unsubscribe = unsub;
-    });
-
-    return () => {
-      if (unsubscribe) unsubscribe();
-    };
-  }, [userId, profileFcmToken]);
+    init();
+  }, [userId]);
 };

@@ -7,7 +7,7 @@ import Leaderboard from '../pages/leaderBoard';
 import GetStartedScreen from './GetStartedScreen';
 import JobDetailPage from '../pages/JobDetailPage';
 import ReportDetailScreen from '../pages/ReportDetail';
-
+import NotificationsPage from '../pages/NotificationsDrawer';
 const Stack = createNativeStackNavigator();
 
 const RootNavigator = () => {
@@ -26,7 +26,11 @@ const RootNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="AppTabs" component={AppTabs} />
-
+      <Stack.Screen
+        name="notifications"
+        component={NotificationsPage}
+        options={{ headerShown: true, title: 'Notifications' }}
+      />
       <Stack.Screen
         name="jobDetails"
         component={JobDetailPage}

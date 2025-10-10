@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -15,13 +15,17 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { useNavigation } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import Ionicons from '@react-native-vector-icons/ionicons';
+import fetchWithAuth from '../libs/fetchWithAuth';
+import { API_URL } from './config';
 
 const TopBar = () => {
   const {
     userProfile,
     setUserProfile,
-    setIsNotificationDrawerOn,
     unreadNotification,
+    notifications,
+    setNotifications,
+    setUnreadNotification,
   } = useContext(AppStateContext);
 
   const [menuVisible, setMenuVisible] = useState(false);
@@ -29,6 +33,36 @@ const TopBar = () => {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const navigation = useNavigation();
 
+  const unreadCount = useMemo(() => {
+    if (!Array.isArray(notifications)) return 0;
+    return notifications.filter(n => !n.read).length;
+  }, [notifications]);
+
+  useEffect(() => {
+    if (typeof setUnreadNotification === 'function') {
+      setUnreadNotification(unreadCount);
+    }
+  }, [unreadCount, setUnreadNotification]);
+  function fetchNotifications() {
+    fetchWithAuth(`${API_URL}/notifications/${userProfile.uid}/`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setNotifications(data);
+        } else {
+          setNotifications([]);
+        }
+      })
+      .catch(err => {
+        console.error('Failed to fetch notifications:', err);
+        setNotifications([]);
+      });
+  }
+  useEffect(() => {
+    if (userProfile?.uid) {
+      fetchNotifications();
+    }
+  }, [userProfile?.uid]);
   const getInitial = name => {
     if (!name) return '?';
     return name.charAt(0).toUpperCase();
@@ -114,9 +148,10 @@ const TopBar = () => {
         {/* Notification Bell */}
         <TouchableOpacity
           onPress={() => {
-            setIsNotificationDrawerOn(true);
+            // setIsNotificationDrawerOn(true);
+            navigation.navigate('notifications');
           }}
-          accessibilityLabel="Open notifications"
+          accessibilityLabel="Notifications"
           className="relative"
           style={{ paddingHorizontal: 6, paddingVertical: 6 }}
         >

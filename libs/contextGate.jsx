@@ -10,24 +10,18 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNotification } from '../hooks/useNotifications';
 import messaging from '@react-native-firebase/messaging';
 import Toast from 'react-native-toast-message';
-import NotificationDrawer from '../components/NotificationsDrawer';
-import fetchWithAuth from './fetchWithAuth';
-import { API_URL } from '../components/config';
 
 const ContextGate = ({ children }) => {
   const {
     setUserProfile,
     setFirebaseUser,
     userProfile,
-    isNotificationDraweron,
-    setIsNotificationDrawerOn,
     setUnreadNotification,
   } = useContext(AppStateContext);
 
   const [authLoading, setAuthLoading] = useState(true);
   const [userId, setUserId] = useState(null);
   const [fcmToken, setFcmToken] = useState(null);
-  const [notifications, setNotifications] = useState([]);
   // subscribe to foreground messages and increment unread count
   useEffect(() => {
     if (!userProfile?.uid) return;
@@ -42,10 +36,6 @@ const ContextGate = ({ children }) => {
         received_at: new Date().toISOString(),
       };
 
-      setNotifications(prev =>
-        Array.isArray(prev) ? [incoming, ...prev] : [incoming],
-      );
-
       setUnreadNotification(prev => (typeof prev === 'number' ? prev + 1 : 1));
 
       Toast.show({
@@ -57,7 +47,20 @@ const ContextGate = ({ children }) => {
 
     return () => unsubscribe();
   }, [userProfile?.uid]);
+  useEffect(() => {
+    if (!userProfile?.uid) return;
 
+    const unsubscribeOpened = messaging().onNotificationOpenedApp(
+      remoteMessage => {
+        if (!remoteMessage) return;
+        setUnreadNotification(prev =>
+          typeof prev === 'number' ? prev + 1 : 1,
+        );
+      },
+    );
+
+    return () => unsubscribeOpened();
+  }, [userProfile?.uid]);
   useEffect(() => {
     GoogleSignin.configure({
       webClientId:
@@ -97,33 +100,6 @@ const ContextGate = ({ children }) => {
 
   useNotification(userId, fcmToken);
 
-  // Use the exact fetchNotifications you provided
-  function fetchNotifications() {
-    fetchWithAuth(`${API_URL}/notifications/${userProfile?.uid}/`)
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) {
-          let unreadNots = data.filter(item => !item.read);
-          setUnreadNotification && setUnreadNotification(unreadNots.length);
-          setNotifications(data);
-        }
-      })
-      .catch(err => {
-        console.error('Failed to fetch notifications:', err);
-      });
-  }
-
-  useEffect(() => {
-    if (userProfile?.uid) {
-      fetchNotifications();
-    }
-  }, [userProfile?.uid]);
-
-  // mark single notification read
-  function handleCloseDrawer() {
-    setIsNotificationDrawerOn(false);
-  }
-
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <StatusBar
@@ -137,15 +113,7 @@ const ContextGate = ({ children }) => {
           <SplashScreen />
         </View>
       ) : (
-        <View className="flex-1">
-          {children}
-
-          <NotificationDrawer
-            visible={Boolean(isNotificationDraweron)}
-            onClose={handleCloseDrawer}
-            notifications={notifications}
-          />
-        </View>
+        <View className="flex-1">{children}</View>
       )}
     </SafeAreaView>
   );
