@@ -207,10 +207,7 @@ export default function JobsPage() {
       <TopBar />
       <Layout>
         {openPopup ? (
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            className="py-5"
-          >
+          <ScrollView showsVerticalScrollIndicator={false} className="py-5">
             <View className="flex-1 items-center justify-center w-full">
               <JobsFormDetails
                 uid={userProfile?.uid}
@@ -252,13 +249,17 @@ export default function JobsPage() {
             <View className="space-y-6 sm:space-y-8 mt-4">
               <View className="flex-row items-center gap-3">
                 <View className="flex-1">
-                  <View className="h-12 border border-gray-300 rounded-lg overflow-hidden justify-center px-3 bg-white">
+                  <View className="h-12 border border-gray-300 rounded-lg overflow-hidden justify-center px-3 bg-white text-black">
                     <Picker
                       mode="dropdown"
                       selectedValue={jobTypeFilter}
                       onValueChange={val => setJobTypeFilter(val)}
-                      style={{ width: '100%', paddingVertical: 6 }}
-                      itemStyle={{ fontSize: 15 }}
+                      style={{
+                        width: '100%',
+                        paddingVertical: 6,
+                        text: 'black',
+                      }}
+                      itemStyle={{ fontSize: 15, text: 'black' }}
                     >
                       <Picker.Item label="All Types" value="" />
                       <Picker.Item label="Full Time" value="full time" />
@@ -269,13 +270,17 @@ export default function JobsPage() {
                 </View>
 
                 <View className="flex-1">
-                  <View className="h-12 border border-gray-300 rounded-lg overflow-hidden justify-center px-3 bg-white">
+                  <View className="h-12 border border-gray-300 rounded-lg overflow-hidden justify-center px-3 bg-white text-black">
                     <Picker
                       mode="dropdown"
                       selectedValue={locationFilter}
                       onValueChange={val => setLocationFilter(val)}
-                      style={{ width: '100%', paddingVertical: 6 }}
-                      itemStyle={{ fontSize: 15 }}
+                      style={{
+                        width: '100%',
+                        paddingVertical: 6,
+                        text: 'black',
+                      }}
+                      itemStyle={{ fontSize: 15, text: 'black' }}
                     >
                       <Picker.Item label="All Locations" value="" />
                       {uniqueLocations.map((loc, idx) => (
