@@ -236,20 +236,18 @@ export default function ProfileScreen() {
             </View>
 
             {/* Subscription */}
-            <View className="bg-white rounded-xl shadow-md p-4">
-              <Text className="text-lg font-bold">Subscription</Text>
-              <Text className="text-sm text-gray-500 mb-4">
-                Your current plan and billing information.
-              </Text>
-
-              <View className="bg-indigo-50 rounded-lg p-4 mb-4">
+            <View className="bg-white rounded-xl shadow-md p-4 gap-4">
+              <View>
+                <Text className="text-lg font-bold">Subscription</Text>
+                <Text className="text-sm text-gray-500">
+                  Your current plan and billing information.
+                </Text>
+              </View>
+              <View className="bg-indigo-50 rounded-lg p-4">
                 <View className="flex-row justify-between items-center">
                   <View>
                     <Text className="font-medium text-indigo-800">
-                      Free Plan
-                    </Text>
-                    <Text className="text-xs text-indigo-600">
-                      Basic features
+                      {userProfile?.plan?.name || 'Free'} Plan
                     </Text>
                   </View>
                   <View className="bg-indigo-100 px-2 py-1 rounded-full">
@@ -258,7 +256,8 @@ export default function ProfileScreen() {
                 </View>
 
                 <Text className="text-sm text-gray-600 mt-2">
-                  <Text className="font-bold">{activeUsedMinutes}</Text> of
+                  <Text className="font-bold">{activeUsedMinutes}</Text>
+                  <Text> of </Text>
                   <Text className="font-bold">{totalMinutes}</Text> minutes used
                 </Text>
 
@@ -278,16 +277,30 @@ export default function ProfileScreen() {
                   {totalMinutes - activeUsedMinutes} minutes left
                 </Text>
               </View>
-
-              <TouchableOpacity
-                onPress={() =>
-                  Linking.openURL('https://aiinterviewagents.com/pricing')
-                }
-                className="bg-blue-500 p-3 items-center rounded-xl"
-                activeOpacity={0.8}
-              >
-                <Text className="text-white font-bold">Upgrade to Pro</Text>
-              </TouchableOpacity>
+              {userProfile?.plan.id == 1 ? (
+                <TouchableOpacity
+                  onPress={() =>
+                    Linking.openURL('https://aiinterviewagents.com/pricing')
+                  }
+                  activeOpacity={0.8}
+                  className="bg-blue-500 p-3 items-center rounded-lg"
+                >
+                  <Text className="text-white font-bold">Upgrade to Pro</Text>
+                </TouchableOpacity>
+              ) : (
+                <View
+                  className="p-3 items-center rounded-lg border"
+                  style={{
+                    backgroundColor: '#E5E7EB',
+                    borderColor: '#D1D5DB',
+                    opacity: 0.8,
+                  }}
+                >
+                  <Text className="font-bold" style={{ color: '#6B7280' }}>
+                    Pro Plan Active
+                  </Text>
+                </View>
+              )}
             </View>
 
             {/* Links Section */}
@@ -298,13 +311,15 @@ export default function ProfileScreen() {
                   className="text-blue-600"
                   onPress={() => Linking.openURL(TERMS_OF_USE_URL)}
                 >
-                  Terms of Service
+                  {' '}
+                  Terms of Service{' '}
                 </Text>
-                and
+                <Text> and </Text>
                 <Text
                   className="text-blue-600"
                   onPress={() => Linking.openURL(PRIVACY_POILCY_URL)}
                 >
+                  {' '}
                   Privacy Policy
                 </Text>
                 .
@@ -313,17 +328,17 @@ export default function ProfileScreen() {
 
             {/* Danger Zone */}
             <View className="bg-white rounded-xl shadow-md p-4">
-              <Text className="text-lg font-bold mb-2">Danger Zone</Text>
-              <Text className="text-sm text-gray-500 mb-4">
+              <Text className="text-lg font-bold">Danger Zone</Text>
+              <Text className="text-sm text-gray-500 mb-2">
                 Irreversible account actions.
               </Text>
-              <Text className="font-medium mb-1">Delete Account</Text>
-              <Text className="text-sm text-gray-600 mb-4">
+              <Text className="font-medium">Delete Account</Text>
+              <Text className="text-sm text-gray-600 mb-2">
                 Permanently delete your account and all associated data. This
                 action cannot be undone.
               </Text>
               <TouchableOpacity
-                className="bg-red-600 rounded-xl p-3 items-center"
+                className="bg-red-600 rounded-lg p-3 items-center"
                 onPress={handleDeleteAccount}
                 disabled={loading}
               >

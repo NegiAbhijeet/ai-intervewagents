@@ -3,6 +3,7 @@ import React, {
   useContext,
   useEffect,
   useRef,
+  useState,
 } from 'react';
 import {
   View,
@@ -45,7 +46,13 @@ export default function NotificationsPage() {
   const { userProfile, setUnreadNotification, notifications } =
     useContext(AppStateContext);
   const shimmer = useRef(new Animated.Value(0)).current;
+  const [expandedId, setExpandedId] = useState<string | number | null>(null);
 
+  // This is the function you asked for
+  const toggleExpnaded = (id: string | number) => {
+    console.log(id);
+    setExpandedId(prev => (prev === id ? null : id));
+  };
   const showList = notifications !== null;
 
   function fetchReadAll() {
@@ -97,10 +104,17 @@ export default function NotificationsPage() {
     [],
   );
 
-  const renderItem = useCallback(({ item }: { item: NotificationItem }) => {
+  const renderItem = ({ item }: { item: NotificationItem }) => {
     const timeLabel = formatTimeAgo(item.created_at);
-    return <NotificationRow item={item} timeLabel={timeLabel} />;
-  }, []);
+    return (
+      <NotificationRow
+        item={item}
+        timeLabel={timeLabel}
+        expanded={expandedId === item.id} // <-- boolean, not the id
+        onToggle={toggleExpnaded}
+      />
+    );
+  };
 
   const getItemLayout = useCallback(
     (_data: NotificationItem[] | null, index: number) => {
@@ -151,12 +165,12 @@ export default function NotificationsPage() {
 
   return (
     <Layout>
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <View style={{ flexDirection: 'column' }}>
           <Text style={styles.title}>Notifications</Text>
           <Text style={styles.subtitle}>Recent activity and alerts</Text>
         </View>
-      </View>
+      </View> */}
 
       {!showList && <SkeletonLoader />}
 
@@ -168,6 +182,7 @@ export default function NotificationsPage() {
           getItemLayout={getItemLayout}
           contentContainerStyle={{
             paddingBottom: Platform.OS === 'ios' ? 36 : 24,
+            paddingTop:16
           }}
           ListEmptyComponent={ListEmpty}
           showsVerticalScrollIndicator={false}
