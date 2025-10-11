@@ -4,12 +4,13 @@ import { Pressable, ScrollView, Text, View } from 'react-native';
 import StatsCard from '../components/StatsCard';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import { AppStateContext } from '../components/AppContext';
-import { JAVA_API_URL } from '../components/config';
+import { API_URL, JAVA_API_URL } from '../components/config';
 import GradientCard from '../components/GradientCard';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import TopBar from '../components/TopBar';
 import { useNotification } from '../hooks/useNotifications';
+import fetchWithAuth from '../libs/fetchWithAuth';
 const interviews = [
   {
     title: 'Real Interview',
@@ -75,6 +76,7 @@ const Home = () => {
   const [meetings, setMeetings] = useState([]);
   const [overallScore, setOverallScore] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [leaderboardRank, setLeaderboardRank] = useState(null);
   const finalLoading = isLoading || !userProfile;
   async function fetchMeetings() {
     setIsLoading(true);
@@ -107,11 +109,37 @@ const Home = () => {
       setIsLoading(false);
     }
   }
+  function fetchUserRank() {
+    fetchWithAuth(`${API_URL}/get-users-rating/`)
+      .then(res => res.json())
+      .then(res => {
+        let data = res.profiles || [];
+        if (userProfile?.user_email) {
+          let sortedUsers = [...data]
+            .sort((a, b) => b.rating - a.rating)
+            .map((user, index) => ({
+              ...user,
+              rank: index + 1,
+              image: user.user_photo_url,
+            }));
+          const found = sortedUsers.find(
+            u => u.user_email === userProfile.user_email,
+          );
+          if (found) {
+            setLeaderboardRank(found?.rank || 0);
+          }
+        }
+      })
+      .catch(err => {
+        console.error('Failed to fetch leaderboard:', err);
+      });
+  }
   useNotification(userProfile?.uid, fcmTokenUpdated, setFcmTokenUpdated);
 
   useEffect(() => {
     if (userProfile?.uid) {
       fetchMeetings();
+      fetchUserRank();
     }
   }, [userProfile?.uid]);
 
@@ -130,7 +158,6 @@ const Home = () => {
 
   const totalInterviews = meetings.length;
 
-  const leaderboardRank = 15;
   return (
     <>
       <TopBar />
