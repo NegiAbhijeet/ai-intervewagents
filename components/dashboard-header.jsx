@@ -28,7 +28,7 @@ export function DashboardHeader({
         </Text>
 
         {description ? (
-          <Text className="text-sm text-gray-500">
+          <Text className="text-base text-gray-500">
             {description}{" "}
             {extraText ? <Text className="text-gray-800">{extraText}</Text> : null}
           </Text>

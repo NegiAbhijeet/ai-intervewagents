@@ -224,7 +224,9 @@ export default function JobsPage() {
             <View className="flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <DashboardHeader
                 title="Recommended Jobs"
-                description="View and apply for jobs matched to you."
+                description={`Here, is job recommendation for you for the role of ${
+                  candidate?.position || '_'
+                }.`}
                 extraText="(Upcoming job update in 12 hours)"
               />
 
