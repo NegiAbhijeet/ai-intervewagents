@@ -3,11 +3,11 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AppTabs from './navigation/AppTabs';
 import AuthStack from './navigation/AuthStack';
 import { AppStateContext } from './AppContext';
-import Leaderboard from '../pages/leaderBoard';
 import GetStartedScreen from './GetStartedScreen';
 import JobDetailPage from '../pages/JobDetailPage';
 import ReportDetailScreen from '../pages/ReportDetail';
 import NotificationsPage from '../pages/NotificationsDrawer';
+import ProfileScreen from '../pages/Profile';
 const Stack = createNativeStackNavigator();
 
 const RootNavigator = () => {
@@ -42,9 +42,9 @@ const RootNavigator = () => {
         options={{ headerShown: true, title: 'Report Details' }}
       />
       <Stack.Screen
-        name="leaderBoard"
-        component={Leaderboard}
-        options={{ headerShown: true, title: 'Leaderboard' }}
+        name="profile"
+        component={ProfileScreen}
+        options={{ headerShown: true, title: 'Profile' }}
       />
     </Stack.Navigator>
   );

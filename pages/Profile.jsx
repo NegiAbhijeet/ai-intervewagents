@@ -99,7 +99,7 @@ export default function ProfileScreen() {
 
   return (
     <>
-      <TopBar />
+      {/* <TopBar /> */}
       <Layout>
         <ScrollView showsVerticalScrollIndicator={false} className="py-5">
           <View className="gap-6 pb-10">

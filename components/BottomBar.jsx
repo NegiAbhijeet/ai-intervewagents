@@ -9,7 +9,7 @@ const TABS = [
   { name: 'jobs', label: 'Jobs', iconName: 'briefcase' },
   { name: 'interview', label: 'Interview', iconName: 'mic', isCenter: true },
   { name: 'reports', label: 'Reports', iconName: 'document-text' },
-  { name: 'profile', label: 'Profile', iconName: 'person' },
+  { name: 'leaderBoard', label: 'Leaderboard', iconName: 'trophy-outline' },
 ];
 
 const BottomTabBar = ({ state, descriptors, navigation }) => {

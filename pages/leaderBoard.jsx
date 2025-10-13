@@ -16,6 +16,8 @@ import fetchWithAuth from '../libs/fetchWithAuth';
 import { AppStateContext } from '../components/AppContext';
 import { API_URL } from '../components/config';
 import Ionicons from '@react-native-vector-icons/ionicons';
+import TopBar from '../components/TopBar';
+import Layout from './Layout';
 function getInitials(name) {
   const words = name.trim().split(' ');
   if (words.length >= 2) {
@@ -75,15 +77,6 @@ export default function Leaderboard() {
         setLoading(false);
       });
   }, [userProfile]);
-
-  if (loading) {
-    return (
-      <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" />
-        <Text className="mt-4">Loading leaderboard...</Text>
-      </View>
-    );
-  }
 
   const topThreeUsers = users.slice(0, 3);
   const otherUsers = users.slice(3);
@@ -208,7 +201,9 @@ export default function Leaderboard() {
             </View>
           )}
         </View>
-        <Text className="flex-1 text-base truncate">{user.user_name}</Text>
+        <Text className="flex-1 text-base truncate" numberOfLines={1}>
+          {user.user_name}
+        </Text>
       </View>
       <View className="flex-row items-center">
         <Ionicons name="star" size={16} color="#FBBF24" />
@@ -218,64 +213,74 @@ export default function Leaderboard() {
   );
 
   return (
-    <View className="flex-1 pt-6 px-4">
-      <FlatList
-        data={otherUsers}
-        keyExtractor={item => item.rank.toString()}
-        showsVerticalScrollIndicator={false}
-        ListHeaderComponent={
-          <>
-            {/* Top 3 Users */}
-            {renderTopThree()}
+    <>
+      <TopBar />
+      <Layout>
+        <View className="py-5">
+          {loading ? (
+            <View className="w-full justify-center items-center">
+              <ActivityIndicator size="large" />
+              <Text className="mt-4">Loading leaderboard...</Text>
+            </View>
+          ) : (
+            <FlatList
+              data={otherUsers}
+              keyExtractor={item => item.rank.toString()}
+              showsVerticalScrollIndicator={false}
+              ListHeaderComponent={
+                <>
+                  {/* Top 3 Users */}
+                  {renderTopThree()}
 
-            {/* Current User Rank */}
-            {userRankDetails && (
-              <View className="px-4 py-3 bg-purple-100 rounded-b-lg border-b border-purple-300 mb-4">
-                <View className="flex-row justify-between items-center">
-                  <Text className="text-purple-600 font-bold">
-                    #{userRankDetails.rank}
-                  </Text>
-                  <View className="flex-row items-center flex-1 gap-2 ml-3">
-                    <View className="w-12 h-12 rounded-full overflow-hidden border-2 border-purple-400">
-                      {userRankDetails.image ? (
-                        <Image
-                          source={{ uri: userRankDetails.image }}
-                          className="w-full h-full rounded-full"
-                        />
-                      ) : (
-                        <View className="flex-1 justify-center items-center bg-purple-200">
-                          <Text className="font-bold">
-                            {getInitials(userRankDetails.user_name)}
+                  {/* Current User Rank */}
+                  {userRankDetails && (
+                    <View className="px-4 py-3 bg-purple-100 rounded-b-lg border-b border-purple-300 mb-4">
+                      <View className="flex-row justify-between items-center">
+                        <Text className="text-purple-600 font-bold">
+                          #{userRankDetails.rank}
+                        </Text>
+                        <View className="flex-row items-center flex-1 gap-2 ml-3">
+                          <View className="w-12 h-12 rounded-full overflow-hidden border-2 border-purple-400">
+                            {userRankDetails.image ? (
+                              <Image
+                                source={{ uri: userRankDetails.image }}
+                                className="w-full h-full rounded-full"
+                              />
+                            ) : (
+                              <View className="flex-1 justify-center items-center bg-purple-200">
+                                <Text className="font-bold">
+                                  {getInitials(userRankDetails.user_name)}
+                                </Text>
+                              </View>
+                            )}
+                          </View>
+                          <Text className="font-semibold">You</Text>
+                          {userRankDetails.rank <= 3 && (
+                            <Text>
+                              {userRankDetails.rank === 1
+                                ? '🥇'
+                                : userRankDetails.rank === 2
+                                ? '🥈'
+                                : '🥉'}
+                            </Text>
+                          )}
+                        </View>
+                        <View className="flex-row items-center">
+                          <Ionicons name="star" size={18} color="#FBBF24" />
+                          <Text className="ml-1 text-purple-600 font-extrabold">
+                            {userRankDetails.rating.toLocaleString()} pts
                           </Text>
                         </View>
-                      )}
+                      </View>
                     </View>
-                    <Text className="font-semibold">You</Text>
-                    {userRankDetails.rank <= 3 && (
-                      <Text>
-                        {userRankDetails.rank === 1
-                          ? '🥇'
-                          : userRankDetails.rank === 2
-                          ? '🥈'
-                          : '🥉'}
-                      </Text>
-                    )}
-                  </View>
-                  <View className="flex-row items-center">
-                    <Ionicons name="star" size={18} color="#FBBF24" />
-                    <Text className="ml-1 text-purple-600 font-extrabold">
-                      {userRankDetails.rating.toLocaleString()} pts
-                    </Text>
-                  </View>
-                </View>
-              </View>
-            )}
-
-            
-          </>
-        }
-        renderItem={renderOtherUser}
-      />
-    </View>
+                  )}
+                </>
+              }
+              renderItem={renderOtherUser}
+            />
+          )}
+        </View>
+      </Layout>
+    </>
   );
 }

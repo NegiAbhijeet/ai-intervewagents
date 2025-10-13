@@ -217,7 +217,32 @@ const TopBar = () => {
             }}
           >
             <TouchableOpacity
-              onPress={onLogoutPress}
+              onPress={() => {
+                setMenuVisible(false);
+                navigation.navigate('profile');
+              }}
+              disabled={isLoggingOut}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingVertical: 10,
+                paddingHorizontal: 16,
+                opacity: isLoggingOut ? 0.6 : 1,
+              }}
+            >
+              <Ionicons
+                name="person-outline"
+                size={20}
+                color="#333"
+                style={{ marginRight: 10 }}
+              />
+              <Text style={{ fontSize: 16, color: '#333' }}>Profile</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setMenuVisible(false);
+                onLogoutPress();
+              }}
               disabled={isLoggingOut}
               style={{
                 flexDirection: 'row',

@@ -5,7 +5,7 @@ import Home from '../../pages/Home';
 import Interview from '../../pages/Interview';
 import Reports from '../../pages/Reports';
 import JobsPage from '../../pages/jobs';
-import ProfileScreen from '../../pages/Profile';
+import Leaderboard from '../../pages/leaderBoard';
 
 const Tab = createBottomTabNavigator();
 
@@ -19,7 +19,7 @@ const AppTabs = () => {
       <Tab.Screen name="jobs" component={JobsPage} />
       <Tab.Screen name="interview" component={Interview} />
       <Tab.Screen name="reports" component={Reports} />
-      <Tab.Screen name="profile" component={ProfileScreen} />
+      <Tab.Screen name="leaderBoard" component={Leaderboard} />
 
       {/* Profile removed from tab navigator */}
     </Tab.Navigator>
