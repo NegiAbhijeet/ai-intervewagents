@@ -259,7 +259,7 @@ export default function JobsPage() {
                       style={{
                         width: '100%',
                         paddingVertical: 6,
-                        text: 'black',
+                        color: '#000',
                       }}
                       itemStyle={{ fontSize: 15, text: 'black' }}
                     >
@@ -280,7 +280,7 @@ export default function JobsPage() {
                       style={{
                         width: '100%',
                         paddingVertical: 6,
-                        text: 'black',
+                        color: '#000',
                       }}
                       itemStyle={{ fontSize: 15, text: 'black' }}
                     >
