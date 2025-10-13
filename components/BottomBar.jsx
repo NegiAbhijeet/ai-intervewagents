@@ -5,11 +5,11 @@ import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from '@react-native-vector-icons/ionicons';
 
 const TABS = [
-  { name: 'index', label: 'Home', iconName: 'home' },
-  { name: 'jobs', label: 'Jobs', iconName: 'briefcase' },
-  { name: 'interview', label: 'Interview', iconName: 'mic', isCenter: true },
-  { name: 'reports', label: 'Reports', iconName: 'document-text' },
-  { name: 'leaderBoard', label: 'Leaderboard', iconName: 'trophy-outline' },
+  { name: 'index', label: 'Home', iconName: 'home-outline' },
+  { name: 'jobs', label: 'Jobs', iconName: 'briefcase-outline' },
+  { name: 'interview', label: 'Interview', iconName: 'mic-outline', isCenter: true },
+  { name: 'reports', label: 'Reports', iconName: 'document-text-outline' },
+  { name: 'leaderBoard', label: 'League', iconName: 'trophy-outline' },
 ];
 
 const BottomTabBar = ({ state, descriptors, navigation }) => {
@@ -50,6 +50,11 @@ const BottomTabBar = ({ state, descriptors, navigation }) => {
 
         const iconColor = isFocused ? '#3B82F6' : '#9CA3AF';
 
+        // Remove '-outline' for focused tab
+        const iconName = isFocused
+          ? tab.iconName.replace('-outline', '')
+          : tab.iconName;
+
         if (tab.isCenter) {
           return (
             <View
@@ -83,7 +88,7 @@ const BottomTabBar = ({ state, descriptors, navigation }) => {
                     borderRadius: 32,
                   }}
                 >
-                  <Ionicons name={tab.iconName} size={30} color="#fff" />
+                  <Ionicons name={isFocused ? 'mic' : 'mic-outline'} size={30} color="#fff" />
                 </LinearGradient>
               </Pressable>
               <Text
@@ -110,7 +115,7 @@ const BottomTabBar = ({ state, descriptors, navigation }) => {
               justifyContent: 'center',
             }}
           >
-            <Ionicons name={tab.iconName} size={24} color={iconColor} />
+            <Ionicons name={iconName} size={24} color={iconColor} />
             <Text
               style={{
                 marginTop: 4,
