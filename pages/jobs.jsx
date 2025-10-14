@@ -105,21 +105,24 @@ export default function JobsPage() {
       setLoading(false);
     }
   };
-  function handleRefresh() {
-    const body = {
-      uid: userProfile.uid,
-      role: candidate.position,
-      experience_years: candidate.experienceYears,
-    };
-
-    console.log(body, '===');
-    fetchJobs(body);
+  async function handleRefresh() {
+    try {
+      const body = {
+        uid: userProfile.uid,
+        role: candidate.position,
+        experience_years: candidate.experienceYears,
+      };
+      const fetched = await fetchJobs(body);
+      setJobs(fetched);
+      setJobsFetched(true);
+    } catch (err) {
+      console.log('Error on job fetch', err);
+    }
   }
   useEffect(() => {
     if (userProfile?.uid && !jobsFetched) {
       handleFetch();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -140,12 +143,13 @@ export default function JobsPage() {
   const filteredJobs = useMemo(() => {
     let filtered = [...jobs];
     if (jobTypeFilter) {
-      filtered = filtered.filter(
-        job =>
-          String(job.job_type || '').toLowerCase() ===
-          String(jobTypeFilter || '').toLowerCase(),
+      filtered = filtered.filter(job =>
+        String(job.job_type || '')
+          .toLowerCase()
+          .includes(String(jobTypeFilter || '').toLowerCase()),
       );
     }
+
     if (locationFilter) {
       filtered = filtered.filter(
         job =>
@@ -239,7 +243,7 @@ export default function JobsPage() {
             {/* Header */}
             <View className="flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <DashboardHeader
-                title="Recommended Jobs"
+                title={`Recommended Jobs (${filteredJobs?.length || 0})`}
                 description={`Here, is job recommendation for you for the role of ${
                   candidate?.position || '_'
                 }.`}
@@ -280,9 +284,9 @@ export default function JobsPage() {
                       itemStyle={{ fontSize: 15, text: 'black' }}
                     >
                       <Picker.Item label="All Types" value="" />
-                      <Picker.Item label="Full Time" value="full time" />
-                      <Picker.Item label="Hybrid" value="Hybrid" />
-                      <Picker.Item label="Remote" value="Remote" />
+                      <Picker.Item label="Full Time" value="full" />
+                      <Picker.Item label="Hybrid" value="hybrid" />
+                      <Picker.Item label="Remote" value="remote" />
                     </Picker>
                   </View>
                 </View>

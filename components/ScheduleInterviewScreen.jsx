@@ -18,6 +18,7 @@ import Ionicons from '@react-native-vector-icons/ionicons';
 import Toast from 'react-native-toast-message';
 import InterviewTypeDropdown from './InterviewTypeDropdown';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Badge } from './ui/badge';
 const typeOptions = [
   { label: 'Technical', value: 'Technical' },
   { label: 'Behavioral', value: 'Behavioral' },
@@ -47,8 +48,8 @@ export default function ScheduleInterviewScreen({
     interviewTime: null,
   });
 
-  const practiceOrRevise = type || 'practice';
-
+  const practiceOrRevise = type || 'Practice';
+  const isPractice = type === 'Practice';
   const addSkill = () => {
     if (currentSkill) {
       let newSkills = currentSkill
@@ -285,8 +286,19 @@ export default function ScheduleInterviewScreen({
         keyboardDismissMode="on-drag"
         showsVerticalScrollIndicator={false}
       >
-        <Text className="text-2xl font-semibold mb-4">Start Interview</Text>
+        <View className="flex-row items-center justify-between mb-4 ">
+          <Text className="text-2xl font-semibold">Start Interview</Text>
 
+          <Badge
+            className={`px-4 text-center py-1 rounded-full ${
+              isPractice ? 'bg-green-500' : 'bg-blue-500'
+            }`}
+          >
+            <Text className="text-white font-medium text-sm">
+              {isPractice ? 'Real' : 'Trainer'}
+            </Text>
+          </Badge>
+        </View>
         {showInterviewScreen &&
           interviewData?.meetingId &&
           interviewData?.canId &&
