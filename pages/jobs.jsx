@@ -20,6 +20,7 @@ import { API_URL, JAVA_API_URL } from '../components/config';
 import { AppStateContext } from '../components/AppContext';
 import TopBar from '../components/TopBar';
 import Layout from './Layout';
+import { RefreshControl } from 'react-native-gesture-handler';
 
 export default function JobsPage() {
   const navigation = useNavigation();
@@ -104,7 +105,16 @@ export default function JobsPage() {
       setLoading(false);
     }
   };
+  function handleRefresh() {
+    const body = {
+      uid: userProfile.uid,
+      role: candidate.position,
+      experience_years: candidate.experienceYears,
+    };
 
+    console.log(body, '===');
+    fetchJobs(body);
+  }
   useEffect(() => {
     if (userProfile?.uid && !jobsFetched) {
       handleFetch();
@@ -219,7 +229,13 @@ export default function JobsPage() {
             </View>
           </ScrollView>
         ) : (
-          <ScrollView showsVerticalScrollIndicator={false} className="py-5">
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            className="py-5"
+            refreshControl={
+              <RefreshControl refreshing={loading} onRefresh={handleRefresh} />
+            }
+          >
             {/* Header */}
             <View className="flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <DashboardHeader

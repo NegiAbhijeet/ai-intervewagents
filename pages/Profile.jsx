@@ -21,6 +21,8 @@ import {
 } from '../components/config';
 import TopBar from '../components/TopBar';
 import Layout from './Layout';
+import fetchUserDetails from '../libs/fetchUser';
+import { RefreshControl } from 'react-native-gesture-handler';
 
 export default function ProfileScreen() {
   const {
@@ -35,7 +37,24 @@ export default function ProfileScreen() {
   const activeUsedMinutes = isFreePlan ? usedFreeMinutes : usedMinutes;
 
   const [loading, setLoading] = useState(false);
+  async function fetchDetails() {
+    try {
+      if (user?.uid) {
+        profile = await fetchUserDetails(userProfile?.uid);
+      }
+    } catch (err) {
+      console.log('Error fetching user details:', err);
+    }
 
+    if (profile) {
+      setUserProfile(profile);
+    } else {
+      setUserProfile(null);
+    }
+  }
+  const onRefresh = () => {
+    fetchDetails();
+  };
   const initials =
     firebaseUser?.displayName
       ?.split(' ')
@@ -101,7 +120,13 @@ export default function ProfileScreen() {
     <>
       {/* <TopBar /> */}
       <Layout>
-        <ScrollView showsVerticalScrollIndicator={false} className="py-5">
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          className="py-5"
+          refreshControl={
+            <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+          }
+        >
           <View className="gap-6 pb-10">
             {/* Profile Card */}
             <View className="bg-white rounded-xl shadow-md p-4">
@@ -211,7 +236,7 @@ export default function ProfileScreen() {
               </View>
 
               {/* Sessions Info */}
-              <View className="flex-row justify-between gap-4">
+              {/* <View className="flex-row justify-between gap-4">
                 <View className="flex-1">
                   <Text className="text-sm text-gray-700 mb-1">
                     Total Sessions
@@ -232,7 +257,7 @@ export default function ProfileScreen() {
                     editable={false}
                   />
                 </View>
-              </View>
+              </View> */}
             </View>
 
             {/* Subscription */}

@@ -43,11 +43,15 @@ function formatTimeAgo(dateString: string) {
 }
 
 export default function NotificationsPage() {
-  const { userProfile, setUnreadNotification, notifications } =
-    useContext(AppStateContext);
+  const {
+    userProfile,
+    setUnreadNotification,
+    notifications,
+    setNotifications,
+  } = useContext(AppStateContext);
   const shimmer = useRef(new Animated.Value(0)).current;
   const [expandedId, setExpandedId] = useState<string | number | null>(null);
-
+  const [loading, setLoading] = useState(false);
   // This is the function you asked for
   const toggleExpnaded = (id: string | number) => {
     console.log(id);
@@ -81,8 +85,26 @@ export default function NotificationsPage() {
       fetchReadAll();
     }
   }, [userProfile?.uid]);
-
-  // shimmer animation while loading
+  function fetchNotifications() {
+    fetchWithAuth(
+      `${API_URL}/notifications/${userProfile.uid}/?notification_from=app`,
+    )
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setNotifications(data);
+        } else {
+          setNotifications([]);
+        }
+      })
+      .catch(err => {
+        console.error('Failed to fetch notifications:', err);
+        setNotifications([]);
+      });
+  }
+  const onRefresh = () => {
+    fetchNotifications();
+  };
   useEffect(() => {
     if (!showList) {
       const anim = Animated.loop(
@@ -182,7 +204,7 @@ export default function NotificationsPage() {
           getItemLayout={getItemLayout}
           contentContainerStyle={{
             paddingBottom: Platform.OS === 'ios' ? 36 : 24,
-            paddingTop:16
+            paddingTop: 16,
           }}
           ListEmptyComponent={ListEmpty}
           showsVerticalScrollIndicator={false}
@@ -190,6 +212,8 @@ export default function NotificationsPage() {
           maxToRenderPerBatch={10}
           windowSize={5}
           removeClippedSubviews
+          refreshing={loading}
+          onRefresh={onRefresh}
         />
       )}
     </Layout>
