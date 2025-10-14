@@ -8,6 +8,7 @@ const Interview = ({ route }) => {
   const { userProfile } = useContext(AppStateContext);
   const [type, setType] = useState(route.params?.type || 'Practice');
   const [position, setPosition] = useState(route.params?.position || '');
+  const [routeSkills, setRouteSkills] = useState(route.params?.skills || []);
   const [isFromJob, setIsFromJob] = useState(false);
   useEffect(() => {
     if (route.params?.type) {
@@ -15,11 +16,12 @@ const Interview = ({ route }) => {
     }
   }, [route.params?.type]);
   useEffect(() => {
-    if (route.params?.position) {
+    if (route.params?.position || route.params?.skills) {
       setPosition(route.params.position);
+      setRouteSkills(route.params?.skills || []);
       setIsFromJob(true);
     }
-  }, [route.params?.position]);
+  }, [route.params?.position, route.params?.skills]);
 
   return (
     <>
@@ -29,7 +31,7 @@ const Interview = ({ route }) => {
           userProfile={userProfile}
           type={type}
           routePosition={position}
-          isFromJob={isFromJob}
+          routeSkills={routeSkills}
         />
       </Layout>
     </>

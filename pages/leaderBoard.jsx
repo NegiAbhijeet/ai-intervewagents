@@ -1,5 +1,3 @@
-// LeaderboardNative.js
-
 'use client';
 
 import React, { useContext, useEffect, useState } from 'react';
@@ -10,7 +8,6 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   FlatList,
-  ScrollView,
 } from 'react-native';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import { AppStateContext } from '../components/AppContext';
@@ -18,6 +15,7 @@ import { API_URL } from '../components/config';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import TopBar from '../components/TopBar';
 import Layout from './Layout';
+
 function getInitials(name) {
   const words = name.trim().split(' ');
   if (words.length >= 2) {
@@ -29,10 +27,10 @@ function getInitials(name) {
 export default function Leaderboard() {
   const { userProfile } = useContext(AppStateContext);
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [userRankDetails, setUserRankDetails] = useState(null);
 
-  useEffect(() => {
+  function getRatings() {
     setLoading(true);
     fetchWithAuth(`${API_URL}/get-users-rating/`)
       .then(res => res.json())
@@ -51,6 +49,7 @@ export default function Leaderboard() {
             user_email: user.user_email || '',
             rating: Number(user.rating) || 0,
           }));
+
         if (userProfile?.user_email) {
           const found = sortedUsers.find(
             u => u.user_email === userProfile.user_email,
@@ -68,6 +67,7 @@ export default function Leaderboard() {
         } else {
           setUserRankDetails(null);
         }
+
         setUsers(sortedUsers);
       })
       .catch(err => {
@@ -76,7 +76,18 @@ export default function Leaderboard() {
       .finally(() => {
         setLoading(false);
       });
+  }
+
+  useEffect(() => {
+    if (userProfile?.uid) {
+      getRatings();
+    }
   }, [userProfile]);
+
+  const onRefresh = () => {
+    // Use the same getRatings function so state updates are consistent
+    getRatings();
+  };
 
   const topThreeUsers = users.slice(0, 3);
   const otherUsers = users.slice(3);
@@ -84,7 +95,6 @@ export default function Leaderboard() {
   const renderTopThree = () => (
     <View className="flex-row justify-center items-end gap-4 mb-12">
       {[topThreeUsers[1], topThreeUsers[0], topThreeUsers[2]].map((user, i) => {
-        // In case fewer than 3 users:
         if (!user) return <View key={`top-${i}`} className="w-24 h-24" />;
 
         const actualIndex = [1, 0, 2][i];
@@ -99,7 +109,6 @@ export default function Leaderboard() {
           : 'bg-amber-200 text-amber-800';
 
         const avatarSize = isFirst ? 16 : 16;
-        const borderWidth = isFirst ? 4 : 2;
 
         const textColor = isFirst
           ? 'text-yellow-900'
@@ -114,10 +123,7 @@ export default function Leaderboard() {
             className="items-center"
           >
             <View className="relative">
-              <View
-                className={`w-${avatarSize} h-${avatarSize} rounded-full 
-                }`}
-              >
+              <View className={`w-${avatarSize} h-${avatarSize} rounded-full`}>
                 {user.image ? (
                   <Image
                     source={{ uri: user.image }}
@@ -212,73 +218,77 @@ export default function Leaderboard() {
     </View>
   );
 
+  const ListHeader = () => (
+    <>
+      {loading && users.length === 0 ? (
+        <View className="w-full justify-center items-center py-8">
+          <ActivityIndicator size="large" />
+          <Text className="mt-4">Loading leaderboard...</Text>
+        </View>
+      ) : (
+        <>
+          {renderTopThree()}
+
+          {userRankDetails && (
+            <View className="px-4 py-3 bg-purple-100 rounded-b-lg border-b border-purple-300 mb-4">
+              <View className="flex-row justify-between items-center">
+                <Text className="text-purple-600 font-bold">
+                  #{userRankDetails.rank}
+                </Text>
+                <View className="flex-row items-center flex-1 gap-2 ml-3">
+                  <View className="w-12 h-12 rounded-full overflow-hidden border-2 border-purple-400">
+                    {userRankDetails.image ? (
+                      <Image
+                        source={{ uri: userRankDetails.image }}
+                        className="w-full h-full rounded-full"
+                      />
+                    ) : (
+                      <View className="flex-1 justify-center items-center bg-purple-200">
+                        <Text className="font-bold">
+                          {getInitials(userRankDetails.user_name)}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                  <Text className="font-semibold">You</Text>
+                  {userRankDetails.rank <= 3 && (
+                    <Text>
+                      {userRankDetails.rank === 1
+                        ? '🥇'
+                        : userRankDetails.rank === 2
+                        ? '🥈'
+                        : '🥉'}
+                    </Text>
+                  )}
+                </View>
+                <View className="flex-row items-center">
+                  <Ionicons name="star" size={18} color="#FBBF24" />
+                  <Text className="ml-1 text-purple-600 font-extrabold">
+                    {userRankDetails.rating.toLocaleString()} pts
+                  </Text>
+                </View>
+              </View>
+            </View>
+          )}
+        </>
+      )}
+    </>
+  );
+
   return (
     <>
       <TopBar />
       <Layout>
         <View className="py-5">
-          {loading ? (
-            <View className="w-full justify-center items-center">
-              <ActivityIndicator size="large" />
-              <Text className="mt-4">Loading leaderboard...</Text>
-            </View>
-          ) : (
-            <FlatList
-              data={otherUsers}
-              keyExtractor={item => item.rank.toString()}
-              showsVerticalScrollIndicator={false}
-              ListHeaderComponent={
-                <>
-                  {/* Top 3 Users */}
-                  {renderTopThree()}
-
-                  {/* Current User Rank */}
-                  {userRankDetails && (
-                    <View className="px-4 py-3 bg-purple-100 rounded-b-lg border-b border-purple-300 mb-4">
-                      <View className="flex-row justify-between items-center">
-                        <Text className="text-purple-600 font-bold">
-                          #{userRankDetails.rank}
-                        </Text>
-                        <View className="flex-row items-center flex-1 gap-2 ml-3">
-                          <View className="w-12 h-12 rounded-full overflow-hidden border-2 border-purple-400">
-                            {userRankDetails.image ? (
-                              <Image
-                                source={{ uri: userRankDetails.image }}
-                                className="w-full h-full rounded-full"
-                              />
-                            ) : (
-                              <View className="flex-1 justify-center items-center bg-purple-200">
-                                <Text className="font-bold">
-                                  {getInitials(userRankDetails.user_name)}
-                                </Text>
-                              </View>
-                            )}
-                          </View>
-                          <Text className="font-semibold">You</Text>
-                          {userRankDetails.rank <= 3 && (
-                            <Text>
-                              {userRankDetails.rank === 1
-                                ? '🥇'
-                                : userRankDetails.rank === 2
-                                ? '🥈'
-                                : '🥉'}
-                            </Text>
-                          )}
-                        </View>
-                        <View className="flex-row items-center">
-                          <Ionicons name="star" size={18} color="#FBBF24" />
-                          <Text className="ml-1 text-purple-600 font-extrabold">
-                            {userRankDetails.rating.toLocaleString()} pts
-                          </Text>
-                        </View>
-                      </View>
-                    </View>
-                  )}
-                </>
-              }
-              renderItem={renderOtherUser}
-            />
-          )}
+          <FlatList
+            data={otherUsers}
+            keyExtractor={item => item.rank.toString()}
+            showsVerticalScrollIndicator={false}
+            ListHeaderComponent={<ListHeader />}
+            renderItem={renderOtherUser}
+            refreshing={loading}
+            onRefresh={onRefresh}
+          />
         </View>
       </Layout>
     </>

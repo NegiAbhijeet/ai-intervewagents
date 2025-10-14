@@ -1,19 +1,25 @@
-// LearningMaterials.native.tsx
 import Ionicons from '@react-native-vector-icons/ionicons';
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   View,
   Text,
   Image,
   TouchableOpacity,
-  ActivityIndicator,
-  // Linking,
-  ScrollView,
   Linking,
+  FlatList,
+  ActivityIndicator,
 } from 'react-native';
 
-export function LearningMaterials({ jobData, materialLoading }) {
-  const { articles = [], videos = [] } = jobData || {};
+// JSX / TSX component using nativewind className utilities
+export default function LearningMaterials({ jobData, materialLoading }) {
+  const articles = useMemo(
+    () => (Array.isArray(jobData?.articles) ? jobData.articles : []),
+    [jobData],
+  );
+  const videos = useMemo(
+    () => (Array.isArray(jobData?.videos) ? jobData.videos : []),
+    [jobData],
+  );
 
   const openLink = url => {
     if (!url) return;
@@ -22,21 +28,85 @@ export function LearningMaterials({ jobData, materialLoading }) {
     );
   };
 
-  const PlaceholderLine = ({ width = '3/4' }) => (
-    <View
-      className={`h-3 bg-gray-200 rounded ${
-        width === 'full' ? 'w-full' : width === '2/3' ? 'w-2/3' : 'w-3/4'
-      }`}
-    />
-  );
+  const renderArticle = ({ item, index }) => {
+    return (
+      <TouchableOpacity
+        onPress={() => openLink(item?.link)}
+        activeOpacity={0.8}
+        className="mb-3"
+      >
+        <View className="flex-row items-start justify-between p-3 rounded-lg bg-white border border-gray-100">
+          <View className="flex-1 mr-3">
+            <Text className="font-semibold text-blue-700 mb-1">
+              {item?.title}
+            </Text>
+            <Text className="text-sm text-gray-600" numberOfLines={2}>
+              {item?.snippet}
+            </Text>
+          </View>
+
+          <TouchableOpacity
+            onPress={() => openLink(item?.link)}
+            activeOpacity={0.8}
+            className="items-center justify-center p-2"
+          >
+            <Ionicons name="open-outline" size={18} color="#2563eb" />
+          </TouchableOpacity>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderVideo = ({ item, index }) => {
+    return (
+      <View className="mb-4 rounded-2xl overflow-hidden bg-white border border-gray-100">
+        <TouchableOpacity
+          activeOpacity={0.9}
+          onPress={() => openLink(item?.link)}
+        >
+          <Image
+            source={
+              item?.thumbnail
+                ? { uri: item.thumbnail }
+                : require('../assets/images/logo.png')
+            }
+            className="w-full h-40 bg-gray-200"
+            resizeMode="cover"
+            onError={e => console.warn('Image failed to load', e.nativeEvent)}
+          />
+        </TouchableOpacity>
+
+        <View className="p-3">
+          <Text className="font-semibold text-gray-900 mb-1" numberOfLines={2}>
+            {item?.title}
+          </Text>
+          <Text className="text-sm text-gray-500 mb-2">{item?.channel}</Text>
+
+          <View className="flex-row items-center justify-between">
+            <Text className="text-xs text-gray-400">{item?.duration}</Text>
+
+            <TouchableOpacity
+              onPress={() => openLink(item?.link)}
+              activeOpacity={0.9}
+              className="mt-2"
+            >
+              <View className="px-3 py-2 border rounded items-center border-gray-200">
+                <View className="flex-row items-center">
+                  <Ionicons name="play-outline" size={16} color="#374151" />
+                  <Text className="ml-2 text-sm">Watch Video</Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    );
+  };
 
   return (
-    <ScrollView
-      contentContainerStyle={{ paddingBottom: 24 }}
-      className="space-y-6"
-    >
+    <View className="pb-6">
       {/* Recommended Articles */}
-      <View className="bg-white rounded-lg shadow-md overflow-hidden">
+      <View className="bg-white rounded-lg mb-4 overflow-hidden border border-gray-100">
         <View className="px-4 py-3 border-b border-gray-100 flex-row items-center">
           <Ionicons name="book-outline" size={18} color="#374151" />
           <Text className="ml-2 text-base font-medium text-gray-900">
@@ -46,63 +116,36 @@ export function LearningMaterials({ jobData, materialLoading }) {
 
         <View className="p-4">
           {materialLoading ? (
-            Array.from({ length: 3 }).map((_, i) => (
-              <View
-                key={i}
-                className="flex-row items-start justify-between p-3 border rounded-lg mb-3 bg-white"
-              >
-                <View style={{ flex: 1, marginRight: 12 }}>
-                  <PlaceholderLine width="2/3" />
-                  <View className="h-2" />
-                  <PlaceholderLine width="full" />
-                  <View className="h-3" />
-                  <View className="flex-row items-center gap-3">
-                    <View className="h-6 w-20 bg-gray-200 rounded" />
-                    <View className="h-6 w-24 bg-gray-200 rounded" />
-                  </View>
+            <View>
+              {[0, 1, 2].map(i => (
+                <View key={i} className="mb-3">
+                  <View className="h-3 bg-gray-200 rounded w-2/3 mb-2" />
+                  <View className="h-2 bg-gray-200 rounded w-full mb-2" />
+                  <View className="h-3 bg-gray-200 rounded w-1/3" />
                 </View>
-                <View className="h-8 w-8 bg-gray-200 rounded" />
-              </View>
-            ))
+              ))}
+            </View>
           ) : articles.length === 0 ? (
             <Text className="text-gray-500 italic">
               No related articles found
             </Text>
           ) : (
-            articles.map((article, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => openLink(article?.link)}
-                activeOpacity={0.8}
-              >
-                <View className="flex-row items-start justify-between p-3 border rounded-lg mb-3 bg-white">
-                  <View style={{ flex: 1, marginRight: 12 }}>
-                    <Text className="font-semibold mb-1 text-blue-700">
-                      {article.title}
-                    </Text>
-                    <Text
-                      className="text-sm text-gray-600 mb-2"
-                      numberOfLines={2}
-                    >
-                      {article.snippet}
-                    </Text>
-                  </View>
-
-                  <TouchableOpacity
-                    onPress={() => openLink(article?.link)}
-                    className="items-center justify-center p-2"
-                  >
-                    <Ionicons name="open-outline" size={18} color="#2563eb" />
-                  </TouchableOpacity>
-                </View>
-              </TouchableOpacity>
-            ))
+            <FlatList
+              data={articles}
+              renderItem={renderArticle}
+              keyExtractor={(item, index) =>
+                item?.id ? String(item.id) : String(index)
+              }
+              scrollEnabled={false}
+              initialNumToRender={5}
+              removeClippedSubviews
+            />
           )}
         </View>
       </View>
 
       {/* YouTube Videos */}
-      <View className="bg-white rounded-lg shadow-md overflow-hidden">
+      <View className="bg-white rounded-lg overflow-hidden border border-gray-100">
         <View className="px-4 py-3 border-b border-gray-100 flex-row items-center">
           <Ionicons name="videocam-outline" size={18} color="#374151" />
           <Text className="ml-2 text-base font-medium text-gray-900">
@@ -112,92 +155,33 @@ export function LearningMaterials({ jobData, materialLoading }) {
 
         <View className="p-4">
           {materialLoading ? (
-            Array.from({ length: 2 }).map((_, i) => (
-              <View
-                key={i}
-                className="border rounded-lg overflow-hidden mb-4 bg-white"
-              >
-                <View className="w-full h-40 bg-gray-200" />
-                <View className="p-3">
-                  <PlaceholderLine width="2/3" />
-                  <View className="h-2" />
-                  <PlaceholderLine width="1/2" />
-                  <View className="h-2" />
-                  <PlaceholderLine width="1/3" />
+            <View>
+              {[0, 1].map(i => (
+                <View key={i} className="mb-3">
+                  <View className="h-40 bg-gray-200 rounded mb-2" />
+                  <View className="h-3 bg-gray-200 rounded w-2/3 mb-2" />
+                  <View className="h-2 bg-gray-200 rounded w-1/2" />
                 </View>
-              </View>
-            ))
+              ))}
+            </View>
           ) : videos.length === 0 ? (
             <Text className="text-gray-500 italic">
               No related videos found
             </Text>
           ) : (
-            videos.map((video, index) => (
-              <View
-                key={index}
-                className="group border rounded-2xl overflow-hidden shadow-sm mb-4 bg-white"
-              >
-                <TouchableOpacity
-                  activeOpacity={0.9}
-                  onPress={() => openLink(video?.link)}
-                >
-                  <Image
-                    source={
-                      video.thumbnail
-                        ? { uri: video.thumbnail }
-                        : require('../assets/images/logo.png')
-                    }
-                    style={{ width: '100%', height: 160 }}
-                    resizeMode="cover"
-                  />
-                </TouchableOpacity>
-
-                <View className="p-3 flex flex-col">
-                  <View style={{ flex: 1 }}>
-                    <Text
-                      className="font-semibold text-gray-900 mb-1"
-                      numberOfLines={2}
-                    >
-                      {video.title}
-                    </Text>
-                    <Text className="text-sm text-gray-500 mb-2">
-                      {video.channel}
-                    </Text>
-                    <View className="flex-row items-center justify-between">
-                      <Text className="text-xs text-gray-400">
-                        {video.duration}
-                      </Text>
-                      <TouchableOpacity
-                        onPress={() => openLink(video?.link)}
-                        className="mt-2"
-                        activeOpacity={0.9}
-                      >
-                        <View className="px-3 py-2 border rounded items-center">
-                          <View
-                            style={{
-                              flexDirection: 'row',
-                              alignItems: 'center',
-                            }}
-                          >
-                            <Ionicons
-                              name="play-outline"
-                              size={16}
-                              color="#374151"
-                            />
-                            <Text className="ml-2 text-sm">Watch Video</Text>
-                          </View>
-                        </View>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </View>
-              </View>
-            ))
+            <FlatList
+              data={videos}
+              renderItem={renderVideo}
+              keyExtractor={(item, index) =>
+                item?.id ? String(item.id) : String(index)
+              }
+              scrollEnabled={false}
+              initialNumToRender={3}
+              removeClippedSubviews
+            />
           )}
         </View>
       </View>
-    </ScrollView>
+    </View>
   );
 }
-
-export default LearningMaterials;

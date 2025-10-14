@@ -44,8 +44,8 @@ const TopBar = () => {
     }
   }, [unreadCount, setUnreadNotification]);
   function fetchNotifications() {
-    fetchWithAuth(`${API_URL}/notifications/${userProfile.uid}/`)
-      .then(res => res.json())
+    fetchWithAuth(`${API_URL}/notifications/${userProfile.uid}/?notification_from=app`)
+      .then(res => res.json()) 
       .then(data => {
         if (Array.isArray(data)) {
           setNotifications(data);

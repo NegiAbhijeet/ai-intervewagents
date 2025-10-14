@@ -11,6 +11,7 @@ import Ionicons from '@react-native-vector-icons/ionicons';
 import TopBar from '../components/TopBar';
 import { useNotification } from '../hooks/useNotifications';
 import fetchWithAuth from '../libs/fetchWithAuth';
+import { RefreshControl } from 'react-native-gesture-handler';
 const interviews = [
   {
     title: 'Real Interview',
@@ -76,7 +77,7 @@ const Home = () => {
   const [meetings, setMeetings] = useState([]);
   const [overallScore, setOverallScore] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [leaderboardRank, setLeaderboardRank] = useState(null);
+  const [leaderboardRank, setLeaderboardRank] = useState(0);
   const finalLoading = isLoading || !userProfile;
   async function fetchMeetings() {
     setIsLoading(true);
@@ -142,7 +143,11 @@ const Home = () => {
       fetchUserRank();
     }
   }, [userProfile?.uid]);
-
+  const onRefresh = () => {
+    setIsLoading(true);
+    fetchMeetings();
+    fetchUserRank();
+  };
   useEffect(() => {
     if (meetings.length > 0) {
       const totalScore = meetings.reduce(
@@ -162,7 +167,13 @@ const Home = () => {
     <>
       <TopBar />
       <Layout>
-        <ScrollView showsVerticalScrollIndicator={false} className="py-5">
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          className="py-5"
+          refreshControl={
+            <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
+          }
+        >
           {!userProfile ? (
             <SkeletonPlaceholder borderRadius={8}>
               <SkeletonPlaceholder.Item

@@ -372,7 +372,10 @@ export default function JobDetailPage() {
                   onPress={() =>
                     navigation.navigate('AppTabs', {
                       screen: 'interview',
-                      params: { position: jobData.title },
+                      params: {
+                        position: jobData.title || '',
+                        skills: jobData?.skills || [],
+                      },
                     })
                   }
                   className="bg-blue-600 px-6 py-3 rounded items-center justify-center w-full"

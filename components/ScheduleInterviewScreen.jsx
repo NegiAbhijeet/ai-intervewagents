@@ -27,13 +27,13 @@ export default function ScheduleInterviewScreen({
   routePosition,
   userProfile,
   type,
-  isFromJob,
+  routeSkills,
 }) {
   const insets = useSafeAreaInsets();
   const [interviewType, setInterviewType] = useState('Technical');
   const [selectedPosition, setSelectedPosition] = useState(routePosition || '');
   const [currentSkill, setCurrentSkill] = useState('');
-  const [skills, setSkills] = useState([]);
+  const [skills, setSkills] = useState(routeSkills || []);
   const [duration, setDuration] = useState('');
   const [loadingSkills, setLoadingSkills] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -104,11 +104,7 @@ export default function ScheduleInterviewScreen({
       fetchCandidatedata();
     }
   }, [userProfile]);
-  useEffect(() => {
-    if (isFromJob && routePosition) {
-      fetchSkillsForPosition(routePosition);
-    }
-  }, [isFromJob, routePosition]);
+
   // ✅ Skill Suggestion Based on Position
   const fetchSkillsForPosition = async position => {
     setLoadingSkills(true);
