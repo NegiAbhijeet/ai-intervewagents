@@ -17,6 +17,7 @@ import TopBar from '../components/TopBar';
 import LeagueCarousel from '../components/LeagueCarousel';
 import { LEAGUES } from '../libs/leagueData';
 import { RefreshControl, ScrollView } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
 function getInitials(name) {
   const words = name.trim().split(' ');
   if (words.length >= 2) {
@@ -27,6 +28,7 @@ function getInitials(name) {
 
 export default function Leaderboard() {
   const { userProfile } = useContext(AppStateContext);
+  const navigation = useNavigation();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [userRankDetails, setUserRankDetails] = useState(null);
@@ -34,7 +36,7 @@ export default function Leaderboard() {
   // Fetch, filter, sort and add rank index
   function getRatings() {
     setLoading(true);
-    fetchWithAuth(`${API_URL}/get-users-rating/`)
+    fetchWithAuth(`${API_URL}/get-users-rating/?uid=${userProfile?.uid}`)
       .then(res => res.json())
       .then(res => {
         const data = Array.isArray(res?.profiles) ? res.profiles : [];
@@ -105,6 +107,21 @@ export default function Leaderboard() {
       <>
         <TouchableOpacity
           activeOpacity={0.8}
+          onPress={() => {
+            if (!isCurrentUser) {
+              const minutesUsed = user?.seconds_used
+                ? Math.floor(user.seconds_used / 60)
+                : 0;
+              navigation.navigate('othersProfile', {
+                avatar: user?.user_photo_url || null,
+                name: user?.user_name || 'Unknown User',
+                trophies: user?.rating ?? 0,
+                interviewCompleted: user?.total_interviews ?? 0,
+                minutes: minutesUsed,
+                lastRole: user?.last_interview_role || 'No recent role',
+              });
+            }
+          }}
           className={`flex-row justify-between items-center py-3 px-4 border-b border-gray-200 ${
             isCurrentUser ? 'bg-blue-200' : ''
           }`}

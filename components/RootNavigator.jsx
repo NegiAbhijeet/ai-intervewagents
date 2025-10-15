@@ -8,6 +8,7 @@ import JobDetailPage from '../pages/JobDetailPage';
 import ReportDetailScreen from '../pages/ReportDetail';
 import NotificationsPage from '../pages/NotificationsDrawer';
 import ProfileScreen from '../pages/Profile';
+import OthersProfile from '../pages/othersProfile';
 const Stack = createNativeStackNavigator();
 
 const RootNavigator = () => {
@@ -44,6 +45,11 @@ const RootNavigator = () => {
       <Stack.Screen
         name="profile"
         component={ProfileScreen}
+        options={{ headerShown: true, title: 'Profile' }}
+      />
+      <Stack.Screen
+        name="othersProfile"
+        component={OthersProfile}
         options={{ headerShown: true, title: 'Profile' }}
       />
     </Stack.Navigator>
