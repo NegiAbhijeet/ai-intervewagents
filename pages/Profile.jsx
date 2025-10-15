@@ -29,12 +29,10 @@ export default function ProfileScreen() {
     userProfile,
     totalMinutes,
     usedMinutes,
-    usedFreeMinutes,
     firebaseUser,
     setUserProfile,
-    isFreePlan,
   } = useContext(AppStateContext);
-  const activeUsedMinutes = isFreePlan ? usedFreeMinutes : usedMinutes;
+  const activeUsedMinutes = usedMinutes;
 
   const [loading, setLoading] = useState(false);
   async function fetchDetails() {
@@ -299,7 +297,10 @@ export default function ProfileScreen() {
                 </View>
 
                 <Text className="text-xs text-gray-500 text-center mt-2">
-                  {totalMinutes - activeUsedMinutes} minutes left
+                  {activeUsedMinutes > totalMinutes
+                    ? 0
+                    : totalMinutes - activeUsedMinutes}{' '}
+                  minutes left
                 </Text>
               </View>
               {userProfile?.plan.id == 1 ? (

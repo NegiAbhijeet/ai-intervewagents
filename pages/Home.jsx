@@ -72,7 +72,7 @@ const StatsSkeleton = () => {
 };
 const Home = () => {
   const navigation = useNavigation();
-  const { userProfile, usedMinutes, fcmTokenUpdated, setFcmTokenUpdated } =
+  const { userProfile, mainUsedMinutes, fcmTokenUpdated, setFcmTokenUpdated } =
     useContext(AppStateContext);
   const [meetings, setMeetings] = useState([]);
   const [overallScore, setOverallScore] = useState(0);
@@ -202,8 +202,8 @@ const Home = () => {
                 color="green"
               />
               <StatsCard
-                label="Time Practiced"
-                value={`${usedMinutes} Minutes`}
+                label="Time Practiced (Total)"
+                value={`${mainUsedMinutes} Minutes`}
                 color="purple"
               />
               <StatsCard

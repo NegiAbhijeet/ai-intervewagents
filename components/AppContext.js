@@ -18,14 +18,18 @@ const AppStateProvider = ({ children }) => {
   const totalSeconds = isFreePlan
     ? userProfile?.plan?.free_seconds || 0
     : userProfile?.plan?.total_seconds || 0;
-  const totalFreeSeconds = userProfile?.plan?.free_seconds_used_today || 0;
 
-  const usedSeconds = userProfile?.seconds_used || 0;
+  const usedSeconds = isFreePlan
+    ? userProfile?.free_seconds_used_today || 0
+    : userProfile?.seconds_used || 0;
 
   // Round UP to the nearest minute
   const totalMinutes = Math.ceil(totalSeconds / 60);
   const usedMinutes = Math.ceil(usedSeconds / 60);
-  const usedFreeMinutes = Math.ceil(totalFreeSeconds / 60);
+
+  const mainUsedSeconds = userProfile?.seconds_used || 0;
+
+  const mainUsedMinutes = Math.ceil(mainUsedSeconds / 60);
 
   // ✅ Memoize the cleaned context value
   const contextValue = useMemo(
@@ -38,7 +42,6 @@ const AppStateProvider = ({ children }) => {
       setFirebaseUser,
       jobs,
       setJobs,
-      usedFreeMinutes,
       isFreePlan,
       isNotificationDraweron,
       setIsNotificationDrawerOn,
@@ -50,6 +53,7 @@ const AppStateProvider = ({ children }) => {
       setFcmTokenUpdated,
       jobsFetched,
       setJobsFetched,
+      mainUsedMinutes,
     }),
     [
       userProfile,
@@ -57,13 +61,13 @@ const AppStateProvider = ({ children }) => {
       usedMinutes,
       firebaseUser,
       jobs,
-      usedFreeMinutes,
       isFreePlan,
       isNotificationDraweron,
       unreadNotification,
       notifications,
       fcmTokenUpdated,
       jobsFetched,
+      mainUsedMinutes,
     ],
   );
 
