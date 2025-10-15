@@ -14,8 +14,9 @@ import { AppStateContext } from '../components/AppContext';
 import { API_URL } from '../components/config';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import TopBar from '../components/TopBar';
-import Layout from './Layout';
-
+import LeagueCarousel from '../components/LeagueCarousel';
+import { LEAGUES } from '../libs/leagueData';
+import { RefreshControl, ScrollView } from 'react-native-gesture-handler';
 function getInitials(name) {
   const words = name.trim().split(' ');
   if (words.length >= 2) {
@@ -30,14 +31,15 @@ export default function Leaderboard() {
   const [loading, setLoading] = useState(false);
   const [userRankDetails, setUserRankDetails] = useState(null);
 
+  // Fetch, filter, sort and add rank index
   function getRatings() {
     setLoading(true);
     fetchWithAuth(`${API_URL}/get-users-rating/`)
       .then(res => res.json())
       .then(res => {
         const data = Array.isArray(res?.profiles) ? res.profiles : [];
-        const filteredData = data.filter(user => Number(user?.rating) > 0);
-        let sortedUsers = filteredData
+        const filteredData = data.filter(u => Number(u?.rating) > 0);
+        const sortedUsers = filteredData
           .slice()
           .sort((a, b) => Number(b.rating) - Number(a.rating))
           .map((user, index) => ({
@@ -56,11 +58,6 @@ export default function Leaderboard() {
           );
           if (found) {
             setUserRankDetails(found);
-            if (found.rank > 3) {
-              sortedUsers = sortedUsers.filter(
-                u => u.user_email !== userProfile.user_email,
-              );
-            }
           } else {
             setUserRankDetails(null);
           }
@@ -85,138 +82,74 @@ export default function Leaderboard() {
   }, [userProfile]);
 
   const onRefresh = () => {
-    // Use the same getRatings function so state updates are consistent
     getRatings();
   };
+  const rating = userRankDetails?.rating ?? 0;
 
-  const topThreeUsers = users.slice(0, 3);
-  const otherUsers = users.slice(3);
+  const currentLeague =
+    LEAGUES.find(l => rating >= l.min && rating <= l.max) || LEAGUES[0];
 
-  const renderTopThree = () => (
-    <View className="flex-row justify-center items-end gap-4 mb-12">
-      {[topThreeUsers[1], topThreeUsers[0], topThreeUsers[2]].map((user, i) => {
-        if (!user) return <View key={`top-${i}`} className="w-24 h-24" />;
+  const renderUserItem = ({ item: user }) => {
+    const isCurrentUser = user.user_email === userProfile?.user_email;
 
-        const actualIndex = [1, 0, 2][i];
-        const isFirst = actualIndex === 0;
-        const isSecond = actualIndex === 1;
-        const isThird = actualIndex === 2;
+    const trophyIcon =
+      user.rank === 1 ? (
+        <Ionicons name="trophy" size={20} color="#D4AF37" />
+      ) : user.rank === 2 ? (
+        <Ionicons name="trophy" size={18} color="#A0AEC0" />
+      ) : user.rank === 3 ? (
+        <Ionicons name="trophy" size={18} color="#D97706" />
+      ) : null;
 
-        const fallbackBg = isFirst
-          ? 'bg-yellow-200 text-yellow-900'
-          : isSecond
-          ? 'bg-gray-200 text-gray-800'
-          : 'bg-amber-200 text-amber-800';
+    return (
+      <>
+        <TouchableOpacity
+          activeOpacity={0.8}
+          className={`flex-row justify-between items-center py-3 px-4 border-b border-gray-200 ${
+            isCurrentUser ? 'bg-blue-200' : ''
+          }`}
+        >
+          <Text className="w-10 text-base font-bold">
+            {trophyIcon ? null : `#${user.rank}`}
+            {trophyIcon}
+          </Text>
 
-        const avatarSize = isFirst ? 16 : 16;
-
-        const textColor = isFirst
-          ? 'text-yellow-900'
-          : isSecond
-          ? 'text-gray-700'
-          : 'text-amber-800';
-
-        return (
-          <TouchableOpacity
-            key={user.rank}
-            activeOpacity={0.8}
-            className="items-center"
-          >
-            <View className="relative">
-              <View className={`w-${avatarSize} h-${avatarSize} rounded-full`}>
-                {user.image ? (
-                  <Image
-                    source={{ uri: user.image }}
-                    className={`w-${avatarSize} h-${avatarSize} rounded-full`}
-                  />
-                ) : (
-                  <View
-                    className={`w-${avatarSize} h-${avatarSize} justify-center items-center ${fallbackBg} rounded-full`}
-                  >
-                    <Text className="text-2xl font-bold">
-                      {getInitials(user.user_name)}
-                    </Text>
-                  </View>
-                )}
-              </View>
-
-              <View className="absolute top-0 right-0 p-2 bg-white rounded-full shadow">
-                {isFirst ? (
-                  <Ionicons name="trophy" size={24} color="#D4AF37" />
-                ) : isSecond ? (
-                  <Ionicons name="trophy-outline" size={20} color="#A0AEC0" />
-                ) : (
-                  <Ionicons name="trophy" size={20} color="#D97706" />
-                )}
-              </View>
-            </View>
-
-            <View className="mt-4 items-center">
-              <Text
-                className={`font-black ${textColor} ${
-                  isFirst ? 'text-3xl' : 'text-xl'
-                }`}
-              >
-                #{user.rank}
-              </Text>
-
-              {user.user_email === userProfile?.user_email ? (
-                <View className={`px-3 py-1 rounded-full bg-purple-500`}>
-                  <Text className="text-white font-bold">You</Text>
-                </View>
+          <View className="flex-row items-center gap-3 flex-1 px-2">
+            <View className="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-300">
+              {user.image ? (
+                <Image
+                  source={{ uri: user.image }}
+                  className="w-full h-full rounded-full"
+                />
               ) : (
-                <Text
-                  className={`font-bold ${textColor} text-base`}
-                  numberOfLines={1}
-                >
-                  {user.user_name}
-                </Text>
+                <View className="flex-1 justify-center items-center bg-gray-300">
+                  <Text className="font-bold">
+                    {getInitials(user.user_name)}
+                  </Text>
+                </View>
               )}
+            </View>
 
-              <Text className={`font-black ${textColor} text-lg`}>
-                {user.rating.toLocaleString()} pts
+            <View className="flex-1">
+              <Text className="text-base font-semibold" numberOfLines={1}>
+                {isCurrentUser ? 'You' : user.user_name}
               </Text>
+              {/* <Text className="text-sm text-gray-500" numberOfLines={1}>
+                {user.user_email}
+              </Text> */}
             </View>
-          </TouchableOpacity>
-        );
-      })}
-    </View>
-  );
+          </View>
 
-  const renderOtherUser = ({ item: user }) => (
-    <View className="flex-row justify-between items-center py-3 px-4 border-b border-gray-200">
-      <Text className="text-base">
-        {user.rank === 1
-          ? '🥇'
-          : user.rank === 2
-          ? '🥈'
-          : user.rank === 3
-          ? '🥉'
-          : `#${user.rank}`}
-      </Text>
-      <View className="flex-row items-center gap-2 flex-1 px-4">
-        <View className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-300">
-          {user.image ? (
-            <Image
-              source={{ uri: user.image }}
-              className="w-full h-full rounded-full"
-            />
-          ) : (
-            <View className={`flex-1 justify-center items-center bg-gray-300`}>
-              <Text className="font-bold">{getInitials(user.user_name)}</Text>
-            </View>
-          )}
-        </View>
-        <Text className="flex-1 text-base truncate" numberOfLines={1}>
-          {user.user_name}
-        </Text>
-      </View>
-      <View className="flex-row items-center">
-        <Ionicons name="star" size={16} color="#FBBF24" />
-        <Text className="ml-1 text-base font-medium">{user.rating} pts</Text>
-      </View>
-    </View>
-  );
+          <View className="flex-row items-center">
+            <Text className="ml-2 text-base font-extrabold">
+              {user.rating.toLocaleString()}{' '}
+            </Text>
+            <Ionicons name="trophy" size={16} color="#FBBF24" />
+          </View>
+        </TouchableOpacity>
+      </>
+    );
+  };
 
   const ListHeader = () => (
     <>
@@ -226,51 +159,7 @@ export default function Leaderboard() {
           <Text className="mt-4">Loading leaderboard...</Text>
         </View>
       ) : (
-        <>
-          {renderTopThree()}
-
-          {userRankDetails && (
-            <View className="px-4 py-3 bg-purple-100 rounded-b-lg border-b border-purple-300 mb-4">
-              <View className="flex-row justify-between items-center">
-                <Text className="text-purple-600 font-bold">
-                  #{userRankDetails.rank}
-                </Text>
-                <View className="flex-row items-center flex-1 gap-2 ml-3">
-                  <View className="w-12 h-12 rounded-full overflow-hidden border-2 border-purple-400">
-                    {userRankDetails.image ? (
-                      <Image
-                        source={{ uri: userRankDetails.image }}
-                        className="w-full h-full rounded-full"
-                      />
-                    ) : (
-                      <View className="flex-1 justify-center items-center bg-purple-200">
-                        <Text className="font-bold">
-                          {getInitials(userRankDetails.user_name)}
-                        </Text>
-                      </View>
-                    )}
-                  </View>
-                  <Text className="font-semibold">You</Text>
-                  {userRankDetails.rank <= 3 && (
-                    <Text>
-                      {userRankDetails.rank === 1
-                        ? '🥇'
-                        : userRankDetails.rank === 2
-                        ? '🥈'
-                        : '🥉'}
-                    </Text>
-                  )}
-                </View>
-                <View className="flex-row items-center">
-                  <Ionicons name="star" size={18} color="#FBBF24" />
-                  <Text className="ml-1 text-purple-600 font-extrabold">
-                    {userRankDetails.rating.toLocaleString()} pts
-                  </Text>
-                </View>
-              </View>
-            </View>
-          )}
-        </>
+        <></>
       )}
     </>
   );
@@ -278,19 +167,62 @@ export default function Leaderboard() {
   return (
     <>
       <TopBar />
-      <Layout>
-        <View className="py-5">
+      <ScrollView
+        style={{ flex: 1, backgroundColor: '#fff' }}
+        contentContainerStyle={{ paddingBottom: 60 }}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+        }
+      >
+        <View>
+          <LeagueCarousel data={LEAGUES} userTrophies={rating} />
+
+          <View style={{ marginTop: 16, paddingHorizontal: 20 }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <Text style={{ fontWeight: '700', fontSize: 20 }}>
+                {currentLeague.name} League
+              </Text>
+
+              <View className="flex-row items-center gap-2 bg-gray-800 rounded-full py-1 px-3">
+                <Text style={{ fontSize: 16, color: 'white' }}>{rating}</Text>
+                <Ionicons name="trophy" size={16} color="#FBBF24" />
+              </View>
+            </View>
+
+            <Text style={{ fontSize: 14, color: '#4B5563', marginTop: 6 }}>
+              This is Leaderboard
+            </Text>
+          </View>
+        </View>
+
+        <View
+          style={{
+            backgroundColor: '#000',
+            width: '100%',
+            marginTop: 16,
+            marginBottom: 4,
+            height: 1,
+          }}
+        />
+
+        <View style={{ paddingHorizontal: 20 }}>
           <FlatList
-            data={otherUsers}
-            keyExtractor={item => item.rank.toString()}
+            data={users}
+            keyExtractor={item => `${item.user_email}-${item.rank}`}
             showsVerticalScrollIndicator={false}
             ListHeaderComponent={<ListHeader />}
-            renderItem={renderOtherUser}
-            refreshing={loading}
-            onRefresh={onRefresh}
+            renderItem={renderUserItem}
+            scrollEnabled={false}
           />
         </View>
-      </Layout>
+      </ScrollView>
     </>
   );
 }
