@@ -72,12 +72,17 @@ const StatsSkeleton = () => {
 };
 const Home = () => {
   const navigation = useNavigation();
-  const { userProfile, mainUsedMinutes, fcmTokenUpdated, setFcmTokenUpdated } =
-    useContext(AppStateContext);
+  const {
+    userProfile,
+    mainUsedMinutes,
+    fcmTokenUpdated,
+    setFcmTokenUpdated,
+    setLeaderboardRank,
+  } = useContext(AppStateContext);
   const [meetings, setMeetings] = useState([]);
   const [overallScore, setOverallScore] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [leaderboardRank, setLeaderboardRank] = useState(0);
+
   const finalLoading = isLoading || !userProfile;
   async function fetchMeetings() {
     setIsLoading(true);
@@ -207,9 +212,10 @@ const Home = () => {
                 color="purple"
               />
               <StatsCard
-                label="Leaderboard Rank"
-                value={`#${leaderboardRank}`}
+                label="Streak"
+                value={`${userProfile?.current_streak || 0} Day`}
                 color="yellow"
+                isStreak={true}
               />
             </View>
           )}

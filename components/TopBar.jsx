@@ -26,6 +26,7 @@ const TopBar = () => {
     notifications,
     setNotifications,
     setUnreadNotification,
+    leaderboardRank,
   } = useContext(AppStateContext);
 
   const [menuVisible, setMenuVisible] = useState(false);
@@ -44,8 +45,10 @@ const TopBar = () => {
     }
   }, [unreadCount, setUnreadNotification]);
   function fetchNotifications() {
-    fetchWithAuth(`${API_URL}/notifications/${userProfile.uid}/?notification_from=app`)
-      .then(res => res.json()) 
+    fetchWithAuth(
+      `${API_URL}/notifications/${userProfile.uid}/?notification_from=app`,
+    )
+      .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
           setNotifications(data);
@@ -125,23 +128,24 @@ const TopBar = () => {
         <Text className="font-semibold text-xl">AIIA</Text>
       </TouchableOpacity>
 
-      <View className="flex-row items-center gap-3">
+      <View className="flex-row items-center gap-2">
         <TouchableOpacity
           onPress={() => navigation.navigate('leaderBoard')}
           className="flex-row items-center gap-2"
         >
           <View
-            className="flex-row items-center justify-center gap-2 border border-gray-300 rounded-full px-3 h-10"
+            className="flex-row items-center justify-center gap-2 border border-gray-300 rounded-full px-4 py-1"
             style={{ overflow: 'hidden' }}
           >
-            <Text className="text-xl font-semibold">
-              {userProfile?.current_streak || 0}
-            </Text>
-            <Image
+            {/* <Image
               source={require('../assets/images/flame.png')}
-              className="w-6 h-6"
+              className="w-5 h-5"
               resizeMode="contain"
-            />
+            /> */}
+            <Ionicons name="trophy" size={14} color="#FBBF24" />
+            <Text className="text-base font-semibold">
+              #{leaderboardRank || 0}
+            </Text>
           </View>
         </TouchableOpacity>
 
