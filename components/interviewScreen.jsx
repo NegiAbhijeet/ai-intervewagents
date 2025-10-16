@@ -22,6 +22,7 @@ import Timer from './timer';
 import AIAgent from './AIAgent';
 import { useNavigation } from '@react-navigation/native';
 import { AppStateContext } from './AppContext';
+import { JAVA_API_URL } from './config';
 
 const CallUI = ({
   agentId,
@@ -57,16 +58,13 @@ const CallUI = ({
     stopAudioRecording();
     stopAudioPlayer();
 
-    fetch(
-      `https://interview.java.docsightai.com/api/meetings/update/${meetingId}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ interviewDuration: elapsedSeconds }),
+    fetch(`${JAVA_API_URL}/api/meetings/update/${meetingId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
       },
-    )
+      body: JSON.stringify({ interviewDuration: elapsedSeconds }),
+    })
       .catch(error => {
         console.error('Error updating meeting:', error);
       })
