@@ -126,7 +126,7 @@ const Reports = () => {
         >
           <View className="flex-row justify-between items-center mb-4">
             <Text className="text-2xl font-semibold">Interview Reports</Text>
-            <View
+            {/* <View
               style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
             >
               <TouchableOpacity
@@ -150,7 +150,7 @@ const Reports = () => {
                 </Animated.View>
                 <Text style={{ fontWeight: '600' }}>Refresh</Text>
               </TouchableOpacity>
-            </View>
+            </View> */}
           </View>
 
           {/* Top user-friendly status banner */}

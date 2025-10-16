@@ -76,6 +76,7 @@ const ContextGate = ({ children }) => {
           profile = await fetchUserDetails(user.uid);
         }
       } catch (err) {
+        setUserProfile(null);
         console.log('Error fetching user details:', err);
       }
 

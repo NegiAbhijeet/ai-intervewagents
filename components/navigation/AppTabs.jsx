@@ -13,7 +13,8 @@ const AppTabs = () => {
   return (
     <Tab.Navigator
       tabBar={props => <BottomTabBar {...props} />}
-      screenOptions={{ headerShown: false }}
+      screenOptions={{ headerShown: false, animation: 'shift' }}
+      backBehavior="history"
     >
       <Tab.Screen name="index" component={Home} />
       <Tab.Screen name="jobs" component={JobsPage} />
