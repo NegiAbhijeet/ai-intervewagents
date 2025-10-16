@@ -129,13 +129,15 @@ export default function ProfileScreen() {
             {/* Profile Card */}
             <View className="bg-white rounded-xl shadow-md p-4">
               <View className="items-center py-2">
-                {firebaseUser?.photoURL ? (
-                  <Image
-                    source={{ uri: firebaseUser.photoURL }}
-                    className="w-32 h-32 rounded-full"
-                  />
+                {userProfile?.avatar ? (
+                  <View className="w-32 h-32 rounded-full border-4 border-gray-600 overflow-hidden">
+                    <Image
+                      source={{ uri: userProfile?.avatar }}
+                      className="w-full h-full rounded-full"
+                    />
+                  </View>
                 ) : (
-                  <View className="w-32 h-32 rounded-full bg-indigo-100 justify-center items-center">
+                  <View className="w-32 h-32 rounded-full bg-indigo-100 justify-center items-center border-4 border-gray-600">
                     <Text className="text-indigo-600 text-4xl">{initials}</Text>
                   </View>
                 )}

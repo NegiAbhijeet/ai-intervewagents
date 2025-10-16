@@ -1,15 +1,54 @@
-import { useContext, useState } from 'react';
-import { Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+// AvatarSelectionScreen.tsx
+import React, { useContext, useMemo, useState } from 'react';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Image,
+  ActivityIndicator,
+  StyleSheet,
+  Dimensions,
+} from 'react-native';
 import { AppStateContext } from './AppContext';
+import { API_URL, JAVA_API_URL } from './config';
 import fetchWithAuth from '../libs/fetchWithAuth';
-import { JAVA_API_URL, API_URL } from '../components/config';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 
-const GetStartedScreen = () => {
+export default function AvatarSelectionScreen() {
   const { userProfile, setUserProfile } = useContext(AppStateContext);
+  const [selectedIndex, setSelectedIndex] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  console.log(userProfile);
+  // build 14 avatar urls
+  const avatars = useMemo(() => {
+    const base =
+      'https://docsightaistorageprod.blob.core.windows.net/avatar/avatar';
+    return Array.from({ length: 14 }, (_, i) => `${base}${i + 1}.png`);
+  }, []);
+
+  const selectedAvatar = selectedIndex !== null ? avatars[selectedIndex] : null;
 
   const handleContinue = async () => {
+    if (!userProfile?.uid) {
+      console.error('Missing userProfile.uid', userProfile);
+      Toast.show({
+        type: 'error',
+        text1: 'User',
+        text2: 'Invalid User.',
+      });
+      return;
+    }
+    if (!selectedAvatar) {
+      console.error('Missing avatar');
+      Toast.show({
+        type: 'error',
+        text1: 'Select Avatar',
+        text2: 'Please choose an avatar.',
+      });
+      return;
+    }
+
     try {
       setIsLoading(true);
 
@@ -17,10 +56,8 @@ const GetStartedScreen = () => {
         `${API_URL}/profiles/${userProfile?.uid}/update-role/`,
         {
           method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ role: 'candidate' }),
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ role: 'candidate', url: selectedAvatar }),
         },
       );
 
@@ -31,20 +68,21 @@ const GetStartedScreen = () => {
           lastName: userProfile?.last_name,
           email: userProfile?.email,
         };
-
         const candidateRes = await fetchWithAuth(
           `${JAVA_API_URL}/api/candidates/save`,
           {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body),
           },
         );
 
         if (candidateRes.status === 200) {
-          setUserProfile({ ...userProfile, role: 'candidate' });
+          setUserProfile({
+            ...userProfile,
+            role: 'candidate',
+            avatar: selectedAvatar,
+          });
         } else {
           console.error(
             'Failed to save candidate. Status:',
@@ -59,70 +97,248 @@ const GetStartedScreen = () => {
     }
   };
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <Image
-        source={require('../assets/images/logo.png')} // Replace with your logo
-        style={styles.logo}
-        resizeMode="contain"
-      />
-<Text style={styles.logoTitle}>AI Interview Agents</Text>
-      <Text style={styles.title}>Welcome to Our App</Text>
-      <Text style={styles.subtitle}>
-        Choose your role and let's get started!
-      </Text>
+  // Render each grid item. wrapper uses aspectRatio to ensure square equal to column width.
+  const renderItem = ({ item, index }) => {
+    const isSelected = selectedIndex === index;
 
-      <TouchableOpacity style={styles.button} onPress={handleContinue}>
-        <Text style={styles.buttonText}>
-          {isLoading ? 'Please Wait...' : 'Get Started'}
-        </Text>
+    return (
+      <TouchableOpacity
+        activeOpacity={0.85}
+        onPress={() => setSelectedIndex(index)}
+        accessibilityRole="button"
+        accessibilityState={{ selected: isSelected }}
+        style={styles.avatarCell}
+      >
+        <View
+          style={[
+            styles.avatarOuter, // outer aligns the circle and provides optional shadow
+            isSelected ? styles.avatarOuterSelected : null,
+          ]}
+        >
+          <View style={styles.avatarInner}>
+            <Image
+              source={{ uri: item }}
+              resizeMode="cover"
+              accessibilityLabel={`Avatar ${index + 1}`}
+              style={styles.avatarImage}
+            />
+          </View>
+        </View>
       </TouchableOpacity>
-    </SafeAreaView>
-  );
-};
+    );
+  };
 
-export default GetStartedScreen;
+  return (
+    <View style={styles.container}>
+      <View style={styles.headerContainer}>
+        <Text style={styles.title}>Choose your avatar</Text>
+        <Text style={styles.subtitle}>Select one avatar to represent you</Text>
+      </View>
+
+      <View style={styles.previewContainer}>
+        <View style={styles.previewWrapper}>
+          {selectedAvatar ? (
+            <Image
+              source={{ uri: selectedAvatar }}
+              style={styles.previewImage}
+            />
+          ) : (
+            <View style={styles.previewPlaceholder}>
+              <Text style={styles.previewPlaceholderText}>Preview</Text>
+            </View>
+          )}
+        </View>
+        <Text style={styles.previewLabel}>
+          {selectedIndex !== null
+            ? `Selected avatar #${selectedIndex + 1}`
+            : 'No avatar selected'}
+        </Text>
+      </View>
+
+      <FlatList
+        data={avatars}
+        renderItem={renderItem}
+        keyExtractor={(_, idx) => String(idx)}
+        numColumns={4}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.gridContent}
+      />
+
+      <View style={styles.footer}>
+        <TouchableOpacity
+          activeOpacity={0.9}
+          onPress={handleContinue}
+          disabled={isLoading || !selectedAvatar}
+          accessibilityRole="button"
+          style={[
+            styles.button,
+            isLoading || !selectedAvatar
+              ? styles.buttonDisabled
+              : styles.buttonEnabled,
+          ]}
+        >
+          {isLoading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Get started</Text>
+          )}
+        </TouchableOpacity>
+
+        {/* <Text style={styles.footerNote}>
+          You can change this later in profile settings
+        </Text> */}
+      </View>
+    </View>
+  );
+}
+
+// Calculate column gaps so squares fill exactly
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const HORIZONTAL_PADDING = 16 * 2; // container padding left and right (matches styles.container)
+const COLUMNS = 4;
+const CELL_HORIZONTAL_MARGIN = 8; // left+right total per cell is 16, so each side 8
+const totalGaps = COLUMNS * CELL_HORIZONTAL_MARGIN * 2;
+const available = SCREEN_WIDTH - HORIZONTAL_PADDING - totalGaps;
+const CELL_SIZE = Math.floor(available / COLUMNS);
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F6F7FB',
+    backgroundColor: '#f8fafc',
+    paddingHorizontal: 16,
+    paddingTop: 32,
+  },
+  headerContainer: {
     alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  logo: {
-    width: 180,
-    height: 180,
-    // marginBottom: 30,
-  },
-  logoTitle:{
-    fontSize:20,
-    color:"#5C6EF8",
-marginBottom: 30,
+    marginBottom: 24,
   },
   title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#333',
-    marginBottom: 10,
+    fontSize: 22,
+    fontWeight: '600',
+    color: '#1e293b',
   },
   subtitle: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 40,
-    textAlign: 'center',
+    fontSize: 14,
+    color: '#64748b',
+    marginTop: 4,
+  },
+
+  // preview
+  previewContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  previewWrapper: {
+    width: 128,
+    height: 128,
+    borderRadius: 64,
+    overflow: 'hidden',
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  previewImage: {
+    width: '100%',
+    height: '100%',
+  },
+  previewPlaceholder: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#e0e7ff',
+  },
+  previewPlaceholderText: {
+    color: '#4f46e5',
+  },
+  previewLabel: {
+    fontSize: 14,
+    color: '#475569',
+    marginTop: 12,
+  },
+
+  // grid
+  gridContent: {
+    paddingBottom: 24,
+  },
+
+  // Each cell occupies 25% width. there is minimal margin so the inner wrapper can use full width
+  avatarCell: {
+    width: '25%',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: CELL_HORIZONTAL_MARGIN,
+  },
+
+  // Outer wrapper controls shadow and selected border. No inner padding
+  avatarOuter: {
+    width: '100%',
+    aspectRatio: 1,
+    borderRadius: 999,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#fff',
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+  },
+
+  // Selected variant: thicker border and shadow. still no extra padding
+  avatarOuterSelected: {
+    borderWidth: 3,
+    borderColor: '#4f46e5',
+    shadowColor: '#4f46e5',
+    shadowOpacity: 0.18,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+
+  // Inner is the exact square that hosts the image. set width/height 100%
+  avatarInner: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 999,
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  // Image fills the inner wrapper exactly
+  avatarImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+
+  // footer
+  footer: {
+    marginTop: 16,
+    marginBottom: 24,
   },
   button: {
-    backgroundColor: '#5C6EF8',
-    paddingVertical: 15,
-    paddingHorizontal: 50,
-    borderRadius: 30,
-    elevation: 3,
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonEnabled: {
+    backgroundColor: '#4f46e5',
+  },
+  buttonDisabled: {
+    backgroundColor: '#4f46e5',
+    opacity: 0.6,
   },
   buttonText: {
     color: '#fff',
+    fontWeight: '500',
     fontSize: 16,
-    fontWeight: '600',
+  },
+  footerNote: {
+    textAlign: 'center',
+    fontSize: 13,
+    color: '#64748b',
+    marginTop: 12,
   },
 });

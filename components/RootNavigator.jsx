@@ -15,7 +15,7 @@ const RootNavigator = () => {
   const { firebaseUser, userProfile } = useContext(AppStateContext);
 
   // If user is logged in and has a profile with a role, show the main app tabs
-  if (firebaseUser && userProfile && userProfile.role) {
+  if (firebaseUser && userProfile && userProfile.role && userProfile?.avatar) {
     return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="AppTabs" component={AppTabs} />
@@ -45,16 +45,20 @@ const RootNavigator = () => {
           options={{ headerShown: true, title: 'Profile' }}
         />
       </Stack.Navigator>
-    )
+    );
   }
 
   // If user is logged in but has no role yet, show onboarding / get started
-  if (firebaseUser && userProfile && !userProfile.role) {
+  if (
+    firebaseUser &&
+    userProfile &&
+    (!userProfile.role || !userProfile?.avatar)
+  ) {
     return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="GetStarted" component={GetStartedScreen} />
       </Stack.Navigator>
-    )
+    );
   }
 
   // Default: not authenticated. show auth stack
@@ -62,7 +66,7 @@ const RootNavigator = () => {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="AuthStack" component={AuthStack} />
     </Stack.Navigator>
-  )
-}
+  );
+};
 
-export default RootNavigator
+export default RootNavigator;
