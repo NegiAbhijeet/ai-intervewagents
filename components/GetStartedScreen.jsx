@@ -161,7 +161,10 @@ export default function AvatarSelectionScreen() {
         keyExtractor={(_, idx) => String(idx)}
         numColumns={4}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.gridContent}
+        contentContainerStyle={[
+          styles.gridContent,
+          { alignItems: 'center', paddingHorizontal: 0 },
+        ]}
       />
 
       <View style={styles.footer}>
@@ -194,11 +197,12 @@ export default function AvatarSelectionScreen() {
 
 // Calculate column gaps so squares fill exactly
 const SCREEN_WIDTH = Dimensions.get('window').width;
-const HORIZONTAL_PADDING = 16 * 2; // container padding left and right (matches styles.container)
+const CONTAINER_HORIZONTAL_PADDING = 16;
 const COLUMNS = 4;
-const CELL_HORIZONTAL_MARGIN = 8; // left+right total per cell is 16, so each side 8
-const totalGaps = COLUMNS * CELL_HORIZONTAL_MARGIN * 2;
-const available = SCREEN_WIDTH - HORIZONTAL_PADDING - totalGaps;
+const SIDE_MARGIN = 8;
+const totalSideMargins = COLUMNS * SIDE_MARGIN * 2;
+const available =
+SCREEN_WIDTH - CONTAINER_HORIZONTAL_PADDING * 2 - totalSideMargins;
 const CELL_SIZE = Math.floor(available / COLUMNS);
 
 const styles = StyleSheet.create({
@@ -264,19 +268,20 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
 
-  // Each cell occupies 25% width. there is minimal margin so the inner wrapper can use full width
   avatarCell: {
-    width: '25%',
-    alignItems: 'center',
+    width: CELL_SIZE,
+    height: CELL_SIZE + 16, // allow vertical padding for touch area and label space
     paddingVertical: 8,
-    paddingHorizontal: CELL_HORIZONTAL_MARGIN,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: SIDE_MARGIN,
   },
 
   // Outer wrapper controls shadow and selected border. No inner padding
   avatarOuter: {
-    width: '100%',
-    aspectRatio: 1,
-    borderRadius: 999,
+    width: CELL_SIZE,
+    height: CELL_SIZE,
+    borderRadius: CELL_SIZE / 2,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#fff',
@@ -294,12 +299,10 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 4,
   },
-
-  // Inner is the exact square that hosts the image. set width/height 100%
   avatarInner: {
     width: '100%',
     height: '100%',
-    borderRadius: 999,
+    borderRadius: CELL_SIZE / 2,
     overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
