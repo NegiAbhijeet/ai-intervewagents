@@ -32,10 +32,13 @@ export default function Leaderboard() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [userRankDetails, setUserRankDetails] = useState(null);
-
+  const [isRefreshing, setIsRefreshing] = useState(false);
   // Fetch, filter, sort and add rank index
-  function getRatings() {
+  function getRatings(isRefreshingCall = false) {
     setLoading(true);
+    if (isRefreshingCall) {
+      setIsRefreshing(true);
+    }
     fetchWithAuth(`${API_URL}/get-users-rating/?uid=${userProfile?.uid}`)
       .then(res => res.json())
       .then(res => {
@@ -74,6 +77,9 @@ export default function Leaderboard() {
       })
       .finally(() => {
         setLoading(false);
+        if (isRefreshingCall) {
+          setIsRefreshing(false);
+        }
       });
   }
 
@@ -84,7 +90,7 @@ export default function Leaderboard() {
   }, [userProfile]);
 
   const onRefresh = () => {
-    getRatings();
+    getRatings(true);
   };
   const rating = userRankDetails?.rating ?? 0;
 
@@ -189,7 +195,7 @@ export default function Leaderboard() {
         contentContainerStyle={{ paddingBottom: 60 }}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
         }
       >
         <View>

@@ -40,7 +40,7 @@ export default function JobsPage() {
   const [locationFilter, setLocationFilter] = useState('');
   const [openPopup, setOpenPopup] = useState(false);
   const [candidate, setCandidate] = useState(null);
-
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const fetchCandidate = async uid => {
     try {
       const response = await fetchWithAuth(
@@ -58,9 +58,12 @@ export default function JobsPage() {
     }
   };
 
-  const fetchJobs = async body => {
+  const fetchJobs = async (body, isRefreshingCall = false) => {
     try {
       setLoading(true);
+      if (isRefreshingCall) {
+        setIsRefreshing(true);
+      }
       const res = await fetchWithAuth(`${API_URL}/job-search/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -78,6 +81,9 @@ export default function JobsPage() {
       return [];
     } finally {
       setLoading(false);
+      if (isRefreshingCall) {
+        setIsRefreshing(false);
+      }
     }
   };
 
@@ -112,7 +118,7 @@ export default function JobsPage() {
         role: candidate.position,
         experience_years: candidate.experienceYears,
       };
-      const fetched = await fetchJobs(body);
+      const fetched = await fetchJobs(body, true);
       setJobs(fetched);
       setJobsFetched(true);
     } catch (err) {
@@ -237,7 +243,10 @@ export default function JobsPage() {
             showsVerticalScrollIndicator={false}
             className="py-5"
             refreshControl={
-              <RefreshControl refreshing={loading} onRefresh={handleRefresh} />
+              <RefreshControl
+                refreshing={isRefreshing}
+                onRefresh={handleRefresh}
+              />
             }
           >
             {/* Header */}

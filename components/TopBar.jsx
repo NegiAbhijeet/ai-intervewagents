@@ -179,12 +179,14 @@ const TopBar = () => {
 
         <TouchableOpacity onPress={() => setMenuVisible(true)}>
           {userProfile?.avatar ? (
-            <Image
-              source={{ uri: userProfile?.avatar }}
-              className="w-9 h-9 rounded-full bg-gray-200"
-            />
+            <View className="w-9 h-9 rounded-full border-2 border-black bg-blue-500 justify-center items-center">
+              <Image
+                source={{ uri: userProfile?.avatar }}
+                className="w-full h-full rounded-full bg-gray-200"
+              />
+            </View>
           ) : (
-            <View className="w-9 h-9 rounded-full bg-blue-500 justify-center items-center">
+            <View className="w-9 h-9 rounded-full border-2 border-black bg-blue-500 justify-center items-center">
               <Text className="text-white font-bold text-base">
                 {getInitial(userProfile?.first_name)}
               </Text>

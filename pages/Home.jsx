@@ -82,10 +82,13 @@ const Home = () => {
   const [meetings, setMeetings] = useState([]);
   const [overallScore, setOverallScore] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const finalLoading = isLoading || !userProfile;
-  async function fetchMeetings() {
+  async function fetchMeetings(isRefreshingCall=false) {
     setIsLoading(true);
+    if (isRefreshingCall) {
+      setIsRefreshing(true);
+    }
     try {
       const response = await fetch(
         `${JAVA_API_URL}/api/meetings/uid/${userProfile?.uid}`,
@@ -113,6 +116,9 @@ const Home = () => {
       console.error(err);
     } finally {
       setIsLoading(false);
+      if (isRefreshingCall) {
+        setIsRefreshing(false);
+      }
     }
   }
   function fetchUserRank() {
@@ -150,7 +156,7 @@ const Home = () => {
   }, [userProfile?.uid]);
   const onRefresh = () => {
     setIsLoading(true);
-    fetchMeetings();
+    fetchMeetings(true);
     fetchUserRank();
   };
   useEffect(() => {
@@ -176,7 +182,7 @@ const Home = () => {
           showsVerticalScrollIndicator={false}
           className="py-5"
           refreshControl={
-            <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
+            <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
           }
         >
           {!userProfile ? (

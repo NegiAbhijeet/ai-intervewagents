@@ -24,7 +24,7 @@ export default function AvatarSelectionScreen() {
   const avatars = useMemo(() => {
     const base =
       'https://docsightaistorageprod.blob.core.windows.net/avatar/avatar';
-    return Array.from({ length: 14 }, (_, i) => `${base}${i + 1}.png`);
+    return Array.from({ length: 20 }, (_, i) => `${base}${i + 1}.png`);
   }, []);
 
   const selectedAvatar = selectedIndex !== null ? avatars[selectedIndex] : null;
