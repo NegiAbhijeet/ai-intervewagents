@@ -2,13 +2,14 @@ import React, { useContext } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AppTabs from './navigation/AppTabs';
 import AuthStack from './navigation/AuthStack';
-import { AppStateContext } from './AppContext';
 import GetStartedScreen from './GetStartedScreen';
 import JobDetailPage from '../pages/JobDetailPage';
 import ReportDetailScreen from '../pages/ReportDetail';
 import NotificationsPage from '../pages/NotificationsDrawer';
 import ProfileScreen from '../pages/Profile';
 import OthersProfile from '../pages/othersProfile';
+import PricingPage from "../pages/pricing"
+import { AppStateContext } from './AppContext';
 const Stack = createNativeStackNavigator();
 
 const RootNavigator = () => {
@@ -38,6 +39,11 @@ const RootNavigator = () => {
           name="profile"
           component={ProfileScreen}
           options={{ headerShown: true, title: 'Profile' }}
+        />
+        <Stack.Screen
+          name="pricing"
+          component={PricingPage}
+          options={{ headerShown: true, title: 'Pricing' }}
         />
         <Stack.Screen
           name="othersProfile"

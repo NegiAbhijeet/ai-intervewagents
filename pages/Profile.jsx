@@ -19,10 +19,10 @@ import {
   PRIVACY_POILCY_URL,
   TERMS_OF_USE_URL,
 } from '../components/config';
-import TopBar from '../components/TopBar';
 import Layout from './Layout';
 import fetchUserDetails from '../libs/fetchUser';
 import { RefreshControl } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
 
 export default function ProfileScreen() {
   const {
@@ -32,6 +32,7 @@ export default function ProfileScreen() {
     firebaseUser,
     setUserProfile,
   } = useContext(AppStateContext);
+  const navigation = useNavigation();
   const activeUsedMinutes = usedMinutes;
 
   const [loading, setLoading] = useState(false);
@@ -307,9 +308,7 @@ export default function ProfileScreen() {
               </View>
               {userProfile?.plan.id == 1 ? (
                 <TouchableOpacity
-                  onPress={() =>
-                    Linking.openURL('https://aiinterviewagents.com/pricing')
-                  }
+                  onPress={() => navigation.navigate('pricing')}
                   activeOpacity={0.8}
                   className="bg-blue-500 p-3 items-center rounded-lg"
                 >
