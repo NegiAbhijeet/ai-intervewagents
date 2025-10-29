@@ -55,6 +55,7 @@ export default function Leaderboard() {
               user.user_name || user.name || user.user_email || 'Unknown',
             user_email: user.user_email || '',
             rating: Number(user.rating) || 0,
+            avatar: user?.avatar
           }));
 
         if (userProfile?.user_email) {
@@ -141,7 +142,7 @@ export default function Leaderboard() {
             <View className="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-300">
               {user.image ? (
                 <Image
-                  source={{ uri: user.image }}
+                  source={{ uri: user?.avatar }}
                   className="w-full h-full rounded-full"
                 />
               ) : (
