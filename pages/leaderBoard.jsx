@@ -140,7 +140,7 @@ export default function Leaderboard() {
 
           <View className="flex-row items-center gap-3 flex-1 px-2">
             <View className="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-300">
-              {user.image ? (
+              {user?.avatar ? (
                 <Image
                   source={{ uri: user?.avatar }}
                   className="w-full h-full rounded-full"
