@@ -1,1 +1,0 @@
-if get FIS_AUTH_ERROR then check google-services.json and if there are multiple current-key in api-keys, then remove current key 
