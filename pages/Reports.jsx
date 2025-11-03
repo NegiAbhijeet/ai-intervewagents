@@ -15,12 +15,13 @@ import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import TopBar from '../components/TopBar';
-
+import ReportModal from '../components/reportModal';
 const Reports = () => {
   const { userProfile } = useContext(AppStateContext);
   const [meetings, setMeetings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [currentReport, setCurrentReport] = useState(null);
   const navigation = useNavigation();
 
   // small animated rotation for the refresh icon when active
@@ -390,11 +391,7 @@ const Reports = () => {
                           justifyContent: 'center',
                           alignItems: 'center',
                         }}
-                        onPress={() =>
-                          navigation.navigate('ReportDetail', {
-                            meetingId: report.meetingId,
-                          })
-                        }
+                        onPress={() => setCurrentReport(report)}
                       >
                         <Text style={{ color: 'white', fontWeight: '600' }}>
                           Report
@@ -406,6 +403,12 @@ const Reports = () => {
               })}
             </>
           )}
+
+          <ReportModal
+            visible={!!currentReport?.feedback}
+            onClose={() => setCurrentReport(null)}
+            report={currentReport}
+          />
         </ScrollView>
       </Layout>
     </>

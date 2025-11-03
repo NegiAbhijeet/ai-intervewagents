@@ -1,0 +1,84 @@
+import React from 'react';
+import { View, Text } from 'react-native';
+import Gauge from './simpleGuage';
+
+export default function InterviewCard({
+  title = 'Name of Interview',
+  duration,
+  total = 1800, // default 30 minutes in seconds
+  interviewType = 'mock',
+}) {
+  // Safely parse both numbers and strings
+  const parsedDuration = Number(duration);
+  const parsedTotal = Number(total);
+
+  const hasValidData =
+    !isNaN(parsedDuration) && !isNaN(parsedTotal) && parsedTotal > 0;
+
+  // Convert seconds to minutes (rounded down)
+  const durationMinutes = hasValidData ? Math.floor(parsedDuration / 60) : 0;
+  const totalMinutes = hasValidData ? Math.floor(parsedTotal / 60) : 0;
+
+  const displayTime = hasValidData
+    ? `${durationMinutes}/${totalMinutes}`
+    : 'No Data';
+
+  // Gauge shows proportional progress
+  const gaugeValue = hasValidData ? (parsedDuration / parsedTotal) * 100 : 0;
+
+  return (
+    <View className="flex-row items-center w-[90%] m-auto rounded-lg p-3 h-[100px] gap-4">
+      {/* Left half: duration/total and gauge */}
+      <View
+        className="w-[48%] flex-row items-center justify-between rounded-lg h-full"
+        style={{ backgroundColor: 'rgba(245, 245, 245, 0.9)' }}
+      >
+        <View className="flex-1 justify-center items-center">
+          <Text
+            className={`text-sm font-semibold ${
+              hasValidData ? 'text-gray-800' : 'text-gray-400'
+            }`}
+          >
+            {displayTime}
+          </Text>
+          <Text className="text-xs text-gray-500 mt-1">Minutes</Text>
+        </View>
+
+        <View className="w-20 h-20 items-center justify-center">
+          {/* Pass a normalized gauge value (0–100%) */}
+          <Gauge value={gaugeValue} size={48} />
+        </View>
+      </View>
+
+      {/* Right half: title and interview type */}
+      <View
+        className="w-[48%] justify-center items-center rounded-lg h-full"
+        style={{ backgroundColor: 'rgba(245, 245, 245, 0.9)' }}
+      >
+        <Text
+          numberOfLines={1}
+          className={`text-base font-semibold ${
+            title ? 'text-gray-900' : 'text-gray-400'
+          }`}
+        >
+          {title || 'No Title'}
+        </Text>
+
+        <View className="mt-2">
+          <View
+            className="self-start px-3 py-1 rounded-full border border-blue-100"
+            style={{ backgroundColor: 'rgba(1, 187, 251, 0.3)' }}
+          >
+            <Text
+              className={`text-xs ${
+                interviewType ? 'text-blue-600' : 'text-gray-400'
+              }`}
+            >
+              {interviewType ? `#${interviewType}` : '#unknown'}
+            </Text>
+          </View>
+        </View>
+      </View>
+    </View>
+  );
+}
