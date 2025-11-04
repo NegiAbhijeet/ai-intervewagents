@@ -19,14 +19,17 @@ import InterviewCard from './InterviewCard';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import ImprovementsPoints from './improvementsPoints';
 import InterviewSummaryModal from './summaryModal';
+import ReportCards from './ReportCards';
+import Transcript from './Transcript';
 
 const ReportModal = ({ visible, onClose, report }) => {
   const feedback = report?.feedback || null;
-  console.log(feedback);
   const [isViewDetails, setIsViewDetails] = useState(false);
+  const [isViewSkills, setIsViewSkills] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [showImprovementPoints, setShowImprovementPoints] = useState(false);
-
+  const [activeTab, setActiveTab] = useState('details'); //details or transcript
+  console.log(report);
   return (
     <Modal
       visible={visible}
@@ -67,10 +70,11 @@ const ReportModal = ({ visible, onClose, report }) => {
           }}
           className="w-full flex-row items-center justify-between bg-white"
         >
-          {isViewDetails ? (
+          {isViewDetails || isViewSkills ? (
             <TouchableOpacity
               onPress={() => {
                 setIsViewDetails(false);
+                setIsViewSkills(false);
               }}
             >
               <View className="w-10 h-10 rounded-full border border-gray-300 items-center justify-center">
@@ -86,12 +90,16 @@ const ReportModal = ({ visible, onClose, report }) => {
           )}
 
           {isViewDetails ? (
-            <Text style={{ fontSize: 24, fontWeight: 700, color: 'black' }}>
+            <Text style={{ fontSize: 24, fontWeight: '700', color: 'black' }}>
               Detailed Report
+            </Text>
+          ) : isViewSkills ? (
+            <Text style={{ fontSize: 24, fontWeight: '700', color: 'black' }}>
+              Skill Overview
             </Text>
           ) : (
             <Text
-              style={{ fontSize: 24, fontWeight: 700, color: 'black' }}
+              style={{ fontSize: 24, fontWeight: '700', color: 'black' }}
               className="line-clamp-1"
             >
               {report?.position || 'Report'}
@@ -102,7 +110,18 @@ const ReportModal = ({ visible, onClose, report }) => {
         </View>
         <ScrollView showsVerticalScrollIndicator={false} className="py-5">
           {isViewDetails ? (
-            <SkillCards skills={feedback?.report?.technical_skills || []} />
+            <ReportCards
+              interviewType={report?.type}
+              report={feedback?.report || null}
+              setIsViewSkills={setIsViewSkills}
+              setIsViewDetails={setIsViewDetails}
+            />
+          ) : isViewSkills ? (
+            <SkillCards
+              skills={feedback?.report?.technical_skills || []}
+              setIsViewSkills={setIsViewSkills}
+              setIsViewDetails={setIsViewDetails}
+            />
           ) : (
             <View className="flex-1 px-6 pt-4 gap-6">
               <ArcGaugeFull size={360} percentage={74} />
@@ -183,46 +202,56 @@ const ReportModal = ({ visible, onClose, report }) => {
                   )}
                 </View>
               </View>
-              <Tabs />
-
-              <CarouselCard setIsViewDetails={setIsViewDetails} />
-
-              <AnalysisCards
-                strengths={
-                  Array.isArray(feedback?.report?.strengths)
-                    ? feedback?.report?.strengths
-                    : []
-                }
-                weaknesses={
-                  Array.isArray(feedback?.report?.weaknesses)
-                    ? feedback?.report?.weaknesses
-                    : []
-                }
-              />
-              <View className="flex-row items-center justify-center">
-                <Pressable
-                  onPress={() => setShowImprovementPoints(true)}
-                  className="flex-row px-8 py-2 items-center justify-center gap-4"
-                  style={{
-                    backgroundColor: 'rgba(109, 18, 192, 0.2)',
-                    borderWidth: 2,
-                    borderColor: 'rgba(109, 18, 192, 1)',
-                    borderRadius:10
-                  }}
-                >
-                  <Text
-                    className="text-white py-2"
-                    style={{ fontSize: 20, fontWeight: 700 }}
-                  >
-                    How to Improve
-                  </Text>
-                  <Image
-                    source={require('../assets/images/Rewind.png')}
-                    className="w-7 h-7"
-                    resizeMode="cover"
+              <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
+              {activeTab === 'transcript' ? (
+                <Transcript transcript={report?.feedback?.transcript || []} />
+              ) : (
+                <>
+                  <CarouselCard
+                    setIsViewDetails={setIsViewDetails}
+                    interviewType={report?.type}
+                    report={feedback?.report || null}
                   />
-                </Pressable>
-              </View>
+
+                  <AnalysisCards
+                    setShowImprovementPoints={setShowImprovementPoints}
+                    strengths={
+                      Array.isArray(feedback?.report?.strengths)
+                        ? feedback?.report?.strengths
+                        : []
+                    }
+                    weaknesses={
+                      Array.isArray(feedback?.report?.weaknesses)
+                        ? feedback?.report?.weaknesses
+                        : []
+                    }
+                  />
+                  <View className="flex-row items-center justify-center">
+                    <Pressable
+                      onPress={() => setShowImprovementPoints(true)}
+                      className="flex-row px-8 py-2 items-center justify-center gap-4"
+                      style={{
+                        backgroundColor: 'rgba(109, 18, 192, 0.2)',
+                        borderWidth: 2,
+                        borderColor: 'rgba(109, 18, 192, 1)',
+                        borderRadius: 10,
+                      }}
+                    >
+                      <Text
+                        className="text-white py-2"
+                        style={{ fontSize: 20, fontWeight: 700 }}
+                      >
+                        How to Improve
+                      </Text>
+                      <Image
+                        source={require('../assets/images/Rewind.png')}
+                        className="w-7 h-7"
+                        resizeMode="cover"
+                      />
+                    </Pressable>
+                  </View>
+                </>
+              )}
             </View>
           )}
           <ImprovementsPoints

@@ -1,9 +1,22 @@
 // AnalysisCards.js
 import React, { useState } from 'react';
-import { View, Text, Modal, Pressable, ScrollView, Image } from 'react-native';
+import {
+  View,
+  Text,
+  Modal,
+  Pressable,
+  ScrollView,
+  Image,
+  StyleSheet,
+} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { GradientBorderView } from '@good-react-native/gradient-border';
-export default function AnalysisCards({ strengths = [], weaknesses = [] }) {
+
+export default function AnalysisCards({
+  strengths = [],
+  weaknesses = [],
+  setShowImprovementPoints,
+}) {
   const [openItem, setOpenItem] = useState(null); // 'strengths' | 'weaknesses' | null
 
   const open = key => setOpenItem(key);
@@ -12,7 +25,7 @@ export default function AnalysisCards({ strengths = [], weaknesses = [] }) {
   const renderCard = (key, title, subtitle) => (
     <Pressable
       onPress={() => open(key)}
-      className="w-[48%]"
+      style={styles.cardWrapper}
       accessibilityRole="button"
     >
       <GradientBorderView
@@ -27,21 +40,18 @@ export default function AnalysisCards({ strengths = [], weaknesses = [] }) {
           borderRadius: 16,
         }}
       >
-        <View className="r bg-[rgba(58,55,55,0.25)] overflow-hidden">
-          <View className="flex-row items-center justify-end w-full">
+        <View style={styles.cardContent}>
+          <View style={styles.playRow}>
             <Image
               source={require('../assets/images/playButton.png')}
               resizeMode="contain"
+              style={styles.playImage}
             />
           </View>
 
-          <View className="px-3 pb-3">
-            <Text className="text-[16px] font-extrabold text-black">
-              {title}
-            </Text>
-            <Text className="text-[13px] text-[#333] opacity-80 mt-1.5">
-              {subtitle}
-            </Text>
+          <View style={styles.cardText}>
+            <Text style={styles.cardTitle}>{title}</Text>
+            <Text style={styles.cardSubtitle}>{subtitle}</Text>
           </View>
         </View>
       </GradientBorderView>
@@ -50,37 +60,29 @@ export default function AnalysisCards({ strengths = [], weaknesses = [] }) {
 
   const renderListItems = (items, type) => {
     if (!items || items.length === 0) {
-      return (
-        <Text className="text-[14px] text-[#666] py-2">No items found</Text>
-      );
+      return <Text style={styles.emptyText}>No items found</Text>;
     }
 
     return items.map((it, idx) => {
       const text = typeof it === 'string' ? it : it.text ?? '';
       const icon = type === 'strengths' ? '✓' : '✕';
-      const iconBg = type === 'strengths' ? 'bg-[#2e7d32]' : 'bg-[#c62828]';
+      const iconBgStyle =
+        type === 'strengths' ? styles.iconBgStrength : styles.iconBgWeak;
 
       return (
-        <View
-          key={idx}
-          className="flex-row items-center py-2.5 border-b border-gray-200"
-        >
-          <View
-            className={`w-8 h-8 rounded-full ${iconBg} items-center justify-center mr-3`}
-          >
-            <Text className="text-[16px] text-white font-bold text-center">
-              {icon}
-            </Text>
+        <View key={idx} style={styles.listRow}>
+          <View style={[styles.iconWrap, iconBgStyle]}>
+            <Text style={styles.iconText}>{icon}</Text>
           </View>
-          <Text className="flex-1 text-[15px] text-[#222]">{text}</Text>
+          <Text style={styles.itemText}>{text}</Text>
         </View>
       );
     });
   };
 
   return (
-    <View className="w-full">
-      <View className="flex-row justify-between">
+    <View style={styles.container}>
+      <View style={styles.row}>
         {renderCard(
           'strengths',
           'Strengths',
@@ -99,57 +101,152 @@ export default function AnalysisCards({ strengths = [], weaknesses = [] }) {
         animationType="fade"
         onRequestClose={close}
       >
-        <Pressable
-          className="flex-1 bg-black/50 items-center justify-center p-5"
-          onPress={close}
-        >
-          <Pressable
-            className="w-full max-w-[480px] bg-gray-200 rounded-xl p-4 max-h-[80%]"
-            onPress={() => {}}
-          >
-            <Text
-              className={`text-[20px] font-extrabold mb-3 text-center ${
-                openItem === 'strengths' ? 'text-[#2e7d32]' : 'text-[#c62828]'
-              }`}
-            >
-              {openItem === 'strengths' ? 'Strength Points' : 'Weakness Points'}
-            </Text>
+        <View style={styles.modalFull}>
+          {/* backdrop first, absolute so it does not intercept touches for content above */}
+          <Pressable style={StyleSheet.absoluteFill} onPress={close} />
 
-            <ScrollView
-              className="mb-2"
-              contentContainerStyle={{ paddingBottom: 6 }}
-            >
-              {openItem === 'strengths' &&
-                renderListItems(strengths, 'strengths')}
-              {openItem === 'weaknesses' &&
-                renderListItems(weaknesses, 'weaknesses')}
-            </ScrollView>
-
-            <Pressable
-              onPress={close}
-              className="rounded-lg overflow-hidden mt-4"
-            >
-              <LinearGradient
-                colors={['rgba(85, 95, 238, 1)', 'rgba(140, 70, 239, 1)']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                className="py-3 items-center justify-center rounded-lg"
+          {/* modal content rendered after backdrop so it sits on top and receives touches */}
+          <View style={styles.center}>
+            <View style={styles.cardModal}>
+              <Text
+                style={[
+                  styles.modalTitle,
+                  openItem === 'strengths'
+                    ? styles.strengthTitle
+                    : styles.weakTitle,
+                ]}
               >
-                <Text className="text-white text-[16px] font-semibold text-center">
-                  How to Improve
-                </Text>
-              </LinearGradient>
-            </Pressable>
+                {openItem === 'strengths'
+                  ? 'Strength Points'
+                  : 'Weakness Points'}
+              </Text>
 
-            <Pressable
-              onPress={close}
-              className="absolute top-2 right-2 rounded-full bg-white p-2"
-            >
-              <Text className="text-[15px] text-[#111]">✕</Text>
-            </Pressable>
-          </Pressable>
-        </Pressable>
+              <ScrollView
+                style={styles.scroll}
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+                nestedScrollEnabled={true}
+                keyboardShouldPersistTaps="handled"
+              >
+                {openItem === 'strengths' &&
+                  renderListItems(strengths, 'strengths')}
+                {openItem === 'weaknesses' &&
+                  renderListItems(weaknesses, 'weaknesses')}
+              </ScrollView>
+
+              <Pressable
+                onPress={() => setShowImprovementPoints(true)}
+                style={styles.ctaWrap}
+              >
+                <LinearGradient
+                  colors={['rgba(85, 95, 238, 1)', 'rgba(140, 70, 239, 1)']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={styles.cta}
+                >
+                  <Text style={styles.ctaText}>How to Improve</Text>
+                </LinearGradient>
+              </Pressable>
+
+              <Pressable onPress={close} style={styles.closeBtn}>
+                <Text style={styles.closeBtnText}>✕</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
       </Modal>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { width: '100%' },
+  row: { flexDirection: 'row', justifyContent: 'space-between' },
+  cardWrapper: { width: '48%' },
+  cardContent: {
+    borderRadius: 10,
+    overflow: 'hidden',
+    backgroundColor: 'rgba(58,55,55,0.25)',
+  },
+  playRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    width: '100%',
+  },
+  playImage: {zIndex:111},
+  cardText: { paddingHorizontal: 12, paddingBottom: 12 },
+  cardTitle: { fontSize: 16, fontWeight: '800', color: '#000' },
+  cardSubtitle: { fontSize: 13, color: '#333', opacity: 0.9, marginTop: 6 },
+  modalFull: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)' },
+  center: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+  },
+  cardModal: {
+    width: '100%',
+    maxWidth: 480,
+    maxHeight: '80%',
+    backgroundColor: '#e5e7eb',
+    borderRadius: 16,
+    padding: 12,
+    position: 'relative',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  strengthTitle: { color: '#2e7d32' },
+  weakTitle: { color: '#c62828' },
+  scroll: { marginTop: 8 },
+  scrollContent: { paddingBottom: 12 },
+  emptyText: { fontSize: 14, color: '#666', paddingVertical: 8 },
+  listRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+  },
+  iconWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  iconBgStrength: { backgroundColor: '#2e7d32' },
+  iconBgWeak: { backgroundColor: '#c62828' },
+  iconText: {
+    fontSize: 16,
+    color: '#fff',
+    fontWeight: '700',
+    textAlign: 'center',
+  },
+  itemText: { flex: 1, fontSize: 15, color: '#222' },
+  ctaWrap: { marginTop: 12, borderRadius: 10, overflow: 'hidden' },
+  cta: {
+    paddingVertical: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+  },
+  ctaText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  closeBtn: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  closeBtnText: { fontSize: 14, color: '#111' },
+});

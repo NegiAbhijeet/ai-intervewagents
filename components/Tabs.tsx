@@ -1,9 +1,7 @@
 import { View, Text, Pressable, Image } from 'react-native';
-import React, { useState } from 'react';
+import React from 'react';
 
-export default function Tabs() {
-  const [activeTab, setActiveTab] = useState('report');
-
+export default function Tabs({ activeTab, setActiveTab }) {
   return (
     <View className="items-center justify-center w-[80%] relative  mx-auto">
       <Image
@@ -13,14 +11,14 @@ export default function Tabs() {
       />
       <View className="flex-row items-center justify-center w-full relative border-2 border-white rounded-2xl overflow-hidden">
         <Pressable
-          onPress={() => setActiveTab('report')}
+          onPress={() => setActiveTab('details')}
           className={` py-3 w-1/2 
-          ${activeTab === 'report' ? 'bg-white ' : 'bg-gray-200 '}
+          ${activeTab === 'details' ? 'bg-white ' : 'bg-gray-200 '}
         `}
         >
           <Text
             className={`text-base font-semibold  text-center 
-            ${activeTab === 'report' ? 'text-black' : 'text-gray-500'}
+            ${activeTab === 'details' ? 'text-black' : 'text-gray-500'}
           `}
           >
             Report Analysis
