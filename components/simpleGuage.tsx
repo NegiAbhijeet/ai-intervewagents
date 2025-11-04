@@ -70,7 +70,7 @@ export default function Gauge({
             fill="#333"
             fontWeight="bold"
           >
-            {text?.length > 7 ? text.slice(0, 7) : text}
+            {text?.length > 9 ? text.slice(0, 7) : text}
           </Text>
         </G>
       </Svg>

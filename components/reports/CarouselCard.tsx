@@ -10,6 +10,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import Gauge from '../simpleGuage';
+import AnalysisCards from '../AnalysisCards';
 
 const WINDOW_WIDTH = Dimensions.get('window').width;
 const HORIZONTAL_MARGIN = 20;
@@ -18,6 +19,7 @@ export default function CarouselCard({
   setIsViewDetails,
   interviewType,
   report,
+  setShowImprovementPoints,
 }) {
   const listRef = useRef(null);
   const [index, setIndex] = useState(0);
@@ -148,6 +150,7 @@ export default function CarouselCard({
   }, [containerWidth]);
 
   const renderItem = ({ item }) => {
+    const percentage = item.value ? (item.value / 10) * 100 : 0;
     const bgColor = item.color.replace('1)', '0.12)');
     return (
       <View style={{ width: containerWidth, alignItems: 'center' }}>
@@ -181,20 +184,20 @@ export default function CarouselCard({
             onStartShouldSetResponderCapture={() => true}
           >
             <Gauge
-              value={item.value}
+              value={percentage}
               strokeWidth={8}
               size={75}
               text={
-                item.value <= 30
+                percentage <= 30
                   ? 'Poor'
-                  : item.value <= 70
+                  : percentage <= 70
                   ? 'Good'
                   : 'Excellent'
               }
               color={
-                item.value <= 30
+                percentage <= 30
                   ? 'rgba(239, 68, 68, 1)'
-                  : item.value <= 70
+                  : percentage <= 70
                   ? 'rgba(234, 179, 8, 1)'
                   : 'rgba(34, 197, 94, 1)'
               }
@@ -206,75 +209,90 @@ export default function CarouselCard({
   };
 
   return (
-    <View
-      style={styles.wrapper}
-      onLayout={ev => {
-        const w = Math.round(ev.nativeEvent.layout.width) || WINDOW_WIDTH;
-        setContainerWidth(w);
-      }}
-    >
-      <FlatList
-        ref={listRef}
-        data={cards}
-        keyExtractor={item => item.key}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        renderItem={renderItem}
-        snapToInterval={snapInterval}
-        decelerationRate="fast"
-        snapToAlignment="start"
-        pagingEnabled={false}
-        onMomentumScrollEnd={ev => {
-          const offsetX = ev.nativeEvent.contentOffset.x;
-          const newIndex = clamp(
-            Math.round(offsetX / snapInterval),
-            0,
-            cards.length - 1,
-          );
-          setIndex(newIndex);
+    <View>
+      <View
+        style={styles.wrapper}
+        onLayout={ev => {
+          const w = Math.round(ev.nativeEvent.layout.width) || WINDOW_WIDTH;
+          setContainerWidth(w);
         }}
-        contentContainerStyle={{ paddingHorizontal: 0 }}
-        getItemLayout={(_, i) => {
-          const length = snapInterval;
-          return { length, offset: length * i, index: i };
-        }}
-        style={{ width: containerWidth }}
-        keyboardShouldPersistTaps="handled"
-      />
-
-      <TouchableOpacity
-        onPress={onPrev}
-        activeOpacity={0.8}
-        style={[styles.arrowButton, { left: -10 }]}
-        accessibilityLabel="Previous card"
       >
-        <Image
-          source={require('../../assets/images/leftArrow.png')}
-          resizeMode="contain"
+        <FlatList
+          ref={listRef}
+          data={cards}
+          keyExtractor={item => item.key}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          renderItem={renderItem}
+          snapToInterval={snapInterval}
+          decelerationRate="fast"
+          snapToAlignment="start"
+          pagingEnabled={false}
+          onMomentumScrollEnd={ev => {
+            const offsetX = ev.nativeEvent.contentOffset.x;
+            const newIndex = clamp(
+              Math.round(offsetX / snapInterval),
+              0,
+              cards.length - 1,
+            );
+            setIndex(newIndex);
+          }}
+          contentContainerStyle={{ paddingHorizontal: 0 }}
+          getItemLayout={(_, i) => {
+            const length = snapInterval;
+            return { length, offset: length * i, index: i };
+          }}
+          style={{ width: containerWidth }}
+          keyboardShouldPersistTaps="handled"
         />
-      </TouchableOpacity>
 
-      <TouchableOpacity
-        onPress={onNext}
-        activeOpacity={0.8}
-        style={[styles.arrowButton, { right: -10 }]}
-        accessibilityLabel="Next card"
-      >
-        <Image
-          source={require('../../assets/images/rightArrow.png')}
-          resizeMode="contain"
-        />
-      </TouchableOpacity>
+        <TouchableOpacity
+          onPress={onPrev}
+          activeOpacity={0.8}
+          style={[styles.arrowButton, { left: -10 }]}
+          accessibilityLabel="Previous card"
+        >
+          <Image
+            source={require('../../assets/images/leftArrow.png')}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
 
+        <TouchableOpacity
+          onPress={onNext}
+          activeOpacity={0.8}
+          style={[styles.arrowButton, { right: -10 }]}
+          accessibilityLabel="Next card"
+        >
+          <Image
+            source={require('../../assets/images/rightArrow.png')}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+      </View>
       <Pressable
         onPress={() => setIsViewDetails(true)}
         style={[
           styles.detailsButton,
-          { width: Math.min(cardWidth, containerWidth - 40) },
+          {
+            width: Math.min(cardWidth, containerWidth - 40),
+            marginHorizontal: 'auto',
+          },
         ]}
       >
         <Text style={styles.detailsText}>See Detailed Report</Text>
       </Pressable>
+      <View
+        style={{ width: cardWidth, marginTop: 24, marginHorizontal: 'auto' }}
+      >
+        <AnalysisCards
+          setShowImprovementPoints={setShowImprovementPoints}
+          strengths={Array.isArray(report?.strengths) ? report?.strengths : []}
+          weaknesses={
+            Array.isArray(report?.weaknesses) ? report?.weaknesses : []
+          }
+        />
+      </View>
     </View>
   );
 }
@@ -284,6 +302,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 8,
     width: '100%',
+    position: 'relative',
   },
   card: {
     minHeight: 150,
@@ -306,12 +325,11 @@ const styles = StyleSheet.create({
   arrowButton: {
     position: 'absolute',
     top: '50%',
-
     alignItems: 'center',
     justifyContent: 'center',
     padding: 8,
     zIndex: 10,
-    transform: 'translateY(-50%)',
+    transform: 'translateY(-25%)',
   },
   detailsButton: {
     marginTop: 12,
@@ -323,7 +341,8 @@ const styles = StyleSheet.create({
   },
   detailsText: {
     color: '#fff',
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '700',
+    
   },
 });

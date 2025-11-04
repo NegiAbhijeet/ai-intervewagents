@@ -170,7 +170,7 @@ export default function ReportCards({
       <View style={{ gap: 12 }}>
         {normalized.map((s, i) => {
           const color = colorVariants[i % colorVariants.length];
-          const gaugeValue = s.score ?? 0;
+          const gaugeValue = s.score ? (s.score / 10) * 100 : 0;
 
           return (
             <Pressable

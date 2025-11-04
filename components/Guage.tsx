@@ -1,12 +1,19 @@
 // ArcGauge.js
 import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Animated, Text } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Animated,
+  Text,
+  useWindowDimensions,
+} from 'react-native';
 import Svg, { Defs, LinearGradient, Stop, Circle } from 'react-native-svg';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 export default function ArcGauge({
-  size = 260,
+  // if size is passed it becomes the max allowed diameter
+  size: maxSize = 360,
   // Inner arc (main gauge)
   inner = {
     strokeWidth: 50,
@@ -37,7 +44,15 @@ export default function ArcGauge({
   sweepAngle = 180,
   duration = 800,
   gap = 10,
+  // horizontal padding to leave from screen edges when computing size
+  horizontalPadding = 16,
 }) {
+  const { width: windowWidth } = useWindowDimensions();
+
+  // compute usable width from device width and padding, then clamp to maxSize
+  const usableWidth = Math.max(windowWidth - horizontalPadding * 2, 0);
+  const size = Math.min(usableWidth, maxSize);
+
   // radii are calculated from the full diameter `size` so the geometry stays consistent
   const outerRadius = (size - outer.strokeWidth) / 2;
   const innerRadius =
@@ -66,13 +81,16 @@ export default function ArcGauge({
   // center of the full circle (based on original size)
   const cx = size / 2;
   const cy = size / 2;
+  // rotate so the arc starts at startAngle
   const rotation = startAngle + 180;
 
-  // show only the top half: shrink SVG height and let the bottom get clipped
-  // add a small padding equal to the largest stroke so strokes are not clipped
-  // const strokePad = Math.max(inner.strokeWidth, outer.strokeWidth);
-  // const svgHeight = size / 2 + strokePad;
+  // prevent stroke clipping by adding padding equal to the thicker stroke
+  const strokePad = Math.max(inner.strokeWidth, outer.strokeWidth);
+  // show only the top half: shrink SVG height and add padding so strokes are not clipped
   const svgHeight = size / 2;
+
+  // label vertical offset scale so it looks right on different sizes
+  const labelPaddingBottom = Math.round(size * 0.12);
 
   return (
     <View style={[styles.wrapper, { width: size, height: svgHeight }]}>
@@ -144,9 +162,20 @@ export default function ArcGauge({
       </Svg>
 
       {/* Centered label over the semicircle */}
-      <View style={[styles.labelContainer, { width: size, height: svgHeight }]}>
-        <Text style={{ fontSize: 14 }}>Score</Text>
-        <Text style={styles.valueText}>{Math.round(percentage)}%</Text>
+      <View
+        style={[
+          styles.labelContainer,
+          { width: size, height: svgHeight, paddingBottom: labelPaddingBottom },
+        ]}
+      >
+        <View style={{ alignItems: 'center', transform: 'translateY(70px)' }}>
+          <Text style={{ fontSize: Math.round(size * 0.05) }}>Score</Text>
+          <Text
+            style={[styles.valueText, { fontSize: Math.round(size * 0.12) }]}
+          >
+            {Math.round(percentage)}%
+          </Text>
+        </View>
       </View>
     </View>
   );
@@ -162,11 +191,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     top: 0,
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-end',
-    paddingBottom: 40,
+    justifyContent: 'center',
   },
   valueText: {
-    fontSize: 30,
+    fontWeight: '600',
   },
 });

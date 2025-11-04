@@ -62,7 +62,7 @@ export default function SkillCards({
         {normalized.map((s, i) => {
           const color = colorVariants[i % colorVariants.length];
           // gauge expects a number; pass 0 when score is null but show description below
-          const gaugeValue = s.score ?? 0;
+          const gaugeValue = s.score ? (s.score / 10) * 100 : 0;
 
           return (
             <Pressable

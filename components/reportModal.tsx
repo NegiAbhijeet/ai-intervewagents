@@ -111,7 +111,7 @@ const ReportModal = ({ visible, onClose, report }) => {
         <ScrollView showsVerticalScrollIndicator={false} className="py-5">
           {isViewDetails ? (
             <ReportCards
-              interviewType={report?.type}
+              interviewType={report?.interviewType}
               report={feedback?.report || null}
               setIsViewSkills={setIsViewSkills}
               setIsViewDetails={setIsViewDetails}
@@ -124,12 +124,14 @@ const ReportModal = ({ visible, onClose, report }) => {
             />
           ) : (
             <View className="flex-1 px-6 pt-4 gap-6">
-              <ArcGaugeFull size={360} percentage={74} />
+              <ArcGaugeFull
+                percentage={report?.feedback?.averagePercentage || 0}
+              />
               <InterviewCard
                 title={report?.position || 'Report'}
                 duration={report?.interviewDuration || 0}
                 total={report?.duration || 0}
-                interviewType={report?.type || ''}
+                interviewType={report?.interviewType || ''}
               />
               <View
                 style={{
@@ -209,11 +211,12 @@ const ReportModal = ({ visible, onClose, report }) => {
                 <>
                   <CarouselCard
                     setIsViewDetails={setIsViewDetails}
-                    interviewType={report?.type}
+                    interviewType={report?.interviewType}
                     report={feedback?.report || null}
+                    setShowImprovementPoints={setShowImprovementPoints}
                   />
 
-                  <AnalysisCards
+                  {/* <AnalysisCards
                     setShowImprovementPoints={setShowImprovementPoints}
                     strengths={
                       Array.isArray(feedback?.report?.strengths)
@@ -225,7 +228,8 @@ const ReportModal = ({ visible, onClose, report }) => {
                         ? feedback?.report?.weaknesses
                         : []
                     }
-                  />
+                  /> */}
+
                   <View className="flex-row items-center justify-center">
                     <Pressable
                       onPress={() => setShowImprovementPoints(true)}
