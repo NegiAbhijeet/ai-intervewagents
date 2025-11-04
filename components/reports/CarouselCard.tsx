@@ -6,13 +6,14 @@ import {
   TouchableOpacity,
   Dimensions,
   Image,
+  Pressable,
 } from 'react-native';
 import Gauge from '../simpleGuage';
 
 const WINDOW_WIDTH = Dimensions.get('window').width;
 const MAX_CARD = 340;
 
-export default function CarouselCard() {
+export default function CarouselCard({ setIsViewDetails }) {
   const listRef = useRef(null);
   const [index, setIndex] = useState(0);
   const [containerWidth, setContainerWidth] = useState(WINDOW_WIDTH);
@@ -92,7 +93,7 @@ export default function CarouselCard() {
             onResponderTerminationRequest={() => false}
             onStartShouldSetResponderCapture={() => true}
           >
-            <Gauge value={item.value} />
+            <Gauge value={item.value} text={'Good'} strokeWidth={10} />
           </View>
         </View>
       </View>
@@ -101,16 +102,13 @@ export default function CarouselCard() {
 
   return (
     <View
-      onLayout={ev => {
-        const w = ev.nativeEvent.layout.width;
-        if (w && w !== containerWidth) setContainerWidth(w);
+      style={{
+        alignItems: 'center',
+        paddingVertical: 0,
       }}
-      style={{ alignItems: 'center', paddingVertical: 0 }}
     >
       <View style={{ width: cardWidth, alignItems: 'center' }}>
-        <View
-          style={{ width: cardWidth, height: 220, justifyContent: 'center' }}
-        >
+        <View style={{ width: cardWidth, justifyContent: 'center' }}>
           <FlatList
             ref={listRef}
             data={cards}
@@ -148,7 +146,6 @@ export default function CarouselCard() {
               transform: [{ translateY: -18 }],
               alignItems: 'center',
               justifyContent: 'center',
-              
             }}
           >
             <Image
@@ -167,7 +164,6 @@ export default function CarouselCard() {
               borderRadius: 18,
               alignItems: 'center',
               justifyContent: 'center',
-        
             }}
           >
             <Image
@@ -176,23 +172,18 @@ export default function CarouselCard() {
             />
           </TouchableOpacity>
         </View>
-
-        {/* <View
-          style={{ flexDirection: 'row', alignItems: 'center', marginTop: 12 }}
+        <Pressable
+          onPress={() => setIsViewDetails(true)}
+          className="rounded-full w-full py-2 flex items-center justify-center mt-3"
+          style={{ backgroundColor: 'rgba(211, 127, 58, 1)' }}
         >
-          {cards.map((_, i) => (
-            <View
-              key={i}
-              style={{
-                width: 8,
-                height: 8,
-                borderRadius: 4,
-                marginHorizontal: 4,
-                backgroundColor: i === index ? '#000' : '#d1d5db',
-              }}
-            />
-          ))}
-        </View> */}
+          <Text
+            className="text-white py-2"
+            style={{ fontSize: 20, fontWeight: 700 }}
+          >
+            See Detailed Report
+          </Text>
+        </Pressable>
       </View>
     </View>
   );

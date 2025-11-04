@@ -10,39 +10,42 @@ export default function AnalysisCards({ strengths = [], weaknesses = [] }) {
   const close = () => setOpenItem(null);
 
   const renderCard = (key, title, subtitle) => (
-    <GradientBorderView
+    <Pressable
+      onPress={() => open(key)}
       className="w-[48%]"
-      gradientProps={{
-        colors: ['rgba(203,104,195,1)', 'rgba(108,110,196,1)'],
-        start: { x: 0, y: 0 },
-        end: { x: 0, y: 1},
-      }}
-      style={{
-        backgroundColor: 'transparent',
-        borderWidth: 6,
-        borderRadius: 16,
-      }}
+      accessibilityRole="button"
     >
-      <Pressable
-        onPress={() => open(key)}
-        accessibilityRole="button"
-        className="r bg-[rgba(58,55,55,0.25)] overflow-hidden"
+      <GradientBorderView
+        gradientProps={{
+          colors: ['rgba(203,104,195,1)', 'rgba(108,110,196,1)'],
+          start: { x: 0, y: 0 },
+          end: { x: 0, y: 1 },
+        }}
+        style={{
+          backgroundColor: 'transparent',
+          borderWidth: 6,
+          borderRadius: 16,
+        }}
       >
-        <View className="flex-row items-center justify-end w-full">
-          <Image
-            source={require('../assets/images/playButton.png')}
-            resizeMode="contain"
-          />
-        </View>
+        <View className="r bg-[rgba(58,55,55,0.25)] overflow-hidden">
+          <View className="flex-row items-center justify-end w-full">
+            <Image
+              source={require('../assets/images/playButton.png')}
+              resizeMode="contain"
+            />
+          </View>
 
-        <View className="px-3 pb-3">
-          <Text className="text-[16px] font-extrabold text-black">{title}</Text>
-          <Text className="text-[13px] text-[#333] opacity-80 mt-1.5">
-            {subtitle}
-          </Text>
+          <View className="px-3 pb-3">
+            <Text className="text-[16px] font-extrabold text-black">
+              {title}
+            </Text>
+            <Text className="text-[13px] text-[#333] opacity-80 mt-1.5">
+              {subtitle}
+            </Text>
+          </View>
         </View>
-      </Pressable>
-    </GradientBorderView>
+      </GradientBorderView>
+    </Pressable>
   );
 
   const renderListItems = (items, type) => {

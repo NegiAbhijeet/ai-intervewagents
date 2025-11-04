@@ -27,13 +27,13 @@ export default function InterviewCard({
   const gaugeValue = hasValidData ? (parsedDuration / parsedTotal) * 100 : 0;
 
   return (
-    <View className="flex-row items-center w-full m-auto rounded-lg h-[50px] gap-4 ">
+    <View className="flex-row items-center justify-center w-full m-auto rounded-lg h-[50px] gap-4">
       {/* Left half: duration/total and gauge */}
       <View
-        className="w-[48%] flex-row items-center justify-between rounded-lg h-full"
-        style={{ backgroundColor: ' rgba(245, 245, 245, 0.9)' }}
+        className=" flex-row items-center justify-between rounded-lg h-full overflow-hidden"
+        style={{ backgroundColor: ' rgba(245, 245, 245, 0.9)', width: 125 }}
       >
-        <View className="flex-1 justify-center items-center">
+        <View className="flex-1 justify-center items-center w-1/2">
           <Text
             className={`text-sm font-semibold ${
               hasValidData ? 'text-gray-800' : 'text-gray-400'
@@ -44,16 +44,24 @@ export default function InterviewCard({
           <Text className="text-xs text-gray-500 mt-1">Minutes</Text>
         </View>
 
-        <View className="w-20 h-20 items-center justify-center">
+        <View
+          className="h-20 items-center justify-center w-1/2"
+          style={{ backgroundColor: 'rgba(234, 105, 0, 0.3);' }}
+        >
           {/* Pass a normalized gauge value (0–100%) */}
-          <Gauge value={gaugeValue} size={48} />
+          <Gauge
+            value={gaugeValue}
+            size={40}
+            color="rgba(211, 127, 58, 1);"
+            strokeWidth={5}
+          />
         </View>
       </View>
 
       {/* Right half: title and interview type */}
       <View
-        className="w-[48%] justify-center items-center rounded-lg h-full"
-        style={{ backgroundColor: ' rgba(245, 245, 245, 0.9)' }}
+        className=" justify-center items-center rounded-lg h-full"
+        style={{ backgroundColor: ' rgba(245, 245, 245, 0.9)', width: 125 }}
       >
         <Text
           numberOfLines={1}

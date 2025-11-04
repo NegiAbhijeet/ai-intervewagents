@@ -5,16 +5,16 @@ export default function Tabs() {
   const [activeTab, setActiveTab] = useState('report');
 
   return (
-    <View className="items-center justify-center w-full relative">
+    <View className="items-center justify-center w-[80%] relative  mx-auto">
       <Image
         source={require('../assets/images/penguine.png')}
-        resizeMode="cover"
-        pointerEvents="none"
+        resizeMode="contain"
+        style={{ height: 120 }}
       />
       <View className="flex-row items-center justify-center w-full relative border-2 border-white rounded-2xl overflow-hidden">
         <Pressable
           onPress={() => setActiveTab('report')}
-          className={`px-6 py-3 w-1/2 
+          className={` py-3 w-1/2 
           ${activeTab === 'report' ? 'bg-white ' : 'bg-gray-200 '}
         `}
         >
@@ -29,7 +29,7 @@ export default function Tabs() {
 
         <Pressable
           onPress={() => setActiveTab('transcript')}
-          className={`px-6 py-3 w-1/2 
+          className={` py-3 w-1/2 
           ${activeTab === 'transcript' ? 'bg-white ' : 'bg-gray-200 '}
         `}
         >
