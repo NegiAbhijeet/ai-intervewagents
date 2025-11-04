@@ -24,7 +24,7 @@ export default function InterviewCard({
     : 'No Data';
 
   // Gauge shows proportional progress
-  const gaugeValue = hasValidData ? (parsedDuration / parsedTotal) * 100 : 0;
+  const gaugeValue = hasValidData ? (durationMinutes / totalMinutes) * 100 : 0;
 
   return (
     <View className="flex-row items-center justify-center w-full m-auto rounded-lg h-[50px] gap-4">
