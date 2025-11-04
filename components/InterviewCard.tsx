@@ -27,11 +27,11 @@ export default function InterviewCard({
   const gaugeValue = hasValidData ? (parsedDuration / parsedTotal) * 100 : 0;
 
   return (
-    <View className="flex-row items-center w-[90%] m-auto rounded-lg p-3 h-[100px] gap-4">
+    <View className="flex-row items-center w-full m-auto rounded-lg h-[50px] gap-4 ">
       {/* Left half: duration/total and gauge */}
       <View
         className="w-[48%] flex-row items-center justify-between rounded-lg h-full"
-        style={{ backgroundColor: 'rgba(245, 245, 245, 0.9)' }}
+        style={{ backgroundColor: ' rgba(245, 245, 245, 0.9)' }}
       >
         <View className="flex-1 justify-center items-center">
           <Text
@@ -53,26 +53,26 @@ export default function InterviewCard({
       {/* Right half: title and interview type */}
       <View
         className="w-[48%] justify-center items-center rounded-lg h-full"
-        style={{ backgroundColor: 'rgba(245, 245, 245, 0.9)' }}
+        style={{ backgroundColor: ' rgba(245, 245, 245, 0.9)' }}
       >
         <Text
           numberOfLines={1}
-          className={`text-base font-semibold ${
+          className={`font-semibold ${
             title ? 'text-gray-900' : 'text-gray-400'
           }`}
+          style={{ fontSize: 10 }}
         >
           {title || 'No Title'}
         </Text>
 
-        <View className="mt-2">
+        <View className="">
           <View
             className="self-start px-3 py-1 rounded-full border border-blue-100"
             style={{ backgroundColor: 'rgba(1, 187, 251, 0.3)' }}
           >
             <Text
-              className={`text-xs ${
-                interviewType ? 'text-blue-600' : 'text-gray-400'
-              }`}
+              className={`${interviewType ? 'text-blue-600' : 'text-gray-400'}`}
+              style={{ fontSize: 8 }}
             >
               {interviewType ? `#${interviewType}` : '#unknown'}
             </Text>

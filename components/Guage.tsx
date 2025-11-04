@@ -70,8 +70,9 @@ export default function ArcGauge({
 
   // show only the top half: shrink SVG height and let the bottom get clipped
   // add a small padding equal to the largest stroke so strokes are not clipped
-  const strokePad = Math.max(inner.strokeWidth, outer.strokeWidth);
-  const svgHeight = size / 2 + strokePad;
+  // const strokePad = Math.max(inner.strokeWidth, outer.strokeWidth);
+  // const svgHeight = size / 2 + strokePad;
+  const svgHeight = size / 2;
 
   return (
     <View style={[styles.wrapper, { width: size, height: svgHeight }]}>

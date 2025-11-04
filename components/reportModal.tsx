@@ -74,13 +74,14 @@ const ReportModal = ({ visible, onClose, report }) => {
         ) : (
           <ScrollView className="flex-1 px-6 pt-4 space-y-6">
             <ArcGaugeFull size={360} percentage={74} />
-            <Tabs />
             <InterviewCard
               title={report?.position || 'Report'}
               duration={report?.interviewDuration || 0}
               total={report?.duration || 0}
               interviewType={report?.type || ''}
             />
+            <Tabs />
+
             <CarouselCard />
             <Pressable
               onPress={() => setIsViewDetails(true)}
