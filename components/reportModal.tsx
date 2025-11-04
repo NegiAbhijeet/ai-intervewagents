@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Modal,
   View,
@@ -22,10 +22,17 @@ import InterviewSummaryModal from './summaryModal';
 import ReportCards from './ReportCards';
 import Transcript from './Transcript';
 
-const ReportModal = ({ visible, onClose, report }) => {
+const ReportModal = ({
+  visible,
+  onClose,
+  report,
+  isViewDetails,
+  setIsViewDetails,
+  isViewSkills,
+  setIsViewSkills,
+}) => {
   const feedback = report?.feedback || null;
-  const [isViewDetails, setIsViewDetails] = useState(false);
-  const [isViewSkills, setIsViewSkills] = useState(false);
+
   const [showSummary, setShowSummary] = useState(false);
   const [showImprovementPoints, setShowImprovementPoints] = useState(false);
   const [activeTab, setActiveTab] = useState('details'); //details or transcript

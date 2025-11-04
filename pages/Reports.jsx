@@ -22,7 +22,8 @@ const Reports = () => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [currentReport, setCurrentReport] = useState(null);
-  const navigation = useNavigation();
+  const [isViewDetails, setIsViewDetails] = useState(false);
+  const [isViewSkills, setIsViewSkills] = useState(false);
 
   // small animated rotation for the refresh icon when active
   const rotateAnim = useRef(new Animated.Value(0)).current;
@@ -406,8 +407,16 @@ const Reports = () => {
 
           <ReportModal
             visible={!!currentReport?.feedback}
-            onClose={() => setCurrentReport(null)}
+            onClose={() => {
+              setCurrentReport(null);
+              setIsViewDetails(false);
+              setIsViewSkills(false);
+            }}
             report={currentReport}
+            isViewDetails={isViewDetails}
+            setIsViewDetails={setIsViewDetails}
+            isViewSkills={isViewSkills}
+            setIsViewSkills={setIsViewSkills}
           />
         </ScrollView>
       </Layout>
