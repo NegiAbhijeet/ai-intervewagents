@@ -1,6 +1,6 @@
 import Layout from './Layout';
 import React, { useContext, useEffect, useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Button, Pressable, ScrollView, Text, View } from 'react-native';
 import StatsCard from '../components/StatsCard';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import { AppStateContext } from '../components/AppContext';
@@ -12,6 +12,7 @@ import TopBar from '../components/TopBar';
 import { useNotification } from '../hooks/useNotifications';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import { RefreshControl } from 'react-native-gesture-handler';
+// import PaperSheetModal from '../components/StreakPaperSheet';
 const interviews = [
   {
     title: 'Real Interview',
@@ -84,7 +85,7 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const finalLoading = isLoading || !userProfile;
-  async function fetchMeetings(isRefreshingCall=false) {
+  async function fetchMeetings(isRefreshingCall = false) {
     setIsLoading(true);
     if (isRefreshingCall) {
       setIsRefreshing(true);
@@ -173,7 +174,7 @@ const Home = () => {
   }, [meetings]);
 
   const totalInterviews = meetings.length;
-
+  // const [open, setOpen] = useState(false);
   return (
     <>
       <TopBar />
@@ -185,6 +186,13 @@ const Home = () => {
             <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
           }
         >
+          {/* <Button title="Open modal" onPress={() => setOpen(true)} />
+
+          <PaperSheetModal
+            visible={open}
+            onRequestClose={() => setOpen(false)}
+            onStart={() => console.log('start interview')}
+          /> */}
           {!userProfile ? (
             <SkeletonPlaceholder borderRadius={8}>
               <SkeletonPlaceholder.Item
