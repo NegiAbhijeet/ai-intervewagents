@@ -31,7 +31,7 @@ export default function InterviewCard({
       {/* Left half: duration/total and gauge */}
       <View
         className=" flex-row items-center justify-between rounded-lg h-full overflow-hidden"
-        style={{ backgroundColor: ' rgba(245, 245, 245, 0.9)', width: 125 }}
+        style={{ backgroundColor: ' rgba(245, 245, 245, 0.9)', width: 125, padding:2 }}
       >
         <View className="flex-1 justify-center items-center w-1/2">
           <Text
@@ -45,14 +45,18 @@ export default function InterviewCard({
         </View>
 
         <View
-          className="h-20 items-center justify-center w-1/2"
-          style={{ backgroundColor: 'rgba(234, 105, 0, 0.3);' }}
+          className="h-full items-center justify-center w-1/2"
+          style={{
+            backgroundColor: 'rgba(234, 105, 0, 0.3)',
+            borderRadius: 6,
+          }}
         >
           {/* Pass a normalized gauge value (0–100%) */}
           <Gauge
             value={gaugeValue}
             size={40}
-            color="rgba(211, 127, 58, 1);"
+            color="rgba(211, 127, 58, 1)"
+            bgColor="rgba(0, 0, 0, 0.1)"
             strokeWidth={5}
           />
         </View>
@@ -60,7 +64,7 @@ export default function InterviewCard({
 
       {/* Right half: title and interview type */}
       <View
-        className=" justify-center items-center rounded-lg h-full"
+        className=" justify-center items-center rounded-lg h-full px-4"
         style={{ backgroundColor: ' rgba(245, 245, 245, 0.9)', width: 125 }}
       >
         <Text
@@ -73,18 +77,24 @@ export default function InterviewCard({
           {title || 'No Title'}
         </Text>
 
-        <View className="">
-          <View
-            className="self-start px-3 py-1 rounded-full border border-blue-100"
-            style={{ backgroundColor: 'rgba(1, 187, 251, 0.3)' }}
+        <View
+          className="px-2 py-1 rounded-full"
+          style={{
+            backgroundColor: 'rgba(1, 187, 251, 0.3)',
+            borderWidth: 1,
+            borderColor: 'rgba(1, 187, 251, 0.4)',
+          }}
+        >
+          <Text
+            numberOfLines={1}
+            style={{
+              fontSize: 8,
+              fontWeight: 700,
+              color: 'rgba(14, 126, 165, 1)',
+            }}
           >
-            <Text
-              className={`${interviewType ? 'text-blue-600' : 'text-gray-400'}`}
-              style={{ fontSize: 8 }}
-            >
-              {interviewType ? `#${interviewType}` : '#unknown'}
-            </Text>
-          </View>
+            {interviewType ? `#${interviewType}` : '#unknown'}
+          </Text>
         </View>
       </View>
     </View>

@@ -2,17 +2,16 @@ import React, { useRef, useState, useEffect } from 'react';
 import {
   View,
   Text,
-  FlatList,
   TouchableOpacity,
   Dimensions,
   Image,
   Pressable,
-  StyleSheet,
 } from 'react-native';
+import Carousel from 'react-native-reanimated-carousel';
 import Gauge from '../simpleGuage';
 import AnalysisCards from '../AnalysisCards';
 
-const WINDOW_WIDTH = Dimensions.get('window').width;
+const WINDOW_WIDTH = Math.round(Dimensions.get('window').width);
 const HORIZONTAL_MARGIN = 20;
 
 export default function CarouselCard({
@@ -21,18 +20,15 @@ export default function CarouselCard({
   report,
   setShowImprovementPoints,
 }) {
-  const listRef = useRef(null);
-  const [index, setIndex] = useState(0);
-  const [containerWidth, setContainerWidth] = useState(WINDOW_WIDTH);
+  const carouselRef = useRef(null);
+  const [containerWidth, setContainerWidth] = useState(WINDOW_WIDTH || 360);
 
-  // keys selection logic you specified
   const technicalKeys = [
     'Technical_Expertise',
     'Problem_Solving',
     'Decision_Judgment',
     'Debugging_Mindset',
   ];
-
   const nonTechnicalKeys = [
     'Accountability_Mindset',
     'Team_Collaboration',
@@ -41,11 +37,9 @@ export default function CarouselCard({
     'Conflict_Resolution',
     'Outcome_Focus',
   ];
-
   const selectedKeys =
     interviewType === 'Technical' ? technicalKeys : nonTechnicalKeys;
 
-  // color palette for cards, cycles if there are more keys than colors
   const palette = [
     'rgba(251, 146, 60, 1)',
     'rgba(34, 197, 94, 1)',
@@ -55,7 +49,6 @@ export default function CarouselCard({
     'rgba(14, 165, 233, 1)',
   ];
 
-  // helper to create a readable title from keys
   const humanize = key =>
     (key || '')
       .replace(/_/g, ' ')
@@ -63,14 +56,9 @@ export default function CarouselCard({
       .map(s => (s.length ? s[0].toUpperCase() + s.slice(1).toLowerCase() : s))
       .join(' ');
 
-  // Try to extract value and description for a key from the report safely.
-  // We look in multiple places to be resilient to report shape differences.
   const getFieldData = key => {
     const fallback = { value: 0, description: 'Not enough data' };
-
     if (!report) return fallback;
-
-    // direct top-level object
     const top = report[key];
     if (top && typeof top === 'object') {
       const value = top.score ?? top.value ?? top.percentage ?? null;
@@ -83,8 +71,6 @@ export default function CarouselCard({
       }
       if (description) return { value: 0, description };
     }
-
-    // sometimes skills are nested under a section like technical_skills
     if (report.technical_skills && report.technical_skills[key]) {
       const v =
         report.technical_skills[key].score ??
@@ -92,8 +78,6 @@ export default function CarouselCard({
       const d = report.technical_skills[key].description;
       return { value: Number(v) || 0, description: d || fallback.description };
     }
-
-    // fallback: try to find a similar key case-insensitive
     const keys = Object.keys(report || {});
     const matched = keys.find(k => k.toLowerCase() === key.toLowerCase());
     if (matched && typeof report[matched] === 'object') {
@@ -101,12 +85,17 @@ export default function CarouselCard({
       const d = report[matched].description ?? fallback.description;
       return { value: Number(v) || 0, description: d };
     }
-
-    // nothing found
     return fallback;
   };
 
-  // Build cards array from selectedKeys
+  function clampNumber(n, min, max) {
+    const num = Number(n);
+    if (Number.isNaN(num)) return min;
+    if (num < min) return min;
+    if (num > max) return max;
+    return num;
+  }
+
   const cards = selectedKeys.map((k, i) => {
     const data = getFieldData(k);
     const color = palette[i % palette.length];
@@ -119,172 +108,185 @@ export default function CarouselCard({
     };
   });
 
-  // card width so one card fills viewport (no peek)
-  const cardWidth = Math.max(0, containerWidth - HORIZONTAL_MARGIN * 2);
-  const snapInterval = containerWidth;
-
-  function clampNumber(n, min, max) {
-    const num = Number(n);
-    if (Number.isNaN(num)) return min;
-    if (num < min) return min;
-    if (num > max) return max;
-    return num;
-  }
-
-  const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
-
-  const scrollToIndex = nextIndex => {
-    const i = clamp(nextIndex, 0, cards.length - 1);
-    const offset = i * snapInterval;
-    listRef.current?.scrollToOffset({ offset, animated: true });
-    setIndex(i);
-  };
-
-  const onNext = () => scrollToIndex(index + 1);
-  const onPrev = () => scrollToIndex(index - 1);
+  const safeContainerWidth =
+    typeof containerWidth === 'number' && containerWidth > 0
+      ? containerWidth
+      : WINDOW_WIDTH;
+  const cardWidth = Math.max(0, safeContainerWidth - HORIZONTAL_MARGIN * 2);
 
   useEffect(() => {
-    // keep visible card in view on container width changes
-    const offset = index * snapInterval;
-    listRef.current?.scrollToOffset({ offset, animated: false });
-  }, [containerWidth]);
+    // if width changes, ensure carousel keeps current item
+    if (carouselRef.current && carouselRef.current.currentIndex != null) {
+      // no-op, library handles it; keep for future safety
+    }
+  }, [safeContainerWidth]);
 
-  const renderItem = ({ item }) => {
-    const percentage = item.value ? (item.value / 10) * 100 : 0;
-    const bgColor = item.color.replace('1)', '0.12)');
-    return (
-      <View style={{ width: containerWidth, alignItems: 'center' }}>
-        <View
-          style={[
-            styles.card,
-            {
-              width: cardWidth,
-              backgroundColor: bgColor,
-              borderColor: item.color,
-            },
-          ]}
-        >
-          <View style={{ flex: 1, justifyContent: 'space-between' }}>
-            <Text style={styles.title} className="line-clamp-1">
-              {item.title}
-            </Text>
-            <Text style={styles.description} className="line-clamp-2">
-              {item.description}
-            </Text>
-          </View>
+  if (!Array.isArray(cards) || cards.length === 0) return null;
 
-          <View
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginLeft: 12,
-            }}
-            onStartShouldSetResponder={() => true}
-            onResponderTerminationRequest={() => false}
-            onStartShouldSetResponderCapture={() => true}
-          >
-            <Gauge
-              value={percentage}
-              strokeWidth={8}
-              size={75}
-              text={
-                percentage <= 30
-                  ? 'Poor'
-                  : percentage <= 70
-                  ? 'Good'
-                  : 'Excellent'
-              }
-              color={
-                percentage <= 30
-                  ? 'rgba(239, 68, 68, 1)'
-                  : percentage <= 70
-                  ? 'rgba(234, 179, 8, 1)'
-                  : 'rgba(34, 197, 94, 1)'
-              }
-            />
-          </View>
-        </View>
-      </View>
-    );
-  };
+  // defensive image sources. require will throw only at build time if not present
+  const leftArrow = require('../../assets/images/leftArrow.png');
+  const rightArrow = require('../../assets/images/rightArrow.png');
 
   return (
-    <View>
+    <View className="w-full">
       <View
-        style={styles.wrapper}
+        className="items-center justify-center relative w-full"
+        style={{ height: 160 }}
         onLayout={ev => {
           const w = Math.round(ev.nativeEvent.layout.width) || WINDOW_WIDTH;
           setContainerWidth(w);
         }}
       >
-        <FlatList
-          ref={listRef}
+        <Carousel
+          height={160}
+          ref={carouselRef}
+          loop
+          width={safeContainerWidth}
+          autoPlay
+          autoPlayInterval={2000}
           data={cards}
-          keyExtractor={item => item.key}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          renderItem={renderItem}
-          snapToInterval={snapInterval}
-          decelerationRate="fast"
-          snapToAlignment="start"
-          pagingEnabled={false}
-          onMomentumScrollEnd={ev => {
-            const offsetX = ev.nativeEvent.contentOffset.x;
-            const newIndex = clamp(
-              Math.round(offsetX / snapInterval),
-              0,
-              cards.length - 1,
+          onSnapToItem={index => {}}
+          renderItem={({ item: cardItem, index: idx }) => {
+            // extra defensive guard
+            if (!cardItem) {
+              return (
+                <View
+                  style={{ width: safeContainerWidth }}
+                  className="items-center"
+                >
+                  <View
+                    className={`min-h-[160px] rounded-[14px] p-4 flex-row items-center border mx-[${HORIZONTAL_MARGIN}px]`}
+                    style={{ width: cardWidth }}
+                  >
+                    <Text className="text-base font-bold">No data</Text>
+                  </View>
+                </View>
+              );
+            }
+
+            const percentage = cardItem.value ? (cardItem.value / 10) * 100 : 0;
+            const bgColor =
+              cardItem.color && cardItem.color.replace
+                ? cardItem.color.replace('1)', '0.12)')
+                : 'rgba(0,0,0,0.05)';
+
+            return (
+              <View
+                style={{ width: safeContainerWidth }}
+                className="items-center"
+              >
+                <View
+                  className="min-h-[160px] flex-row items-center border mx-5"
+                  style={{
+                    paddingHorizontal: 21,
+                    borderRadius: 20,
+                    width: cardWidth,
+                    backgroundColor: bgColor,
+                    borderColor: cardItem.color || 'rgba(0,0,0,0.06)',
+                  }}
+                >
+                  <View className="flex-1 justify-between">
+                    <Text
+                      className="text-[16px]"
+                      numberOfLines={1}
+                      style={{ color: 'rgba(58, 61, 63, 1)', fontWeight: 700 }}
+                    >
+                      {cardItem.title}
+                    </Text>
+                    <Text
+                      className="text-[12px] mt-1.5"
+                      numberOfLines={3}
+                      style={{ color: 'rgba(58, 61, 63, 1)', fontWeight: 500 }}
+                    >
+                      {cardItem.description}
+                    </Text>
+                  </View>
+
+                  <View className="justify-center items-center ml-3">
+                    <Gauge
+                      value={percentage}
+                      strokeWidth={8}
+                      size={75}
+                      text={
+                        percentage <= 30
+                          ? 'Poor'
+                          : percentage <= 70
+                          ? 'Good'
+                          : 'Excellent'
+                      }
+                      bgColor="rgba(51, 138, 14, 0.4)"
+                      color={
+                        percentage <= 30
+                          ? 'rgba(239, 68, 68, 1)'
+                          : percentage <= 70
+                          ? 'rgba(234, 179, 8, 1)'
+                          : 'rgba(51, 138, 14, 1)'
+                      }
+                    />
+                  </View>
+                </View>
+              </View>
             );
-            setIndex(newIndex);
           }}
-          contentContainerStyle={{ paddingHorizontal: 0 }}
-          getItemLayout={(_, i) => {
-            const length = snapInterval;
-            return { length, offset: length * i, index: i };
-          }}
-          style={{ width: containerWidth }}
-          keyboardShouldPersistTaps="handled"
         />
 
         <TouchableOpacity
-          onPress={onPrev}
+          onPress={() =>
+            carouselRef.current &&
+            typeof carouselRef.current.prev === 'function' &&
+            carouselRef.current.prev()
+          }
           activeOpacity={0.8}
-          style={[styles.arrowButton, { left: -10 }]}
-          accessibilityLabel="Previous card"
+          className="absolute items-center justify-center p-2 z-10 -left-2 "
+          style={{
+            zIndex: 111,
+            top: '50%',
+            transform: [{ translateY: -22 }],
+          }}
         >
           <Image
-            source={require('../../assets/images/leftArrow.png')}
+            source={leftArrow}
             resizeMode="contain"
+            style={{ width: 16, height: 44 }}
           />
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={onNext}
+          onPress={() =>
+            carouselRef.current &&
+            typeof carouselRef.current.next === 'function' &&
+            carouselRef.current.next()
+          }
           activeOpacity={0.8}
-          style={[styles.arrowButton, { right: -10 }]}
-          accessibilityLabel="Next card"
+          className="absolute items-center justify-center p-2 z-10 -right-2 "
+          style={{
+            zIndex: 111,
+            top: '50%',
+            transform: [{ translateY: -22 }],
+          }}
         >
           <Image
-            source={require('../../assets/images/rightArrow.png')}
+            source={rightArrow}
             resizeMode="contain"
+            style={{ width: 16, height: 44 }}
           />
         </TouchableOpacity>
       </View>
+
       <Pressable
         onPress={() => setIsViewDetails(true)}
-        style={[
-          styles.detailsButton,
-          {
-            width: Math.min(cardWidth, containerWidth - 40),
-            marginHorizontal: 'auto',
-          },
-        ]}
+        className="mt-3 bg-amber-600 rounded-full py-2 items-center justify-center mx-4"
+        style={{
+          width: Math.min(cardWidth, safeContainerWidth - 40),
+          alignSelf: 'center',
+        }}
       >
-        <Text style={styles.detailsText}>See Detailed Report</Text>
+        <Text className="text-white text-[20px] font-extrabold">
+          See Detailed Report
+        </Text>
       </Pressable>
-      <View
-        style={{ width: cardWidth, marginTop: 24, marginHorizontal: 'auto' }}
-      >
+
+      <View className="mt-6" style={{ width: cardWidth, alignSelf: 'center' }}>
         <AnalysisCards
           setShowImprovementPoints={setShowImprovementPoints}
           strengths={Array.isArray(report?.strengths) ? report?.strengths : []}
@@ -296,53 +298,3 @@ export default function CarouselCard({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  wrapper: {
-    alignItems: 'center',
-    paddingVertical: 8,
-    width: '100%',
-    position: 'relative',
-  },
-  card: {
-    minHeight: 150,
-    borderRadius: 14,
-    padding: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 2,
-    marginHorizontal: HORIZONTAL_MARGIN,
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  description: {
-    fontSize: 12,
-    color: '#374151',
-    marginTop: 6,
-  },
-  arrowButton: {
-    position: 'absolute',
-    top: '50%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 8,
-    zIndex: 10,
-    transform: 'translateY(-25%)',
-  },
-  detailsButton: {
-    marginTop: 12,
-    backgroundColor: 'rgba(211, 127, 58, 1)',
-    borderRadius: 24,
-    paddingVertical: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  detailsText: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: '700',
-    
-  },
-});

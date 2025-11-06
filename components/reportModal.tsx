@@ -57,10 +57,9 @@ const ReportModal = ({
           source={require('../assets/images/bgGradient.png')}
           style={{
             position: 'absolute',
-            bottom: 0,
+            top: 0,
             left: 0,
-            right: 0,
-            // option A: percentage height (simple)
+            transform:"translateY(250%)",
             height: '100%',
           }}
           resizeMode="cover"
@@ -181,7 +180,7 @@ const ReportModal = ({
                   </View>
 
                   <Text
-                    style={{ fontSize: 14, color: '#333', fontWeight: '500' }}
+                    style={{ fontSize: 14, color: '#333', fontSize: 12 }}
                   >
                     You Scored well
                   </Text>
@@ -189,7 +188,7 @@ const ReportModal = ({
                   <Pressable onPress={() => setShowSummary(true)} hitSlop={6}>
                     <Text
                       style={{
-                        fontSize: 14,
+                        fontSize: 12,
                         marginLeft: 6,
                         textDecorationLine: 'underline',
                       }}
