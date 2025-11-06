@@ -106,7 +106,7 @@ export default function PaymentPopup({
       const payload = {
         planId: selectedPlan.id,
         uid,
-        planInterval: 'monthly',
+        planInterval: '1',
         couponCode: appliedCoupon || '',
       };
 

@@ -62,51 +62,84 @@ export default function PricingPage() {
   const [paymentModalVisible, setPaymentModalVisible] = useState(false);
 
   useEffect(() => {
-    let mounted = true;
+    const controller = new AbortController();
+
     const fetchPlans = async () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(`${API_URL}/api/plans`);
-        if (!res.ok) throw new Error('Failed to load plans');
+        const res = await fetch(`${API_URL}/api/plans`, {
+          signal: controller.signal,
+        });
+
+        if (!res.ok) {
+          const text = await res.text().catch(() => '');
+          throw new Error(`Failed to load plans: ${res.status} ${text}`);
+        }
+
         const data = await res.json();
-        // filter out ids 6 and 7 and keep only candidate/personal plans
-        const filtered = data
+        console.log('raw plans response:', data);
+
+        // support array responses and wrapped responses like { plans: [...] } or { data: [...] }
+        const plansArray = Array.isArray(data)
+          ? data
+          : data.plans ?? data.data ?? [];
+        if (!Array.isArray(plansArray))
+          throw new Error('Unexpected response shape: expected array of plans');
+
+        const filtered = plansArray
+          .filter(p => p && typeof p.id === 'number')
           .filter(p => p.id !== 6 && p.id !== 7)
-          .filter(p => p.id === 1 || p.id === 2) // personal/candidate plans
-          .map(p => ({
+          .filter(p => p.id === 1 || p.id === 2); 
+
+        const transformed = filtered.map(p => {
+          const rawPrices =
+            p.prices == null
+              ? []
+              : Array.isArray(p.prices)
+              ? p.prices
+              : [p.prices];
+
+          const prices = rawPrices.map(pr => ({
+            id: pr.id,
+            interval: pr.interval,
+            price: pr.price,
+            features: pr.features ?? null,
+            is_active: pr.is_active,
+            total_seconds: pr.total_seconds ?? 0,
+            free_seconds: pr.free_seconds ?? 0,
+            max_sub_users: pr.max_sub_users ?? 0,
+            plan: pr.plan ?? null,
+          }));
+
+          return {
             id: p.id,
             name: p.name,
-            description: p.description || p.name,
-            prices:
-              p.prices?.map(pr => ({
-                id: pr.id,
-                interval: pr.interval,
-                price: pr.price,
-                features: pr.features || null,
-                is_active: pr.is_active,
-              })) || [],
+            description: p.description ?? p.name,
+            icon:
+              typeof defaultIcon === 'function' ? defaultIcon(p.name) : null,
+            prices,
             buttonText:
               p.id === 1
                 ? 'Start Free'
                 : p.id === 5
                 ? 'Book a Demo'
                 : 'Buy Now',
-            max_sub_users: p.max_sub_users,
-          }));
+            max_sub_users: p.max_sub_users ?? 0,
+          };
+        });
 
-        if (mounted) setPlans(filtered);
+        setPlans(transformed);
       } catch (err) {
-        if (mounted) setError('Unable to load plans.');
+        console.error('fetchPlans error:', err);
+        setError(err.message ?? 'Unable to load plans.');
       } finally {
-        if (mounted) setLoading(false);
+        setLoading(false);
       }
     };
 
     fetchPlans();
-    return () => {
-      mounted = false;
-    };
+    return () => controller.abort();
   }, []);
 
   const handlePerPlanToggle = planId => {

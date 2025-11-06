@@ -116,9 +116,7 @@ export default function AnalysisCards({
                     : styles.weakTitle,
                 ]}
               >
-                {openItem === 'strengths'
-                  ? 'Strength Points'
-                  : 'Weakness Points'}
+                {openItem === 'strengths' ? 'Strength' : 'Weakness'}
               </Text>
 
               <ScrollView
@@ -174,7 +172,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     width: '100%',
   },
-  playImage: {zIndex:111},
+  playImage: { zIndex: 111 },
   cardText: { paddingHorizontal: 12, paddingBottom: 12 },
   cardTitle: { fontSize: 16, fontWeight: '800', color: '#000' },
   cardSubtitle: { fontSize: 13, color: '#333', opacity: 0.9, marginTop: 6 },
@@ -191,8 +189,10 @@ const styles = StyleSheet.create({
     maxHeight: '80%',
     backgroundColor: '#e5e7eb',
     borderRadius: 16,
-    padding: 12,
+    padding: 24,
     position: 'relative',
+    borderWidth: 2,
+    borderColor: 'rgba(88, 94, 238, 1)',
   },
   modalTitle: {
     fontSize: 20,
@@ -239,8 +239,8 @@ const styles = StyleSheet.create({
   ctaText: { color: '#fff', fontSize: 16, fontWeight: '600' },
   closeBtn: {
     position: 'absolute',
-    top: 8,
-    right: 8,
+    top: 16,
+    right: 16,
     width: 28,
     height: 28,
     borderRadius: 14,
