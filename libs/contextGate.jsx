@@ -9,11 +9,10 @@ import SplashScreen from '../components/SplashScreen';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import messaging from '@react-native-firebase/messaging';
 import Toast from 'react-native-toast-message';
-// import PlayInstallReferrer from 'react-native-play-install-referrer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { NativeModules } from 'react-native';
+import { PlayInstallReferrer } from 'react-native-play-install-referrer';
 import { JAVA_API_URL } from '../components/config';
-const modulePlayInstallReferrer = NativeModules.PlayInstallReferrer;
+
 const ContextGate = ({ children }) => {
   const {
     setUserProfile,
@@ -24,211 +23,65 @@ const ContextGate = ({ children }) => {
 
   const [authLoading, setAuthLoading] = useState(true);
   const [myRefId, setMyRefId] = useState('');
+
   useEffect(() => {
-    const checkAndSendReferrer = async () => {
-      console.log('--- Referrer check started ---');
-
+    const checkAndSaveReferrer = async () => {
       try {
-        console.log(
-          'modulePlayInstallReferrer defined',
-          typeof modulePlayInstallReferrer !== 'undefined',
-        );
-        console.log(
-          'modulePlayInstallReferrer keys',
-          Object.keys(modulePlayInstallReferrer || {}),
-        );
-
-        const alreadySent = await AsyncStorage.getItem('referrerSent');
-        console.log('Already sent referrer?', alreadySent);
-        if (alreadySent) {
-          console.log('Referrer already sent, skipping');
+        const storedRefId = await AsyncStorage.getItem('referrerId');
+        if (storedRefId) {
+          setMyRefId(storedRefId);
+          console.log('Referrer ID loaded from storage:', storedRefId);
           return;
         }
 
-        // quick mock switch for local testing
-        const USE_MOCK = false;
-        if (USE_MOCK) {
-          console.log('Using mock referrer for local testing');
-          const mockInfo = {
-            installReferrer: 'utm_clg=mockCollege&utm_source=mockSource',
-            referrerClickTimestampSeconds: Math.floor(Date.now() / 1000),
-            installBeginTimestampSeconds: Math.floor(Date.now() / 1000),
-          };
-          await handleInfoAndSend(mockInfo);
-          return;
-        }
+        PlayInstallReferrer.getInstallReferrerInfo(
+          async (installReferrerInfo, error) => {
+            if (!error) {
+              const referrer = installReferrerInfo.installReferrer;
+              console.log('Install referrer = ' + referrer);
+              if (
+                referrer &&
+                referrer !== 'utm_source=google-play&utm_medium=organic'
+              ) {
+                await AsyncStorage.setItem('referrerId', referrer);
+                setMyRefId(referrer);
 
-        // getInfo adapts to both promise and callback APIs
-        const getInfo = () =>
-          new Promise(async (resolve, reject) => {
-            let settled = false;
-            const timeoutMs = 8000;
-            const to = setTimeout(() => {
-              if (settled) return;
-              settled = true;
-              const msg = `Timeout waiting for getInstallReferrerInfo after ${timeoutMs} ms`;
-              console.error(msg);
-              reject(new Error(msg));
-            }, timeoutMs);
-
-            try {
-              const nativeFn =
-                modulePlayInstallReferrer?.getInstallReferrerInfo;
-              if (typeof nativeFn !== 'function') {
-                clearTimeout(to);
-                settled = true;
-                const msg = 'Native method getInstallReferrerInfo not found';
-                console.warn(msg);
-                return reject(new Error(msg));
-              }
-
-              console.log(
-                'Native function arity',
-                nativeFn.length,
-                'invoking accordingly',
-              );
-
-              // promise-style native method (arity 0)
-              if (nativeFn.length === 0) {
                 try {
-                  const result = await nativeFn();
-                  if (settled) {
-                    console.warn(
-                      'Promise resolved after timeout, ignoring result',
-                      result,
-                    );
-                    clearTimeout(to);
-                    return;
-                  }
-                  settled = true;
-                  clearTimeout(to);
-                  console.log('Native promise resolved with', result);
-                  return resolve(result);
-                } catch (err) {
-                  if (settled) {
-                    console.warn(
-                      'Promise rejected after timeout, ignoring',
-                      err,
-                    );
-                    clearTimeout(to);
-                    return;
-                  }
-                  settled = true;
-                  clearTimeout(to);
-                  console.error('Native promise rejected', err);
-                  return reject(err);
+                  console.log(
+                    `${JAVA_API_URL}/api/campaigns/${referrer}/increment?type=install`,
+                  );
+                  const response = await fetch(
+                    `${JAVA_API_URL}/api/campaigns/${referrer}/increment?type=install`,
+                    {
+                      method: 'PATCH',
+                      headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                      },
+                    },
+                  );
+                } catch (apiErr) {
+                  console.error('Error saving referrer to backend:', apiErr);
                 }
               }
-
-              // callback-style native method (expects callback arg)
-              console.log('Invoking native method in callback style');
-              try {
-                nativeFn((info, error) => {
-                  if (settled) {
-                    console.warn('Callback invoked after timeout, ignoring', {
-                      info,
-                      error,
-                    });
-                    return;
-                  }
-                  settled = true;
-                  clearTimeout(to);
-                  console.log('Callback invoked with', { info, error });
-                  if (error) return reject(error);
-                  resolve(info);
-                });
-              } catch (e) {
-                if (settled) return;
-                settled = true;
-                clearTimeout(to);
-                console.error(
-                  'Exception when calling native callback method',
-                  e,
-                );
-                reject(e);
-              }
-            } catch (e) {
-              if (settled) return;
-              settled = true;
-              clearTimeout(to);
-              console.error('Unexpected error in getInfo', e);
-              reject(e);
+            } else {
+              console.warn('Failed to get install referrer info:', error);
             }
-          });
-
-        const info = await getInfo();
-        console.log('Install Referrer raw info', info);
-        await handleInfoAndSend(info);
-      } catch (err) {
-        console.error('Error checking referrer', err);
-      } finally {
-        console.log('--- Referrer check completed ---');
+          },
+        );
+      } catch (e) {
+        console.error('Error handling referrer logic:', e);
       }
     };
 
-    async function handleInfoAndSend(infoObj) {
-      try {
-        console.log('Handling info object', infoObj);
-        const installReferrer = info?.installReferrer;
-        if (!installReferrer) {
-          console.log('No installReferrer string in response');
-          return;
-        }
-
-        // detect if it’s a key=value string or a plain value
-        let refId;
-        if (installReferrer.includes('=')) {
-          // typical UTM or key=value string
-          const urlParams = new URLSearchParams(installReferrer);
-          refId = urlParams.get('ref') || urlParams.get('referrer');
-        } else {
-          // direct referrer, like your UUID
-          refId = installReferrer.trim();
-        }
-
-        console.log('Extracted Referrer ID:', refId);
-        if (!refId) {
-          console.log('No valid referrer ID found in', installReferrer);
-          return;
-        }
-        setMyRefId(refId);
-        console.log('Sending referrer ID to API', refId);
-        try {
-          const res = await fetch(
-            `${JAVA_API_URL}/api/campaigns/${refId}/increment?type=install`,
-            {
-              method: 'PATCH',
-              headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-              },
-            },
-          );
-
-          console.log('API response status', res.status);
-          if (!res.ok) {
-            console.warn('Referrer post failed with status', res.status);
-            return;
-          }
-          await AsyncStorage.setItem('referrerSent', 'true');
-          console.log('Referrer sent and saved');
-        } catch (e) {
-          console.error('Network error sending referrer', e);
-        }
-      } catch (e) {
-        console.error('Error in handleInfoAndSend', e);
-      }
-    }
-
-    checkAndSendReferrer();
+    checkAndSaveReferrer();
   }, []);
 
-  // 🔹 2️⃣ Messaging foreground listener
+  // 🔹 Messaging foreground listener
   useEffect(() => {
     if (!userProfile?.uid) return;
 
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-      // optional: normalize remoteMessage to your notifications shape
       const incoming = {
         id: remoteMessage.messageId || Date.now().toString(),
         title: remoteMessage.notification?.title || '',
@@ -248,6 +101,7 @@ const ContextGate = ({ children }) => {
 
     return () => unsubscribe();
   }, [userProfile?.uid]);
+
   useEffect(() => {
     if (!userProfile?.uid) return;
 
@@ -262,6 +116,7 @@ const ContextGate = ({ children }) => {
 
     return () => unsubscribeOpened();
   }, [userProfile?.uid]);
+
   useEffect(() => {
     GoogleSignin.configure({
       webClientId:
