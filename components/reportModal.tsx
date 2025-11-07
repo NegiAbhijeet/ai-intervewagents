@@ -21,6 +21,7 @@ import ImprovementsPoints from './improvementsPoints';
 import InterviewSummaryModal from './summaryModal';
 import ReportCards from './ReportCards';
 import Transcript from './Transcript';
+import { useNavigation } from '@react-navigation/native';
 
 const ReportModal = ({
   visible,
@@ -32,7 +33,7 @@ const ReportModal = ({
   setIsViewSkills,
 }) => {
   const feedback = report?.feedback || null;
-
+  const navigation = useNavigation();
   const [showSummary, setShowSummary] = useState(false);
   const [showImprovementPoints, setShowImprovementPoints] = useState(false);
   const [activeTab, setActiveTab] = useState('details'); //details or transcript
@@ -234,7 +235,7 @@ const ReportModal = ({
                     }
                   /> */}
 
-                  <View className="flex-row items-center justify-center">
+                  <View className="items-center justify-center gap-4">
                     <Pressable
                       onPress={() => setShowImprovementPoints(true)}
                       className="flex-row items-center justify-center gap-4"
@@ -258,6 +259,38 @@ const ReportModal = ({
                         className="w-7 h-7"
                         resizeMode="cover"
                       />
+                    </Pressable>
+                    <Pressable
+                      onPress={() => {
+                        navigation.navigate('interview', {
+                          type: report?.interviewType || '',
+                          skills: report?.candidateRequiredSkills || [],
+                          position: report?.position || '',
+                        });
+                        onClose();
+                      }}
+                      className="flex-row items-center justify-center gap-4"
+                      style={{
+                        borderWidth: 1,
+                        borderColor: 'rgba(60, 60, 60, 1)',
+                        borderRadius: 10,
+                        paddingHorizontal: 25,
+                        paddingVertical: 10,
+                      }}
+                    >
+                      <Image
+                        source={require('../assets/images/retry.png')}
+                        resizeMode="cover"
+                      />
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: 700,
+                          color: 'rgba(60, 60, 60, 1)',
+                        }}
+                      >
+                        Try again
+                      </Text>
                     </Pressable>
                   </View>
                 </>
