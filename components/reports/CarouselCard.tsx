@@ -22,7 +22,16 @@ export default function CarouselCard({
 }) {
   const carouselRef = useRef(null);
   const [containerWidth, setContainerWidth] = useState(WINDOW_WIDTH || 360);
+  const [activeIndex, setActiveIndex] = useState(0);
+  // put these near your other hooks
+  const lastActiveRef = useRef(activeIndex);
 
+  // when you update state, also update the ref
+  const setActive = idx => {
+    if (lastActiveRef.current === idx) return;
+    lastActiveRef.current = idx;
+    setActiveIndex(idx);
+  };
   const technicalKeys = [
     'Technical_Expertise',
     'Problem_Solving',
@@ -41,12 +50,12 @@ export default function CarouselCard({
     interviewType === 'Technical' ? technicalKeys : nonTechnicalKeys;
 
   const palette = [
-    'rgba(251, 146, 60, 1)',
-    'rgba(34, 197, 94, 1)',
-    'rgba(59, 130, 246, 1)',
-    'rgba(168, 85, 247, 1)',
-    'rgba(244, 63, 94, 1)',
-    'rgba(14, 165, 233, 1)',
+    'rgba(211, 127, 58, 1)',
+    'rgba(179, 102, 147, 1)',
+    'rgba(43, 129, 143, 1)',
+    'rgba(122, 63, 191, 1)',
+    'rgba(54, 109, 238, 1)',
+    'rgba(81, 194, 211, 1)',
   ];
 
   const humanize = key =>
@@ -114,13 +123,6 @@ export default function CarouselCard({
       : WINDOW_WIDTH;
   const cardWidth = Math.max(0, safeContainerWidth - HORIZONTAL_MARGIN * 2);
 
-  useEffect(() => {
-    // if width changes, ensure carousel keeps current item
-    if (carouselRef.current && carouselRef.current.currentIndex != null) {
-      // no-op, library handles it; keep for future safety
-    }
-  }, [safeContainerWidth]);
-
   if (!Array.isArray(cards) || cards.length === 0) return null;
 
   // defensive image sources. require will throw only at build time if not present
@@ -145,24 +147,45 @@ export default function CarouselCard({
           autoPlay
           autoPlayInterval={2000}
           data={cards}
-          onSnapToItem={index => {}}
-          renderItem={({ item: cardItem, index: idx }) => {
-            // extra defensive guard
-            if (!cardItem) {
-              return (
-                <View
-                  style={{ width: safeContainerWidth }}
-                  className="items-center"
-                >
-                  <View
-                    className={`min-h-[160px] rounded-[14px] p-4 flex-row items-center border mx-[${HORIZONTAL_MARGIN}px]`}
-                    style={{ width: cardWidth }}
-                  >
-                    <Text className="text-base font-bold">No data</Text>
-                  </View>
-                </View>
-              );
+          onSnapToItem={index => setActiveIndex(index)} // <-- update active index
+          // replace onProgressChange with this
+          onProgressChange={(offsetProgress, absoluteProgress) => {
+            if (absoluteProgress == null || Number.isNaN(absoluteProgress))
+              return;
+
+            // absoluteProgress is a fractional index, e.g. 0, 0.1, 0.5, 1, 1.2 ...
+            const total = cards.length;
+            // make sure progress is finite
+            const progress = Math.max(-1e9, Math.min(1e9, absoluteProgress));
+
+            // base index and fractional part
+            const base = Math.floor(progress);
+            const frac = progress - base;
+
+            // hysteresis thresholds — adjust to taste
+            const lowerThreshold = 0.35;
+            const upperThreshold = 0.65;
+
+            // decide target index relative to base
+            let targetRelative;
+            if (frac <= lowerThreshold) {
+              targetRelative = 0;
+            } else if (frac >= upperThreshold) {
+              targetRelative = 1;
+            } else {
+              // in the middle zone, do not change from last known index
+              return;
             }
+
+            let tentative = base + targetRelative;
+
+            // normalize for looping carousels
+            const wrapped = ((tentative % total) + total) % total;
+
+            setActive(wrapped);
+          }}
+          renderItem={({ item: cardItem }) => {
+            if (!cardItem) return null;
 
             const percentage = cardItem.value ? (cardItem.value / 10) * 100 : 0;
             const bgColor =
@@ -275,10 +298,11 @@ export default function CarouselCard({
 
       <Pressable
         onPress={() => setIsViewDetails(true)}
-        className="mt-3 bg-amber-600 rounded-full py-2 items-center justify-center mx-4"
+        className="mt-3 rounded-full py-2 items-center justify-center mx-4"
         style={{
           width: Math.min(cardWidth, safeContainerWidth - 40),
           alignSelf: 'center',
+          backgroundColor: cards[activeIndex]?.color || 'rgba(59,130,246,1)', // <-- dynamic color
         }}
       >
         <Text className="text-white text-[20px] font-extrabold">
