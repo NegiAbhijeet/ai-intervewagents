@@ -167,11 +167,11 @@ const ContextGate = ({ children }) => {
         <View className="flex-1">
           {myRefId ? (
             <View
-              style={{ height: 2, width: '100%', backgroundColor: 'green' }}
+              style={{ height: 1, width: '100%', backgroundColor: 'green' }}
             ></View>
           ) : (
             <View
-              style={{ height: 2, width: '100%', backgroundColor: 'red' }}
+              style={{ height: 1, width: '100%', backgroundColor: 'gray' }}
             ></View>
           )}
           {children}
