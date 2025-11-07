@@ -90,7 +90,7 @@ export default function PricingPage() {
         const filtered = plansArray
           .filter(p => p && typeof p.id === 'number')
           .filter(p => p.id !== 6 && p.id !== 7)
-          .filter(p => p.id === 1 || p.id === 2); 
+          .filter(p => p.id === 1 || p.id === 2);
 
         const transformed = filtered.map(p => {
           const rawPrices =
@@ -272,10 +272,9 @@ export default function PricingPage() {
           ) : plan.id === 1 ? (
             <TouchableOpacity
               onPress={() => {
-                if (userProfile?.uid) navigation.navigate('Dashboard');
-                else navigation.navigate('Login');
+                if (!userProfile?.uid) navigation.navigate('Login');
               }}
-              style={styles.button}
+              style={[styles.button, styles.buttonDisabled]}
             >
               <Text style={styles.buttonText}>{plan.buttonText}</Text>
             </TouchableOpacity>

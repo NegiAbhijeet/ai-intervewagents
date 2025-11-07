@@ -28,24 +28,89 @@ export default function PaymentPopup({
   const [couponCode, setCouponCode] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState('');
   const [isRedeemLoading, setIsRedeemLoading] = useState(false);
-  const baseAmount = selectedPlan?.prices?.[0]?.price || 0;
+  // discount and amounts
   const [discountPercentage, setDiscountPercentage] = useState(0);
   const [discountAmount, setDiscountAmount] = useState(0);
-  const [finalAmount, setFinalAmount] = useState(baseAmount);
+  const [finalAmount, setFinalAmount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+
+  // interval state: this will hold the selected interval string from price.interval
+  const [selectedInterval, setSelectedInterval] = useState(null);
+
+  // build billing options from selectedPlan.prices
+  const billingOptions = (selectedPlan?.prices || [])
+    .filter(p => p) // drop falsy
+    .map(p => {
+      // keep interval as-is (monthly/yearly or numeric string)
+      const label =
+        p.interval === 'yearly' || p.interval === '12' || p.interval === 12
+          ? '1Y'
+          : p.interval === 'monthly' || p.interval === '1' || p.interval === 1
+          ? '1M'
+          : `${String(p.interval)}M`;
+      return {
+        id: p.id,
+        interval: String(p.interval),
+        price: Number(p.price ?? 0),
+        label,
+        raw: p,
+      };
+    });
+
+  // Set initial selected interval and reset coupon state when plan changes
   useEffect(() => {
-    setFinalAmount(baseAmount);
+    // reset coupon and discount state
     setAppliedCoupon('');
     setDiscountAmount(0);
     setDiscountPercentage(0);
-  }, [selectedPlan]);
+    setCouponCode('');
+    // select first available interval if present
+    if (billingOptions.length > 0) {
+      // choose monthly if available, else first
+      const monthly = billingOptions.find(
+        b => b.interval === 'monthly' || b.interval === '1',
+      );
+      setSelectedInterval(
+        prev =>
+          prev ?? (monthly ? monthly.interval : billingOptions[0].interval),
+      );
+      // set final amount to base of selected
+      const base = (monthly ? monthly.price : billingOptions[0].price) || 0;
+      setFinalAmount(Number(base.toFixed(2)));
+    } else {
+      setSelectedInterval(null);
+      setFinalAmount(0);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedPlan]); // only when selectedPlan changes
+
+  // compute base amount for currently selected interval
+  const baseAmount = (() => {
+    if (!selectedPlan || !selectedInterval) return 0;
+    const found =
+      (selectedPlan.prices || []).find(
+        pr => String(pr.interval) === String(selectedInterval),
+      ) ||
+      selectedPlan.prices?.[0] ||
+      null;
+    return Number(found?.price ?? 0);
+  })();
+
+  // keep final amount in sync if base or discounts change
+  useEffect(() => {
+    const computedDiscountAmount =
+      discountAmount ||
+      Math.round((baseAmount * (discountPercentage || 0)) / 100);
+    const computedFinal = Math.max(0, baseAmount - computedDiscountAmount);
+    setFinalAmount(Number(computedFinal.toFixed(2)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [baseAmount, discountPercentage, discountAmount]);
 
   const handleRedeem = async () => {
     if (!couponCode.trim()) return;
     Keyboard.dismiss();
     setIsRedeemLoading(true);
-    console.log(selectedPlan);
     try {
       const res = await fetch(`${API_URL}/coupons/verify/`, {
         method: 'POST',
@@ -53,7 +118,7 @@ export default function PaymentPopup({
         body: JSON.stringify({
           code: couponCode.trim().toUpperCase(),
           planId: selectedPlan?.id,
-          planInterval: 'monthly',
+          planInterval: String(selectedInterval ?? 'monthly'),
         }),
       });
       if (!res.ok) {
@@ -61,9 +126,9 @@ export default function PaymentPopup({
         throw new Error(errData?.error || 'Failed to verify coupon');
       }
       const data = await res.json();
-      setDiscountPercentage(data?.discount_percentage || 0);
-      setFinalAmount(data?.payable_amount ?? baseAmount);
-      setDiscountAmount(data?.discount_amount ?? 0);
+      setDiscountPercentage(Number(data?.discount_percentage || 0));
+      setFinalAmount(Number((data?.payable_amount ?? baseAmount).toFixed(2)));
+      setDiscountAmount(Number(data?.discount_amount ?? 0));
       setAppliedCoupon(couponCode.trim().toUpperCase());
       setCouponCode('');
     } catch (err) {
@@ -78,7 +143,7 @@ export default function PaymentPopup({
     setAppliedCoupon('');
     setDiscountPercentage(0);
     setDiscountAmount(0);
-    setFinalAmount(baseAmount);
+    setFinalAmount(Number(baseAmount.toFixed(2)));
   };
 
   const refreshUserProfile = async () => {
@@ -106,7 +171,7 @@ export default function PaymentPopup({
       const payload = {
         planId: selectedPlan.id,
         uid,
-        planInterval: '1',
+        planInterval: String(selectedInterval ?? '1'),
         couponCode: appliedCoupon || '',
       };
 
@@ -137,9 +202,8 @@ export default function PaymentPopup({
 
       // get public key fallback: config or server endpoint
       let publicKey =
-        key_id || global?.RAZORPAY_KEY || process?.env?.RAZORPAY_KEY; // adapt to your env
+        key_id || global?.RAZORPAY_KEY || process?.env?.RAZORPAY_KEY;
       if (!publicKey) {
-        // try a dedicated endpoint that returns only the public key
         try {
           const keyRes = await fetchWithAuth(`${API_URL}/razorpay-key/`);
           if (keyRes.ok) {
@@ -170,8 +234,8 @@ export default function PaymentPopup({
       }
 
       const options = {
-        key: publicKey, // required by native SDK
-        amount: amountNumber, // integer in paise
+        key: publicKey,
+        amount: amountNumber,
         currency: currency || 'INR',
         name: 'AI Interview Agents',
         description: 'Order payment',
@@ -202,10 +266,7 @@ export default function PaymentPopup({
             }
 
             if (verifyRes.ok) {
-              Toast.show({
-                type: 'success',
-                text1: 'Payment successful',
-              });
+              Toast.show({ type: 'success', text1: 'Payment successful' });
               onClose && onClose();
               await refreshUserProfile();
               navigation.navigate('profile');
@@ -247,7 +308,7 @@ export default function PaymentPopup({
       {isUpdating && (
         <View
           style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.3)', // slightly transparent black
+            backgroundColor: 'rgba(0, 0, 0, 0.3)',
             flex: 1,
             position: 'absolute',
             inset: 0,
@@ -275,6 +336,56 @@ export default function PaymentPopup({
           <Text style={styles.subtitle}>
             Secure checkout with optional savings
           </Text>
+
+          {/* Interval selection */}
+          {billingOptions.length > 0 && (
+            <View
+              style={{
+                flexDirection: 'row',
+                marginBottom: 18,
+                flexWrap: 'nowrap',
+                gap: 8,
+              }}
+            >
+              {billingOptions.map(opt => {
+                const active =
+                  String(opt.interval) === String(selectedInterval);
+                return (
+                  <TouchableOpacity
+                    key={`${opt.id}-${opt.interval}`}
+                    onPress={() => {
+                      if (active) return;
+                      setAppliedCoupon('');
+                      setDiscountAmount(0);
+                      setDiscountPercentage(0);
+                      setCouponCode('');
+                      setSelectedInterval(opt.interval);
+                      setFinalAmount(Number((opt.price || 0).toFixed(2)));
+                    }}
+                    style={{
+                      flex: 1,
+                      paddingVertical: 8,
+                      paddingHorizontal: 12,
+                      borderRadius: 10,
+                      borderWidth: 1,
+                      borderColor: active ? '#4338CA' : '#E6E6E6',
+                      backgroundColor: active ? '#4338CA' : '#F8FAFF',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: active ? '#fff' : '#0f172a',
+                        fontWeight: '700',
+                      }}
+                    >
+                      {opt.label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          )}
 
           <View style={styles.couponRow}>
             <TextInput
