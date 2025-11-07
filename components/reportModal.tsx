@@ -59,7 +59,7 @@ const ReportModal = ({
             position: 'absolute',
             top: 0,
             left: 0,
-            transform:"translateY(250%)",
+            transform: 'translateY(250%)',
             height: '100%',
           }}
           resizeMode="cover"
@@ -179,9 +179,7 @@ const ReportModal = ({
                     </Text>
                   </View>
 
-                  <Text
-                    style={{ fontSize: 14, color: '#333', fontSize: 12 }}
-                  >
+                  <Text style={{ fontSize: 14, color: '#333', fontSize: 12 }}>
                     You Scored well
                   </Text>
 
@@ -239,16 +237,18 @@ const ReportModal = ({
                   <View className="flex-row items-center justify-center">
                     <Pressable
                       onPress={() => setShowImprovementPoints(true)}
-                      className="flex-row px-8 py-2 items-center justify-center gap-4"
+                      className="flex-row items-center justify-center gap-4"
                       style={{
                         backgroundColor: 'rgba(109, 18, 192, 0.2)',
-                        borderWidth: 2,
+                        borderWidth: 1,
                         borderColor: 'rgba(109, 18, 192, 1)',
                         borderRadius: 10,
+                        paddingHorizontal: 25,
+                        paddingVertical: 10,
                       }}
                     >
                       <Text
-                        className="text-white py-2"
+                        className="text-white"
                         style={{ fontSize: 20, fontWeight: 700 }}
                       >
                         How to Improve

@@ -36,7 +36,7 @@ export default function AnalysisCards({
         }}
         style={{
           backgroundColor: 'transparent',
-          borderWidth: 6,
+          borderWidth: 5,
           borderRadius: 16,
         }}
       >
@@ -107,6 +107,11 @@ export default function AnalysisCards({
 
           {/* modal content rendered after backdrop so it sits on top and receives touches */}
           <View style={styles.center}>
+            <Image
+              source={require('../assets/images/cardsTopPenguin.png')}
+              resizeMode="contain"
+              style={{ width: 175 }}
+            />
             <View style={styles.cardModal}>
               <Text
                 style={[
@@ -131,21 +136,27 @@ export default function AnalysisCards({
                 {openItem === 'weaknesses' &&
                   renderListItems(weaknesses, 'weaknesses')}
               </ScrollView>
-
-              <Pressable
-                onPress={() => setShowImprovementPoints(true)}
-                style={styles.ctaWrap}
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
               >
-                <LinearGradient
-                  colors={['rgba(85, 95, 238, 1)', 'rgba(140, 70, 239, 1)']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={styles.cta}
+                <Pressable
+                  onPress={() => setShowImprovementPoints(true)}
+                  style={styles.ctaWrap}
                 >
-                  <Text style={styles.ctaText}>How to Improve</Text>
-                </LinearGradient>
-              </Pressable>
-
+                  <LinearGradient
+                    colors={['rgba(85, 95, 238, 1)', 'rgba(140, 70, 239, 1)']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={styles.cta}
+                  >
+                    <Text style={styles.ctaText}>How to Improve</Text>
+                  </LinearGradient>
+                </Pressable>
+              </View>
               <Pressable onPress={close} style={styles.closeBtn}>
                 <Text style={styles.closeBtnText}>✕</Text>
               </Pressable>
@@ -186,7 +197,7 @@ const styles = StyleSheet.create({
   cardModal: {
     width: '100%',
     maxWidth: 480,
-    maxHeight: '80%',
+    maxHeight: '60%',
     backgroundColor: '#e5e7eb',
     borderRadius: 16,
     padding: 24,
@@ -236,7 +247,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 10,
   },
-  ctaText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  ctaText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+    paddingHorizontal: 12,
+  },
   closeBtn: {
     position: 'absolute',
     top: 16,
