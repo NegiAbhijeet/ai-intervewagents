@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useEffect, useContext, useState, useCallback } from 'react';
 import { View, StatusBar } from 'react-native';
 import { onAuthStateChanged } from 'firebase/auth';
 import fetchUserDetails from './fetchUser';
@@ -22,50 +22,87 @@ const ContextGate = ({ children }) => {
   } = useContext(AppStateContext);
 
   const [authLoading, setAuthLoading] = useState(true);
-  const [myRefId, setMyRefId] = useState('');
+
+  // helper: increment install
+  const incrementInstall = useCallback(async referrer => {
+    if (!referrer) return;
+    try {
+      console.log('Calling install increment for', referrer);
+      await fetch(`${JAVA_API_URL}/api/campaigns/${referrer}/increment?type=install`, {
+        method: 'PATCH',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+    } catch (err) {
+      console.error('install increment failed for', referrer, err);
+    }
+  }, []);
+
+  const incrementSignupOnce = useCallback(async referrer => {
+    if (!referrer) return;
+    const signupKey = `signupCalled_${referrer}`;
+    try {
+      const already = await AsyncStorage.getItem(signupKey);
+      if (already) {
+        console.log('Signup already counted for', referrer);
+        return;
+      }
+
+      console.log('Calling signup increment for', referrer);
+      await fetch(`${JAVA_API_URL}/api/campaigns/${referrer}/increment?type=signup`, {
+        method: 'PATCH',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+
+      await AsyncStorage.setItem(signupKey, 'true');
+    } catch (err) {
+      console.error('signup increment failed for', referrer, err);
+    }
+  }, []);
+
 
   useEffect(() => {
     const checkAndSaveReferrer = async () => {
       try {
         const storedRefId = await AsyncStorage.getItem('referrerId');
         if (storedRefId) {
-          setMyRefId(storedRefId);
           console.log('Referrer ID loaded from storage:', storedRefId);
+          // If user is already logged in, attempt signup increment (only once)
+          if (userProfile?.uid) {
+            incrementSignupOnce(storedRefId);
+          }
           return;
         }
 
         PlayInstallReferrer.getInstallReferrerInfo(
           async (installReferrerInfo, error) => {
-            if (!error) {
-              const referrer = installReferrerInfo.installReferrer;
-              console.log('Install referrer = ' + referrer);
-              if (
-                referrer &&
-                referrer !== 'utm_source=google-play&utm_medium=organic'
-              ) {
-                await AsyncStorage.setItem('referrerId', referrer);
-                setMyRefId(referrer);
+            if (error) {
+              console.warn('Failed to get install referrer info:', error);
+              return;
+            }
 
-                try {
-                  console.log(
-                    `${JAVA_API_URL}/api/campaigns/${referrer}/increment?type=install`,
-                  );
-                  const response = await fetch(
-                    `${JAVA_API_URL}/api/campaigns/${referrer}/increment?type=install`,
-                    {
-                      method: 'PATCH',
-                      headers: {
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json',
-                      },
-                    },
-                  );
-                } catch (apiErr) {
-                  console.error('Error saving referrer to backend:', apiErr);
-                }
+            const referrer = installReferrerInfo?.installReferrer;
+            console.log('Install referrer =', referrer);
+
+            if (
+              referrer &&
+              referrer !== 'utm_source=google-play&utm_medium=organic'
+            ) {
+              await AsyncStorage.setItem('referrerId', referrer);
+              // increment install immediately
+              await incrementInstall(referrer);
+
+              // if user already logged in, also mark signup once
+              if (userProfile?.uid) {
+                await incrementSignupOnce(referrer);
               }
             } else {
-              console.warn('Failed to get install referrer info:', error);
+              console.log('No valid referrer to record or organic referrer');
             }
           },
         );
@@ -75,9 +112,29 @@ const ContextGate = ({ children }) => {
     };
 
     checkAndSaveReferrer();
-  }, []);
+  }, []); 
 
-  // 🔹 Messaging foreground listener
+ 
+  useEffect(() => {
+    if (!userProfile?.uid) return;
+
+    const trySignupForStoredReferrer = async () => {
+      try {
+        const referrer = await AsyncStorage.getItem('referrerId');
+        if (!referrer) {
+          console.log('No stored referrer to attribute signup to');
+          return;
+        }
+        await incrementSignupOnce(referrer);
+      } catch (err) {
+        console.error('Error attempting signup increment after login:', err);
+      }
+    };
+
+    trySignupForStoredReferrer();
+  }, [userProfile?.uid]);
+
+  // Messaging foreground listener
   useEffect(() => {
     if (!userProfile?.uid) return;
 
@@ -164,18 +221,7 @@ const ContextGate = ({ children }) => {
           <SplashScreen />
         </View>
       ) : (
-        <View className="flex-1">
-          {myRefId ? (
-            <View
-              style={{ height: 1, width: '100%', backgroundColor: 'green' }}
-            ></View>
-          ) : (
-            <View
-              style={{ height: 1, width: '100%', backgroundColor: 'gray' }}
-            ></View>
-          )}
-          {children}
-        </View>
+        <View className="flex-1">{children}</View>
       )}
     </SafeAreaView>
   );
