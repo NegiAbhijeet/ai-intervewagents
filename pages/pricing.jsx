@@ -191,8 +191,8 @@ export default function PricingPage() {
       plan.prices[0] ||
       null;
     const displayPrice = formatPrice(priceObj?.price);
-    const displayPeriodLabel =
-      effectiveBilling === 'monthly' ? '/month' : '/year';
+    const displayPeriodLabel ="/month"
+      // effectiveBilling === 'monthly' ? '/month' : '/year';
     const features =
       typeof priceObj?.features === 'string'
         ? priceObj.features
