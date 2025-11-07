@@ -34,7 +34,9 @@ export default function ProfileScreen() {
   } = useContext(AppStateContext);
   const navigation = useNavigation();
   const activeUsedMinutes = usedMinutes;
-
+  const expiryDate = userProfile?.plan_expiry
+    ? new Date(userProfile.plan_expiry).toLocaleDateString('en-GB')
+    : '';
   const [loading, setLoading] = useState(false);
   async function fetchDetails() {
     try {
@@ -148,6 +150,14 @@ export default function ProfileScreen() {
                 <Text className="text-gray-500 text-sm">
                   {firebaseUser?.email}
                 </Text>
+                {expiryDate && (
+                  <View className="text-center space-y-1 text-gray-600 mt-2">
+                    <View className="text-sm font-medium flex-row items-center">
+                      <Text className="text-black">Plan expiry: </Text>
+                      <Text className="text-red-500">{expiryDate}</Text>
+                    </View>
+                  </View>
+                )}
               </View>
             </View>
 
