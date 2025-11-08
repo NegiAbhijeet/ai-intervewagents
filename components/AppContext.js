@@ -32,7 +32,19 @@ const AppStateProvider = ({ children }) => {
 
   const mainUsedMinutes = Math.ceil(mainUsedSeconds / 60);
 
-  // ✅ Memoize the cleaned context value
+  // Reset all app states to default when logging out
+  const resetAppState = () => {
+    setUserProfile(null);
+    setFirebaseUser(null);
+    setNotifications(null);
+    setIsNotificationDrawerOn(false);
+    setJobs([]);
+    setUnreadNotification(0);
+    setFcmTokenUpdated(false);
+    setJobsFetched(false);
+    setLeaderboardRank(0);
+  };
+
   const contextValue = useMemo(
     () => ({
       userProfile,
@@ -57,6 +69,7 @@ const AppStateProvider = ({ children }) => {
       mainUsedMinutes,
       leaderboardRank,
       setLeaderboardRank,
+      resetAppState,
     }),
     [
       userProfile,

@@ -21,7 +21,7 @@ import { API_URL } from './config';
 const TopBar = () => {
   const {
     userProfile,
-    setUserProfile,
+    resetAppState,
     unreadNotification,
     notifications,
     setNotifications,
@@ -92,7 +92,7 @@ const TopBar = () => {
       }
 
       await signOut(auth);
-      setUserProfile(null);
+      resetAppState();
 
       console.log('[Logout] User successfully logged out');
     } catch (err) {

@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AppTabs from './navigation/AppTabs';
 import AuthStack from './navigation/AuthStack';
-import GetStartedScreen from './GetStartedScreen';
+import AvatarSelectionScreen from "./AvatarSelectionScreen"
 import JobDetailPage from '../pages/JobDetailPage';
 import ReportDetailScreen from '../pages/ReportDetail';
 import NotificationsPage from '../pages/NotificationsDrawer';
@@ -62,7 +62,7 @@ const RootNavigator = () => {
   ) {
     return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="GetStarted" component={GetStartedScreen} />
+        <Stack.Screen name="AvatarSelection" component={AvatarSelectionScreen} />
       </Stack.Navigator>
     );
   }
