@@ -1,0 +1,436 @@
+import React, { useRef, useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Platform,
+  KeyboardAvoidingView,
+  ActivityIndicator,
+} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import auth from '@react-native-firebase/auth';
+
+const penguin = require('../../assets/images/loginPeng.png');
+const google = require('../../assets/images/google1.png');
+
+export default function LoginScreen() {
+  const navigation = useNavigation();
+
+  const [phone, setPhone] = useState('');
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const inputs = [
+    useRef(null),
+    useRef(null),
+    useRef(null),
+    useRef(null),
+    useRef(null),
+    useRef(null),
+  ];
+
+  // phone auth states
+  const [confirmObj, setConfirmObj] = useState(null); // confirmation returned by auth().signInWithPhoneNumber
+  const [loading, setLoading] = useState(false);
+  const [timer, setTimer] = useState(0); // seconds for resend cooldown
+  const [otpLoading, setOtpLoading] = useState(false);
+  useEffect(() => {
+    // cleanup on unmount
+    return () => {};
+  }, []);
+
+  useEffect(() => {
+    let t;
+    if (timer > 0) {
+      t = setTimeout(() => setTimer(prev => prev - 1), 1000);
+    }
+    return () => clearTimeout(t);
+  }, [timer]);
+
+  const normalizePhone = raw => {
+    if (!raw) return raw;
+    const trimmed = raw.trim();
+    if (trimmed.startsWith('+')) return trimmed;
+    const digits = trimmed.replace(/\D/g, '');
+    // default to +91 for local 10 digit input
+    if (digits.length === 10) return `+91${digits}`;
+    if (digits.length > 10 && digits.startsWith('91')) return `+${digits}`;
+    return `+${digits}`;
+  };
+
+  const sendOtp = async () => {
+    try {
+      setOtpLoading(true);
+      let x = '+1 897-958-4098';
+      const phoneNumber = normalizePhone(x);
+      if (!phoneNumber || phoneNumber.length < 6) {
+        console.warn('Enter a valid phone number');
+        setOtpLoading(false);
+        return;
+      }
+      // use the normalized phone number for sending OTP
+      const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
+      setConfirmObj(confirmation);
+      setOtp(['', '', '', '', '', '']);
+      setTimer(120); // 2 minutes cooldown
+      // autofocus first OTP box
+      setTimeout(() => {
+        if (inputs[0].current) inputs[0].current.focus();
+      }, 200);
+      console.log('OTP sent to', phoneNumber);
+    } catch (err) {
+      console.error('send OTP error', err.code, err.message);
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
+  const onOtpChange = (text, i) => {
+    const v = text.replace(/[^0-9]/g, '');
+    const newOtp = [...otp];
+    newOtp[i] = v.slice(-1);
+    setOtp(newOtp);
+    if (v && i < 5) {
+      inputs[i + 1].current?.focus();
+    }
+    if (!v && i > 0) {
+      inputs[i - 1].current?.focus();
+    }
+  };
+
+  const verifyOtpAndLogin = async () => {
+    const code = otp.join('');
+    if (!confirmObj) {
+      console.warn('Request OTP first');
+      return;
+    }
+    if (code.length < 6) {
+      console.warn('Enter full OTP');
+      return;
+    }
+    try {
+      setLoading(true);
+      await confirmObj.confirm(code);
+      console.log('Phone auth successful');
+      // navigate to Home
+      navigation.replace('Home');
+    } catch (err) {
+      console.error('confirmCode error', err.code, err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resendOtp = async () => {
+    if (timer > 0) return;
+    await sendOtp();
+  };
+
+  return (
+    <SafeAreaView style={styles.safe}>
+      <View style={styles.bg}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.container}
+        >
+          <View style={styles.topLogoWrapper}>
+            <Image source={penguin} style={styles.penguin} />
+          </View>
+
+          <View style={styles.card}>
+            <Text style={styles.title}>Let’s You In</Text>
+
+            <View style={styles.field}>
+              <Text style={styles.label}>Mobile Number</Text>
+              <TextInput
+                value={phone}
+                onChangeText={setPhone}
+                placeholder="e.g. 9876543210"
+                keyboardType="phone-pad"
+                style={styles.input}
+                placeholderTextColor="rgba(139, 71, 239, 0.4)"
+                maxLength={15}
+                editable={!loading || !otpLoading}
+              />
+            </View>
+
+            {/* Show Send OTP when no confirmation yet. Once OTP sent, hide send and show boxes */}
+            {!confirmObj ? (
+              <TouchableOpacity
+                style={[styles.loginButton, { marginTop: 18 }]}
+                onPress={sendOtp}
+                activeOpacity={0.8}
+                disabled={otpLoading}
+              >
+                <LinearGradient
+                  colors={['rgba(143, 68, 239, 1)', 'rgba(92, 92, 239, 1)']}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: 35,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  {otpLoading ? (
+                    <ActivityIndicator size="small" color="#fff" />
+                  ) : (
+                    <Text style={styles.loginText}>Send OTP</Text>
+                  )}
+                </LinearGradient>
+              </TouchableOpacity>
+            ) : (
+              <>
+                <View style={styles.otpRow}>
+                  {otp.map((o, i) => (
+                    <TextInput
+                      key={i}
+                      ref={inputs[i]}
+                      value={o}
+                      onChangeText={t => onOtpChange(t, i)}
+                      keyboardType="numeric"
+                      maxLength={1}
+                      style={styles.otpBox}
+                      editable={!loading || !otpLoading}
+                    />
+                  ))}
+                </View>
+
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginTop: 10,
+                  }}
+                >
+                  {/* When timer is active show timer and hide resend button.
+                      When timer is zero hide timer and show resend button. */}
+                  {timer > 0 ? (
+                    <>
+                      <Text style={styles.resend}>Resend OTP? </Text>
+                      <Text style={styles.resend2}>
+                        {`${String(Math.floor(timer / 60)).padStart(
+                          2,
+                          '0',
+                        )} : ${String(timer % 60).padStart(2, '0')}`}
+                      </Text>
+                      <View style={{ marginLeft: 12 }}>
+                        <Text style={{ color: '#999' }}>Wait</Text>
+                      </View>
+                    </>
+                  ) : (
+                    <>
+                      <Text style={styles.resend}>Resend OTP? </Text>
+                      <TouchableOpacity
+                        onPress={resendOtp}
+                        disabled={loading || otpLoading}
+                        style={{ marginLeft: 12 }}
+                      >
+                        <Text
+                          style={{
+                            color:
+                              loading || otpLoading
+                                ? '#999'
+                                : 'rgba(139, 70, 239, 1)',
+                          }}
+                        >
+                          Resend
+                        </Text>
+                      </TouchableOpacity>
+                    </>
+                  )}
+                </View>
+              </>
+            )}
+
+            {/* Login button verifies OTP when confirmObj exists. If no confirmObj, it is disabled. */}
+            <TouchableOpacity
+              style={styles.loginButton}
+              onPress={verifyOtpAndLogin}
+              activeOpacity={0.8}
+              disabled={!confirmObj || loading || otpLoading}
+            >
+              <LinearGradient
+                colors={['rgba(143, 68, 239, 1)', 'rgba(92, 92, 239, 1)']}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: 35,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                {loading ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Text style={styles.loginText}>Login</Text>
+                )}
+              </LinearGradient>
+            </TouchableOpacity>
+
+            <View style={styles.orRow}>
+              <View style={styles.line} />
+              <Text style={styles.orText}>or</Text>
+              <View style={styles.line} />
+            </View>
+
+            <TouchableOpacity
+              style={styles.googleBtn}
+              activeOpacity={0.8}
+              disabled={loading}
+            >
+              <Image source={google} style={styles.googleIcon} />
+              <Text style={styles.googleText}>Continue with Google</Text>
+            </TouchableOpacity>
+
+            <View style={styles.signupRow}>
+              <Text style={styles.signupText}>Don’t have an Account ? </Text>
+              <TouchableOpacity>
+                <Text style={styles.signupLink}>Signup</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </View>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  safe: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  bg: {
+    flex: 1,
+    width: '100%',
+  },
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  topLogoWrapper: {
+    alignItems: 'center',
+    marginTop: 10,
+    marginBottom: 35,
+  },
+  penguin: {
+    width: 280,
+    height: 230,
+  },
+  card: {
+    width: '90%',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: '700',
+    marginBottom: 20,
+  },
+  field: {
+    width: '100%',
+  },
+  label: {
+    color: 'rgba(139, 71, 239, 1)',
+    fontSize: 12,
+    marginBottom: 8,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: 'rgba(139, 71, 239, 1)',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 14,
+    backgroundColor: 'rgba(255,255,255,0.6)',
+    fontSize: 12,
+  },
+  otpRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 18,
+    width: '60%',
+  },
+  otpBox: {
+    width: 48,
+    height: 48,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(139, 71, 239, 1)',
+    textAlign: 'center',
+    fontSize: 20,
+    marginHorizontal: 6,
+  },
+  resend: {
+    color: 'rgba(60, 60, 60, 1)',
+    fontWeight: '600',
+  },
+  resend2: {
+    color: 'rgba(180, 180, 180, 1)',
+  },
+  loginButton: {
+    marginTop: 16,
+    width: '100%',
+    borderRadius: 30,
+    height: 54,
+  },
+  loginText: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: '600',
+  },
+  orRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    marginTop: 18,
+  },
+  line: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#e6e6e6',
+  },
+  orText: {
+    marginHorizontal: 8,
+    color: '#9a9a9a',
+  },
+  googleBtn: {
+    marginTop: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(213, 213, 213, 1)',
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    width: '100%',
+    height: 54,
+    justifyContent: 'center',
+    backgroundColor: 'rgba(245, 245, 245, 1)',
+  },
+  googleIcon: {
+    width: 21,
+    height: 21,
+    marginRight: 10,
+  },
+  googleText: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  signupRow: {
+    flexDirection: 'row',
+    marginTop: 14,
+    alignItems: 'center',
+  },
+  signupText: {
+    color: 'rgba(60, 60, 60, 1)',
+    fontWeight: '600',
+  },
+  signupLink: {
+    color: 'rgba(139, 70, 239, 1)',
+    fontWeight: '600',
+  },
+});
