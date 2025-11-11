@@ -16,7 +16,7 @@ export default function ArcGauge({
   size: maxSize = 360,
   // Inner arc (main gauge)
   inner = {
-    strokeWidth: 50,
+    strokeWidth: 32,
     gradient: {
       id: 'innerGrad',
       stops: [
@@ -29,7 +29,7 @@ export default function ArcGauge({
   // Outer thin static arc
   outer = {
     enabled: true,
-    strokeWidth: 6,
+    strokeWidth: 11,
     gradient: {
       id: 'outerGrad',
       stops: [
@@ -39,9 +39,9 @@ export default function ArcGauge({
     },
     backgroundColor: '#BBBBBB',
   },
-  percentage = 50,
+  percentage = 0,
   startAngle = 0,
-  sweepAngle = 180,
+  sweepAngle = 200,
   duration = 800,
   gap = 10,
   // horizontal padding to leave from screen edges when computing size
@@ -51,7 +51,7 @@ export default function ArcGauge({
 
   // compute usable width from device width and padding, then clamp to maxSize
   const usableWidth = Math.max(windowWidth - horizontalPadding * 2, 0);
-  const size = Math.min(usableWidth, maxSize);
+  const size = Math.min(usableWidth, maxSize)-80;
 
   // radii are calculated from the full diameter `size` so the geometry stays consistent
   const outerRadius = (size - outer.strokeWidth) / 2;
@@ -82,19 +82,16 @@ export default function ArcGauge({
   const cx = size / 2;
   const cy = size / 2;
   // rotate so the arc starts at startAngle
-  const rotation = startAngle + 180;
+  const rotation = startAngle + 170;
 
-  // prevent stroke clipping by adding padding equal to the thicker stroke
-  const strokePad = Math.max(inner.strokeWidth, outer.strokeWidth);
   // show only the top half: shrink SVG height and add padding so strokes are not clipped
   const svgHeight = size / 2;
 
-  // label vertical offset scale so it looks right on different sizes
   const labelPaddingBottom = Math.round(size * 0.12);
 
   return (
-    <View style={[styles.wrapper, { width: size, height: svgHeight }]}>
-      <Svg width={size} height={svgHeight}>
+    <View style={[styles.wrapper, { width: "100%", height: svgHeight + 30 }]}>
+      <Svg width={size} height={svgHeight + 30}>
         <Defs>
           <LinearGradient
             id={outer.gradient.id}
@@ -165,7 +162,12 @@ export default function ArcGauge({
       <View
         style={[
           styles.labelContainer,
-          { width: size, height: svgHeight, paddingBottom: labelPaddingBottom },
+          {
+            width: "100%",
+            height: svgHeight,
+            paddingBottom: labelPaddingBottom,
+            zIndex: 1111,
+          },
         ]}
       >
         <View style={{ alignItems: 'center', transform: 'translateY(70px)' }}>

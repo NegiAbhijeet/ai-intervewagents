@@ -298,7 +298,7 @@ export default function CarouselCard({
 
       <Pressable
         onPress={() => setIsViewDetails(true)}
-        className="mt-3 rounded-full py-2 items-center justify-center mx-4"
+        className="mt-3 rounded-full py-4 items-center justify-center mx-4"
         style={{
           width: Math.min(cardWidth, safeContainerWidth - 40),
           alignSelf: 'center',

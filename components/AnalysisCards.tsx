@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { GradientBorderView } from '@good-react-native/gradient-border';
+import PlayButton from '../assets/images/playButton.svg';
 
 export default function AnalysisCards({
   strengths = [],
@@ -42,11 +43,13 @@ export default function AnalysisCards({
       >
         <View style={styles.cardContent}>
           <View style={styles.playRow}>
-            <Image
+            {/* <Image
               source={require('../assets/images/playButton.png')}
               resizeMode="contain"
               style={styles.playImage}
-            />
+            /> */}
+            <PlayButton />
+
           </View>
 
           <View style={styles.cardText}>
@@ -107,11 +110,7 @@ export default function AnalysisCards({
 
           {/* modal content rendered after backdrop so it sits on top and receives touches */}
           <View style={styles.center}>
-            <Image
-              source={require('../assets/images/cardsTopPenguin.png')}
-              resizeMode="contain"
-              style={{ width: 175 }}
-            />
+            <PlayButton width={50} height={50} />
             <View style={styles.cardModal}>
               <Text
                 style={[

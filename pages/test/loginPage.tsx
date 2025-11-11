@@ -14,6 +14,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
+import Toast from 'react-native-toast-message';
 
 const penguin = require('../../assets/images/loginPeng.png');
 const google = require('../../assets/images/google1.png');
@@ -57,34 +58,123 @@ export default function LoginScreen() {
     const digits = trimmed.replace(/\D/g, '');
     // default to +91 for local 10 digit input
     if (digits.length === 10) return `+91${digits}`;
-    if (digits.length > 10 && digits.startsWith('91')) return `+${digits}`;
     return `+${digits}`;
   };
 
-  const sendOtp = async () => {
+  const sendOtp = async isResend => {
     try {
       setOtpLoading(true);
-      let x = '+1 897-958-4098';
-      const phoneNumber = normalizePhone(x);
+      // let x = '+1 897-958-4098';
+      const phoneNumber = normalizePhone(phone);
+
       if (!phoneNumber || phoneNumber.length < 6) {
-        console.warn('Enter a valid phone number');
+        Toast.show({
+          type: 'error',
+          text1: 'Invalid phone number',
+          text2: 'Please enter a valid phone number.',
+        });
         setOtpLoading(false);
         return;
       }
+
       // use the normalized phone number for sending OTP
       const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
       setConfirmObj(confirmation);
       setOtp(['', '', '', '', '', '']);
       setTimer(120); // 2 minutes cooldown
+
       // autofocus first OTP box
       setTimeout(() => {
         if (inputs[0].current) inputs[0].current.focus();
       }, 200);
+
       console.log('OTP sent to', phoneNumber);
+      if (isResend) {
+        Toast.show({
+          type: 'success',
+          text1: 'New OTP sent',
+          text2: 'A new verification code has been sent to your phone.',
+        });
+      } else {
+        // success toast after send
+        Toast.show({
+          type: 'success',
+          text1: 'OTP sent',
+          text2: `A verification code was sent to ${phoneNumber}`,
+        });
+      }
     } catch (err) {
       console.error('send OTP error', err.code, err.message);
+      Toast.show({
+        type: 'error',
+        text1: 'Send OTP failed',
+        text2: err.message || 'Unable to send OTP. Try again.',
+      });
     } finally {
       setOtpLoading(false);
+    }
+  };
+
+  const verifyOtpAndLogin = async () => {
+    const code = otp.join('');
+    if (!confirmObj) {
+      Toast.show({
+        type: 'info',
+        text1: 'Request OTP first',
+        text2: 'Please request an OTP before verifying.',
+      });
+      return;
+    }
+    if (code.length < 6) {
+      Toast.show({
+        type: 'info',
+        text1: 'Enter full OTP',
+        text2: 'Please enter the 6 digit code you received.',
+      });
+      return;
+    }
+    try {
+      setLoading(true);
+      await confirmObj.confirm(code);
+      console.log('Phone auth successful');
+      // navigate to Home
+      navigation.replace('Home');
+    } catch (err) {
+      console.error('confirmCode error', err.code, err.message);
+
+      // clear all boxes and focus first
+      setOtp(['', '', '', '', '', '']);
+      setTimeout(() => {
+        if (inputs[0].current) inputs[0].current.focus();
+      }, 200);
+
+      // map a few common firebase errors to user-friendly messages
+      let friendly = 'Verification failed. Please try again.';
+      if (err && err.code) {
+        if (err.code === 'auth/invalid-verification-code') {
+          friendly =
+            'The code you entered is invalid. Check the code and try again.';
+        } else if (
+          err.code === 'auth/code-expired' ||
+          err.code === 'auth/session-expired'
+        ) {
+          friendly = 'The verification code expired. Request a new code.';
+        } else if (err.code === 'auth/invalid-phone-number') {
+          friendly = 'The phone number is invalid. Please request OTP again.';
+        } else if (err.message) {
+          friendly = err.message;
+        }
+      } else if (err && err.message) {
+        friendly = err.message;
+      }
+
+      Toast.show({
+        type: 'error',
+        text1: 'Verification failed',
+        text2: friendly,
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -101,32 +191,17 @@ export default function LoginScreen() {
     }
   };
 
-  const verifyOtpAndLogin = async () => {
-    const code = otp.join('');
-    if (!confirmObj) {
-      console.warn('Request OTP first');
-      return;
-    }
-    if (code.length < 6) {
-      console.warn('Enter full OTP');
-      return;
-    }
-    try {
-      setLoading(true);
-      await confirmObj.confirm(code);
-      console.log('Phone auth successful');
-      // navigate to Home
-      navigation.replace('Home');
-    } catch (err) {
-      console.error('confirmCode error', err.code, err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const resendOtp = async () => {
-    if (timer > 0) return;
-    await sendOtp();
+    if (timer > 0) {
+      Toast.show({
+        type: 'info',
+        text1: 'Please wait',
+        text2: `You can resend OTP after ${timer} seconds.`,
+      });
+      return;
+    }
+
+    await sendOtp(true);
   };
 
   return (
@@ -167,6 +242,8 @@ export default function LoginScreen() {
               >
                 <LinearGradient
                   colors={['rgba(143, 68, 239, 1)', 'rgba(92, 92, 239, 1)']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
                   style={{
                     width: '100%',
                     height: '100%',
@@ -178,7 +255,7 @@ export default function LoginScreen() {
                   {otpLoading ? (
                     <ActivityIndicator size="small" color="#fff" />
                   ) : (
-                    <Text style={styles.loginText}>Send OTP</Text>
+                    <Text style={styles.loginText}>Verify</Text>
                   )}
                 </LinearGradient>
               </TouchableOpacity>
@@ -243,33 +320,35 @@ export default function LoginScreen() {
                     </>
                   )}
                 </View>
+                <TouchableOpacity
+                  style={styles.loginButton}
+                  onPress={verifyOtpAndLogin}
+                  activeOpacity={0.8}
+                  disabled={!confirmObj || loading || otpLoading}
+                >
+                  <LinearGradient
+                    colors={['rgba(143, 68, 239, 1)', 'rgba(92, 92, 239, 1)']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: 35,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
+                    {loading ? (
+                      <ActivityIndicator size="small" color="#fff" />
+                    ) : (
+                      <Text style={styles.loginText}>Login</Text>
+                    )}
+                  </LinearGradient>
+                </TouchableOpacity>
               </>
             )}
 
             {/* Login button verifies OTP when confirmObj exists. If no confirmObj, it is disabled. */}
-            <TouchableOpacity
-              style={styles.loginButton}
-              onPress={verifyOtpAndLogin}
-              activeOpacity={0.8}
-              disabled={!confirmObj || loading || otpLoading}
-            >
-              <LinearGradient
-                colors={['rgba(143, 68, 239, 1)', 'rgba(92, 92, 239, 1)']}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  borderRadius: 35,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                {loading ? (
-                  <ActivityIndicator size="small" color="#fff" />
-                ) : (
-                  <Text style={styles.loginText}>Login</Text>
-                )}
-              </LinearGradient>
-            </TouchableOpacity>
 
             <View style={styles.orRow}>
               <View style={styles.line} />
@@ -343,10 +422,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(139, 71, 239, 1)',
     borderRadius: 8,
-    paddingHorizontal: 12,
+    paddingHorizontal: 16,
     paddingVertical: 14,
     backgroundColor: 'rgba(255,255,255,0.6)',
-    fontSize: 12,
+    fontSize: 16,
   },
   otpRow: {
     flexDirection: 'row',
