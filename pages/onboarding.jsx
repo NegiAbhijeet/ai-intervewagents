@@ -35,7 +35,7 @@ const data = [
   },
 ];
 
-const PAGE_WIDTH = SCREEN_WIDTH * 0.8;
+const PAGE_WIDTH = SCREEN_WIDTH;
 const CAROUSEL_HEIGHT = SCREEN_HEIGHT * 0.7;
 
 export default function OnboardingCarousel({ onFinish }) {
@@ -96,13 +96,15 @@ export default function OnboardingCarousel({ onFinish }) {
       />
 
       <View style={styles.carouselWrapper}>
-        <TouchableOpacity
-          style={styles.skip}
-          onPress={onSkip}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.skipText}>Skip</Text>
-        </TouchableOpacity>
+        <View style={{ width: '80%', margin: 'auto' }}>
+          <TouchableOpacity
+            style={styles.skip}
+            onPress={onSkip}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.skipText}>Skip</Text>
+          </TouchableOpacity>
+        </View>
         <View
           style={{
             flex: 1,
@@ -239,8 +241,9 @@ const styles = StyleSheet.create({
     margin: 'auto',
   },
   slide: {
-    width: PAGE_WIDTH,
+    width: PAGE_WIDTH * 0.8,
     alignItems: 'center',
+    marginHorizontal: 'auto',
   },
   topImage: {
     width: '100%',
@@ -271,7 +274,7 @@ const styles = StyleSheet.create({
   paginationContainer: {
     gap: 10,
   },
-  bottom: { width: '100%' },
+  bottom: { width: '85%' },
   button: {
     backgroundColor: 'rgba(0, 0, 0, 1)',
     paddingVertical: 15,
