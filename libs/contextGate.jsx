@@ -12,6 +12,7 @@ import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PlayInstallReferrer } from 'react-native-play-install-referrer';
 import { JAVA_API_URL } from '../components/config';
+import fetchWithAuth from './fetchWithAuth';
 
 const ContextGate = ({ children }) => {
   const {
@@ -28,7 +29,7 @@ const ContextGate = ({ children }) => {
     if (!referrer) return;
     try {
       console.log('Calling install increment for', referrer);
-      await fetch(`${JAVA_API_URL}/api/campaigns/${referrer}/increment?type=install`, {
+      await fetchWithAuth(`${JAVA_API_URL}/api/campaigns/${referrer}/increment?type=install`, {
         method: 'PATCH',
         headers: {
           Accept: 'application/json',
@@ -51,7 +52,7 @@ const ContextGate = ({ children }) => {
       }
 
       console.log('Calling signup increment for', referrer);
-      await fetch(`${JAVA_API_URL}/api/campaigns/${referrer}/increment?type=signup`, {
+      await fetchWithAuth(`${JAVA_API_URL}/api/campaigns/${referrer}/increment?type=signup`, {
         method: 'PATCH',
         headers: {
           Accept: 'application/json',

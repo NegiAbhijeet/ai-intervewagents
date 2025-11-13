@@ -23,6 +23,7 @@ import Layout from './Layout';
 import fetchUserDetails from '../libs/fetchUser';
 import { RefreshControl } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
+import fetchWithAuth from '../libs/fetchWithAuth';
 
 export default function ProfileScreen() {
   const {
@@ -95,7 +96,7 @@ export default function ProfileScreen() {
           onPress: async () => {
             try {
               setLoading(true);
-              const res = await fetch(
+              const res = await fetchWithAuth(
                 `${API_URL}/profile/${userProfile.uid}/delete/`,
                 { method: 'DELETE' },
               );

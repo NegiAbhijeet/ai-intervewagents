@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import debounce from 'lodash.debounce';
-
+import fetchWithAuth from '../libs/fetchWithAuth';
 const MAX_SKILLS = 10;
 
 const SkillsInput = ({
@@ -24,7 +24,7 @@ const SkillsInput = ({
   const [currentSkill, setCurrentSkill] = useState('');
   const [loadingSkills, setLoadingSkills] = useState(false);
 
-  const fetchSkillsForPosition = async (position) => {
+  const fetchSkillsForPosition = async position => {
     setLoadingSkills(true);
     try {
       const body = {
@@ -33,7 +33,7 @@ const SkillsInput = ({
         uid: userProfile?.uid,
       };
 
-      const response = await fetch(`${API_URL}/generate-skills/`, {
+      const response = await fetchWithAuth(`${API_URL}/generate-skills/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -55,15 +55,15 @@ const SkillsInput = ({
   };
 
   const debouncedFetch = useCallback(
-    debounce((value) => {
+    debounce(value => {
       if (value.trim().length > 0) {
         fetchSkillsForPosition(value.trim());
       }
     }, 500),
-    [myCandidate, userProfile]
+    [myCandidate, userProfile],
   );
 
-  const handlePositionChange = (value) => {
+  const handlePositionChange = value => {
     setSelectedPosition(value);
     // debouncedFetch(value);
   };
@@ -73,8 +73,8 @@ const SkillsInput = ({
 
     const newSkills = currentSkill
       .split(',')
-      .map((s) => s.trim())
-      .filter((s) => s && !skills.includes(s));
+      .map(s => s.trim())
+      .filter(s => s && !skills.includes(s));
 
     if (skills.length + newSkills.length > MAX_SKILLS) {
       alert(`You can only add up to ${MAX_SKILLS} skills.`);
@@ -85,8 +85,8 @@ const SkillsInput = ({
     setCurrentSkill('');
   };
 
-  const removeSkill = (skill) => {
-    setSkills(skills.filter((s) => s !== skill));
+  const removeSkill = skill => {
+    setSkills(skills.filter(s => s !== skill));
   };
 
   return (
@@ -122,16 +122,16 @@ const SkillsInput = ({
       {/* {loadingSkills ? (
         <ActivityIndicator color="#3b82f6" style={{ marginVertical: 10 }} />
       ) : ( */}
-        <View style={styles.skillContainer}>
-          {skills.map((skill) => (
-            <View key={skill} style={styles.skillBadge}>
-              <Text style={styles.skillText}>{skill}</Text>
-              <TouchableOpacity onPress={() => removeSkill(skill)}>
-                <Text style={{ color: 'white', marginLeft: 6 }}>×</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
-        </View>
+      <View style={styles.skillContainer}>
+        {skills.map(skill => (
+          <View key={skill} style={styles.skillBadge}>
+            <Text style={styles.skillText}>{skill}</Text>
+            <TouchableOpacity onPress={() => removeSkill(skill)}>
+              <Text style={{ color: 'white', marginLeft: 6 }}>×</Text>
+            </TouchableOpacity>
+          </View>
+        ))}
+      </View>
       {/* )} */}
     </View>
   );

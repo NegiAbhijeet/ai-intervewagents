@@ -62,7 +62,7 @@ export default function JobDetailPage() {
         if (hasNoArticles && hasTitle) {
           setMaterialLoading(true);
           try {
-            const response2 = await fetch(`${API_URL}/get-study-material/`, {
+            const response2 = await fetchWithAuth(`${API_URL}/get-study-material/`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -119,7 +119,7 @@ export default function JobDetailPage() {
   const makeApply = async link => {
     try {
       setLoader('apply');
-      const response = await fetch(
+      const response = await fetchWithAuth(
         `${JAVA_API_URL}/api/jobs/update/job/${id}`,
         {
           method: 'PATCH',
@@ -148,7 +148,7 @@ export default function JobDetailPage() {
   const jobToggle = async () => {
     try {
       setLoader('save');
-      const response = await fetch(
+      const response = await fetchWithAuth(
         `${JAVA_API_URL}/api/jobs/update/job/${id}`,
         {
           method: 'PATCH',

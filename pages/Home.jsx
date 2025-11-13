@@ -91,7 +91,7 @@ const Home = () => {
       setIsRefreshing(true);
     }
     try {
-      const response = await fetch(
+      const response = await fetchWithAuth(
         `${JAVA_API_URL}/api/meetings/uid/${userProfile?.uid}`,
         {
           headers: {

@@ -15,6 +15,7 @@ import { AppStateContext } from '../components/AppContext';
 import { useNavigation } from '@react-navigation/native';
 import { API_URL } from '../components/config';
 import PaymentPopup from '../components/PaymentPopup';
+import fetchWithAuth from '../libs/fetchWithAuth';
 const formatPrice = p =>
   p === null || p === undefined ? 'Custom pricing' : `₹ ${p}`;
 
@@ -68,7 +69,7 @@ export default function PricingPage() {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(`${API_URL}/api/plans`, {
+        const res = await fetchWithAuth(`${API_URL}/api/plans`, {
           signal: controller.signal,
         });
 

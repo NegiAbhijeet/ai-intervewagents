@@ -19,6 +19,7 @@ import Toast from 'react-native-toast-message';
 import InterviewTypeDropdown from './InterviewTypeDropdown';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Badge } from './ui/badge';
+import fetchWithAuth from '../libs/fetchWithAuth';
 const typeOptions = [
   { label: 'Technical', value: 'Technical' },
   { label: 'Behavioral', value: 'Behavioral' },
@@ -88,7 +89,7 @@ export default function ScheduleInterviewScreen({
 
   const fetchCandidatedata = async () => {
     try {
-      const response = await fetch(
+      const response = await fetchWithAuth(
         `${JAVA_API_URL}/api/candidates/uid/${userProfile?.uid}`,
       );
       const data = await response.json();
@@ -116,7 +117,7 @@ export default function ScheduleInterviewScreen({
         uid: userProfile?.uid,
       };
 
-      const response = await fetch(`${API_URL}/generate-skills/`, {
+      const response = await fetchWithAuth(`${API_URL}/generate-skills/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -216,7 +217,7 @@ export default function ScheduleInterviewScreen({
         experience: myCandidate?.experienceYears || 0,
       };
 
-      const response = await fetch(`${API_URL}/interview-agent/`, {
+      const response = await fetchWithAuth(`${API_URL}/interview-agent/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -112,7 +112,7 @@ export default function PaymentPopup({
     Keyboard.dismiss();
     setIsRedeemLoading(true);
     try {
-      const res = await fetch(`${API_URL}/coupons/verify/`, {
+      const res = await fetchWithAuth(`${API_URL}/coupons/verify/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
