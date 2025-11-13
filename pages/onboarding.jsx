@@ -7,6 +7,7 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
+  Pressable,
 } from 'react-native';
 import Carousel, { Pagination } from 'react-native-reanimated-carousel';
 import {
@@ -26,13 +27,13 @@ const data = [
   {
     heading: 'Overcome Interview Nerves',
     desc: 'Strengthen weaknesses with personalized AI feedback. Build lasting confidence and learn to structure clear, compelling answers through guided practice.',
-    img: require('../assets/images/onboarding/2.png'),
-  },
-  {
-    heading: 'Boost Your Chances of Success',
-    desc: 'Tackle realistic, role-based interview challenges. Connect with peers, track progress, and earn rewards with streaks, badges, and certificates.',
     img: require('../assets/images/onboarding/3.png'),
   },
+  // {
+  //   heading: 'Boost Your Chances of Success',
+  //   desc: 'Tackle realistic, role-based interview challenges. Connect with peers, track progress, and earn rewards with streaks, badges, and certificates.',
+  //   img: require('../assets/images/onboarding/3.png'),
+  // },
 ];
 
 const PAGE_WIDTH = SCREEN_WIDTH;
@@ -96,7 +97,7 @@ export default function OnboardingCarousel({ onFinish }) {
       />
 
       <View style={styles.carouselWrapper}>
-        <View style={{ width: '80%', margin: 'auto' }}>
+        {/* <View style={{ width: '80%', margin: 'auto' }}>
           <TouchableOpacity
             style={styles.skip}
             onPress={onSkip}
@@ -104,113 +105,124 @@ export default function OnboardingCarousel({ onFinish }) {
           >
             <Text style={styles.skipText}>Skip</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
+
         <View
           style={{
             flex: 1,
             alignItems: 'center',
-            justifyContent: 'space-around',
+            justifyContent: 'center',
           }}
         >
-          <View>
-            <Carousel
-              ref={ref}
-              width={PAGE_WIDTH}
-              height={CAROUSEL_HEIGHT}
-              data={data}
-              renderItem={({ item }) => (
-                <View style={styles.slide}>
-                  <View style={{ width: '100%' }}>
-                    <Image
-                      source={item.img}
-                      style={styles.topImage}
-                      resizeMode="cover"
-                    />
-                  </View>
-                  <View style={styles.textBlock}>
-                    <Text style={styles.heading}>{item.heading}</Text>
-                    <Text style={styles.paragraph}>{item.desc}</Text>
-                  </View>
-                </View>
-              )}
-              loop={false}
-              autoPlay={false}
-              onProgressChange={progress}
-              onSnapToItem={i => setIndex(i)}
-            />
-            {/* Pagination: active dot is rectangular */}
-            <View style={styles.paginationOuter}>
-              <Pagination.Custom
-                progress={progress}
-                data={data.map(() => ({ color: '#000' }))}
-                size={8}
-                dotStyle={{
-                  width: 10,
-                  height: 2,
-                  borderRadius: 8,
-                  backgroundColor: 'rgba(102, 102, 102, 1)',
-                }}
-                activeDotStyle={{
-                  width: 22,
-                  height: 2,
-                  borderRadius: 10,
-                  backgroundColor: '#000',
-                }}
-                containerStyle={{
-                  gap: 6,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  height: 16,
-                }}
-                horizontal
-                onPress={onPressPagination}
-                customReanimatedStyle={(progress, index, length) => {
-                  let val = Math.abs(progress - index);
-                  if (index === 0 && progress > length - 1) {
-                    val = Math.abs(progress - length);
-                  }
-                  return {
-                    opacity: interpolate(
-                      val,
-                      [0, 1],
-                      [1, 0.4],
-                      Extrapolation.CLAMP,
-                    ),
-                    transform: [
-                      {
-                        scale: interpolate(
-                          val,
-                          [0, 1],
-                          [1, 0.9],
-                          Extrapolation.CLAMP,
-                        ),
-                      },
-                    ],
-                  };
-                }}
-                renderItem={item => (
-                  <View
-                    style={{
-                      backgroundColor: item.color,
-                      flex: 1,
-                      borderRadius: 50,
-                    }}
+          <Carousel
+            ref={ref}
+            width={PAGE_WIDTH}
+            height={CAROUSEL_HEIGHT}
+            data={data}
+            renderItem={({ item }) => (
+              <View style={styles.slide}>
+                <View style={{ width: '100%' }}>
+                  <Image
+                    source={item.img}
+                    style={styles.topImage}
+                    resizeMode="cover"
                   />
-                )}
-              />
-            </View>
-          </View>
-          <View style={styles.bottom}>
-            <TouchableOpacity
-              style={styles.button}
-              activeOpacity={0.8}
-              onPress={goNext}
-            >
-              <Text style={styles.buttonText}>Next</Text>
-            </TouchableOpacity>
-            <View style={styles.bottomBlackLine} />
+                </View>
+                <View style={styles.textBlock}>
+                  <Text style={styles.heading}>{item.heading}</Text>
+                  <Text style={styles.paragraph}>{item.desc}</Text>
+                </View>
+              </View>
+            )}
+            loop={false}
+            autoPlay={false}
+            onProgressChange={progress}
+            onSnapToItem={i => setIndex(i)}
+          />
+          {/* Pagination: active dot is rectangular */}
+          <View style={styles.paginationOuter}>
+            <Pagination.Custom
+              progress={progress}
+              data={data.map(() => ({ color: '#000' }))}
+              size={8}
+              dotStyle={{
+                width: 10,
+                height: 2,
+                borderRadius: 8,
+                backgroundColor: 'rgba(102, 102, 102, 1)',
+              }}
+              activeDotStyle={{
+                width: 22,
+                height: 2,
+                borderRadius: 10,
+                backgroundColor: '#000',
+              }}
+              containerStyle={{
+                gap: 6,
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: 16,
+              }}
+              horizontal
+              onPress={onPressPagination}
+              customReanimatedStyle={(progress, index, length) => {
+                let val = Math.abs(progress - index);
+                if (index === 0 && progress > length - 1) {
+                  val = Math.abs(progress - length);
+                }
+                return {
+                  opacity: interpolate(
+                    val,
+                    [0, 1],
+                    [1, 0.4],
+                    Extrapolation.CLAMP,
+                  ),
+                  transform: [
+                    {
+                      scale: interpolate(
+                        val,
+                        [0, 1],
+                        [1, 0.9],
+                        Extrapolation.CLAMP,
+                      ),
+                    },
+                  ],
+                };
+              }}
+              renderItem={item => (
+                <View
+                  style={{
+                    backgroundColor: item.color,
+                    flex: 1,
+                    borderRadius: 50,
+                  }}
+                />
+              )}
+            />
           </View>
         </View>
+        <View style={{ height: 30 }} />
+
+        <View style={styles.bottom}>
+          {/* <View style={{ marginBottom: 12 }}>
+                   {step === 2 && (
+                     <Pressable
+                       onPress={onPressBack}
+                       style={{ alignSelf: 'flex-start' }}
+                     >
+                       <Text style={{ color: '#111827' }}>Back</Text>
+                     </Pressable>
+                   )}
+                 </View> */}
+
+          <Pressable onPress={() => {}} style={styles.button}>
+            <Text style={styles.buttonText}>Next</Text>
+          </Pressable>
+
+          <View style={styles.bottomBlackLine} />
+        </View>
+
+        <View style={{ height: 40 }} />
       </View>
     </SafeAreaView>
   );
@@ -274,7 +286,7 @@ const styles = StyleSheet.create({
   paginationContainer: {
     gap: 10,
   },
-  bottom: { width: '85%' },
+  bottom: { width: '85%', marginHorizontal: 'auto' },
   button: {
     backgroundColor: 'rgba(0, 0, 0, 1)',
     paddingVertical: 15,
