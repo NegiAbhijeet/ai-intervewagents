@@ -1,5 +1,5 @@
 // OnboardingCarousel.js
-import React, { useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -16,6 +16,8 @@ import {
   useSharedValue,
 } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { AppStateContext } from '../components/AppContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const data = [
@@ -39,10 +41,30 @@ const data = [
 const PAGE_WIDTH = SCREEN_WIDTH;
 const CAROUSEL_HEIGHT = SCREEN_HEIGHT * 0.7;
 
-export default function OnboardingCarousel({ onFinish }) {
+export default function OnboardingCarousel() {
+  const { setOnboardingComplete } = useContext(AppStateContext);
+
   const ref = useRef(null);
   const progress = useSharedValue(0);
   const [index, setIndex] = useState(0);
+  async function onFinish() {
+    try {
+      console.log('setting onboardingComplete', '==================');
+      await AsyncStorage.setItem('onboardingComplete', 'true');
+      // read back to verify
+      const check = await AsyncStorage.getItem('onboardingComplete');
+      console.log('after set, read back', check, '==================');
+      if (check === 'true') {
+        setOnboardingComplete(true);
+      } else {
+        // write failed to persist
+        setOnboardingComplete(false);
+      }
+    } catch (e) {
+      console.error('error setting onboardingComplete', e);
+      setOnboardingComplete(false);
+    }
+  }
 
   const goNext = () => {
     const next = Math.min(index + 1, data.length - 1);
@@ -56,20 +78,8 @@ export default function OnboardingCarousel({ onFinish }) {
         // ignore
       }
     }
-    if (next === data.length - 1 && typeof onFinish === 'function') onFinish();
-  };
-
-  const onSkip = () => {
-    const last = data.length - 1;
-    setIndex(last);
-    try {
-      ref.current?.scrollTo({ index: last, animated: true });
-    } catch (e) {
-      try {
-        ref.current?.scrollTo(last);
-      } catch (err) {}
-    }
-    if (typeof onFinish === 'function') onFinish();
+    if (index === data.length - 1) onFinish();
+    setIndex(next);
   };
 
   const onPressPagination = targetIndex => {
@@ -204,18 +214,7 @@ export default function OnboardingCarousel({ onFinish }) {
         <View style={{ height: 30 }} />
 
         <View style={styles.bottom}>
-          {/* <View style={{ marginBottom: 12 }}>
-                   {step === 2 && (
-                     <Pressable
-                       onPress={onPressBack}
-                       style={{ alignSelf: 'flex-start' }}
-                     >
-                       <Text style={{ color: '#111827' }}>Back</Text>
-                     </Pressable>
-                   )}
-                 </View> */}
-
-          <Pressable onPress={() => {}} style={styles.button}>
+          <Pressable onPress={goNext} style={styles.button}>
             <Text style={styles.buttonText}>Next</Text>
           </Pressable>
 

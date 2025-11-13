@@ -9,14 +9,19 @@ import {
   ActivityIndicator,
   StyleSheet,
   Dimensions,
+  TextInput,
 } from 'react-native';
 import { AppStateContext } from './AppContext';
 import { API_URL, JAVA_API_URL } from './config';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import Toast from 'react-native-toast-message';
 
-export default function AvatarSelectionScreen() {
+export default function AvatarSelectionScreen({ route }) {
+  const { selectedIndustry, selectedRole, selectedLevel } = route.params;
+  const [step, setStep] = useState(1);
+
   const { userProfile, setUserProfile } = useContext(AppStateContext);
+  const [userName, setUserName] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   console.log(userProfile);
@@ -24,12 +29,24 @@ export default function AvatarSelectionScreen() {
   const avatars = useMemo(() => {
     const base =
       'https://docsightaistorageprod.blob.core.windows.net/avatar/avatar';
-    return Array.from({ length: 20 }, (_, i) => `${base}${i + 1}.png`);
+    return Array.from({ length: 6 }, (_, i) => `${base}${i + 1}.png`);
   }, []);
 
   const selectedAvatar = selectedIndex !== null ? avatars[selectedIndex] : null;
 
   const handleContinue = async () => {
+    if (step === 1 && selectedAvatar) {
+      setStep(2);
+      return;
+    }
+    console.log(
+      selectedIndustry,
+      selectedRole,
+      selectedLevel,
+      selectedAvatar,
+      userName,
+    );
+    return;
     if (!userProfile?.uid) {
       console.error('Missing userProfile.uid', userProfile);
       Toast.show({
@@ -130,66 +147,73 @@ export default function AvatarSelectionScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.title}>Choose your avatar</Text>
-        <Text style={styles.subtitle}>Select one avatar to represent you</Text>
-      </View>
-
       <View style={styles.previewContainer}>
         <View style={styles.previewWrapper}>
-          {selectedAvatar ? (
-            <Image
-              source={{ uri: selectedAvatar }}
-              style={styles.previewImage}
-            />
-          ) : (
-            <View style={styles.previewPlaceholder}>
-              <Text style={styles.previewPlaceholderText}>Preview</Text>
-            </View>
-          )}
+          <Image
+            source={require('../assets/images/talkingPenguine.png')}
+            style={styles.previewImage}
+          />
         </View>
-        <Text style={styles.previewLabel}>
-          {selectedIndex !== null
-            ? `Selected avatar #${selectedIndex + 1}`
-            : 'No avatar selected'}
-        </Text>
+
+        <View style={styles.headerContainer}>
+          <Text style={styles.title}>
+            {step === 1 ? 'Choose your avatar' : 'What should I call you?'}
+          </Text>
+        </View>
       </View>
+      <View style={styles.screenWrap}>
+        {step === 1 ? (
+          <View>
+            <FlatList
+              data={avatars}
+              renderItem={renderItem}
+              keyExtractor={(_, idx) => String(idx)}
+              numColumns={3}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={[
+                styles.gridContent,
+                { alignItems: 'center', paddingHorizontal: 0 },
+              ]}
+            />
+          </View>
+        ) : (
+          <View style={{ width: '100%', marginHorizontal: 'auto' }}>
+            <View style={styles.field}>
+              <Text style={styles.label}>Your Full Name</Text>
+              <TextInput
+                value={userName}
+                onChangeText={setUserName}
+                placeholder="Enter name"
+                keyboardType="default"
+                style={styles.input}
+                placeholderTextColor="rgba(139, 71, 239, 0.4)"
+                maxLength={15}
+                editable={!isLoading}
+              />
+            </View>
+          </View>
+        )}
 
-      <FlatList
-        data={avatars}
-        renderItem={renderItem}
-        keyExtractor={(_, idx) => String(idx)}
-        numColumns={4}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={[
-          styles.gridContent,
-          { alignItems: 'center', paddingHorizontal: 0 },
-        ]}
-      />
-
-      <View style={styles.footer}>
-        <TouchableOpacity
-          activeOpacity={0.9}
-          onPress={handleContinue}
-          disabled={isLoading || !selectedAvatar}
-          accessibilityRole="button"
-          style={[
-            styles.button,
-            isLoading || !selectedAvatar
-              ? styles.buttonDisabled
-              : styles.buttonEnabled,
-          ]}
-        >
-          {isLoading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.buttonText}>Get started</Text>
-          )}
-        </TouchableOpacity>
-
-        {/* <Text style={styles.footerNote}>
-          You can change this later in profile settings
-        </Text> */}
+        <View style={styles.footer}>
+          <TouchableOpacity
+            activeOpacity={0.9}
+            onPress={handleContinue}
+            disabled={isLoading || !selectedAvatar}
+            accessibilityRole="button"
+            style={[
+              styles.button,
+              isLoading || !selectedAvatar
+                ? styles.buttonDisabled
+                : styles.buttonEnabled,
+            ]}
+          >
+            {isLoading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Next</Text>
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -198,23 +222,22 @@ export default function AvatarSelectionScreen() {
 // Calculate column gaps so squares fill exactly
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const CONTAINER_HORIZONTAL_PADDING = 16;
-const COLUMNS = 4;
+const COLUMNS = 3;
 const SIDE_MARGIN = 8;
 const totalSideMargins = COLUMNS * SIDE_MARGIN * 2;
 const available =
-SCREEN_WIDTH - CONTAINER_HORIZONTAL_PADDING * 2 - totalSideMargins;
-const CELL_SIZE = Math.floor(available / COLUMNS);
+  SCREEN_WIDTH - CONTAINER_HORIZONTAL_PADDING * 2 - totalSideMargins;
+// const CELL_SIZE = Math.floor(available / COLUMNS);
+const CELL_SIZE = 100;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f8fafc',
-    paddingHorizontal: 16,
     paddingTop: 32,
   },
   headerContainer: {
     alignItems: 'center',
-    marginBottom: 24,
   },
   title: {
     fontSize: 22,
@@ -230,23 +253,14 @@ const styles = StyleSheet.create({
   // preview
   previewContainer: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 36,
   },
   previewWrapper: {
-    width: 128,
-    height: 128,
-    borderRadius: 64,
-    overflow: 'hidden',
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
+    width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  previewImage: {
-    width: '100%',
-    height: '100%',
-  },
+  previewImage: { marginBottom: 40 },
   previewPlaceholder: {
     width: '100%',
     height: '100%',
@@ -265,13 +279,13 @@ const styles = StyleSheet.create({
 
   // grid
   gridContent: {
-    paddingBottom: 24,
+    paddingBottom: 48,
   },
 
   avatarCell: {
     width: CELL_SIZE,
     height: CELL_SIZE + 16, // allow vertical padding for touch area and label space
-    paddingVertical: 8,
+    // paddingVertical: 8,
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: SIDE_MARGIN,
@@ -292,16 +306,14 @@ const styles = StyleSheet.create({
 
   // Selected variant: thicker border and shadow. still no extra padding
   avatarOuterSelected: {
-    borderWidth: 3,
-    borderColor: '#4f46e5',
+    borderWidth: 5,
+    borderColor: 'rgba(139, 72, 239, 1)',
     shadowColor: '#4f46e5',
     shadowOpacity: 0.18,
     shadowRadius: 6,
     elevation: 4,
   },
   avatarInner: {
-    width: '100%',
-    height: '100%',
     borderRadius: CELL_SIZE / 2,
     overflow: 'hidden',
     alignItems: 'center',
@@ -310,28 +322,26 @@ const styles = StyleSheet.create({
 
   // Image fills the inner wrapper exactly
   avatarImage: {
-    width: '100%',
-    height: '100%',
+    width: 100,
+    height: 100,
     resizeMode: 'cover',
   },
 
   // footer
-  footer: {
-    marginTop: 16,
-    marginBottom: 24,
-  },
+  footer: { marginTop: 36 },
   button: {
-    paddingVertical: 12,
-    borderRadius: 8,
+    backgroundColor: 'rgba(0, 0, 0, 1)',
+    paddingVertical: 15,
+    borderRadius: 30,
     alignItems: 'center',
     justifyContent: 'center',
+    lineHeight: '170%',
   },
   buttonEnabled: {
-    backgroundColor: '#4f46e5',
+    backgroundColor: 'rgba(0, 0, 0, 1)',
   },
   buttonDisabled: {
-    backgroundColor: '#4f46e5',
-    opacity: 0.6,
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
   },
   buttonText: {
     color: '#fff',
@@ -343,5 +353,29 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#64748b',
     marginTop: 12,
+  },
+  field: {
+    width: '100%',
+  },
+  label: {
+    color: 'rgba(139, 71, 239, 1)',
+    fontSize: 12,
+    fontWeight: 600,
+    marginBottom: 8,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: 'rgba(139, 71, 239, 1)',
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    backgroundColor: 'rgba(255,255,255,0.6)',
+    fontSize: 16,
+  },
+  screenWrap: {
+    flex: 1,
+    width: '85%',
+    marginHorizontal: 'auto',
+    justifyContent: 'flex-start',
   },
 });

@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useState, useMemo } from 'react';
 import {
   View,
@@ -113,20 +114,21 @@ const industries = {
   ],
 };
 
-const Radio = ({ selected }) => (
-  <View style={[styles.radioOuter, selected && styles.radioOuterActive]}>
-    <View style={[styles.radioInner, selected && styles.radioInnerActive]} />
-  </View>
-);
+const levels = [
+  'Entry level (0-2 years)',
 
-const IndustryRoleScreen = ({
-  navigation,
-  nextScreenName = 'NextScreen',
-  onComplete,
-}) => {
-  const [step, setStep] = useState(1); // 1 = pick industry, 2 = pick role
+  'Mid-level (2-5 years)',
+
+  'Senior (5-8 years)',
+
+  'Executive (8-10+ years)',
+];
+const IndustryRoleScreen = () => {
+  const navigation = useNavigation();
+  const [step, setStep] = useState(1);
   const [selectedIndustry, setSelectedIndustry] = useState(null);
   const [selectedRole, setSelectedRole] = useState(null);
+  const [selectedLevel, setSelectedLevel] = useState(null);
 
   const data = useMemo(
     () => Object.keys(industries).map(k => ({ key: k, roles: industries[k] })),
@@ -141,27 +143,34 @@ const IndustryRoleScreen = ({
       return;
     }
 
-    // step === 2 -> finish
-    if (!selectedRole) return;
+    if (selectedIndustry && selectedRole && step === 2) {
+      setStep(3);
 
-    if (navigation && typeof navigation.navigate === 'function') {
-      navigation.navigate(nextScreenName, {
-        industry: selectedIndustry,
-        role: selectedRole,
+      return;
+    }
+    if (selectedIndustry && selectedRole && selectedLevel && step === 3) {
+      setStep(4);
+      console.log('===');
+
+      navigation.navigate('AvatarSelection', {
+        selectedIndustry: selectedIndustry,
+        selectedRole: selectedRole,
+        selectedLevel: selectedLevel,
       });
       return;
     }
 
-    if (typeof onComplete === 'function') {
-      onComplete(selectedIndustry, selectedRole);
-    }
-  };
+    // if (navigation && typeof navigation.navigate === 'function') {
+    //   navigation.navigate(nextScreenName, {
+    //     industry: selectedIndustry,
+    //     role: selectedRole,
+    //   });
+    //   return;
+    // }
 
-  const onPressBack = () => {
-    if (step === 2) {
-      setStep(1);
-      setSelectedRole(null);
-    }
+    // if (typeof onComplete === 'function') {
+    //   onComplete(selectedIndustry, selectedRole);
+    // }
   };
 
   const renderIndustry = ({ item }) => {
@@ -170,9 +179,6 @@ const IndustryRoleScreen = ({
       <Pressable onPress={() => setSelectedIndustry(item.key)}>
         <View style={[styles.card, chosen && styles.cardSelected]}>
           <View style={{ flex: 1 }}>
-            {/* <Text style={styles.label} numberOfLines={1}>
-              {item.key}
-            </Text> */}
             <View style={styles.row}>
               <Text
                 numberOfLines={1}
@@ -182,14 +188,6 @@ const IndustryRoleScreen = ({
               </Text>
             </View>
           </View>
-          {/* <View style={styles.rightArrowContainer}>
-            <Image
-              source={require('../assets/images/rightArrow2.png')}
-              style={styles.rightArrow}
-              resizeMode="cover"
-            />
-          </View> */}
-          {/* <Radio selected={chosen} /> */}
         </View>
       </Pressable>
     );
@@ -201,9 +199,6 @@ const IndustryRoleScreen = ({
       <Pressable onPress={() => setSelectedRole(item)}>
         <View style={[styles.roleRow, chosen && styles.cardSelected]}>
           <View style={{ flex: 1 }}>
-            {/* <Text style={styles.label} numberOfLines={1}>
-              {item.key}
-            </Text> */}
             <View style={styles.row}>
               <Text
                 numberOfLines={1}
@@ -213,10 +208,25 @@ const IndustryRoleScreen = ({
               </Text>
             </View>
           </View>
-          {/* <Text numberOfLines={1} style={styles.roleText}>
-            {item}
-          </Text> */}
-          {/* <Radio selected={chosen} /> */}
+        </View>
+      </Pressable>
+    );
+  };
+  const renderLevel = ({ item }) => {
+    const chosen = selectedLevel === item;
+    return (
+      <Pressable onPress={() => setSelectedLevel(item)}>
+        <View style={[styles.roleRow, chosen && styles.cardSelected]}>
+          <View style={{ flex: 1 }}>
+            <View style={styles.row}>
+              <Text
+                numberOfLines={1}
+                style={[styles.value, chosen && styles.cardSelected]}
+              >
+                {item}
+              </Text>
+            </View>
+          </View>
         </View>
       </Pressable>
     );
@@ -236,7 +246,9 @@ const IndustryRoleScreen = ({
             <View style={styles.header}>
               <Text style={styles.title}>Choose Your Industry</Text>
             </View>
-            <Text style={styles.dropdownLabel}>Select Your Industry</Text>
+            <Text style={styles.dropdownLabel}>
+              Select your industry for better matches.
+            </Text>
             <FlatList
               data={data}
               renderItem={renderIndustry}
@@ -252,11 +264,27 @@ const IndustryRoleScreen = ({
               <Text style={styles.title}>Choose Your Role</Text>
             </View>
             <Text style={styles.dropdownLabel}>
-              Roles in {selectedIndustry}
+              Pick a role for personalized practice.
             </Text>
             <FlatList
               data={industries[selectedIndustry] || []}
               renderItem={({ item }) => renderRole({ item })}
+              keyExtractor={i => i}
+              showsVerticalScrollIndicator={false}
+            />
+          </>
+        )}
+        {step === 3 && (
+          <>
+            <View style={styles.header}>
+              <Text style={styles.title}>Select your level</Text>
+            </View>
+            <Text style={styles.dropdownLabel}>
+              Pick your experience level.
+            </Text>
+            <FlatList
+              data={levels || []}
+              renderItem={({ item }) => renderLevel({ item })}
               keyExtractor={i => i}
               showsVerticalScrollIndicator={false}
             />
@@ -272,7 +300,7 @@ const IndustryRoleScreen = ({
                 onPress={onPressBack}
                 style={{ alignSelf: 'flex-start' }}
               >
-                <Text style={{ color: '#111827' }}>Back</Text>
+                <Text style={{ color: '#1118827' }}>Back</Text>
               </Pressable>
             )}
           </View> */}
@@ -307,13 +335,10 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  rightArrowContainer: { paddingLeft: 16 },
-
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-
     marginTop: 45,
   },
   title: {
@@ -325,7 +350,7 @@ const styles = StyleSheet.create({
   },
   screenWrap: {
     flex: 1,
-    width: '90%',
+    width: '85%',
     marginHorizontal: 'auto',
     justifyContent: 'flex-start',
   },
@@ -420,7 +445,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     alignItems: 'center',
     justifyContent: 'center',
-    lineHeight: '170%',
+    lineHeight: 30,
   },
   buttonText: { color: 'white', fontSize: 16, fontWeight: '600' },
   bottomBlackLine: {

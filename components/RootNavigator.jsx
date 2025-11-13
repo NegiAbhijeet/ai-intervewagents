@@ -1,22 +1,77 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import AppTabs from './navigation/AppTabs';
-import AuthStack from './navigation/AuthStack';
-import AvatarSelectionScreen from "./AvatarSelectionScreen"
+// import AuthStack from './navigation/AuthStack';
+import AvatarSelectionScreen from './AvatarSelectionScreen';
 import JobDetailPage from '../pages/JobDetailPage';
 import ReportDetailScreen from '../pages/ReportDetail';
 import NotificationsPage from '../pages/NotificationsDrawer';
 import ProfileScreen from '../pages/Profile';
 import OthersProfile from '../pages/othersProfile';
-import PricingPage from "../pages/pricing"
+import PricingPage from '../pages/pricing';
 import { AppStateContext } from './AppContext';
+import GetStartedScreen from '../pages/GetStartedScreen';
+import OnboardingCarousel from '../pages/onboarding';
+import LoginScreen from '../pages/test/loginPage';
+import IndustryRoleScreen from '../pages/IndustryRoleScreen';
 const Stack = createNativeStackNavigator();
+const AuthStack = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Login" component={LoginScreen} />
+    </Stack.Navigator>
+  );
+};
+const OnboardingStack = () => (
+  <Stack.Navigator
+    screenOptions={{ headerShown: false }}
+    initialRouteName="GetStarted"
+  >
+    <Stack.Screen name="GetStarted" component={GetStartedScreen} />
+    <Stack.Screen name="Onboarding" component={OnboardingCarousel} />
+  </Stack.Navigator>
+);
 
 const RootNavigator = () => {
-  const { firebaseUser, userProfile } = useContext(AppStateContext);
+  const {
+    firebaseUser,
+    userProfile,
+    onboardingComplete,
+    setOnboardingComplete,
+  } = useContext(AppStateContext);
+
+  useEffect(() => {
+    if (onboardingComplete) return;
+    let mounted = true;
+    const readOnboarding = async () => {
+      try {
+        const val = await AsyncStorage.getItem('onboardingComplete');
+        if (!mounted) return;
+        if (val) {
+          setOnboardingComplete(true);
+        } else {
+          setOnboardingComplete(false);
+        }
+      } catch (e) {
+        if (!mounted) return;
+        setOnboardingComplete(false);
+      }
+    };
+    readOnboarding();
+    return () => {
+      mounted = false;
+    };
+  }, [onboardingComplete]);
+
+  // If onboarding not completed, show the onboarding flow (GetStarted -> Onboarding)
+  if (!onboardingComplete) {
+    return <OnboardingStack />;
+  }
 
   // If user is logged in and has a profile with a role, show the main app tabs
-  if (firebaseUser && userProfile && userProfile.role && userProfile?.avatar) {
+  if (firebaseUser && userProfile && userProfile.role) {
     return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="AppTabs" component={AppTabs} />
@@ -54,15 +109,15 @@ const RootNavigator = () => {
     );
   }
 
-  // If user is logged in but has no role yet, show onboarding / get started
-  if (
-    firebaseUser &&
-    userProfile &&
-    (!userProfile.role || !userProfile?.avatar)
-  ) {
+  // If user is logged in but has no role yet or avatar, show onboarding avatar selection
+  if (firebaseUser && userProfile && !userProfile.role) {
     return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="AvatarSelection" component={AvatarSelectionScreen} />
+        <Stack.Screen name="ChooseRole" component={IndustryRoleScreen} />
+        <Stack.Screen
+          name="AvatarSelection"
+          component={AvatarSelectionScreen}
+        />
       </Stack.Navigator>
     );
   }

@@ -32,6 +32,7 @@ const AppStateProvider = ({ children }) => {
 
   const mainUsedMinutes = Math.ceil(mainUsedSeconds / 60);
 
+  const [onboardingComplete, setOnboardingComplete] = useState(false);
   // Reset all app states to default when logging out
   const resetAppState = () => {
     setUserProfile(null);
@@ -43,6 +44,7 @@ const AppStateProvider = ({ children }) => {
     setFcmTokenUpdated(false);
     setJobsFetched(false);
     setLeaderboardRank(0);
+    setOnboardingComplete(false);
   };
 
   const contextValue = useMemo(
@@ -70,6 +72,8 @@ const AppStateProvider = ({ children }) => {
       leaderboardRank,
       setLeaderboardRank,
       resetAppState,
+      onboardingComplete,
+      setOnboardingComplete,
     }),
     [
       userProfile,
@@ -85,6 +89,7 @@ const AppStateProvider = ({ children }) => {
       jobsFetched,
       mainUsedMinutes,
       leaderboardRank,
+      onboardingComplete,
     ],
   );
 

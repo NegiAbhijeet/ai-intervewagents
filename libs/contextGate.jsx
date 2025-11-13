@@ -176,6 +176,7 @@ const ContextGate = ({ children }) => {
   }, [userProfile?.uid]);
 
   useEffect(() => {
+    console.log("==========================")
     GoogleSignin.configure({
       webClientId:
         '611623329833-4t054i14kdj2u7ccdvtb4b5tsev1jgfr.apps.googleusercontent.com',

@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import {
   StyleSheet,
@@ -5,15 +6,16 @@ import {
   Text,
   Image,
   ImageBackground,
-  TouchableOpacity,
   Dimensions,
   StatusBar,
+  Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width, height } = Dimensions.get('window');
 
 export default function GetStartedScreen() {
+  const navigation = useNavigation();
   return (
     <SafeAreaView style={styles.safe}>
       <StatusBar
@@ -38,7 +40,7 @@ export default function GetStartedScreen() {
             </View>
             <View>
               <Text style={styles.brand}>AI Interview Agents</Text>
-              <Text style={styles.subBrand}>Tagline</Text>
+              <Text style={styles.subBrand}>Your AI Interview Assistant</Text>
             </View>
           </View>
         </View>
@@ -59,15 +61,21 @@ export default function GetStartedScreen() {
         </View>
 
         <View style={styles.bottomSpacer}>
-          <TouchableOpacity style={styles.primaryButton} activeOpacity={0.9}>
+          <Pressable
+            style={styles.primaryButton}
+            onPress={() => navigation.navigate('Onboarding')}
+          >
             <Text style={styles.primaryButtonText}>Get Started</Text>
-          </TouchableOpacity>
+          </Pressable>
 
-          <TouchableOpacity style={styles.secondaryButton} activeOpacity={0.9}>
+          <Pressable
+            style={styles.secondaryButton}
+            onPress={() => navigation.navigate('Login')}
+          >
             <Text style={styles.secondaryButtonText}>
               Already Have An Account ? Login
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </ImageBackground>
     </SafeAreaView>
@@ -86,7 +94,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   header: {
-    paddingHorizontal: 24,
+    // paddingHorizontal: 24,
+    width: '85%',
+    marginHorizontal: 'auto',
     paddingTop: 18,
   },
   logoWrap: {
@@ -111,7 +121,9 @@ const styles = StyleSheet.create({
   centerArea: {
     alignItems: 'center',
     marginTop: 20,
-    paddingHorizontal: 28,
+    width: '85%',
+    marginHorizontal: 'auto',
+    // paddingHorizontal: 28,
   },
   penguinWrap: {
     width: 220,
@@ -133,7 +145,7 @@ const styles = StyleSheet.create({
     marginTop: 28,
   },
   primaryButton: {
-    width: '80%',
+    width: '85%',
     backgroundColor: '#000',
     paddingVertical: 14,
     borderRadius: 28,
@@ -147,7 +159,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   secondaryButton: {
-    width: '80%',
+    width: '85%',
     paddingVertical: 12,
     borderRadius: 28,
     alignItems: 'center',
