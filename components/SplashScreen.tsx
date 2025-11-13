@@ -1,106 +1,18 @@
-import React, { useEffect, useRef, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Animated,
-  Easing,
-  Dimensions,
-  Image,
-} from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, Image } from 'react-native';
 
-interface SplashScreenProps {
-  onComplete?: () => void;
-  duration?: number;
-}
-
-const { width, height } = Dimensions.get('window');
-
-const SplashScreen: React.FC<SplashScreenProps> = ({
-  onComplete,
-  duration = 3000,
-}) => {
-  const [isVisible, setIsVisible] = useState(true);
-
-  const logoScale = useRef(new Animated.Value(0)).current;
-  const textOpacity = useRef(new Animated.Value(0)).current;
-  const spinValue = useRef(new Animated.Value(0)).current;
-  const pulseOpacity = useRef(new Animated.Value(0.5)).current;
-
-  useEffect(() => {
-    // Logo scale (bounce-in)
-    Animated.timing(logoScale, {
-      toValue: 1,
-      duration: 600,
-      easing: Easing.out(Easing.exp),
-      useNativeDriver: true,
-    }).start();
-
-    // Text fade in
-    setTimeout(() => {
-      Animated.timing(textOpacity, {
-        toValue: 1,
-        duration: 600,
-        useNativeDriver: true,
-      }).start();
-    }, 500);
-
-    // Spinning ring
-    Animated.loop(
-      Animated.timing(spinValue, {
-        toValue: 1,
-        duration: 3000,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }),
-    ).start();
-
-    // Pulsing circle
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseOpacity, {
-          toValue: 0,
-          duration: 800,
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulseOpacity, {
-          toValue: 0.5,
-          duration: 800,
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-
-    // Hide splash after duration
-    const timer = setTimeout(() => {
-      onComplete?.();
-    }, duration);
-
-    return () => clearTimeout(timer);
-  }, [duration, onComplete]);
-
-  const spin = spinValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '360deg'],
-  });
-
+const SplashScreen = () => {
   return (
     <View style={styles.container}>
+      <Image
+        source={require('../assets/images/bgGradient.png')}
+        style={styles.backgroundImage}
+        resizeMode="cover"
+      />
       <View style={styles.content}>
         {/* Logo Container */}
         <View style={styles.logoWrapper}>
-          {/* Pulse */}
-          <Animated.View style={[styles.pulse, { opacity: pulseOpacity }]} />
-
-          {/* Ring */}
-          <Animated.View
-            style={[styles.ring, { transform: [{ rotate: spin }] }]}
-          />
-
-          {/* Inner Logo */}
-          <Animated.View
-            style={[styles.logo, { transform: [{ scale: logoScale }] }]}
-          >
+          <View style={[styles.logo]}>
             <View style={styles.logoInner}>
               <Image
                 source={require('../assets/images/logo.png')}
@@ -108,16 +20,16 @@ const SplashScreen: React.FC<SplashScreenProps> = ({
                 resizeMode="contain"
               />
             </View>
-          </Animated.View>
+          </View>
         </View>
 
         {/* App Name and Tagline */}
-        <Animated.View style={[styles.textContainer, { opacity: textOpacity }]}>
-          <Text style={styles.title}>AI InterviewAgents</Text>
+        <View style={[styles.textContainer, { opacity: 1 }]}>
+          <Text style={styles.title}>AI Interview Agents</Text>
           <Text style={styles.subtitle}>
-            Your Amazing Experience Starts Here
+            Crack your dream company’s interview with confidence.
           </Text>
-        </Animated.View>
+        </View>
       </View>
     </View>
   );
@@ -125,19 +37,20 @@ const SplashScreen: React.FC<SplashScreenProps> = ({
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  backgroundImage: {
     position: 'absolute',
     top: 0,
     left: 0,
-    width,
-    height,
-    backgroundColor: '#4f46e5', // from-primary
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 100,
+    width: '100%',
+    height: '100%',
   },
   logoImage: {
-    width: 64,
-    height: 64,
+    width: 114,
+    height: 114,
   },
 
   content: {
@@ -157,53 +70,30 @@ const styles = StyleSheet.create({
     borderRadius: 48,
     backgroundColor: 'rgba(255,255,255,0.2)',
   },
-  ring: {
-    position: 'absolute',
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    borderWidth: 4,
-    borderColor: 'rgba(255,255,255,0.3)',
-  },
-  logo: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    backgroundColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 8,
-  },
-  logoInner: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+
+  logo: {},
+  logoInner: {},
   logoIcon: {
     fontSize: 24,
     color: 'white',
   },
   textContainer: {
-    marginTop: 24,
+    marginTop: 10,
     alignItems: 'center',
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: 'white',
+    fontWeight: 600,
+    color: 'black',
   },
   subtitle: {
-    marginTop: 6,
+    lineHeight: 23,
+    marginTop: 2,
     fontSize: 16,
-    color: 'rgba(255,255,255,0.8)',
+    color: 'rgba(51, 51, 51, 1)',
     textAlign: 'center',
     paddingHorizontal: 20,
+    fontWeight: 500,
   },
 });
 
