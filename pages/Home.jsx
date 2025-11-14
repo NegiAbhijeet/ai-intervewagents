@@ -12,7 +12,7 @@ import TopBar from '../components/TopBar';
 import { useNotification } from '../hooks/useNotifications';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import { RefreshControl } from 'react-native-gesture-handler';
-// import PaperSheetModal from '../components/StreakPaperSheet';
+import InterviewScreen from '../components/interviewScreen';
 const interviews = [
   {
     title: 'Real Interview',
@@ -79,6 +79,8 @@ const Home = () => {
     fcmTokenUpdated,
     setFcmTokenUpdated,
     setLeaderboardRank,
+    firstInterviewObject,
+    setFirstInterviewObject
   } = useContext(AppStateContext);
   const [meetings, setMeetings] = useState([]);
   const [overallScore, setOverallScore] = useState(0);
@@ -178,6 +180,13 @@ const Home = () => {
   return (
     <>
       <TopBar />
+      {
+        firstInterviewObject && <InterviewScreen
+          {...firstInterviewObject}
+          showInterviewScreen={true}
+          setShowInterviewScreen={() => setFirstInterviewObject(null)}
+        />
+      }
       <Layout>
         <ScrollView
           showsVerticalScrollIndicator={false}

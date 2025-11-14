@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useContext } from 'react';
 import {
   View,
   Text,
@@ -9,125 +9,608 @@ import {
   StyleSheet,
   Image,
 } from 'react-native';
+import { AppStateContext } from '../components/AppContext';
 
 // industries data
 const industries = {
-  'IT & Software': [
-    'Software Engineer / Developer',
-    'Full Stack Developer',
-    'Data Scientist',
-    'Machine Learning Engineer',
-    'DevOps Engineer',
-    'Cloud Engineer',
-    'Cybersecurity Analyst',
-    'Product Manager',
-  ],
-  'Banking, Finance and Insurance': [
-    'Financial Analyst',
-    'Investment Banker',
-    'Risk Analyst',
-    'Corporate Finance Analyst',
-    'Compliance Officer',
-    'Fintech Product Manager',
-    'Credit Risk Manager',
-    'Portfolio Manager',
-  ],
-  'Engineering (Mech, Electrical, Civil, Industrial)': [
-    'Design Engineer',
-    'Project Manager (Engineering)',
-    'Mechanical Engineer (Production / Manufacturing)',
-    'Civil Site Engineer',
-    'Electrical Design Engineer',
-    'Process Engineer',
-    'Automation Engineer',
-    'Quality Control (QC) Engineer',
-  ],
-  'Data Science and Analytics': [
-    'Data Scientist',
-    'Machine Learning Engineer',
-    'Data Analyst',
-    'Data Engineer',
-    'Business Intelligence (BI) Analyst',
-    'MLOps Engineer',
-    'Data Architect',
-    'NLP Engineer',
-  ],
-  'Consulting and Business Strategy': [
-    'Management Consultant',
-    'Strategy Consultant',
-    'Corporate Strategy Analyst',
-    'Operations Consultant',
-    'Digital Transformation Consultant',
-    'Financial Consultant',
-    'HR Strategy Consultant',
-    'Sustainability / ESG Consultant',
-  ],
-  'Aviation and Aerospace': [
-    'Commercial Pilot',
-    'Aircraft Maintenance Engineer (AME)',
-    'Aerospace Engineer',
-    'Avionics Engineer',
-    'Flight Operations Manager',
-    'Aviation Safety Officer',
-    'Aerospace Project Manager',
-    'Air Traffic Controller',
-  ],
-  'Shipping, Logistics and Supply Chain': [
-    'Supply Chain Manager',
-    'Logistics Manager',
-    'Procurement Specialist / Buyer',
-    'Warehouse Manager',
-    'Export-Import (EXIM) Executive',
-    'Supply Chain Analyst',
-    'Global Sourcing Manager',
-    'Transportation Planner',
-  ],
-  'Renewable Energy and Solar': [
-    'Solar Design Engineer',
-    'Project Manager (Renewable Energy)',
-    'O&M Engineer (Operations and Maintenance)',
-    'Battery Systems Engineer',
-    'Renewable Energy Consultant',
-    'Business Development Manager (Renewable Energy)',
-    'Energy Policy Analyst',
-    'Microgrid Engineer',
-  ],
-  'Manufacturing and Production': [
-    'Production Engineer',
-    'Process Engineer',
-    'Quality Assurance (QA) Engineer',
-    'Maintenance Engineer',
-    'Procurement Engineer',
-    'R&D Engineer',
-    'EHS Officer (Environment, Health, Safety)',
-    'Plant Manager',
-  ],
-  'Healthcare and Pharmaceuticals': [
-    'Doctor / Physician',
-    'Nurse / Registered Nurse (RN)',
-    'Pharmacist',
-    'Clinical Research Associate (CRA)',
-    'Biomedical Engineer',
-    'Hospital Administrator / Manager',
-    'Medical Representative (MR)',
-    'Public Health Officer',
-  ],
-};
+  "IT & Software": {
+    "Software Engineer / Developer": [
+      "Java",
+      "Python",
+      "Data Structures & Algorithms",
+      "Git",
+      "SQL"
+    ],
+    "Full Stack Developer": [
+      "React",
+      "Node.js",
+      "MongoDB",
+      "Express.js",
+      "JavaScript"
+    ],
+    "Data Scientist": [
+      "Python",
+      "Machine Learning",
+      "Pandas",
+      "Tableau",
+      "SQL"
+    ],
+    "Machine Learning Engineer": [
+      "Python",
+      "TensorFlow",
+      "PyTorch",
+      "Kubernetes",
+      "Docker"
+    ],
+    "DevOps Engineer": [
+      "Docker",
+      "Kubernetes",
+      "Jenkins",
+      "Terraform",
+      "AWS"
+    ],
+    "Cloud Engineer": [
+      "AWS",
+      "Azure",
+      "Terraform",
+      "Kubernetes",
+      "Python"
+    ],
+    "Cybersecurity Analyst": [
+      "Network Security",
+      "Penetration Testing",
+      "SIEM",
+      "Python",
+      "Wireshark"
+    ],
+    "Product Manager": [
+      "JIRA",
+      "SQL",
+      "Figma",
+      "Google Analytics",
+      "Excel"
+    ]
+  },
+  "Banking, Finance and Insurance": {
+    "Financial Analyst": [
+      "Excel",
+      "Financial Modeling",
+      "SQL",
+      "Bloomberg Terminal",
+      "PowerPoint"
+    ],
+    "Investment Banker": [
+      "Excel",
+      "PowerPoint",
+      "Financial Modeling",
+      "Bloomberg Terminal",
+      "Capital IQ"
+    ],
+    "Risk Analyst": [
+      "Python",
+      "R",
+      "SQL",
+      "Excel",
+      "SAS"
+    ],
+    "Corporate Finance Analyst": [
+      "Excel",
+      "SAP",
+      "Oracle",
+      "PowerPoint",
+      "SQL"
+    ],
+    "Compliance Officer": [
+      "AML/KYC",
+      "Risk Assessment",
+      "Regulatory Knowledge",
+      "Audit Tools",
+      "MS Office"
+    ],
+    "Fintech Product Manager": [
+      "SQL",
+      "JIRA",
+      "API Integration",
+      "Figma",
+      "Google Analytics"
+    ],
+    "Credit Risk Manager": [
+      "Python",
+      "SAS",
+      "Excel",
+      "SQL",
+      "R"
+    ],
+    "Portfolio Manager": [
+      "Bloomberg Terminal",
+      "Excel",
+      "Financial Modeling",
+      "Python",
+      "Risk Management Tools"
+    ]
+  },
+  "Engineering (Mech, Electrical, Civil, Industrial)": {
+    "Design Engineer": [
+      "AutoCAD",
+      "SolidWorks",
+      "CATIA",
+      "ANSYS",
+      "Creo"
+    ],
+    "Project Manager (Engineering)": [
+      "MS Project",
+      "Primavera P6",
+      "AutoCAD",
+      "Excel",
+      "SAP"
+    ],
+    "Mechanical Engineer (Production / Manufacturing)": [
+      "AutoCAD",
+      "SolidWorks",
+      "Lean Manufacturing",
+      "SAP",
+      "CNC Programming"
+    ],
+    "Civil Site Engineer": [
+      "AutoCAD",
+      "Civil 3D",
+      "Primavera",
+      "MS Project",
+      "Total Station"
+    ],
+    "Electrical Design Engineer": [
+      "AutoCAD Electrical",
+      "ETAP",
+      "MATLAB",
+      "PLC Programming",
+      "EPLAN"
+    ],
+    "Process Engineer": [
+      "Aspen HYSYS",
+      "Aspen Plus",
+      "Six Sigma",
+      "AutoCAD",
+      "MATLAB"
+    ],
+    "Automation Engineer": [
+      "PLC Programming",
+      "SCADA",
+      "Siemens TIA Portal",
+      "Allen Bradley",
+      "HMI"
+    ],
+    "Quality Control (QC) Engineer": [
+      "ISO 9001",
+      "Statistical Process Control",
+      "Minitab",
+      "Six Sigma",
+      "CMM"
+    ]
+  },
+  "Data Science and Analytics": {
+    "Data Scientist": [
+      "Python",
+      "Machine Learning",
+      "Pandas",
+      "SQL",
+      "Scikit-learn"
+    ],
+    "Machine Learning Engineer": [
+      "Python",
+      "TensorFlow",
+      "PyTorch",
+      "Docker",
+      "Kubernetes"
+    ],
+    "Data Analyst": [
+      "SQL",
+      "Excel",
+      "Tableau",
+      "Power BI",
+      "Python"
+    ],
+    "Data Engineer": [
+      "SQL",
+      "Python",
+      "Apache Spark",
+      "Airflow",
+      "AWS"
+    ],
+    "Business Intelligence (BI) Analyst": [
+      "Tableau",
+      "Power BI",
+      "SQL",
+      "Excel",
+      "DAX"
+    ],
+    "MLOps Engineer": [
+      "Docker",
+      "Kubernetes",
+      "MLflow",
+      "Python",
+      "Jenkins"
+    ],
+    "Data Architect": [
+      "SQL",
+      "MongoDB",
+      "Snowflake",
+      "AWS Redshift",
+      "ETL Tools"
+    ],
+    "NLP Engineer": [
+      "Python",
+      "NLTK",
+      "spaCy",
+      "Transformers",
+      "PyTorch"
+    ]
+  },
+  "Consulting and Business Strategy": {
+    "Management Consultant": [
+      "PowerPoint",
+      "Excel",
+      "Tableau",
+      "SQL",
+      "Market Research Tools"
+    ],
+    "Strategy Consultant": [
+      "Excel",
+      "PowerPoint",
+      "Financial Modeling",
+      "Tableau",
+      "SQL"
+    ],
+    "Corporate Strategy Analyst": [
+      "Excel",
+      "PowerPoint",
+      "SQL",
+      "Tableau",
+      "Financial Modeling"
+    ],
+    "Operations Consultant": [
+      "Lean Six Sigma",
+      "Excel",
+      "Process Mapping Tools",
+      "SQL",
+      "Tableau"
+    ],
+    "Digital Transformation Consultant": [
+      "Cloud Platforms (AWS, Azure)",
+      "Agile Tools (JIRA)",
+      "PowerPoint",
+      "Tableau",
+      "SQL"
+    ],
+    "Financial Consultant": [
+      "Excel",
+      "Financial Planning Software",
+      "QuickBooks",
+      "SAP",
+      "PowerPoint"
+    ],
+    "HR Strategy Consultant": [
+      "HRIS Systems",
+      "Excel",
+      "PowerPoint",
+      "Tableau",
+      "Survey Tools"
+    ],
+    "Sustainability / ESG Consultant": [
+      "ESG Reporting Tools",
+      "Excel",
+      "Tableau",
+      "PowerPoint",
+      "Carbon Accounting Software"
+    ]
+  },
+  "Aviation and Aerospace": {
+    "Commercial Pilot": [
+      "CPL License",
+      "ATPL License",
+      "Flight Simulators",
+      "Navigation Systems",
+      "Aviation Regulations"
+    ],
+    "Aircraft Maintenance Engineer (AME)": [
+      "Aircraft Systems",
+      "AME License",
+      "Troubleshooting Tools",
+      "DGCA Regulations",
+      "Maintenance Software"
+    ],
+    "Aerospace Engineer": [
+      "CATIA",
+      "SolidWorks",
+      "ANSYS",
+      "MATLAB",
+      "Simulink"
+    ],
+    "Avionics Engineer": [
+      "Embedded Systems",
+      "Circuit Design",
+      "MATLAB",
+      "DO-178C",
+      "Testing Tools"
+    ],
+    "Flight Operations Manager": [
+      "Flight Planning Software",
+      "Safety Management Systems",
+      "DGCA Regulations",
+      "Excel",
+      "Resource Management Tools"
+    ],
+    "Aviation Safety Officer": [
+      "Safety Management Systems (SMS)",
+      "DGCA Regulations",
+      "Risk Assessment Tools",
+      "Audit Software",
+      "Incident Reporting Systems"
+    ],
+    "Aerospace Project Manager": [
+      "MS Project",
+      "Primavera",
+      "CATIA",
+      "Risk Management Tools",
+      "Excel"
+    ],
+    "Air Traffic Controller": [
+      "Radar Systems",
+      "Communication Systems",
+      "Air Traffic Control Procedures",
+      "Flight Planning Software",
+      "Navigation Tools"
+    ]
+  },
+  "Shipping, Logistics and Supply Chain": {
+    "Supply Chain Manager": [
+      "SAP",
+      "Oracle SCM",
+      "Excel",
+      "Demand Planning Software",
+      "ERP Systems"
+    ],
+    "Logistics Manager": [
+      "Transportation Management Systems (TMS)",
+      "Warehouse Management Systems (WMS)",
+      "Excel",
+      "SAP",
+      "Route Optimization Software"
+    ],
+    "Procurement Specialist / Buyer": [
+      "SAP",
+      "Oracle Procurement",
+      "Excel",
+      "Negotiation Tools",
+      "ERP Systems"
+    ],
+    "Warehouse Manager": [
+      "Warehouse Management Systems (WMS)",
+      "SAP",
+      "Excel",
+      "Inventory Management Software",
+      "Barcode Scanners"
+    ],
+    "Export-Import (EXIM) Executive": [
+      "Customs Software",
+      "Incoterms",
+      "Excel",
+      "Documentation Tools",
+      "Shipping Software"
+    ],
+    "Supply Chain Analyst": [
+      "Excel",
+      "Tableau",
+      "SQL",
+      "SAP",
+      "Power BI"
+    ],
+    "Global Sourcing Manager": [
+      "SAP",
+      "Oracle",
+      "Excel",
+      "Supplier Management Tools",
+      "ERP Systems"
+    ],
+    "Transportation Planner": [
+      "Transportation Management Systems (TMS)",
+      "Route Optimization Software",
+      "Excel",
+      "GIS Software",
+      "SAP"
+    ]
+  },
+  "Renewable Energy and Solar": {
+    "Solar Design Engineer": [
+      "PVsyst",
+      "AutoCAD",
+      "Helioscope",
+      "SketchUp",
+      "MATLAB"
+    ],
+    "Project Manager (Renewable Energy)": [
+      "MS Project",
+      "Primavera P6",
+      "AutoCAD",
+      "Excel",
+      "SAP"
+    ],
+    "O&M Engineer (Operations and Maintenance)": [
+      "SCADA Systems",
+      "PVsyst",
+      "Monitoring Software",
+      "Troubleshooting Tools",
+      "Safety Equipment"
+    ],
+    "Battery Systems Engineer": [
+      "MATLAB",
+      "Simulink",
+      "Battery Management Systems (BMS)",
+      "Power Electronics Design",
+      "Testing Equipment"
+    ],
+    "Renewable Energy Consultant": [
+      "PVsyst",
+      "HOMER",
+      "Excel",
+      "Financial Modeling",
+      "RETScreen"
+    ],
+    "Business Development Manager (Renewable Energy)": [
+      "CRM Software",
+      "Excel",
+      "PowerPoint",
+      "Market Research Tools",
+      "PVsyst"
+    ],
+    "Energy Policy Analyst": [
+      "Excel",
+      "Statistical Software",
+      "Policy Research Tools",
+      "Tableau",
+      "PowerPoint"
+    ],
+    "Microgrid Engineer": [
+      "HOMER",
+      "MATLAB",
+      "Simulink",
+      "ETAP",
+      "Power System Design Software"
+    ]
+  },
+  "Manufacturing and Production": {
+    "Production Engineer": [
+      "AutoCAD",
+      "Lean Manufacturing",
+      "SAP",
+      "Six Sigma",
+      "CNC Programming"
+    ],
+    "Process Engineer": [
+      "Aspen HYSYS",
+      "Six Sigma",
+      "AutoCAD",
+      "MATLAB",
+      "Process Simulation Software"
+    ],
+    "Quality Assurance (QA) Engineer": [
+      "ISO 9001",
+      "Minitab",
+      "Six Sigma",
+      "Statistical Process Control",
+      "Quality Management Software"
+    ],
+    "Maintenance Engineer": [
+      "CMMS Software",
+      "AutoCAD",
+      "Troubleshooting Tools",
+      "SAP",
+      "Vibration Analysis Tools"
+    ],
+    "Procurement Engineer": [
+      "SAP",
+      "Oracle",
+      "Excel",
+      "ERP Systems",
+      "Vendor Management Software"
+    ],
+    "R&D Engineer": [
+      "CAD Software",
+      "SolidWorks",
+      "ANSYS",
+      "MATLAB",
+      "Prototyping Tools"
+    ],
+    "EHS Officer (Environment, Health, Safety)": [
+      "Safety Management Software",
+      "Risk Assessment Tools",
+      "ISO 45001",
+      "Incident Management Systems",
+      "Audit Tools"
+    ],
+    "Plant Manager": [
+      "SAP",
+      "Lean Six Sigma",
+      "Excel",
+      "ERP Systems",
+      "Production Planning Software"
+    ]
+  },
+  "Healthcare and Pharmaceuticals": {
+    "Doctor / Physician": [
+      "EMR/EHR Systems",
+      "Medical Diagnosis",
+      "Clinical Procedures",
+      "HIPAA Compliance",
+      "Medical Imaging Software"
+    ],
+    "Nurse / Registered Nurse (RN)": [
+      "EMR/EHR Systems",
+      "IV Administration",
+      "Patient Monitoring Systems",
+      "Medication Management",
+      "Clinical Procedures"
+    ],
+    "Pharmacist": [
+      "Pharmacy Management Systems",
+      "Drug Database Software",
+      "Prescription Processing",
+      "Inventory Management",
+      "Clinical Knowledge"
+    ],
+    "Clinical Research Associate (CRA)": [
+      "GCP Guidelines",
+      "Clinical Trial Management Systems",
+      "EDC Systems",
+      "Regulatory Documentation",
+      "Site Monitoring"
+    ],
+    "Biomedical Engineer": [
+      "CAD Software",
+      "MATLAB",
+      "Medical Device Design",
+      "FDA Regulations",
+      "Testing Equipment"
+    ],
+    "Hospital Administrator / Manager": [
+      "Hospital Information Systems",
+      "Excel",
+      "SAP",
+      "Healthcare Compliance",
+      "Budget Management Software"
+    ],
+    "Medical Representative (MR)": [
+      "CRM Software",
+      "PowerPoint",
+      "Product Knowledge",
+      "Excel",
+      "Territory Management Tools"
+    ],
+    "Public Health Officer": [
+      "Epidemiological Software",
+      "Statistical Analysis Tools",
+      "Excel",
+      "SPSS",
+      "Health Surveillance Systems"
+    ]
+  }
+}
+
 
 const levels = [
-  'Entry level (0-2 years)',
-
-  'Mid-level (2-5 years)',
-
-  'Senior (5-8 years)',
-
-  'Executive (8-10+ years)',
+  { label: 'Entry level (0-2 years)', value: 1 },
+  { label: 'Mid-level (2-5 years)', value: 3 },
+  { label: 'Senior (5-8 years)', value: 6 },
+  { label: 'Executive (8-10+ years)', value: 10 }
 ];
+
 const IndustryRoleScreen = () => {
   const navigation = useNavigation();
+  const {userProfile}=useContext(AppStateContext)
+  console.log(userProfile, "==")
   const [step, setStep] = useState(1);
   const [selectedIndustry, setSelectedIndustry] = useState(null);
   const [selectedRole, setSelectedRole] = useState(null);
+  const [selectedSkills, setSelectedSkills] = useState([]);
   const [selectedLevel, setSelectedLevel] = useState(null);
 
   const data = useMemo(
@@ -139,7 +622,6 @@ const IndustryRoleScreen = () => {
     if (step === 1) {
       if (!selectedIndustry) return; // guarded by disabled button, but safe check
       setStep(2);
-      setSelectedRole(null);
       return;
     }
 
@@ -149,13 +631,13 @@ const IndustryRoleScreen = () => {
       return;
     }
     if (selectedIndustry && selectedRole && selectedLevel && step === 3) {
-      setStep(4);
-      console.log('===');
+      console.log('===', selectedIndustry, selectedRole, selectedSkills);
 
       navigation.navigate('AvatarSelection', {
         selectedIndustry: selectedIndustry,
         selectedRole: selectedRole,
         selectedLevel: selectedLevel,
+        selectedSkills: selectedSkills
       });
       return;
     }
@@ -172,6 +654,16 @@ const IndustryRoleScreen = () => {
     //   onComplete(selectedIndustry, selectedRole);
     // }
   };
+  const rolesArray =
+    selectedIndustry &&
+      industries &&
+      industries[selectedIndustry]
+      ? Object.keys(industries[selectedIndustry]).map(roleName => ({
+        key: roleName,
+        skills: industries[selectedIndustry][roleName]
+      }))
+      : [];
+
 
   const renderIndustry = ({ item }) => {
     const chosen = selectedIndustry === item.key;
@@ -194,17 +686,14 @@ const IndustryRoleScreen = () => {
   };
 
   const renderRole = ({ item }) => {
-    const chosen = selectedRole === item;
+    const chosen = selectedRole === item.key;
     return (
-      <Pressable onPress={() => setSelectedRole(item)}>
+      <Pressable onPress={() => { setSelectedRole(item.key); setSelectedSkills(item?.skills || []) }}>
         <View style={[styles.roleRow, chosen && styles.cardSelected]}>
           <View style={{ flex: 1 }}>
             <View style={styles.row}>
-              <Text
-                numberOfLines={1}
-                style={[styles.value, chosen && styles.cardSelected]}
-              >
-                {item}
+              <Text numberOfLines={1} style={[styles.value, chosen && styles.cardSelected]}>
+                {item.key}
               </Text>
             </View>
           </View>
@@ -212,10 +701,11 @@ const IndustryRoleScreen = () => {
       </Pressable>
     );
   };
+
   const renderLevel = ({ item }) => {
-    const chosen = selectedLevel === item;
+    const chosen = selectedLevel === item.value;
     return (
-      <Pressable onPress={() => setSelectedLevel(item)}>
+      <Pressable onPress={() => setSelectedLevel(item.value)}>
         <View style={[styles.roleRow, chosen && styles.cardSelected]}>
           <View style={{ flex: 1 }}>
             <View style={styles.row}>
@@ -223,7 +713,7 @@ const IndustryRoleScreen = () => {
                 numberOfLines={1}
                 style={[styles.value, chosen && styles.cardSelected]}
               >
-                {item}
+                {item?.label}
               </Text>
             </View>
           </View>
@@ -262,7 +752,7 @@ const IndustryRoleScreen = () => {
             <FlatList
               data={data}
               renderItem={renderIndustry}
-              keyExtractor={i => i.key}
+              keyExtractor={(_, index) => index.toString()}
               showsVerticalScrollIndicator={false}
             />
           </>
@@ -277,9 +767,9 @@ const IndustryRoleScreen = () => {
               Pick a role for personalized practice.
             </Text>
             <FlatList
-              data={industries[selectedIndustry] || []}
+              data={rolesArray || []}
               renderItem={({ item }) => renderRole({ item })}
-              keyExtractor={i => i}
+              keyExtractor={(_, index) => index.toString()}
               showsVerticalScrollIndicator={false}
             />
           </>
@@ -295,7 +785,7 @@ const IndustryRoleScreen = () => {
             <FlatList
               data={levels || []}
               renderItem={({ item }) => renderLevel({ item })}
-              keyExtractor={i => i}
+              keyExtractor={(_, index) => index.toString()}
               showsVerticalScrollIndicator={false}
             />
           </>

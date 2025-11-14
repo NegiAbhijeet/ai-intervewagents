@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
 
 import Toast from 'react-native-toast-message';
 import fetchUserDetails from '../../libs/fetchUser';
@@ -39,8 +38,7 @@ export default function LoginScreen() {
     useRef(null),
   ];
 
-  // phone auth states
-  const [confirmObj, setConfirmObj] = useState(null); // confirmation returned by auth().signInWithPhoneNumber
+  const [confirmObj, setConfirmObj] = useState(null); 
   const [timer, setTimer] = useState(0);
   const [otpLoading, setOtpLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
@@ -393,27 +391,7 @@ export default function LoginScreen() {
             <GoogleLoginButton
               setIsGoogleLoading={setIsGoogleLoading}
               isGoogleLoading={isGoogleLoading}
-              src={google}
             />
-            {/* <TouchableOpacity
-              style={styles.googleBtn}
-              onPress={loginWithGoogle}
-              disabled={isGoogleLoading}
-            >
-              {isGoogleLoading ? (
-                <ActivityIndicator />
-              ) : (
-                <>
-                  <Image
-                    source={google}
-                    style={{ width: 20, height: 20, marginRight: 8 }}
-                  />
-                  <Text className="text-black font-semibold text-base">
-                    Continue with Google
-                  </Text>
-                </>
-              )}
-            </TouchableOpacity> */}
           </View>
         </KeyboardAvoidingView>
       </View>

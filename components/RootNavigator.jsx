@@ -66,9 +66,7 @@ const RootNavigator = () => {
   }, [onboardingComplete]);
 
   // If onboarding not completed, show the onboarding flow (GetStarted -> Onboarding)
-  if (!onboardingComplete) {
-    return <OnboardingStack />;
-  }
+
 
   // If user is logged in and has a profile with a role, show the main app tabs
   if (firebaseUser && userProfile && userProfile.role) {
@@ -121,7 +119,9 @@ const RootNavigator = () => {
       </Stack.Navigator>
     );
   }
-
+  if (!onboardingComplete) {
+    return <OnboardingStack />;
+  }
   // Default: not authenticated. show auth stack
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>

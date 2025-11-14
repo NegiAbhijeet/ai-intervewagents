@@ -1,12 +1,12 @@
 import {
   ActivityIndicator,
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import React, { useContext } from 'react';
-import { Image } from 'react-native-svg';
 import {
   GoogleSignin,
   statusCodes,
@@ -18,8 +18,7 @@ import { API_URL } from './config';
 import fetchUserDetails from '../libs/fetchUser';
 import { AppStateContext } from './AppContext';
 import Toast from 'react-native-toast-message';
-
-const GoogleLoginButton = ({ isGoogleLoading, setIsGoogleLoading, src }) => {
+const GoogleLoginButton = ({ isGoogleLoading, setIsGoogleLoading }) => {
   const { setUserProfile, setOnboardingComplete } = useContext(AppStateContext);
 
   const loginWithGoogle = async () => {
@@ -103,7 +102,7 @@ const GoogleLoginButton = ({ isGoogleLoading, setIsGoogleLoading, src }) => {
       ) : (
         <>
           <Image
-            source={src}
+            source={require('../assets/images/google1.png')}
             style={{ width: 20, height: 20, marginRight: 8 }}
           />
           <Text className="text-black font-semibold text-base">

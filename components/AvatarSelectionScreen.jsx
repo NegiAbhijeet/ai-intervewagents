@@ -12,20 +12,18 @@ import {
   TextInput,
 } from 'react-native';
 import { AppStateContext } from './AppContext';
-import { API_URL, JAVA_API_URL } from './config';
+import { API_URL } from './config';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import Toast from 'react-native-toast-message';
-
 export default function AvatarSelectionScreen({ route }) {
-  const { selectedIndustry, selectedRole, selectedLevel } = route.params;
+  const { selectedIndustry, selectedRole, selectedLevel, selectedSkills } = route.params;
   const [step, setStep] = useState(1);
 
-  const { userProfile, setUserProfile } = useContext(AppStateContext);
+  const { userProfile, setUserProfile, setFirstInterviewObject } = useContext(AppStateContext);
   const [userName, setUserName] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  console.log(userProfile);
-  // build 14 avatar urls
+
   const avatars = useMemo(() => {
     const base =
       'https://docsightaistorageprod.blob.core.windows.net/avatar/avatar';
@@ -33,89 +31,122 @@ export default function AvatarSelectionScreen({ route }) {
   }, []);
 
   const selectedAvatar = selectedIndex !== null ? avatars[selectedIndex] : null;
+  const extractMeetingDateTimeParts = dateTime => {
+    const date = new Date(dateTime);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hour = String(date.getHours()).padStart(2, '0');
+    const minute = String(date.getMinutes()).padStart(2, '0');
 
+    return {
+      date: `${year}-${month}-${day}`,
+      hour,
+      minute,
+    };
+  };
   const handleContinue = async () => {
-    if (step === 1 && userName) {
-      setStep(2);
-      return;
-    }
-    console.log(
-      selectedIndustry,
-      selectedRole,
-      selectedLevel,
-      selectedAvatar,
-      userName,
-    );
-    return;
-    if (!userProfile?.uid) {
-      console.error('Missing userProfile.uid', userProfile);
-      Toast.show({
-        type: 'error',
-        text1: 'User',
-        text2: 'Invalid User.',
-      });
-      return;
-    }
-    if (!selectedAvatar) {
-      console.error('Missing avatar');
-      Toast.show({
-        type: 'error',
-        text1: 'Select Avatar',
-        text2: 'Please choose an avatar.',
-      });
-      return;
-    }
-
     try {
+      if (step === 1 && userName) {
+        setStep(2);
+        return;
+      }
+      if (step === 2 && !selectedAvatar) {
+        return;
+      }
+
+      const now = new Date();
+      const { date, hour, minute } = extractMeetingDateTimeParts(now);
+
+      const parts = (userName || '').trim().split(/\s+/);
+      const firstName = parts[0] || '';
+      const lastName = parts.length > 1 ? parts.slice(1).join(' ') : '';
+
+      // Ensure skills is an array
+      const skillsPayload = Array.isArray(selectedSkills)
+        ? selectedSkills
+        : selectedSkills
+          ? [selectedSkills]
+          : [];
+
+      const payload = {
+        uid: userProfile?.uid,
+        hour,
+        minute,
+        date,
+        requiredSkills: skillsPayload,
+        position: selectedRole,
+        role: 'candidate',
+        experience: selectedLevel,
+        type: 'Technical',
+        interviewType: 'practice',
+        duration: '600',
+        avatar: selectedAvatar,
+        industry: selectedIndustry,
+        first_name: firstName,
+        last_name: lastName,
+      };
+
       setIsLoading(true);
 
-      const res = await fetchWithAuth(
-        `${API_URL}/profiles/${userProfile?.uid}/update-role/`,
-        {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ role: 'candidate', url: selectedAvatar }),
+      const response = await fetchWithAuth(`${API_URL}/interview-agent/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+        body: JSON.stringify(payload),
+      });
 
-      if (res.status === 200) {
-        const body = {
-          uid: userProfile.uid,
-          firstName: userProfile?.first_name,
-          lastName: userProfile?.last_name,
-          email: userProfile?.email,
-        };
-        const candidateRes = await fetchWithAuth(
-          `${JAVA_API_URL}/api/candidates/save`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body),
-          },
-        );
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        const message = errorData?.error || 'Failed to create interview.';
+        throw new Error(message);
+      }
 
-        if (candidateRes.status === 200) {
-          setUserProfile({
-            ...userProfile,
-            role: 'candidate',
-            avatar: selectedAvatar,
-          });
-        } else {
-          console.error(
-            'Failed to save candidate. Status:',
-            candidateRes.status,
-          );
+      const result = await response.json().catch(() => ({}));
+      const meetingUrl = result?.meeting_url;
+
+      if (meetingUrl) {
+        const urlParams = new URLSearchParams(meetingUrl.split('?')[1] || '');
+
+        const meetingId = urlParams.get('meetingId');
+        const canId = urlParams.get('canId');
+        const interviewType = urlParams.get('interviewType');
+        const candidateName = urlParams.get('candidateName') || 'User';
+        const interviewTime = urlParams.get('interviewTime');
+
+        setUserProfile({
+          ...userProfile,
+          role: 'candidate',
+          avatar: selectedAvatar,
+          full_name: candidateName
+        });
+        const firstPayload = {
+          canId,
+          meetingId,
+          interviewType,
+          interviewTime,
+          candidateName,
+          adminId: userProfile?.uid
         }
+        setFirstInterviewObject(firstPayload)
+      } else {
+        throw new Error('No meeting URL returned from server.');
       }
     } catch (error) {
-      console.error('Error during handleContinue:', error);
+      console.log('handleContinue error:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: error?.message || 'Something went wrong',
+      });
     } finally {
       setIsLoading(false);
     }
   };
+
   const isDisabled = isLoading || (step === 1 ? !userName : !selectedAvatar)
 
-  // Render each grid item. wrapper uses aspectRatio to ensure square equal to column width.
   const renderItem = ({ item, index }) => {
     const isSelected = selectedIndex === index;
 
@@ -184,7 +215,7 @@ export default function AvatarSelectionScreen({ route }) {
         </View>
         <View style={styles.headerContainer}>
           <Text style={styles.title}>
-            {step === 1 ? 'Choose your avatar' : 'What should I call you?'}
+            {step === 1 ? 'What should I call you?' : 'Choose your avatar'}
           </Text>
         </View>
       </View>
@@ -232,7 +263,7 @@ export default function AvatarSelectionScreen({ route }) {
           {isLoading ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.buttonText}>Next</Text>
+            <Text style={styles.buttonText}>{step === 1 ? "Next" : "Start Interview"}</Text>
           )}
         </TouchableOpacity>
       </View>
