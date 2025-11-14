@@ -39,17 +39,12 @@ export default function AnalysisCards({
           backgroundColor: 'transparent',
           borderWidth: 5,
           borderRadius: 16,
+          height: "100%"
         }}
       >
         <View style={styles.cardContent}>
           <View style={styles.playRow}>
-            {/* <Image
-              source={require('../assets/images/playButton.png')}
-              resizeMode="contain"
-              style={styles.playImage}
-            /> */}
             <PlayButton />
-
           </View>
 
           <View style={styles.cardText}>
@@ -170,19 +165,25 @@ export default function AnalysisCards({
 const styles = StyleSheet.create({
   container: { width: '100%' },
   row: { flexDirection: 'row', justifyContent: 'space-between' },
-  cardWrapper: { width: '48%' },
+  cardWrapper: { width: '48%', aspectRatio: 1, },
   cardContent: {
+    alignItems: "flex-end",
+    justifyContent: "flex-end",
     borderRadius: 10,
+    height: "100%",
     overflow: 'hidden',
     backgroundColor: 'rgba(58,55,55,0.25)',
+    position: "relative",
   },
   playRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
     width: '100%',
+    position: "absolute",
+    top: 0,
+    right: 0
   },
-  playImage: { zIndex: 111 },
   cardText: { paddingHorizontal: 12, paddingBottom: 12 },
   cardTitle: { fontSize: 16, fontWeight: '800', color: '#000' },
   cardSubtitle: { fontSize: 13, color: '#333', opacity: 0.9, marginTop: 6 },

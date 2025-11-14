@@ -11,7 +11,6 @@ import {
   Linking,
 } from 'react-native';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { signOut } from 'firebase/auth';
 import { AppStateContext } from '../components/AppContext';
 import { auth } from '../libs/firebase';
 import {
@@ -32,6 +31,7 @@ export default function ProfileScreen() {
     usedMinutes,
     firebaseUser,
     setUserProfile,
+    resetAppState
   } = useContext(AppStateContext);
   const navigation = useNavigation();
   const activeUsedMinutes = usedMinutes;
@@ -69,11 +69,32 @@ export default function ProfileScreen() {
     try {
       setLoading(true);
 
-      await GoogleSignin.revokeAccess();
-      await GoogleSignin.signOut();
-      await signOut(auth);
+      const currentUser = auth().currentUser;
 
-      setUserProfile(null);
+      if (currentUser) {
+        const isGoogleProvider = Array.isArray(currentUser.providerData) &&
+          currentUser.providerData.some(p => p.providerId === 'google.com');
+
+        if (isGoogleProvider) {
+          // revoke and sign out from Google on device — safe to call even if it fails
+          try {
+            await GoogleSignin.revokeAccess();
+          } catch (e) {
+            console.warn('[Logout] revokeAccess failed:', e);
+          }
+          try {
+            await GoogleSignin.signOut();
+          } catch (e) {
+            console.warn('[Logout] GoogleSignin.signOut failed:', e);
+          }
+        }
+      }
+
+      // sign out from Firebase (native)
+      await auth().signOut();
+      resetAppState();
+
+
 
       console.log('[Logout] User successfully logged out');
     } catch (err) {

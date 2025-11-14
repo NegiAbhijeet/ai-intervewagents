@@ -78,20 +78,28 @@ const TopBar = () => {
       setConfirmVisible(false);
       setMenuVisible(false);
 
-      const currentUser = auth.currentUser;
+      const currentUser = auth().currentUser;
 
       if (currentUser) {
-        const isGoogleProvider = currentUser.providerData?.some(
-          p => p.providerId === 'google.com',
-        );
+        const isGoogleProvider = Array.isArray(currentUser.providerData) &&
+          currentUser.providerData.some(p => p.providerId === 'google.com');
 
         if (isGoogleProvider) {
-          await GoogleSignin.revokeAccess();
-          await GoogleSignin.signOut();
+          try {
+            await GoogleSignin.revokeAccess();
+          } catch (e) {
+            console.warn('[Logout] revokeAccess failed:', e);
+          }
+          try {
+            await GoogleSignin.signOut();
+          } catch (e) {
+            console.warn('[Logout] GoogleSignin.signOut failed:', e);
+          }
         }
       }
 
-      await signOut(auth);
+      // sign out from Firebase (native)
+      await auth().signOut();
       resetAppState();
 
       console.log('[Logout] User successfully logged out');

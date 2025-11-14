@@ -107,8 +107,8 @@ const AIAgent = ({ isAgentSpeaking = true }) => {
 const styles = StyleSheet.create({
   wrapper: {
     position: 'absolute',
-    top: 16,
-    right: 16,
+    top: 22,
+    right: 22,
     zIndex: 100,
   },
   agentContainer: {

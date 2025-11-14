@@ -1,10 +1,8 @@
 import React, { useEffect, useContext, useState, useCallback } from 'react';
 import { View, StatusBar } from 'react-native';
-import { onAuthStateChanged } from 'firebase/auth';
-import fetchUserDetails from './fetchUser';
+import fetchUserDetails from '../libs/fetchUser';
 import { AppStateContext } from '../components/AppContext';
-import { auth } from './firebase';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import auth from './firebase';
 import SplashScreen from '../components/SplashScreen';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import messaging from '@react-native-firebase/messaging';
@@ -24,18 +22,20 @@ const ContextGate = ({ children }) => {
 
   const [authLoading, setAuthLoading] = useState(true);
 
-  // helper: increment install
   const incrementInstall = useCallback(async referrer => {
     if (!referrer) return;
     try {
       console.log('Calling install increment for', referrer);
-      await fetchWithAuth(`${JAVA_API_URL}/api/campaigns/${referrer}/increment?type=install`, {
-        method: 'PATCH',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+      await fetchWithAuth(
+        `${JAVA_API_URL}/api/campaigns/${referrer}/increment?type=install`,
+        {
+          method: 'PATCH',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
     } catch (err) {
       console.error('install increment failed for', referrer, err);
     }
@@ -52,13 +52,16 @@ const ContextGate = ({ children }) => {
       }
 
       console.log('Calling signup increment for', referrer);
-      await fetchWithAuth(`${JAVA_API_URL}/api/campaigns/${referrer}/increment?type=signup`, {
-        method: 'PATCH',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+      await fetchWithAuth(
+        `${JAVA_API_URL}/api/campaigns/${referrer}/increment?type=signup`,
+        {
+          method: 'PATCH',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
 
       await AsyncStorage.setItem(signupKey, 'true');
     } catch (err) {
@@ -66,14 +69,15 @@ const ContextGate = ({ children }) => {
     }
   }, []);
 
-
+  // Read install referrer once and record install
   useEffect(() => {
+    let mounted = true;
+
     const checkAndSaveReferrer = async () => {
       try {
         const storedRefId = await AsyncStorage.getItem('referrerId');
         if (storedRefId) {
           console.log('Referrer ID loaded from storage:', storedRefId);
-          // If user is already logged in, attempt signup increment (only once)
           if (userProfile?.uid) {
             incrementSignupOnce(storedRefId);
           }
@@ -82,6 +86,7 @@ const ContextGate = ({ children }) => {
 
         PlayInstallReferrer.getInstallReferrerInfo(
           async (installReferrerInfo, error) => {
+            if (!mounted) return;
             if (error) {
               console.warn('Failed to get install referrer info:', error);
               return;
@@ -90,15 +95,10 @@ const ContextGate = ({ children }) => {
             const referrer = installReferrerInfo?.installReferrer;
             console.log('Install referrer =', referrer);
 
-            if (
-              referrer &&
-              referrer !== 'utm_source=google-play&utm_medium=organic'
-            ) {
+            if (referrer && referrer !== 'utm_source=google-play&utm_medium=organic') {
               await AsyncStorage.setItem('referrerId', referrer);
-              // increment install immediately
               await incrementInstall(referrer);
 
-              // if user already logged in, also mark signup once
               if (userProfile?.uid) {
                 await incrementSignupOnce(referrer);
               }
@@ -113,11 +113,18 @@ const ContextGate = ({ children }) => {
     };
 
     checkAndSaveReferrer();
-  }, []); 
 
- 
+    return () => {
+      mounted = false;
+    };
+    // Intentionally empty deps to run once on mount
+  }, []);
+
+  // When a user logs in, try attributing signup once for stored referrer
   useEffect(() => {
     if (!userProfile?.uid) return;
+
+    let mounted = true;
 
     const trySignupForStoredReferrer = async () => {
       try {
@@ -126,16 +133,20 @@ const ContextGate = ({ children }) => {
           console.log('No stored referrer to attribute signup to');
           return;
         }
-        await incrementSignupOnce(referrer);
+        if (mounted) await incrementSignupOnce(referrer);
       } catch (err) {
         console.error('Error attempting signup increment after login:', err);
       }
     };
 
     trySignupForStoredReferrer();
-  }, [userProfile?.uid]);
 
-  // Messaging foreground listener
+    return () => {
+      mounted = false;
+    };
+  }, [userProfile?.uid, incrementSignupOnce]);
+
+  // Foreground messaging listener
   useEffect(() => {
     if (!userProfile?.uid) return;
 
@@ -157,38 +168,35 @@ const ContextGate = ({ children }) => {
       });
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe && unsubscribe();
+    };
   }, [userProfile?.uid]);
 
+  // Notification opened while app in background
   useEffect(() => {
     if (!userProfile?.uid) return;
 
-    const unsubscribeOpened = messaging().onNotificationOpenedApp(
-      remoteMessage => {
-        if (!remoteMessage) return;
-        setUnreadNotification(prev =>
-          typeof prev === 'number' ? prev + 1 : 1,
-        );
-      },
-    );
+    const unsubscribeOpened = messaging().onNotificationOpenedApp(remoteMessage => {
+      if (!remoteMessage) return;
+      setUnreadNotification(prev => (typeof prev === 'number' ? prev + 1 : 1));
+    });
 
-    return () => unsubscribeOpened();
+    return () => {
+      unsubscribeOpened && unsubscribeOpened();
+    };
   }, [userProfile?.uid]);
 
+  // Auth state listener using native auth instance
   useEffect(() => {
-    console.log("==========================")
-    GoogleSignin.configure({
-      webClientId:
-        '611623329833-4t054i14kdj2u7ccdvtb4b5tsev1jgfr.apps.googleusercontent.com',
-      offlineAccess: true,
-    });
-  }, []);
+    // If you configured GoogleSignin elsewhere, no need to do it here.
+    // Example: GoogleSignin.configure({ webClientId: '...', offlineAccess: true });
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async user => {
-      setFirebaseUser(user);
+    const unsubscribe = auth().onAuthStateChanged(async user => {
+      console.log('Auth state changed', user);
+      setFirebaseUser(user || null);
+
       let profile = null;
-
       try {
         if (user?.uid) {
           profile = await fetchUserDetails(user.uid);
@@ -198,17 +206,17 @@ const ContextGate = ({ children }) => {
         console.log('Error fetching user details:', err);
       }
 
-      if (profile) {
-        setUserProfile(profile);
-      } else {
-        setUserProfile(null);
-      }
+      if (profile) setUserProfile(profile);
+      else setUserProfile(null);
 
       setAuthLoading(false);
     });
 
-    return () => unsubscribe();
-  }, []);
+    return () => {
+      unsubscribe && unsubscribe();
+    };
+    // empty deps: attach listener once on mount
+  }, [setFirebaseUser, setUserProfile]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
@@ -219,11 +227,11 @@ const ContextGate = ({ children }) => {
       />
 
       {authLoading ? (
-        <View className="flex-1 justify-center items-center">
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <SplashScreen />
         </View>
       ) : (
-        <View className="flex-1">{children}</View>
+        <View style={{ flex: 1 }}>{children}</View>
       )}
     </SafeAreaView>
   );

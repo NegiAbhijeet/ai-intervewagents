@@ -1,3 +1,4 @@
+import React, { useContext, useEffect } from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -6,44 +7,49 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useContext } from 'react';
-import {
-  GoogleSignin,
-  statusCodes,
-} from '@react-native-google-signin/google-signin';
-import { auth } from '../libs/firebase';
-import { signInWithCredential, GoogleAuthProvider } from 'firebase/auth';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
+import auth from '../libs/firebase';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import { API_URL } from './config';
 import fetchUserDetails from '../libs/fetchUser';
 import { AppStateContext } from './AppContext';
 import Toast from 'react-native-toast-message';
+
+const WEB_CLIENT_ID = '611623329833-4t054i14kdj2u7ccdvtb4b5tsev1jgfr.apps.googleusercontent.com';
+
 const GoogleLoginButton = ({ isGoogleLoading, setIsGoogleLoading }) => {
   const { setUserProfile, setOnboardingComplete } = useContext(AppStateContext);
+
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId: WEB_CLIENT_ID,
+      offlineAccess: true,
+    });
+  }, []);
 
   const loginWithGoogle = async () => {
     setIsGoogleLoading(true);
     try {
-      await GoogleSignin.hasPlayServices({
-        showPlayServicesUpdateDialog: true,
-      });
+      try {
+        await GoogleSignin.signOut();
+      } catch (e) {
+        console.warn('[Login] GoogleSignin.signOut pre-clean failed', e);
+      }
+      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
 
       const userInfo = await GoogleSignin.signIn();
       const idToken = userInfo.idToken || userInfo?.data?.idToken;
 
       if (!idToken) throw new Error('No idToken found.');
 
-      const authInstance = auth;
-      const credential = GoogleAuthProvider.credential(idToken);
-      const firebaseUserCredential = await signInWithCredential(
-        authInstance,
-        credential,
-      );
-      const user = firebaseUserCredential.user;
+      const credential = auth.GoogleAuthProvider.credential(idToken);
+      const firebaseUser = await auth().signInWithCredential(credential);
+      const user = firebaseUser.user;
 
       const displayName = user.displayName || '';
-      const [first_name, ...last] = displayName.trim().split(' ');
-      const last_name = last.join(' ');
+      const parts = displayName.trim().split(/\s+/);
+      const first_name = parts[0] || '';
+      const last_name = parts.slice(1).join(' ') || '';
 
       const token = await user.getIdToken();
 
@@ -65,13 +71,14 @@ const GoogleLoginButton = ({ isGoogleLoading, setIsGoogleLoading }) => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData?.error || 'Failed to create profile');
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data?.error || 'Profile creation failed');
       }
 
       const final = await fetchUserDetails(user.uid);
       setUserProfile(final);
       setOnboardingComplete(true);
+
     } catch (error) {
       console.error('[Google Sign-In] Error:', error);
 
@@ -100,15 +107,13 @@ const GoogleLoginButton = ({ isGoogleLoading, setIsGoogleLoading }) => {
       {isGoogleLoading ? (
         <ActivityIndicator />
       ) : (
-        <>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Image
             source={require('../assets/images/google1.png')}
-            style={{ width: 20, height: 20, marginRight: 8 }}
+            style={styles.googleIcon}
           />
-          <Text className="text-black font-semibold text-base">
-            Continue with Google
-          </Text>
-        </>
+          <Text style={styles.googleText}>Continue with Google</Text>
+        </View>
       )}
     </TouchableOpacity>
   );
@@ -122,22 +127,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(213, 213, 213, 1)',
+    borderColor: 'rgba(213,213,213,1)',
     borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 16,
     width: '100%',
     height: 54,
     justifyContent: 'center',
-    backgroundColor: 'rgba(245, 245, 245, 1)',
+    backgroundColor: 'rgba(245,245,245,1)',
   },
   googleIcon: {
-    width: 21,
-    height: 21,
-    marginRight: 10,
+    width: 20,
+    height: 20,
+    marginRight: 8,
   },
   googleText: {
     fontSize: 16,
     fontWeight: '600',
+    color: '#000',
   },
 });
