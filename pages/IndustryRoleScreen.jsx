@@ -233,7 +233,17 @@ const IndustryRoleScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container}><Image
+      source={require('../assets/images/bgGradient.png')}
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        transform: 'translateY(250%)',
+        height: '100%',
+      }}
+      resizeMode="cover"
+    />
       <Image
         source={require('../assets/images/bgGradient.png')}
         style={styles.backgroundImage}
@@ -311,7 +321,7 @@ const IndustryRoleScreen = () => {
             style={[
               styles.button,
               !(step === 1 ? selectedIndustry : selectedRole) &&
-                styles.disabledButton,
+              styles.disabledButton,
             ]}
           >
             <Text style={styles.buttonText}>Next</Text>

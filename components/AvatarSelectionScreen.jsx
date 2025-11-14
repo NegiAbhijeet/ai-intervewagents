@@ -35,7 +35,7 @@ export default function AvatarSelectionScreen({ route }) {
   const selectedAvatar = selectedIndex !== null ? avatars[selectedIndex] : null;
 
   const handleContinue = async () => {
-    if (step === 1 && selectedAvatar) {
+    if (step === 1 && userName) {
       setStep(2);
       return;
     }
@@ -113,6 +113,7 @@ export default function AvatarSelectionScreen({ route }) {
       setIsLoading(false);
     }
   };
+  const isDisabled = isLoading || (step === 1 ? !userName : !selectedAvatar)
 
   // Render each grid item. wrapper uses aspectRatio to ensure square equal to column width.
   const renderItem = ({ item, index }) => {
@@ -147,6 +148,17 @@ export default function AvatarSelectionScreen({ route }) {
 
   return (
     <View style={styles.container}>
+      <Image
+        source={require('../assets/images/bgGradient.png')}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          transform: 'translateY(250%)',
+          height: '100%',
+        }}
+        resizeMode="cover"
+      />
       <View style={styles.previewContainer}>
         <View style={styles.previewWrapper}>
           <Image
@@ -154,7 +166,22 @@ export default function AvatarSelectionScreen({ route }) {
             style={styles.previewImage}
           />
         </View>
-
+        <View style={{ width: "100%", alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 4, marginBottom: 30 }}>
+          <View
+            style={{
+              width: step === 1 ? 25 : 10,
+              height: 2,
+              backgroundColor: step === 1 ? "black" : "rgba(102, 102, 102, 1)"
+            }}
+          />
+          <View
+            style={{
+              width: step === 1 ? 10 : 25,
+              height: 2,
+              backgroundColor: step === 1 ? "rgba(102, 102, 102, 1)" : "black"
+            }}
+          />
+        </View>
         <View style={styles.headerContainer}>
           <Text style={styles.title}>
             {step === 1 ? 'Choose your avatar' : 'What should I call you?'}
@@ -163,20 +190,6 @@ export default function AvatarSelectionScreen({ route }) {
       </View>
       <View style={styles.screenWrap}>
         {step === 1 ? (
-          <View>
-            <FlatList
-              data={avatars}
-              renderItem={renderItem}
-              keyExtractor={(_, idx) => String(idx)}
-              numColumns={3}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={[
-                styles.gridContent,
-                { alignItems: 'center', paddingHorizontal: 0 },
-              ]}
-            />
-          </View>
-        ) : (
           <View style={{ width: '100%', marginHorizontal: 'auto' }}>
             <View style={styles.field}>
               <Text style={styles.label}>Your Full Name</Text>
@@ -192,28 +205,36 @@ export default function AvatarSelectionScreen({ route }) {
               />
             </View>
           </View>
+        ) : (
+          <View>
+            <FlatList
+              data={avatars}
+              renderItem={renderItem}
+              keyExtractor={(_, idx) => String(idx)}
+              numColumns={3}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ alignItems: 'center', paddingHorizontal: 0 }}
+            />
+          </View>
         )}
 
-        <View style={styles.footer}>
-          <TouchableOpacity
-            activeOpacity={0.9}
-            onPress={handleContinue}
-            disabled={isLoading || !selectedAvatar}
-            accessibilityRole="button"
-            style={[
-              styles.button,
-              isLoading || !selectedAvatar
-                ? styles.buttonDisabled
-                : styles.buttonEnabled,
-            ]}
-          >
-            {isLoading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.buttonText}>Next</Text>
-            )}
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          activeOpacity={isDisabled ? 1 : 0.9}
+          onPress={handleContinue}
+          disabled={isDisabled}
+          accessibilityRole="button"
+          accessibilityState={{ disabled: isDisabled }}
+          style={[
+            styles.button,
+            isDisabled ? styles.buttonDisabled : styles.buttonEnabled,
+          ]}
+        >
+          {isLoading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Next</Text>
+          )}
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -277,10 +298,6 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
 
-  // grid
-  gridContent: {
-    paddingBottom: 48,
-  },
 
   avatarCell: {
     width: CELL_SIZE,
@@ -335,7 +352,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     alignItems: 'center',
     justifyContent: 'center',
-    lineHeight: '170%',
+    lineHeight: '170%', marginTop: 48
   },
   buttonEnabled: {
     backgroundColor: 'rgba(0, 0, 0, 1)',
