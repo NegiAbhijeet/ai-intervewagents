@@ -15,8 +15,24 @@ import { AppStateContext } from './AppContext';
 import { API_URL } from './config';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import Toast from 'react-native-toast-message';
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const CONTAINER_HORIZONTAL_PADDING = 0; // total horizontal padding inside screenWrap
+const COLUMNS = 3;
+const GAP = 12; 
+
+// compute the container width that holds the grid (screenWrap uses 85% width)
+const CONTAINER_WIDTH = Math.floor(SCREEN_WIDTH * 0.85) - CONTAINER_HORIZONTAL_PADDING * 2;
+
+// compute cell size so COLUMNS cells + gaps fit exactly inside container
+const CELL_SIZE = Math.floor((CONTAINER_WIDTH - GAP * (COLUMNS - 1)) / COLUMNS);
+
 export default function AvatarSelectionScreen({ route }) {
-  const { selectedIndustry, selectedRole, selectedLevel, selectedSkills } = route.params;
+  const {
+    selectedIndustry = "",
+    selectedRole = "",
+    selectedLevel = "",
+    selectedSkills = ""
+  } = route?.params || {};
   const [step, setStep] = useState(1);
 
   const { userProfile, setUserProfile, setFirstInterviewObject } = useContext(AppStateContext);
@@ -158,24 +174,18 @@ export default function AvatarSelectionScreen({ route }) {
         accessibilityState={{ selected: isSelected }}
         style={styles.avatarCell}
       >
-        <View
-          style={[
-            styles.avatarOuter, // outer aligns the circle and provides optional shadow
-            isSelected ? styles.avatarOuterSelected : null,
-          ]}
-        >
-          <View style={styles.avatarInner}>
-            <Image
-              source={{ uri: item }}
-              resizeMode="cover"
-              accessibilityLabel={`Avatar ${index + 1}`}
-              style={styles.avatarImage}
-            />
-          </View>
+        <View style={[styles.avatarOuter, isSelected && styles.avatarOuterSelected]}>
+          <Image
+            source={{ uri: item }}
+            resizeMode="cover"
+            accessibilityLabel={`Avatar ${index + 1}`}
+            style={styles.avatarImage}
+          />
         </View>
       </TouchableOpacity>
     );
   };
+
 
   return (
     <View style={styles.container}>
@@ -242,9 +252,11 @@ export default function AvatarSelectionScreen({ route }) {
               data={avatars}
               renderItem={renderItem}
               keyExtractor={(_, idx) => String(idx)}
-              numColumns={3}
+              numColumns={COLUMNS}
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={{ alignItems: 'center', paddingHorizontal: 0 }}
+              columnWrapperStyle={{
+                justifyContent: 'space-between',
+              }}
             />
           </View>
         )}
@@ -271,16 +283,6 @@ export default function AvatarSelectionScreen({ route }) {
   );
 }
 
-// Calculate column gaps so squares fill exactly
-const SCREEN_WIDTH = Dimensions.get('window').width;
-const CONTAINER_HORIZONTAL_PADDING = 16;
-const COLUMNS = 3;
-const SIDE_MARGIN = 8;
-const totalSideMargins = COLUMNS * SIDE_MARGIN * 2;
-const available =
-  SCREEN_WIDTH - CONTAINER_HORIZONTAL_PADDING * 2 - totalSideMargins;
-// const CELL_SIZE = Math.floor(available / COLUMNS);
-const CELL_SIZE = 100;
 
 const styles = StyleSheet.create({
   container: {
@@ -328,18 +330,21 @@ const styles = StyleSheet.create({
     color: '#475569',
     marginTop: 12,
   },
-
+  screenWrap: {
+    flex: 1,
+    width: '85%',
+    alignSelf: 'center',
+    justifyContent: 'flex-start',
+  },
 
   avatarCell: {
     width: CELL_SIZE,
-    height: CELL_SIZE + 16, // allow vertical padding for touch area and label space
-    // paddingVertical: 8,
+    // keep touch target slightly taller than image for easier taps
+    height: CELL_SIZE + 12,
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: SIDE_MARGIN,
   },
 
-  // Outer wrapper controls shadow and selected border. No inner padding
   avatarOuter: {
     width: CELL_SIZE,
     height: CELL_SIZE,
@@ -352,27 +357,18 @@ const styles = StyleSheet.create({
     borderColor: '#e5e7eb',
   },
 
-  // Selected variant: thicker border and shadow. still no extra padding
   avatarOuterSelected: {
-    borderWidth: 5,
+    borderWidth: 4,
     borderColor: 'rgba(139, 72, 239, 1)',
     shadowColor: '#4f46e5',
     shadowOpacity: 0.18,
     shadowRadius: 6,
     elevation: 4,
   },
-  avatarInner: {
-    borderRadius: CELL_SIZE / 2,
-    overflow: 'hidden',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
 
-  // Image fills the inner wrapper exactly
   avatarImage: {
-    width: 100,
-    height: 100,
-    resizeMode: 'cover',
+    width: '100%',
+    height: '100%',
   },
 
   // footer
@@ -420,10 +416,5 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.6)',
     fontSize: 16,
   },
-  screenWrap: {
-    flex: 1,
-    width: '85%',
-    marginHorizontal: 'auto',
-    justifyContent: 'flex-start',
-  },
+
 });
