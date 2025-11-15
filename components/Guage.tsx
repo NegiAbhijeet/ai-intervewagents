@@ -6,6 +6,7 @@ import {
   Animated,
   Text,
   useWindowDimensions,
+  Image,
 } from 'react-native';
 import Svg, { Defs, LinearGradient, Stop, Circle } from 'react-native-svg';
 
@@ -51,7 +52,7 @@ export default function ArcGauge({
 
   // compute usable width from device width and padding, then clamp to maxSize
   const usableWidth = Math.max(windowWidth - horizontalPadding * 2, 0);
-  const size = Math.min(usableWidth, maxSize)-80;
+  const size = Math.min(usableWidth, maxSize) - 70;
 
   // radii are calculated from the full diameter `size` so the geometry stays consistent
   const outerRadius = (size - outer.strokeWidth) / 2;
@@ -90,74 +91,82 @@ export default function ArcGauge({
   const labelPaddingBottom = Math.round(size * 0.12);
 
   return (
-    <View style={[styles.wrapper, { width: "100%", height: svgHeight + 30 }]}>
-      <Svg width={size} height={svgHeight + 30}>
-        <Defs>
-          <LinearGradient
-            id={outer.gradient.id}
-            x1="0%"
-            y1="0%"
-            x2="100%"
-            y2="0%"
-          >
-            {outer.gradient.stops.map((s, i) => (
-              <Stop key={i} offset={s.offset} stopColor={s.stopColor} />
-            ))}
-          </LinearGradient>
+    <View style={[styles.wrapper, { position: "relative", width: "100%", height: svgHeight + 30, marginTop: 32 }]}>
+      <View style={{ width: "100%", position: "absolute", top: 0, left: 8, alignItems: "center", justifyContent: "center", height: "100%" }}>
+        <Image
+          source={require('../assets/images/numbers.png')}
+          className='w-full'
+          resizeMode="contain"
+        />
+      </View>
+      <View style={{ width: "100%", position: "absolute", top: 0, left: 0, alignItems: "center", justifyContent: "center" }}>
+        <Svg width={size} height={svgHeight + 30}>
+          <Defs>
+            <LinearGradient
+              id={outer.gradient.id}
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="0%"
+            >
+              {outer.gradient.stops.map((s, i) => (
+                <Stop key={i} offset={s.offset} stopColor={s.stopColor} />
+              ))}
+            </LinearGradient>
 
-          <LinearGradient
-            id={inner.gradient.id}
-            x1="0%"
-            y1="0%"
-            x2="100%"
-            y2="0%"
-          >
-            {inner.gradient.stops.map((s, i) => (
-              <Stop key={i} offset={s.offset} stopColor={s.stopColor} />
-            ))}
-          </LinearGradient>
-        </Defs>
+            <LinearGradient
+              id={inner.gradient.id}
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="0%"
+            >
+              {inner.gradient.stops.map((s, i) => (
+                <Stop key={i} offset={s.offset} stopColor={s.stopColor} />
+              ))}
+            </LinearGradient>
+          </Defs>
 
-        {/* Outer thin static arc (full 100% of the semicircle) */}
-        {outer.enabled && (
+          {/* Outer thin static arc (full 100% of the semicircle) */}
+          {outer.enabled && (
+            <Circle
+              cx={cx}
+              cy={cy}
+              r={outerRadius}
+              stroke={`url(#${outer.gradient.id})`}
+              strokeWidth={outer.strokeWidth}
+              fill="transparent"
+              strokeDasharray={`${arcLengthOuter} ${circumferenceOuter}`}
+              transform={`rotate(${rotation} ${cx} ${cy})`}
+            />
+          )}
+
+          {/* Inner background arc */}
           <Circle
             cx={cx}
             cy={cy}
-            r={outerRadius}
-            stroke={`url(#${outer.gradient.id})`}
-            strokeWidth={outer.strokeWidth}
+            r={innerRadius}
+            stroke={inner.backgroundColor}
+            strokeWidth={inner.strokeWidth}
             fill="transparent"
-            strokeDasharray={`${arcLengthOuter} ${circumferenceOuter}`}
+            strokeDasharray={`${arcLengthInner} ${circumferenceInner}`}
             transform={`rotate(${rotation} ${cx} ${cy})`}
           />
-        )}
 
-        {/* Inner background arc */}
-        <Circle
-          cx={cx}
-          cy={cy}
-          r={innerRadius}
-          stroke={inner.backgroundColor}
-          strokeWidth={inner.strokeWidth}
-          fill="transparent"
-          strokeDasharray={`${arcLengthInner} ${circumferenceInner}`}
-          transform={`rotate(${rotation} ${cx} ${cy})`}
-        />
-
-        {/* Inner animated arc */}
-        <AnimatedCircle
-          cx={cx}
-          cy={cy}
-          r={innerRadius}
-          stroke={`url(#${inner.gradient.id})`}
-          strokeWidth={inner.strokeWidth}
-          fill="transparent"
-          strokeDasharray={`${arcLengthInner} ${circumferenceInner}`}
-          strokeDashoffset={strokeDashoffsetInner}
-          transform={`rotate(${rotation} ${cx} ${cy})`}
-        />
-      </Svg>
-
+          {/* Inner animated arc */}
+          <AnimatedCircle
+            cx={cx}
+            cy={cy}
+            r={innerRadius}
+            stroke={`url(#${inner.gradient.id})`}
+            strokeWidth={inner.strokeWidth}
+            fill="transparent"
+            strokeDasharray={`${arcLengthInner} ${circumferenceInner}`}
+            strokeDashoffset={strokeDashoffsetInner}
+            transform={`rotate(${rotation} ${cx} ${cy})`}
+          />
+        </Svg>
+      </View>
       {/* Centered label over the semicircle */}
       <View
         style={[
