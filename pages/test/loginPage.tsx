@@ -9,6 +9,7 @@ import {
   Platform,
   KeyboardAvoidingView,
   ActivityIndicator,
+  Dimensions,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -23,6 +24,7 @@ import auth from '@react-native-firebase/auth';
 import GoogleLoginButton from '../../components/GoogleLoginButton';
 const penguin = require('../../assets/images/loginPeng.png');
 const google = require('../../assets/images/google1.png');
+const { width: screenWidth } = Dimensions.get('window');
 
 export default function LoginScreen() {
   const { setUserProfile, setOnboardingComplete, setFirebaseUser } =
@@ -38,7 +40,7 @@ export default function LoginScreen() {
     useRef(null),
   ];
 
-  const [confirmObj, setConfirmObj] = useState(null); 
+  const [confirmObj, setConfirmObj] = useState(null);
   const [timer, setTimer] = useState(0);
   const [otpLoading, setOtpLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
@@ -450,9 +452,11 @@ const styles = StyleSheet.create({
   },
   otpRow: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginTop: 18,
-    width: '60%',
+    width: '100%',
+    maxWidth: Math.min(360, screenWidth * 0.85),
   },
   otpBox: {
     width: 48,
@@ -462,7 +466,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(139, 71, 239, 1)',
     textAlign: 'center',
     fontSize: 20,
-    marginHorizontal: 6,
+    flexShrink: 1,       
   },
   resend: {
     color: 'rgba(60, 60, 60, 1)',
