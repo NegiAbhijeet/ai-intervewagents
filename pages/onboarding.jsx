@@ -20,6 +20,7 @@ import { AppStateContext } from '../components/AppContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CarouselImage1 from '../assets/images/onboarding/1.svg';
 import CarouselImage2 from '../assets/images/onboarding/2.svg';
+import BackgroundGradient2 from '../components/backgroundGradient2';
 const AutoSvg = ({ Svg }) => (
   <View style={{ width: '100%', height: 320, justifyContent: 'center', alignItems: 'center' }}>
     <Svg
@@ -102,11 +103,7 @@ export default function OnboardingCarousel() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Image
-        source={require('../assets/images/bgGradient.png')}
-        style={styles.backgroundImage}
-        resizeMode="cover"
-      />
+      <BackgroundGradient2 />
 
       <View style={styles.carouselWrapper}>
         {/* <View style={{ width: '80%', margin: 'auto' }}>
@@ -297,6 +294,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: '600',
+    lineHeight: 27
   },
   bottomBlackLine: {
     marginTop: 36,

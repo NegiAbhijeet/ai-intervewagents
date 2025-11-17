@@ -22,8 +22,9 @@ import fetchWithAuth from '../../libs/fetchWithAuth';
 import { API_URL } from '../../components/config';
 import auth from '@react-native-firebase/auth';
 import GoogleLoginButton from '../../components/GoogleLoginButton';
-const penguin = require('../../assets/images/loginPeng.png');
-const google = require('../../assets/images/google1.png');
+import LoginPen from "../../assets/images/loginPeng.svg"
+// const penguin = require('../../assets/images/loginPeng.png');
+// const google = require('../../assets/images/google1.png');
 const { width: screenWidth } = Dimensions.get('window');
 
 export default function LoginScreen() {
@@ -246,7 +247,8 @@ export default function LoginScreen() {
           style={styles.container}
         >
           <View style={styles.topLogoWrapper}>
-            <Image source={penguin} style={styles.penguin} />
+            <LoginPen width={280} height={230} />
+            {/* <Image source={penguin} style={styles.penguin} /> */}
           </View>
 
           <View style={styles.card}>
@@ -269,7 +271,7 @@ export default function LoginScreen() {
             {/* Show Send OTP when no confirmation yet. Once OTP sent, hide send and show boxes */}
             {!confirmObj ? (
               <TouchableOpacity
-                style={[styles.loginButton, { marginTop: 18 }]}
+                style={[styles.loginButton, { marginTop: 24 }]}
                 onPress={sendOtp}
                 activeOpacity={0.8}
                 disabled={otpLoading || phone.length < 10}
@@ -429,8 +431,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: 22,
-    fontWeight: '700',
+    fontSize: 28,
+    fontWeight: 600,
     marginBottom: 20,
   },
   field: {
@@ -440,9 +442,10 @@ const styles = StyleSheet.create({
     color: 'rgba(139, 71, 239, 1)',
     fontSize: 12,
     marginBottom: 8,
+    fontWeight: 600
   },
   input: {
-    borderWidth: 1,
+    borderWidth: 1.2,
     borderColor: 'rgba(139, 71, 239, 1)',
     borderRadius: 8,
     paddingHorizontal: 16,
@@ -466,7 +469,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(139, 71, 239, 1)',
     textAlign: 'center',
     fontSize: 20,
-    flexShrink: 1,       
+    flexShrink: 1,
   },
   resend: {
     color: 'rgba(60, 60, 60, 1)',
@@ -476,7 +479,7 @@ const styles = StyleSheet.create({
     color: 'rgba(180, 180, 180, 1)',
   },
   loginButton: {
-    marginTop: 16,
+    marginTop: 24,
     width: '100%',
     borderRadius: 30,
     height: 54,

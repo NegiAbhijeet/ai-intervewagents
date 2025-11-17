@@ -15,10 +15,11 @@ import { AppStateContext } from './AppContext';
 import { API_URL } from './config';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import Toast from 'react-native-toast-message';
+import BackgroundGradient2 from './backgroundGradient2';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const CONTAINER_HORIZONTAL_PADDING = 0; // total horizontal padding inside screenWrap
 const COLUMNS = 3;
-const GAP = 12; 
+const GAP = 12;
 
 // compute the container width that holds the grid (screenWrap uses 85% width)
 const CONTAINER_WIDTH = Math.floor(SCREEN_WIDTH * 0.85) - CONTAINER_HORIZONTAL_PADDING * 2;
@@ -189,22 +190,13 @@ export default function AvatarSelectionScreen({ route }) {
 
   return (
     <View style={styles.container}>
-      <Image
-        source={require('../assets/images/bgGradient.png')}
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          transform: 'translateY(250%)',
-          height: '100%',
-        }}
-        resizeMode="cover"
-      />
+      <BackgroundGradient2 />
       <View style={styles.previewContainer}>
         <View style={styles.previewWrapper}>
           <Image
             source={require('../assets/images/talkingPenguine.png')}
             style={styles.previewImage}
+            resizeMode="contain"
           />
         </View>
         <View style={{ width: "100%", alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 4, marginBottom: 30 }}>
@@ -287,8 +279,6 @@ export default function AvatarSelectionScreen({ route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8fafc',
-    paddingTop: 32,
   },
   headerContainer: {
     alignItems: 'center',
@@ -307,21 +297,19 @@ const styles = StyleSheet.create({
   // preview
   previewContainer: {
     alignItems: 'center',
-    marginBottom: 36,
+    marginBottom: 36
   },
   previewWrapper: {
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+    height: 130,
+    marginVertical: 40
   },
-  previewImage: { marginBottom: 40 },
-  previewPlaceholder: {
-    width: '100%',
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#e0e7ff',
-  },
+  previewImage: {
+    width: '85%',
+  }
+  ,
   previewPlaceholderText: {
     color: '#4f46e5',
   },

@@ -11,6 +11,7 @@ import {
   Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import BackgroundGradient1 from '../components/backgroundGradient1';
 
 const { width, height } = Dimensions.get('window');
 
@@ -18,16 +19,9 @@ export default function GetStartedScreen() {
   const navigation = useNavigation();
   return (
     <SafeAreaView style={styles.safe}>
-      <StatusBar
-        barStyle="dark-content"
-        translucent
-        backgroundColor="transparent"
-      />
-
-      <ImageBackground
-        source={require('../assets/images/bgGradient.png')}
+      <BackgroundGradient1 />
+      <View
         style={styles.bg}
-        resizeMode="cover"
       >
         <View style={styles.header}>
           <View style={styles.logoWrap}>
@@ -77,7 +71,7 @@ export default function GetStartedScreen() {
             </Text>
           </Pressable>
         </View>
-      </ImageBackground>
+      </View>
     </SafeAreaView>
   );
 }
@@ -85,7 +79,6 @@ export default function GetStartedScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   bg: {
     flex: 1,
@@ -117,6 +110,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#6B7280',
     marginTop: -2,
+    fontWeight: 400
   },
   centerArea: {
     alignItems: 'center',
@@ -142,12 +136,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     color: '#374151',
-    marginTop: 28,
+    marginTop: 30,
+    lineHeight: 27.2
   },
   primaryButton: {
     width: '85%',
     backgroundColor: '#000',
-    paddingVertical: 14,
+    paddingVertical: 15,
     borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
@@ -157,20 +152,22 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: '700',
+    lineHeight: 27.2
   },
   secondaryButton: {
     width: '85%',
-    paddingVertical: 12,
+    paddingVertical: 15,
     borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: 'rgba(0,0,0,1)',
   },
   secondaryButtonText: {
     color: '#111827',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: 600,
+    lineHeight: 27.2
   },
   bottomSpacer: {
     width: '100%',

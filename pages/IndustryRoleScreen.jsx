@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { AppStateContext } from '../components/AppContext';
 import industries from '../libs/industryJson.json'
+import BackgroundGradient2 from '../components/backgroundGradient2';
 
 const levels = [
   { label: 'Entry level', value: 1 },
@@ -139,23 +140,8 @@ const IndustryRoleScreen = () => {
   };
 
   return (
-    <View style={styles.container}><Image
-      source={require('../assets/images/bgGradient.png')}
-      style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        transform: 'translateY(250%)',
-        height: '100%',
-      }}
-      resizeMode="cover"
-    />
-      <Image
-        source={require('../assets/images/bgGradient.png')}
-        style={styles.backgroundImage}
-        resizeMode="cover"
-      />
-
+    <View style={styles.container}>
+      <BackgroundGradient2 />
       <View style={styles.screenWrap}>
         {step === 1 && (
           <>
@@ -274,17 +260,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'white',
-    borderRadius: 14,
+    borderRadius: 10.6,
     marginBottom: 6,
     borderWidth: 1,
     paddingHorizontal: 20,
-    paddingVertical: 12,
     borderColor: 'rgba(242, 242, 242, 1)',
     shadowColor: '#C70039',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.4,
     shadowRadius: 2,
     elevation: 1,
+    paddingVertical: 12
   },
   cardSelected: {
     borderColor: '#111827',
@@ -303,7 +289,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    paddingVertical: 6,
   },
   value: {
     flex: 1,
@@ -311,6 +296,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#111827',
     textAlign: 'center',
+    lineHeight: 27.2
   },
   dropdownLabel: {
     fontSize: 14,
@@ -361,9 +347,9 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     alignItems: 'center',
     justifyContent: 'center',
-    lineHeight: 30,
+    lineHeight: 27.2,
   },
-  buttonText: { color: 'white', fontSize: 16, fontWeight: '600' },
+  buttonText: { color: 'white', fontSize: 18, fontWeight: '600', lineHeight: 27.2 },
   bottomBlackLine: {
     marginTop: 36,
     height: 5,

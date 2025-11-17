@@ -222,8 +222,8 @@ const ContextGate = ({ children }) => {
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <StatusBar
         barStyle="dark-content"
-        backgroundColor={authLoading ? '#4f46e5' : 'white'}
-        translucent={false}
+        translucent
+        backgroundColor="transparent"
       />
 
       {authLoading ? (
