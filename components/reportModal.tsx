@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Modal,
   View,
@@ -6,13 +6,11 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
-  Button,
   Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Tabs from './Tabs';
 import CarouselCard from './reports/CarouselCard';
-import AnalysisCards from './AnalysisCards';
 import ArcGaugeFull from './Guage';
 import SkillCards from './SkillCards';
 import InterviewCard from './InterviewCard';
@@ -22,7 +20,8 @@ import InterviewSummaryModal from './summaryModal';
 import ReportCards from './ReportCards';
 import Transcript from './Transcript';
 import { useNavigation } from '@react-navigation/native';
-
+import RewindImage from '../assets/images/Rewind.svg';
+import RetryIamge from '../assets/images/Repeat.svg';
 const ReportModal = ({
   visible,
   onClose,
@@ -254,11 +253,8 @@ const ReportModal = ({
                       >
                         How to Improve
                       </Text>
-                      <Image
-                        source={require('../assets/images/Rewind.png')}
-                        className="w-7 h-7"
-                        resizeMode="cover"
-                      />
+
+                      <RewindImage />
                     </Pressable>
                     <Pressable
                       onPress={() => {
@@ -278,10 +274,7 @@ const ReportModal = ({
                         paddingVertical: 10,
                       }}
                     >
-                      <Image
-                        source={require('../assets/images/retry.png')}
-                        resizeMode="cover"
-                      />
+                      <RetryIamge />
                       <Text
                         style={{
                           fontSize: 16,

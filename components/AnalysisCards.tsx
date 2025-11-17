@@ -182,7 +182,8 @@ const styles = StyleSheet.create({
     width: '100%',
     position: "absolute",
     top: 0,
-    right: 0
+    right: 0,
+    opacity: 0.3
   },
   cardText: { paddingHorizontal: 12, paddingBottom: 12 },
   cardTitle: { fontSize: 16, fontWeight: '800', color: '#000' },
