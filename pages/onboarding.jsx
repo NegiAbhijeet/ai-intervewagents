@@ -93,7 +93,7 @@ export default function OnboardingCarousel() {
       // fallback to direct index if available
       try {
         ref.current?.scrollTo(targetIndex);
-      } catch (err) {}
+      } catch (err) { }
     }
     setIndex(targetIndex);
   };
@@ -252,9 +252,11 @@ const styles = StyleSheet.create({
     margin: 'auto',
   },
   slide: {
-    width: PAGE_WIDTH * 0.8,
+    height: "100%",
+    width: PAGE_WIDTH * 0.85,
     alignItems: 'center',
     marginHorizontal: 'auto',
+    justifyContent: "space-around"
   },
   topImage: {
     width: '100%',
@@ -262,7 +264,6 @@ const styles = StyleSheet.create({
     objectFit: 'contain',
   },
   textBlock: {
-    marginTop: 30,
   },
   heading: {
     fontSize: 20,
@@ -281,6 +282,7 @@ const styles = StyleSheet.create({
   paginationOuter: {
     // alignItems: 'center',
     // backgroundColor: 'red',
+    marginTop:30
   },
   paginationContainer: {
     gap: 10,
