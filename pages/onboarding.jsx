@@ -18,28 +18,30 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppStateContext } from '../components/AppContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CarouselImage1 from '../assets/images/onboarding/1.svg';
+import CarouselImage2 from '../assets/images/onboarding/2.svg';
+const AutoSvg = ({ Svg }) => (
+  <View style={{ width: '100%', height: 320, justifyContent: 'center', alignItems: 'center' }}>
+    <Svg
+      width="100%"
+      height="100%"
+      preserveAspectRatio="xMidYMid meet"
+    />
+  </View>
+)
+
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const data = [
-  {
-    heading: 'Practice Realistic Interviews',
-    desc: 'Experience truly human AI interviews tailored for your goals. Get recruiter-style insights powered by advanced analytics to refine every response.',
-    img: require('../assets/images/onboarding/2.png'),
-  },
-  {
-    heading: 'Overcome Interview Nerves',
-    desc: 'Strengthen weaknesses with personalized AI feedback. Build lasting confidence and learn to structure clear, compelling answers through guided practice.',
-    img: require('../assets/images/onboarding/3.png'),
-  },
-  // {
-  //   heading: 'Boost Your Chances of Success',
-  //   desc: 'Tackle realistic, role-based interview challenges. Connect with peers, track progress, and earn rewards with streaks, badges, and certificates.',
-  //   img: require('../assets/images/onboarding/3.png'),
-  // },
-];
+  { heading: 'Practice Realistic Interviews', desc: 'Experience truly human AI interviews tailored for your goals. Get recruiter style insights powered by advanced analytics to refine every response.', img: <AutoSvg Svg={CarouselImage1} /> },
+  { heading: 'Overcome Interview Nerves', desc: 'Strengthen weaknesses with personalized AI feedback. Build lasting confidence and learn to structure clear answers through guided practice.', img: <AutoSvg Svg={CarouselImage2} /> }
+]
+
+
 
 const PAGE_WIDTH = SCREEN_WIDTH;
-const CAROUSEL_HEIGHT = SCREEN_HEIGHT * 0.7;
+const CAROUSEL_HEIGHT =
+  SCREEN_HEIGHT < 800 ? SCREEN_HEIGHT * 0.6 : SCREEN_HEIGHT * 0.7
 
 export default function OnboardingCarousel() {
   const { setOnboardingComplete } = useContext(AppStateContext);
@@ -131,13 +133,7 @@ export default function OnboardingCarousel() {
             data={data}
             renderItem={({ item }) => (
               <View style={styles.slide}>
-                <View style={{ width: '100%' }}>
-                  <Image
-                    source={item.img}
-                    style={styles.topImage}
-                    resizeMode="cover"
-                  />
-                </View>
+                {item.img}
                 <View style={styles.textBlock}>
                   <Text style={styles.heading}>{item.heading}</Text>
                   <Text style={styles.paragraph}>{item.desc}</Text>
@@ -149,6 +145,7 @@ export default function OnboardingCarousel() {
             onProgressChange={progress}
             onSnapToItem={i => setIndex(i)}
           />
+
           {/* Pagination: active dot is rectangular */}
           <View style={styles.paginationOuter}>
             <Pagination.Custom
@@ -256,12 +253,12 @@ const styles = StyleSheet.create({
     width: PAGE_WIDTH * 0.85,
     alignItems: 'center',
     marginHorizontal: 'auto',
-    justifyContent: "space-around"
+    justifyContent: "center",
   },
   topImage: {
-    width: '100%',
-    height: 361,
-    objectFit: 'contain',
+    // width: '100%',
+    // height: 361,
+    // objectFit: 'contain',
   },
   textBlock: {
   },
@@ -282,7 +279,7 @@ const styles = StyleSheet.create({
   paginationOuter: {
     // alignItems: 'center',
     // backgroundColor: 'red',
-    marginTop:30
+    // marginTop: 30
   },
   paginationContainer: {
     gap: 10,
