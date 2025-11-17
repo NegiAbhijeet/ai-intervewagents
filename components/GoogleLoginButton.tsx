@@ -109,7 +109,7 @@ const GoogleLoginButton = ({ isGoogleLoading, setIsGoogleLoading }) => {
       ) : (
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Image
-            source={require('../assets/images/google1.png')}
+            source={require('../assets/images/google.png')}
             style={styles.googleIcon}
           />
           <Text style={styles.googleText}>Continue with Google</Text>

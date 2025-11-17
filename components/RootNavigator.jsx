@@ -14,7 +14,7 @@ import PricingPage from '../pages/pricing';
 import { AppStateContext } from './AppContext';
 import GetStartedScreen from '../pages/GetStartedScreen';
 import OnboardingCarousel from '../pages/onboarding';
-import LoginScreen from '../pages/test/loginPage';
+import LoginScreen from '../pages/loginPage';
 import IndustryRoleScreen from '../pages/IndustryRoleScreen';
 const Stack = createNativeStackNavigator();
 const AuthStack = () => {

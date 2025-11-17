@@ -195,13 +195,6 @@ const Home = () => {
             <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
           }
         >
-          {/* <Button title="Open modal" onPress={() => setOpen(true)} />
-
-          <PaperSheetModal
-            visible={open}
-            onRequestClose={() => setOpen(false)}
-            onStart={() => console.log('start interview')}
-          /> */}
           {!userProfile ? (
             <SkeletonPlaceholder borderRadius={8}>
               <SkeletonPlaceholder.Item

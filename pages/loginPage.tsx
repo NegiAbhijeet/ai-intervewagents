@@ -15,16 +15,14 @@ import LinearGradient from 'react-native-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Toast from 'react-native-toast-message';
-import fetchUserDetails from '../../libs/fetchUser';
-import { AppStateContext } from '../../components/AppContext';
+import fetchUserDetails from '../libs/fetchUser';
+import { AppStateContext } from '../components/AppContext';
 
-import fetchWithAuth from '../../libs/fetchWithAuth';
-import { API_URL } from '../../components/config';
+import fetchWithAuth from '../libs/fetchWithAuth';
+import { API_URL } from '../components/config';
 import auth from '@react-native-firebase/auth';
-import GoogleLoginButton from '../../components/GoogleLoginButton';
-import LoginPen from "../../assets/images/loginPeng.svg"
-// const penguin = require('../../assets/images/loginPeng.png');
-// const google = require('../../assets/images/google1.png');
+import GoogleLoginButton from '../components/GoogleLoginButton';
+import LoginPen from "../assets/images/loginPeng.svg"
 const { width: screenWidth } = Dimensions.get('window');
 
 export default function LoginScreen() {
