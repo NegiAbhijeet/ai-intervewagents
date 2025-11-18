@@ -219,7 +219,7 @@ const IndustryRoleScreen = () => {
             <Text style={styles.buttonText}>Next</Text>
           </Pressable>
 
-          <View style={styles.bottomBlackLine} />
+          {/* <View style={styles.bottomBlackLine} /> */}
         </View>
 
         <View style={{ height: 40 }} />

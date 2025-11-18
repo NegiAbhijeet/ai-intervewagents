@@ -143,10 +143,12 @@ const styles = StyleSheet.create({
     width: '85%',
     backgroundColor: '#000',
     paddingVertical: 15,
-    borderRadius: 28,
+    borderRadius: 30,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 12,
+    borderWidth: 2,
+    borderColor: 'rgba(0,0,0,1)',
   },
   primaryButtonText: {
     color: '#fff',
@@ -157,7 +159,7 @@ const styles = StyleSheet.create({
   secondaryButton: {
     width: '85%',
     paddingVertical: 15,
-    borderRadius: 28,
+    borderRadius: 30,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
