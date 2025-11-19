@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   StyleSheet,
   View,
@@ -12,11 +12,28 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import BackgroundGradient1 from '../components/backgroundGradient1';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AppStateContext } from '../components/AppContext';
 
 const { width, height } = Dimensions.get('window');
 
 export default function GetStartedScreen() {
+  const { setOnboardingComplete } = useContext(AppStateContext)
   const navigation = useNavigation();
+  async function onFinish() {
+    try {
+      await AsyncStorage.setItem('onboardingComplete', 'true');
+      const check = await AsyncStorage.getItem('onboardingComplete');
+      if (check === 'true') {
+        setOnboardingComplete(true);
+      } else {
+        setOnboardingComplete(false);
+      }
+    } catch (e) {
+      console.error('error setting onboardingComplete', e);
+      setOnboardingComplete(false);
+    }
+  }
   return (
     <SafeAreaView style={styles.safe}>
       <BackgroundGradient1 />
@@ -64,7 +81,7 @@ export default function GetStartedScreen() {
 
           <Pressable
             style={styles.secondaryButton}
-            onPress={() => navigation.navigate('Login')}
+            onPress={onFinish}
           >
             <Text style={styles.secondaryButtonText}>
               Already Have An Account ? Login

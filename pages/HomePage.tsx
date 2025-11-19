@@ -1,6 +1,6 @@
 import Layout from './Layout';
-import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { Button, Image, ImageBackground, ImageSourcePropType, Pressable, ScrollView, Text, View } from 'react-native';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { Animated, Button, Easing, Image, ImageBackground, ImageSourcePropType, Pressable, ScrollView, Text, View } from 'react-native';
 import StatsCard from '../components/StatsCard';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import { AppStateContext } from '../components/AppContext';
@@ -40,43 +40,7 @@ const interviews = [
     },
 ];
 
-const StatsSkeleton = () => {
-    return (
-        <SkeletonPlaceholder borderRadius={8}>
-            <SkeletonPlaceholder.Item
-                flexDirection="row"
-                flexWrap="wrap"
-                justifyContent="space-between"
-            >
-                {/* 4 Placeholder Cards - 2 per row */}
-                <SkeletonPlaceholder.Item
-                    width="48%"
-                    height={72}
-                    marginBottom={16}
-                    borderRadius={12}
-                />
-                <SkeletonPlaceholder.Item
-                    width="48%"
-                    height={72}
-                    marginBottom={16}
-                    borderRadius={12}
-                />
-                <SkeletonPlaceholder.Item
-                    width="48%"
-                    height={72}
-                    marginBottom={16}
-                    borderRadius={12}
-                />
-                <SkeletonPlaceholder.Item
-                    width="48%"
-                    height={72}
-                    marginBottom={16}
-                    borderRadius={12}
-                />
-            </SkeletonPlaceholder.Item>
-        </SkeletonPlaceholder>
-    );
-};
+
 const HomePage = () => {
     const ratio = useMemo(() => imgW / imgH || 1, [imgW, imgH]);
 
@@ -91,10 +55,40 @@ const HomePage = () => {
         setFirstInterviewObject
     } = useContext(AppStateContext);
     const [meetings, setMeetings] = useState([]);
+    const [lastMeeting, setLastMeeting] = useState([]);
     const [overallScore, setOverallScore] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const finalLoading = isLoading || !userProfile;
+
+    const spin = useRef(new Animated.Value(0)).current
+
+    useEffect(() => {
+        let animation = null
+        if (isLoading) {
+            animation = Animated.loop(
+                Animated.timing(spin, {
+                    toValue: 1,
+                    duration: 800,
+                    easing: Easing.linear,
+                    useNativeDriver: true
+                })
+            )
+            animation.start()
+        } else {
+            // stop and reset
+            spin.stopAnimation(() => spin.setValue(0))
+        }
+        return () => {
+            if (animation) animation.stop()
+            spin.setValue(0)
+        }
+    }, [isLoading, spin])
+
+    const rotate = spin.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0deg', '360deg']
+    })
     async function fetchMeetings(isRefreshingCall = false) {
         setIsLoading(true);
         if (isRefreshingCall) {
@@ -122,7 +116,10 @@ const HomePage = () => {
             const completedMeetings = sortedMeetings.filter(
                 item => item?.status === 'Completed',
             );
-            setMeetings(completedMeetings);
+            if (completedMeetings.length > 0) {
+                setLastMeeting(completedMeetings[0])
+            }
+            // setMeetings(completedMeetings);
         } catch (err) {
             console.error(err);
         } finally {
@@ -215,7 +212,7 @@ const HomePage = () => {
                     ) : (
                         <View className='px-4 flex-row items-center justify-between'>
                             <View className=''>
-                                <Text style={{ fontSize: 18, fontWeight: 700, lineHeight:18 }}>
+                                <Text style={{ fontSize: 18, fontWeight: 700, lineHeight: 18 }}>
                                     Hello {userProfile?.first_name || '_'} 👋
                                 </Text>
                                 <Text style={{ fontSize: 15, fontWeight: 400 }}>
@@ -227,11 +224,28 @@ const HomePage = () => {
                     )}
                     <View style={{ backgroundColor: "rgba(103, 86, 239, 0.08)", borderWidth: 1, borderRadius: 14, borderColor: "rgba(239, 239, 239, 1)", marginTop: 15 }} className='px-8 py-4 flex-row items-center justify-between w-[85%] mx-auto'>
                         <View>
-                            <Text style={{ fontSize: 12, fontWeight: 700 }}>Product Analyst interview</Text>
-                            <Text style={{ fontSize: 10, fontWeight: 600 }}>Score : 82%</Text>
+                            <Text style={{ fontSize: 12, fontWeight: 700 }}>{lastMeeting?.position || "No Interview Found"}</Text>
+                            <Text style={{ fontSize: 10, fontWeight: 600 }}>Score : {lastMeeting?.feedback?.averagePercentage || "N/A"}{lastMeeting?.feedback?.averagePercentage && "%"}</Text>
                             <Text style={{ fontSize: 10, fontWeight: 400 }}>You're Getting Better!</Text>
                         </View>
-                        <Image source={require("../assets/images/reload.png")} />
+
+
+                        {isLoading ? (
+                            <Animated.Image
+                                source={require('../assets/images/reload.png')}
+                                style={{
+                                    width: 28,
+                                    height: 28,
+                                    transform: [{ rotate }],
+                                    resizeMode: 'contain'
+                                }}
+                            />
+                        ) : (<Pressable onPress={fetchMeetings}>
+                            <Image
+                                source={require('../assets/images/reload.png')}
+                                style={{ width: 28, height: 28, resizeMode: 'contain' }}
+                            /></Pressable>
+                        )}
                     </View>
 
                     <View className="mb-10">
