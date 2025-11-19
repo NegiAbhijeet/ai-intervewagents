@@ -29,6 +29,7 @@ import fetchWithAuth from '../libs/fetchWithAuth';
 import { GradientBorderView } from '@good-react-native/gradient-border';
 import BackgroundGradient2 from '../components/backgroundGradient2';
 import TopBar from '../components/TopBar';
+import EditProfileModal from '../components/editProfile';
 const levels = [
   { label: 'Entry level', value: 1 },
   { label: 'Mid-level', value: 3 },
@@ -50,14 +51,16 @@ export default function ProfileScreen() {
     ? new Date(userProfile.plan_expiry).toLocaleDateString('en-GB')
     : '';
   const [loading, setLoading] = useState(false);
+  const [isIsEditProfile, setIsEditProfile] = useState(false)
   const [profileData, setProfileData] = useState({
     avatar: userProfile?.avatar,
-    name: firebaseUser?.displayName,
+    name: "",
     email: firebaseUser?.email,
     totalMinutes: String(totalMinutes),
     score: userProfile?.rating,
     level: "",
-    role: ""
+    role: "",
+    industry:""
   });
   const fetchCandidates = async () => {
     try {
@@ -68,12 +71,13 @@ export default function ProfileScreen() {
         const candidate = result.data[0];
         setProfileData({
           avatar: userProfile?.avatar,
-          name: firebaseUser?.displayName,
+          name: `${candidate?.firstName} ${candidate?.lastName}`,
           email: firebaseUser?.email,
           totalMinutes: String(totalMinutes),
           score: userProfile?.rating,
           level: candidate?.experienceYears,
-          role: candidate?.position
+          role: candidate?.position,
+          industry: candidate?.industry
         })
       }
     } catch (error) {
@@ -88,8 +92,8 @@ export default function ProfileScreen() {
   }, [userProfile?.uid]);
   async function fetchDetails() {
     try {
-      if (user?.uid) {
-        profile = await fetchUserDetails(userProfile?.uid);
+      if (userProfile?.uid) {
+        await fetchUserDetails(userProfile?.uid);
       }
     } catch (err) {
       console.log('Error fetching user details:', err);
@@ -282,7 +286,7 @@ export default function ProfileScreen() {
                   }}
                   style={{
                     backgroundColor: 'transparent',
-                    borderWidth: 2,
+                    borderWidth: 3,
                     borderRadius: "100%",
                   }}
                 >
@@ -314,20 +318,20 @@ export default function ProfileScreen() {
                   </View>
                 </View>
               )}
-              {/* <Pressable onPress={navigation.navigate("")}> */}
-              <Text
-                style={{
-                  fontSize: 12,
-                  fontWeight: '500',
-                  color: 'rgba(143, 15, 200, 1)',
-                  alignSelf: 'center',
-                  marginTop: 8,
-                  textDecorationLine: 'underline'
-                }}
-              >
-                Edit Profile
-              </Text>
-              {/* </Pressable> */}
+              <Pressable onPress={() => setIsEditProfile(true)}>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    fontWeight: '500',
+                    color: 'rgba(143, 15, 200, 1)',
+                    alignSelf: 'center',
+                    marginTop: 8,
+                    textDecorationLine: 'underline'
+                  }}
+                >
+                  Edit Profile
+                </Text>
+              </Pressable>
               <View style={{
                 flexDirection: 'row',
                 flexWrap: 'wrap',
@@ -462,6 +466,18 @@ export default function ProfileScreen() {
             </View>
           </View>
         </View>
+
+        <EditProfileModal
+          visible={isIsEditProfile}
+          onClose={() => setIsEditProfile(false)}
+          currentName={profileData?.name}
+          avatarUrl={profileData?.avatar}
+          initialEmail={profileData?.email}
+          uid={userProfile?.uid}
+          onSuccess={fetchCandidates}
+          initialPosition={profileData?.role}
+          initialIndustry={profileData?.industry}
+        />
       </ScrollView>
     </>
   );
