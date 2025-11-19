@@ -137,7 +137,7 @@
             "Risk Management Tools"
         ]
     },
-    "Engineering (Mech, Electrical, Civil, Industrial)": {
+    "Engineering": {
         "Design Engineer": [
             "AutoCAD",
             "SolidWorks",
@@ -145,14 +145,14 @@
             "ANSYS",
             "Creo"
         ],
-        "Project Manager (Engineering)": [
+        "Project Manager": [
             "MS Project",
             "Primavera P6",
             "AutoCAD",
             "Excel",
             "SAP"
         ],
-        "Mechanical Engineer (Production / Manufacturing)": [
+        "Mechanical Engineer": [
             "AutoCAD",
             "SolidWorks",
             "Lean Manufacturing",
@@ -187,7 +187,7 @@
             "Allen Bradley",
             "HMI"
         ],
-        "Quality Control (QC) Engineer": [
+        "Quality Control Engineer": [
             "ISO 9001",
             "Statistical Process Control",
             "Minitab",
@@ -224,7 +224,7 @@
             "Airflow",
             "AWS"
         ],
-        "Business Intelligence (BI) Analyst": [
+        "Business Intelligence Analyst": [
             "Tableau",
             "Power BI",
             "SQL",
@@ -303,7 +303,7 @@
             "Tableau",
             "Survey Tools"
         ],
-        "Sustainability / ESG Consultant": [
+        "Sustainability": [
             "ESG Reporting Tools",
             "Excel",
             "Tableau",
@@ -319,7 +319,7 @@
             "Navigation Systems",
             "Aviation Regulations"
         ],
-        "Aircraft Maintenance Engineer (AME)": [
+        "Aircraft Maintenance Engineer": [
             "Aircraft Systems",
             "AME License",
             "Troubleshooting Tools",
@@ -384,7 +384,7 @@
             "SAP",
             "Route Optimization Software"
         ],
-        "Procurement Specialist / Buyer": [
+        "Procurement Specialist": [
             "SAP",
             "Oracle Procurement",
             "Excel",
@@ -398,7 +398,7 @@
             "Inventory Management Software",
             "Barcode Scanners"
         ],
-        "Export-Import (EXIM) Executive": [
+        "Export-Import Executive": [
             "Customs Software",
             "Incoterms",
             "Excel",
@@ -435,14 +435,14 @@
             "SketchUp",
             "MATLAB"
         ],
-        "Project Manager (Renewable Energy)": [
+        "Project Manager": [
             "MS Project",
             "Primavera P6",
             "AutoCAD",
             "Excel",
             "SAP"
         ],
-        "O&M Engineer (Operations and Maintenance)": [
+        "Operations & Maintenance Engineer": [
             "SCADA Systems",
             "PVsyst",
             "Monitoring Software",
@@ -463,7 +463,7 @@
             "Financial Modeling",
             "RETScreen"
         ],
-        "Business Development Manager (Renewable Energy)": [
+        "Business Development": [
             "CRM Software",
             "Excel",
             "PowerPoint",
@@ -500,7 +500,7 @@
             "MATLAB",
             "Process Simulation Software"
         ],
-        "Quality Assurance (QA) Engineer": [
+        "Quality Assurance Engineer": [
             "ISO 9001",
             "Minitab",
             "Six Sigma",
@@ -528,7 +528,7 @@
             "MATLAB",
             "Prototyping Tools"
         ],
-        "EHS Officer (Environment, Health, Safety)": [
+        "EHS Officer": [
             "Safety Management Software",
             "Risk Assessment Tools",
             "ISO 45001",
@@ -544,14 +544,14 @@
         ]
     },
     "Healthcare and Pharmaceuticals": {
-        "Doctor / Physician": [
+        "Physician": [
             "EMR/EHR Systems",
             "Medical Diagnosis",
             "Clinical Procedures",
             "HIPAA Compliance",
             "Medical Imaging Software"
         ],
-        "Nurse / Registered Nurse (RN)": [
+        "Nurse": [
             "EMR/EHR Systems",
             "IV Administration",
             "Patient Monitoring Systems",
@@ -565,7 +565,7 @@
             "Inventory Management",
             "Clinical Knowledge"
         ],
-        "Clinical Research Associate (CRA)": [
+        "Clinical Research Associate": [
             "GCP Guidelines",
             "Clinical Trial Management Systems",
             "EDC Systems",
@@ -579,14 +579,14 @@
             "FDA Regulations",
             "Testing Equipment"
         ],
-        "Hospital Administrator / Manager": [
+        "Hospital Administrator": [
             "Hospital Information Systems",
             "Excel",
             "SAP",
             "Healthcare Compliance",
             "Budget Management Software"
         ],
-        "Medical Representative (MR)": [
+        "Medical Representative": [
             "CRM Software",
             "PowerPoint",
             "Product Knowledge",

@@ -53,6 +53,7 @@ export default function ProfileScreen() {
   const [loading, setLoading] = useState(false);
   const [isIsEditProfile, setIsEditProfile] = useState(false)
   const [profileData, setProfileData] = useState({
+    canId: "",
     avatar: userProfile?.avatar,
     name: "",
     email: firebaseUser?.email,
@@ -60,7 +61,7 @@ export default function ProfileScreen() {
     score: userProfile?.rating,
     level: "",
     role: "",
-    industry:""
+    industry: ""
   });
   const fetchCandidates = async () => {
     try {
@@ -77,7 +78,8 @@ export default function ProfileScreen() {
           score: userProfile?.rating,
           level: candidate?.experienceYears,
           role: candidate?.position,
-          industry: candidate?.industry
+          industry: candidate?.industry,
+          canId: candidate?.canId
         })
       }
     } catch (error) {
@@ -473,7 +475,7 @@ export default function ProfileScreen() {
           currentName={profileData?.name}
           avatarUrl={profileData?.avatar}
           initialEmail={profileData?.email}
-          uid={userProfile?.uid}
+          canId={profileData?.canId}
           onSuccess={fetchCandidates}
           initialPosition={profileData?.role}
           initialIndustry={profileData?.industry}

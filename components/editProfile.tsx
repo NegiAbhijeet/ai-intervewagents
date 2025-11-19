@@ -30,7 +30,7 @@ export default function EditProfileModal({
     avatarUrl = null,
     initialPosition,
     initialIndustry,
-    uid,
+    canId,
     onSuccess,
 }) {
     const [name, setName] = useState(currentName)
@@ -70,7 +70,7 @@ export default function EditProfileModal({
         const nameArray = name.trim().split(' ')
         let firstName = nameArray[0]
         let lastName = nameArray.slice(1).join(' ')
-        let url = `${JAVA_API_URL}/api/candidates/update/${uid}`
+        let url = `${JAVA_API_URL}/api/candidates/update/${canId}`
         const payload = { firstName, lastName, }
         // include industry/position only when selected
         if (industry) payload.industry = industry
@@ -153,7 +153,7 @@ export default function EditProfileModal({
                                 onChangeText={setName}
                                 placeholder="Enter name"
                                 style={styles.input}
-                                placeholderTextColor="rgba(139, 71, 239, 0.4)"
+                                placeholderTextColor="gray"
                                 maxLength={50}
                                 editable={!isLoading}
                             />
@@ -189,7 +189,7 @@ export default function EditProfileModal({
                     </View>
                 </KeyboardAvoidingView>
             </View>
-            <EditAvatarModal visible={isAvatarEdit} onClose={() => setIsAvatarEdit(false)} currentAvatar={avatarUrl} uid={uid} />
+            <EditAvatarModal visible={isAvatarEdit} onClose={() => setIsAvatarEdit(false)} currentAvatar={avatarUrl} canId={canId} />
         </Modal>
     )
 }
