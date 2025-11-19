@@ -124,7 +124,7 @@ const TopBar = () => {
     typeof unreadNotification === 'number' ? unreadNotification : 0;
 
   return (
-    <View className="flex-row justify-between items-center px-4 pt-4 pb-3 bg-white border-b border-gray-200 shadow-md">
+    <View className="flex-row justify-between items-center px-[6%] pt-4 pb-3 bg-white shadow-md">
       <TouchableOpacity
         onPress={() => setMenuVisible(true)}
         className="flex-row items-center gap-2"
@@ -142,17 +142,20 @@ const TopBar = () => {
           className="flex-row items-center gap-2"
         >
           <View
-            className="flex-row items-center justify-center gap-2 border border-gray-300 rounded-full px-4 py-1"
-            style={{ overflow: 'hidden' }}
+            className="flex-row items-center justify-center gap-1 border border-transparent rounded-full px-3 py-1"
+            style={{ overflow: 'hidden', backgroundColor:"rgba(209, 209, 209, 0.3)" }}
           >
             {/* <Image
               source={require('../assets/images/flame.png')}
               className="w-5 h-5"
               resizeMode="contain"
             /> */}
-            <Ionicons name="trophy" size={14} color="#FBBF24" />
+            <Image
+              source={require("../assets/images/fire.png")}
+            />
+            {/* <Ionicons name="trophy" size={14} color="#FBBF24" /> */}
             <Text className="text-base font-semibold">
-              #{leaderboardRank || 0}
+              {leaderboardRank || 0}
             </Text>
           </View>
         </TouchableOpacity>
@@ -185,11 +188,12 @@ const TopBar = () => {
           )}
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => setMenuVisible(true)}>
+        {/* <TouchableOpacity onPress={() => setMenuVisible(true)}>
           {userProfile?.avatar ? (
             <View className="w-9 h-9 rounded-full border-2 border-black bg-blue-500 justify-center items-center">
               <Image
                 source={{ uri: userProfile?.avatar }}
+
                 className="w-full h-full rounded-full bg-gray-200"
               />
             </View>
@@ -200,11 +204,11 @@ const TopBar = () => {
               </Text>
             </View>
           )}
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       {/* Menu Modal */}
-      <Modal
+      {/* <Modal
         animationType="fade"
         transparent={true}
         visible={menuVisible}
@@ -276,10 +280,10 @@ const TopBar = () => {
             </TouchableOpacity>
           </View>
         </Pressable>
-      </Modal>
+      </Modal> */}
 
       {/* Confirm Modal */}
-      <Modal
+      {/* <Modal
         animationType="fade"
         transparent={true}
         visible={confirmVisible}
@@ -354,7 +358,7 @@ const TopBar = () => {
             </View>
           </View>
         </Pressable>
-      </Modal>
+      </Modal> */}
     </View>
   );
 };

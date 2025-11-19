@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -9,12 +9,15 @@ import {
   ActivityIndicator,
   Alert,
   Linking,
+  ImageBackground,
+  Pressable,
 } from 'react-native';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { AppStateContext } from '../components/AppContext';
 import { auth } from '../libs/firebase';
 import {
   API_URL,
+  JAVA_API_URL,
   PRIVACY_POILCY_URL,
   TERMS_OF_USE_URL,
 } from '../components/config';
@@ -23,7 +26,15 @@ import fetchUserDetails from '../libs/fetchUser';
 import { RefreshControl } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import fetchWithAuth from '../libs/fetchWithAuth';
-
+import { GradientBorderView } from '@good-react-native/gradient-border';
+import BackgroundGradient2 from '../components/backgroundGradient2';
+import TopBar from '../components/TopBar';
+const levels = [
+  { label: 'Entry level', value: 1 },
+  { label: 'Mid-level', value: 3 },
+  { label: 'Senior', value: 6 },
+  { label: 'Executive', value: 10 }
+];
 export default function ProfileScreen() {
   const {
     userProfile,
@@ -39,6 +50,42 @@ export default function ProfileScreen() {
     ? new Date(userProfile.plan_expiry).toLocaleDateString('en-GB')
     : '';
   const [loading, setLoading] = useState(false);
+  const [profileData, setProfileData] = useState({
+    avatar: userProfile?.avatar,
+    name: firebaseUser?.displayName,
+    email: firebaseUser?.email,
+    totalMinutes: String(totalMinutes),
+    score: userProfile?.rating,
+    level: "",
+    role: ""
+  });
+  const fetchCandidates = async () => {
+    try {
+      const response = await fetchWithAuth(`${JAVA_API_URL}/api/candidates/uid/${userProfile.uid}`);
+      const result = await response.json();
+
+      if (Array.isArray(result?.data) && result.data.length > 0) {
+        const candidate = result.data[0];
+        setProfileData({
+          avatar: userProfile?.avatar,
+          name: firebaseUser?.displayName,
+          email: firebaseUser?.email,
+          totalMinutes: String(totalMinutes),
+          score: userProfile?.rating,
+          level: candidate?.experienceYears,
+          role: candidate?.position
+        })
+      }
+    } catch (error) {
+      console.error("Failed to fetch candidate:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (userProfile?.uid) {
+      fetchCandidates();
+    }
+  }, [userProfile?.uid]);
   async function fetchDetails() {
     try {
       if (user?.uid) {
@@ -56,6 +103,7 @@ export default function ProfileScreen() {
   }
   const onRefresh = () => {
     fetchDetails();
+    fetchCandidates()
   };
   const initials =
     firebaseUser?.displayName
@@ -103,7 +151,20 @@ export default function ProfileScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }; const safe = (v, fallback = 'N/A') => {
+    if (v === null || v === undefined || v === '') return fallback
+    return v
+  }
+  const stats = useMemo(() => {
+    const findLevel = levels.find((item) => String(item?.value) === String(profileData?.level))
+    const fialLevel = findLevel?.label || ""
+    return [
+      { key: 'role', label: 'Role', value: safe(profileData.role, 'N/A') },
+      { key: 'level', label: 'Level', value: safe(fialLevel, 'N/A') },
+      { key: 'time', label: 'Total Time', value: `${safe(profileData.totalMinutes)} Minutes` },
+      { key: 'rating', label: 'Overall Rating', value: safe(profileData.score, 'N/A') }
+    ]
+  }, [profileData])
 
   const handleDeleteAccount = async () => {
     Alert.alert(
@@ -138,279 +199,270 @@ export default function ProfileScreen() {
       ],
     );
   };
+  const StatCard = ({ isRating = false, label, value, containerStyle }) => {
+    const gradientProps = {
+      colors: ['rgba(203,104,195,1)', 'rgba(140,66,236,1)'],
+      start: { x: 0, y: 0 },
+      end: { x: 0, y: 1 }
+    }
+
+    return (
+      <GradientBorderView
+        gradientProps={gradientProps}
+        style={[
+          {
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            borderRadius: 14,
+            width: '48%',
+            height: 64,
+
+            marginBottom: 16,
+            alignItems: 'center',
+            justifyContent: 'center'
+          },
+          containerStyle
+        ]}
+      >
+        <View
+          style={{
+            alignItems: 'center',
+            justifyContent: 'center', paddingHorizontal: 12,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 12,
+              fontWeight: '600',
+              color: 'rgba(60, 60, 60, 1)'
+            }}
+          >
+            {label}
+          </Text>
+          <View className='flex-row items-center gap-2'>
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: '700',
+                color: 'rgba(60, 60, 60, 1)',
+                lineHeight: 20
+              }}
+              numberOfLines={1}
+            >{value}
+            </Text>
+            {
+              isRating && <Image source={require("../assets/images/star.png")} style={{ width: 12, height: 12 }} />
+            }
+          </View>
+        </View>
+      </GradientBorderView>
+    )
+  }
 
   return (
     <>
-      {/* <TopBar /> */}
-      <Layout>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          className="py-5"
-          refreshControl={
-            <RefreshControl refreshing={loading} onRefresh={onRefresh} />
-          }
-        >
-          <View className="gap-6 pb-10">
+      <TopBar />
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+        }
+      >
+        <View style={{ paddingTop: 60, backgroundColor: 'white' }}>
+          <View className="gap-6 pb-10" style={{ backgroundColor: "rgba(239, 239, 239, 1)" }}>
+            <BackgroundGradient2 />
             {/* Profile Card */}
-            <View className="bg-white rounded-xl shadow-md p-4">
-              <View className="items-center py-2">
-                {userProfile?.avatar ? (
-                  <View className="w-32 h-32 rounded-full border-4 border-gray-600 overflow-hidden">
-                    <Image
-                      source={{ uri: userProfile?.avatar }}
-                      className="w-full h-full rounded-full"
-                    />
-                  </View>
-                ) : (
-                  <View className="w-32 h-32 rounded-full bg-indigo-100 justify-center items-center border-4 border-gray-600">
-                    <Text className="text-indigo-600 text-4xl">{initials}</Text>
-                  </View>
-                )}
-                <Text className="font-bold text-lg mt-2">
-                  {firebaseUser?.displayName}
-                </Text>
-                <Text className="text-gray-500 text-sm">
-                  {firebaseUser?.email}
-                </Text>
-                {expiryDate && (
-                  <View className="text-center space-y-1 text-gray-600 mt-2">
-                    <View className="text-sm font-medium flex-row items-center">
-                      <Text className="text-black">Plan expiry: </Text>
-                      <Text className="text-red-500">{expiryDate}</Text>
-                    </View>
-                  </View>
-                )}
-              </View>
-            </View>
-
-            {/* Personal Info */}
-            <View className="bg-white rounded-xl shadow-lg p-4 gap-6">
-              <View>
-                <Text className="text-xl font-semibold text-gray-900">
-                  Personal Information
-                </Text>
-                <Text className="text-sm text-gray-500 mt-1">
-                  Update your personal details and public profile.
-                </Text>
-              </View>
-
-              <View className="gap-4">
-                {/* First Name */}
-                <View>
-                  <Text className="text-sm text-gray-700 mb-1">First Name</Text>
-                  <TextInput
-                    className="bg-gray-100 border border-gray-300 rounded-md px-4 py-2 text-base"
-                    value={firebaseUser?.displayName?.split(' ')[0] || ''}
-                    editable={false}
-                  />
-                </View>
-
-                {/* Last Name */}
-                <View>
-                  <Text className="text-sm text-gray-700 mb-1">Last Name</Text>
-                  <TextInput
-                    className="bg-gray-100 border border-gray-300 rounded-md px-4 py-2 text-base"
-                    value={
-                      firebaseUser?.displayName
-                        ?.split(' ')
-                        .slice(1)
-                        .join(' ') || ''
-                    }
-                    editable={false}
-                  />
-                </View>
-
-                {/* Email */}
-                <View>
-                  <Text className="text-sm text-gray-700 mb-1">Email</Text>
-                  <TextInput
-                    className="bg-gray-100 border border-gray-300 rounded-md px-4 py-2 text-base"
-                    value={firebaseUser?.email || ''}
-                    editable={false}
-                  />
-                </View>
-              </View>
-
-              {/* Bio */}
-              {userProfile?.bio && (
-                <View>
-                  <Text className="text-sm text-gray-700 mb-1">Bio</Text>
-                  <TextInput
-                    className="bg-gray-100 border border-gray-300 rounded-md px-4 py-2 text-base min-h-[100px]"
-                    value={userProfile.bio}
-                    multiline
-                    editable={false}
-                  />
-                </View>
-              )}
-
-              {/* Minutes Info */}
-              <View className="flex-row justify-between gap-4">
-                <View className="flex-1">
-                  <Text className="text-sm text-gray-700 mb-1">
-                    Total Minutes
-                  </Text>
-                  <TextInput
-                    className="bg-gray-100 border border-gray-300 rounded-md px-4 py-2 text-base"
-                    value={String(totalMinutes)}
-                    editable={false}
-                  />
-                </View>
-                <View className="flex-1">
-                  <Text className="text-sm text-gray-700 mb-1">
-                    Used Minutes
-                  </Text>
-                  <TextInput
-                    className="bg-gray-100 border border-gray-300 rounded-md px-4 py-2 text-base"
-                    value={String(activeUsedMinutes)}
-                    editable={false}
-                  />
-                </View>
-              </View>
-
-              {/* Sessions Info */}
-              {/* <View className="flex-row justify-between gap-4">
-                <View className="flex-1">
-                  <Text className="text-sm text-gray-700 mb-1">
-                    Total Sessions
-                  </Text>
-                  <TextInput
-                    className="bg-gray-100 border border-gray-300 rounded-md px-4 py-2 text-base"
-                    value={String(userProfile?.plan?.max_sessions || 0)}
-                    editable={false}
-                  />
-                </View>
-                <View className="flex-1">
-                  <Text className="text-sm text-gray-700 mb-1">
-                    Attended Sessions
-                  </Text>
-                  <TextInput
-                    className="bg-gray-100 border border-gray-300 rounded-md px-4 py-2 text-base"
-                    value={String(userProfile?.sessions_used || 0)}
-                    editable={false}
-                  />
-                </View>
-              </View> */}
-            </View>
-
-            {/* Subscription */}
-            <View className="bg-white rounded-xl shadow-md p-4 gap-4">
-              <View>
-                <Text className="text-lg font-bold">Subscription</Text>
-                <Text className="text-sm text-gray-500">
-                  Your current plan and billing information.
-                </Text>
-              </View>
-              <View className="bg-indigo-50 rounded-lg p-4">
-                <View className="flex-row justify-between items-center">
-                  <View>
-                    <Text className="font-medium text-indigo-800">
-                      {userProfile?.plan?.name || 'Free'} Plan
-                    </Text>
-                  </View>
-                  <View className="bg-indigo-100 px-2 py-1 rounded-full">
-                    <Text className="text-xs text-indigo-800">Active</Text>
-                  </View>
-                </View>
-
-                <Text className="text-sm text-gray-600 mt-2">
-                  <Text className="font-bold">{activeUsedMinutes}</Text>
-                  <Text> of </Text>
-                  <Text className="font-bold">{totalMinutes}</Text> minutes used
-                </Text>
-
-                <View className="mt-2 h-2 w-full rounded-full bg-indigo-100 overflow-hidden">
-                  <View
-                    className="h-full bg-indigo-600"
-                    style={{
-                      width: `${Math.max(
-                        5,
-                        (activeUsedMinutes / totalMinutes) * 100,
-                      )}%`,
-                    }}
-                  />
-                </View>
-
-                <Text className="text-xs text-gray-500 text-center mt-2">
-                  {activeUsedMinutes > totalMinutes
-                    ? 0
-                    : totalMinutes - activeUsedMinutes}{' '}
-                  minutes left
-                </Text>
-              </View>
-              {userProfile?.plan.id == 1 ? (
-                <TouchableOpacity
-                  onPress={() => navigation.navigate('pricing')}
-                  activeOpacity={0.8}
-                  className="bg-blue-500 p-3 items-center rounded-lg"
-                >
-                  <Text className="text-white font-bold">Upgrade to Pro</Text>
-                </TouchableOpacity>
-              ) : (
-                <View
-                  className="p-3 items-center rounded-lg border"
+            <View className="items-center" style={{ transform: "translateY(-48px)", width: "85%", marginHorizontal: "auto" }}>
+              <View style={{ borderRadius: "100%", borderColor: "rgba(239, 239, 239, 1)", borderWidth: 14, backgroundColor: "rgba(239, 239, 239, 1)" }}>
+                <GradientBorderView
+                  gradientProps={{
+                    colors: ['rgba(93, 91, 239, 1)', 'rgba(140, 66, 236, 1)'],
+                    start: { x: 0, y: 0 },
+                    end: { x: 0, y: 1 },
+                  }}
                   style={{
-                    backgroundColor: '#E5E7EB',
-                    borderColor: '#D1D5DB',
-                    opacity: 0.8,
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    borderRadius: "100%",
                   }}
                 >
-                  <Text className="font-bold" style={{ color: '#6B7280' }}>
-                    Pro Plan Active
-                  </Text>
+                  {profileData?.avatar ? (
+                    <Image
+                      source={{ uri: profileData?.avatar }}
+                      className="w-full h-full rounded-full"
+                      style={{ width: 100, height: 100, }}
+                    />
+                  ) : (
+                    <View className="items-center justify-center" style={{ width: 100, height: 100, }}>
+                      <Text className="text-indigo-600 text-4xl font-bold">{initials}</Text>
+                    </View>
+                  )}
+                </GradientBorderView>
+              </View>
+
+              <Text style={{ fontSize: 20, fontWeight: 700 }}>
+                {profileData?.name}
+              </Text>
+              <Text style={{ fontSize: 16, fontWeight: 500, color: "rgba(155, 169, 176, 1)" }}>
+                {profileData?.email}
+              </Text>
+              {expiryDate && (
+                <View className="text-center space-y-1 text-gray-600 mt-2">
+                  <View className="text-sm font-medium flex-row items-center">
+                    <Text className="text-black">Plan expiry: </Text>
+                    <Text className="text-red-500">{expiryDate}</Text>
+                  </View>
                 </View>
               )}
-            </View>
-
-            {/* Links Section */}
-            <View className="items-center">
-              <Text className="text-sm text-gray-600">
-                By using this app, you agree to our
-                <Text
-                  className="text-blue-600"
-                  onPress={() => Linking.openURL(TERMS_OF_USE_URL)}
-                >
-                  {' '}
-                  Terms of Service{' '}
-                </Text>
-                <Text> and </Text>
-                <Text
-                  className="text-blue-600"
-                  onPress={() => Linking.openURL(PRIVACY_POILCY_URL)}
-                >
-                  {' '}
-                  Privacy Policy
-                </Text>
-                .
-              </Text>
-            </View>
-
-            {/* Danger Zone */}
-            <View className="bg-white rounded-xl shadow-md p-4">
-              <Text className="text-lg font-bold">Danger Zone</Text>
-              <Text className="text-sm text-gray-500 mb-2">
-                Irreversible account actions.
-              </Text>
-              <Text className="font-medium">Delete Account</Text>
-              <Text className="text-sm text-gray-600 mb-2">
-                Permanently delete your account and all associated data. This
-                action cannot be undone.
-              </Text>
-              <TouchableOpacity
-                className="bg-red-600 rounded-lg p-3 items-center"
-                onPress={handleDeleteAccount}
-                disabled={loading}
+              {/* <Pressable onPress={navigation.navigate("")}> */}
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontWeight: '500',
+                  color: 'rgba(143, 15, 200, 1)',
+                  alignSelf: 'center',
+                  marginTop: 8,
+                  textDecorationLine: 'underline'
+                }}
               >
-                {loading ? (
-                  <ActivityIndicator color="white" />
+                Edit Profile
+              </Text>
+              {/* </Pressable> */}
+              <View style={{
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                justifyContent: 'space-between',
+                marginTop: 22,
+                width: '100%'
+              }}>
+                {stats.map((s, i) => (
+                  <StatCard
+                    key={s.key}
+                    isRating={s.key === "rating"}
+                    label={s.label}
+                    value={s.value}
+                  />
+                ))}
+              </View>
+
+              <View className=" w-full" style={{ backgroundColor: "rgba(255, 255, 255, 0.4)", padding: 16, borderRadius: 18, marginTop: 24, gap: 12 }}>
+                <View>
+                  <Text className="text-lg font-bold">Subscription</Text>
+                  <Text className="text-sm text-gray-500">
+                    Your current plan and billing information.
+                  </Text>
+                </View>
+                <View className="bg-indigo-50 rounded-lg p-4">
+                  <View className="flex-row justify-between items-center">
+                    <View>
+                      <Text className="font-medium text-indigo-800">
+                        {userProfile?.plan?.name || 'Free'} Plan
+                      </Text>
+                    </View>
+                    <View className="bg-indigo-100 px-2 py-1 rounded-full">
+                      <Text className="text-xs text-indigo-800">Active</Text>
+                    </View>
+                  </View>
+
+                  <Text className="text-sm text-gray-600 mt-2">
+                    <Text className="font-bold">{activeUsedMinutes}</Text>
+                    <Text> of </Text>
+                    <Text className="font-bold">{totalMinutes}</Text> minutes used
+                  </Text>
+
+                  <View className="mt-2 h-2 w-full rounded-full bg-indigo-100 overflow-hidden">
+                    <View
+                      className="h-full bg-indigo-600"
+                      style={{
+                        width: `${Math.max(
+                          5,
+                          (activeUsedMinutes / totalMinutes) * 100,
+                        )}%`,
+                      }}
+                    />
+                  </View>
+
+                  <Text className="text-xs text-gray-500 text-center mt-2">
+                    {activeUsedMinutes > totalMinutes
+                      ? 0
+                      : totalMinutes - activeUsedMinutes}{' '}
+                    minutes left
+                  </Text>
+                </View>
+                {userProfile?.plan.id == 1 ? (
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate('pricing')}
+                    activeOpacity={0.8}
+                    className="bg-blue-500 p-3 items-center rounded-lg"
+                  >
+                    <Text className="text-white font-bold">Upgrade to Pro</Text>
+                  </TouchableOpacity>
                 ) : (
-                  <Text className="text-white font-bold">Delete Account</Text>
+                  <View
+                    className="p-3 items-center rounded-lg border"
+                    style={{
+                      backgroundColor: '#E5E7EB',
+                      borderColor: '#D1D5DB',
+                      opacity: 0.8,
+                    }}
+                  >
+                    <Text className="font-bold" style={{ color: '#6B7280' }}>
+                      Pro Plan Active
+                    </Text>
+                  </View>
                 )}
-              </TouchableOpacity>
+              </View>
+
+              {/* Links Section */}
+              <View className="items-center mt-2">
+                <Text className="text-sm text-gray-600">
+                  By using this app, you agree to our
+                  <Text
+                    className="text-blue-600"
+                    onPress={() => Linking.openURL(TERMS_OF_USE_URL)}
+                  >
+                    {' '}
+                    Terms of Service{' '}
+                  </Text>
+                  <Text> and </Text>
+                  <Text
+                    className="text-blue-600"
+                    onPress={() => Linking.openURL(PRIVACY_POILCY_URL)}
+                  >
+                    {' '}
+                    Privacy Policy
+                  </Text>
+                  .
+                </Text>
+              </View>
+
+              {/* Danger Zone */}
+              <View className="rounded-xl" style={{ backgroundColor: "rgba(255, 255, 255, 0.4)", padding: 16, borderRadius: 18, marginTop: 24 }}>
+                <Text className="text-lg font-bold">Danger Zone</Text>
+                <Text className="text-sm text-gray-500 mb-2">
+                  Irreversible account actions.
+                </Text>
+                <Text className="font-medium">Delete Account</Text>
+                <Text className="text-sm text-gray-600 mb-2">
+                  Permanently delete your account and all associated data. This
+                  action cannot be undone.
+                </Text>
+                <TouchableOpacity
+                  className="bg-red-600 rounded-lg p-3 items-center"
+                  onPress={handleDeleteAccount}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <ActivityIndicator color="white" />
+                  ) : (
+                    <Text className="text-white font-bold">Delete Account</Text>
+                  )}
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </ScrollView>
-      </Layout>
+        </View>
+      </ScrollView>
     </>
   );
 }

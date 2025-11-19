@@ -88,11 +88,11 @@ const RootNavigator = () => {
           component={ReportDetailScreen}
           options={{ headerShown: true, title: 'Report Details' }}
         />
-        <Stack.Screen
+        {/* <Stack.Screen
           name="profile"
           component={ProfileScreen}
           options={{ headerShown: true, title: 'Profile' }}
-        />
+        /> */}
         <Stack.Screen
           name="pricing"
           component={PricingPage}
