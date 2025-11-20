@@ -449,7 +449,7 @@ const Reports = () => {
                       <TouchableOpacity
                         style={{
                           flex: 1,
-                          backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                          backgroundColor: 'black',
                           paddingVertical: 14,
                           borderRadius: 16,
                           justifyContent: 'center',

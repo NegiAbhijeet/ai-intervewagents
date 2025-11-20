@@ -19,7 +19,12 @@ import Toast from 'react-native-toast-message'
 import EditAvatarModal from './editAvatar'
 import { GradientBorderView } from '@good-react-native/gradient-border'
 import { Picker } from '@react-native-picker/picker'
-
+const levels = [
+    { label: 'Entry level', value: '1' },
+    { label: 'Mid-level', value: '8' },
+    { label: 'Senior', value: '12' },
+    { label: 'Executive', value: '20' }
+];
 // load industries/positions from local JSON
 const industries = require('../libs/industryJson.json')
 
@@ -30,6 +35,7 @@ export default function EditProfileModal({
     avatarUrl = null,
     initialPosition,
     initialIndustry,
+    initialLevel,
     canId,
     onSuccess,
 }) {
@@ -39,6 +45,7 @@ export default function EditProfileModal({
 
     // new state for industry and role
     const [industry, setIndustry] = useState(initialIndustry || '')
+    const [level, setLevel] = useState(initialLevel || '')
     const [position, setPosition] = useState(initialPosition || '')
     const [availableRoles, setAvailableRoles] = useState([])
 
@@ -47,7 +54,8 @@ export default function EditProfileModal({
         setName(currentName)
         setIndustry(initialIndustry || '')
         setPosition(initialPosition || '')
-    }, [currentName, initialIndustry, initialPosition, visible])
+        setLevel(initialLevel || "")
+    }, [currentName, initialIndustry, initialPosition, level, visible])
 
     // update roles when industry changes
     useEffect(() => {
@@ -66,7 +74,8 @@ export default function EditProfileModal({
     async function handleSave() {
         if (!name) {
             return
-        }
+        }        console.log( "==================1")
+
         const nameArray = name.trim().split(' ')
         let firstName = nameArray[0]
         let lastName = nameArray.slice(1).join(' ')
@@ -75,7 +84,8 @@ export default function EditProfileModal({
         // include industry/position only when selected
         if (industry) payload.industry = industry
         if (position) payload.position = position
-        console.log(url, payload)
+        if (level) payload.experienceYears = level
+        console.log(url, payload, "==================")
         try {
             setIsLoading(true)
 
@@ -157,6 +167,24 @@ export default function EditProfileModal({
                                 maxLength={50}
                                 editable={!isLoading}
                             />
+
+                            <Text style={[styles.label, { marginTop: 16 }]}>Your Level</Text>
+                            <View style={styles.pickerWrapper}>
+                                <Picker
+                                    selectedValue={level}
+                                    onValueChange={val => setLevel(val)}
+                                    enabled={!isLoading}
+                                >
+                                    <Picker.Item label="Select level" value="" />
+                                    {levels.map(item => (
+                                        <Picker.Item
+                                            key={item.value}
+                                            label={item.label}
+                                            value={item.value}
+                                        />
+                                    ))}
+                                </Picker>
+                            </View>
 
                             <Text style={[styles.label, { marginTop: 16 }]}>Industry</Text>
                             <View style={styles.pickerWrapper}>

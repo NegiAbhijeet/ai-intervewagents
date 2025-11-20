@@ -84,12 +84,12 @@ export default function AnalysisCards({
         {renderCard(
           'strengths',
           'Strengths',
-          'Tap to view the analyzed strength points',
+          'Tap to view the analyzed strength.',
         )}
         {renderCard(
           'weaknesses',
           'Weaknesses',
-          'Tap to view the analyzed weakness points',
+          'Tap to view the analyzed weakness.',
         )}
       </View>
 
@@ -167,8 +167,7 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', justifyContent: 'space-between' },
   cardWrapper: { width: '48%', aspectRatio: 1, },
   cardContent: {
-    alignItems: "flex-end",
-    justifyContent: "flex-end",
+    paddingTop:"30%",
     borderRadius: 10,
     height: "100%",
     overflow: 'hidden',

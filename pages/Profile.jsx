@@ -31,10 +31,10 @@ import BackgroundGradient2 from '../components/backgroundGradient2';
 import TopBar from '../components/TopBar';
 import EditProfileModal from '../components/editProfile';
 const levels = [
-  { label: 'Entry level', value: 1 },
-  { label: 'Mid-level', value: 3 },
-  { label: 'Senior', value: 6 },
-  { label: 'Executive', value: 10 }
+  { label: 'Entry level', value: '1' },
+  { label: 'Mid-level', value: '8' },
+  { label: 'Senior', value: '12' },
+  { label: 'Executive', value: '20' }
 ];
 export default function ProfileScreen() {
   const {
@@ -70,6 +70,7 @@ export default function ProfileScreen() {
 
       if (Array.isArray(result?.data) && result.data.length > 0) {
         const candidate = result.data[0];
+        console.log(candidate)
         setProfileData({
           avatar: userProfile?.avatar,
           name: `${candidate?.firstName} ${candidate?.lastName}`,
@@ -168,7 +169,7 @@ export default function ProfileScreen() {
       { key: 'role', label: 'Role', value: safe(profileData.role, 'N/A') },
       { key: 'level', label: 'Level', value: safe(fialLevel, 'N/A') },
       { key: 'time', label: 'Total Time', value: `${safe(profileData.totalMinutes)} Minutes` },
-      { key: 'rating', label: 'Overall Rating', value: safe(profileData.score, 'N/A') }
+      { key: 'rating', label: 'Overall Rating', value: safe(profileData.score, 'N/A') },
     ]
   }, [profileData])
 
@@ -479,6 +480,7 @@ export default function ProfileScreen() {
           onSuccess={fetchCandidates}
           initialPosition={profileData?.role}
           initialIndustry={profileData?.industry}
+          initialLevel={profileData?.level}
         />
       </ScrollView>
     </>

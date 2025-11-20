@@ -1,4 +1,4 @@
-// OnboardingCarousel.js
+// OnboardingCarousel.js 
 import React, { useContext, useRef, useState } from 'react';
 import {
   StyleSheet,
@@ -21,48 +21,52 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import CarouselImage1 from '../assets/images/onboarding/1.svg';
 import CarouselImage2 from '../assets/images/onboarding/2.svg';
 import BackgroundGradient2 from '../components/backgroundGradient2';
+
 const AutoSvg = ({ Svg }) => (
   <View style={{ width: '100%', height: 320, justifyContent: 'center', alignItems: 'center' }}>
-    <Svg
-      width="100%"
-      height="100%"
-      preserveAspectRatio="xMidYMid meet"
-    />
+    <Svg width="100%" height="100%" preserveAspectRatio="xMidYMid meet" />
   </View>
-)
+);
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+
 const data = [
-  { heading: 'Practice Realistic Interviews', desc: 'Experience truly human AI interviews tailored for your goals. Get recruiter style insights powered by advanced analytics to refine every response.', img: <AutoSvg Svg={CarouselImage1} /> },
-  { heading: 'Overcome Interview Nerves', desc: 'Strengthen weaknesses with personalized AI feedback. Build lasting confidence and learn to structure clear answers through guided practice.', img: <AutoSvg Svg={CarouselImage2} /> }
-]
-
-
+  {
+    heading: 'Practice Realistic Interviews',
+    bullets: [
+      'Experience AI interviews that feel truly human',
+      'Get recruiter-style feedback powered by advanced analytics',
+      'Track your growth with streaks, badges, and certificates',
+    ],
+    img: <AutoSvg Svg={CarouselImage1} />,
+  },
+  {
+    heading: 'Overcome Interview Nerves',
+    bullets: [
+      'Improve faster with personalized AI feedback',
+      'Build confidence through regular practice',
+      'Learn to structure and deliver better answers',
+    ],
+    img: <AutoSvg Svg={CarouselImage2} />,
+  },
+];
 
 const PAGE_WIDTH = SCREEN_WIDTH;
-const CAROUSEL_HEIGHT =
-  SCREEN_HEIGHT < 800 ? SCREEN_HEIGHT * 0.6 : SCREEN_HEIGHT * 0.7
+const CAROUSEL_HEIGHT = SCREEN_HEIGHT < 800 ? SCREEN_HEIGHT * 0.6 : SCREEN_HEIGHT * 0.7;
 
 export default function OnboardingCarousel() {
   const { setOnboardingComplete } = useContext(AppStateContext);
-
   const ref = useRef(null);
   const progress = useSharedValue(0);
   const [index, setIndex] = useState(0);
+
   async function onFinish() {
     try {
-      console.log('setting onboardingComplete', '==================');
       await AsyncStorage.setItem('onboardingComplete', 'true');
-      // read back to verify
       const check = await AsyncStorage.getItem('onboardingComplete');
-      console.log('after set, read back', check, '==================');
-      if (check === 'true') {
-        setOnboardingComplete(true);
-      } else {
-        // write failed to persist
-        setOnboardingComplete(false);
-      }
+      if (check === 'true') setOnboardingComplete(true);
+      else setOnboardingComplete(false);
     } catch (e) {
       console.error('error setting onboardingComplete', e);
       setOnboardingComplete(false);
@@ -77,26 +81,19 @@ export default function OnboardingCarousel() {
     } catch (e) {
       try {
         ref.current?.scrollTo(next);
-      } catch (err) {
-        // ignore
-      }
+      } catch (err) {}
     }
     if (index === data.length - 1) onFinish();
     setIndex(next);
   };
 
   const onPressPagination = targetIndex => {
-    // use scrollTo with count difference to jump to nearest index
     try {
-      ref.current?.scrollTo({
-        count: targetIndex - progress.value,
-        animated: true,
-      });
+      ref.current?.scrollTo({ count: targetIndex - progress.value, animated: true });
     } catch (e) {
-      // fallback to direct index if available
       try {
         ref.current?.scrollTo(targetIndex);
-      } catch (err) { }
+      } catch (err) {}
     }
     setIndex(targetIndex);
   };
@@ -106,23 +103,7 @@ export default function OnboardingCarousel() {
       <BackgroundGradient2 />
 
       <View style={styles.carouselWrapper}>
-        {/* <View style={{ width: '80%', margin: 'auto' }}>
-          <TouchableOpacity
-            style={styles.skip}
-            onPress={onSkip}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.skipText}>Skip</Text>
-          </TouchableOpacity>
-        </View> */}
-
-        <View
-          style={{
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <Carousel
             ref={ref}
             width={PAGE_WIDTH}
@@ -133,7 +114,15 @@ export default function OnboardingCarousel() {
                 {item.img}
                 <View style={styles.textBlock}>
                   <Text style={styles.heading}>{item.heading}</Text>
-                  <Text style={styles.paragraph}>{item.desc}</Text>
+
+                  <View style={styles.bulletContainer}>
+                    {item.bullets.map((line, i) => (
+                      <View key={i} style={styles.bulletRow}>
+                        <View style={styles.bulletDot} />
+                        <Text style={styles.bulletText}>{line}</Text>
+                      </View>
+                    ))}
+                  </View>
                 </View>
               </View>
             )}
@@ -143,7 +132,6 @@ export default function OnboardingCarousel() {
             onSnapToItem={i => setIndex(i)}
           />
 
-          {/* Pagination: active dot is rectangular */}
           <View style={styles.paginationOuter}>
             <Pagination.Custom
               progress={progress}
@@ -161,58 +149,28 @@ export default function OnboardingCarousel() {
                 borderRadius: 10,
                 backgroundColor: '#000',
               }}
-              containerStyle={{
-                gap: 6,
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: 16,
-              }}
+              containerStyle={{ gap: 6, alignItems: 'center', justifyContent: 'center', height: 16 }}
               horizontal
               onPress={onPressPagination}
               customReanimatedStyle={(progress, index, length) => {
                 let val = Math.abs(progress - index);
-                if (index === 0 && progress > length - 1) {
-                  val = Math.abs(progress - length);
-                }
+                if (index === 0 && progress > length - 1) val = Math.abs(progress - length);
                 return {
-                  opacity: interpolate(
-                    val,
-                    [0, 1],
-                    [1, 0.4],
-                    Extrapolation.CLAMP,
-                  ),
-                  transform: [
-                    {
-                      scale: interpolate(
-                        val,
-                        [0, 1],
-                        [1, 0.9],
-                        Extrapolation.CLAMP,
-                      ),
-                    },
-                  ],
+                  opacity: interpolate(val, [0, 1], [1, 0.4], Extrapolation.CLAMP),
+                  transform: [{ scale: interpolate(val, [0, 1], [1, 0.9], Extrapolation.CLAMP) }],
                 };
               }}
-              renderItem={item => (
-                <View
-                  style={{
-                    backgroundColor: item.color,
-                    flex: 1,
-                    borderRadius: 50,
-                  }}
-                />
-              )}
+              renderItem={item => <View style={{ backgroundColor: item.color, flex: 1, borderRadius: 50 }} />}
             />
           </View>
         </View>
+
         <View style={{ height: 30 }} />
 
         <View style={styles.bottom}>
           <Pressable onPress={goNext} style={styles.button}>
             <Text style={styles.buttonText}>Next</Text>
           </Pressable>
-
-          {/* <View style={styles.bottomBlackLine} /> */}
         </View>
 
         <View style={{ height: 40 }} />
@@ -222,85 +180,16 @@ export default function OnboardingCarousel() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-  },
-  backgroundImage: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: SCREEN_WIDTH,
-    height: '100%',
-  },
-  skip: { alignSelf: 'flex-end', marginTop: 20 },
-  skipText: {
-    color: '#111',
-    fontSize: 14,
-    fontWeight: 700,
-  },
-  carouselWrapper: {
-    flex: 1,
-    justifyContent: 'space-between',
-    width: PAGE_WIDTH,
-    margin: 'auto',
-  },
-  slide: {
-    height: "100%",
-    width: PAGE_WIDTH * 0.85,
-    alignItems: 'center',
-    marginHorizontal: 'auto',
-    justifyContent: "center",
-  },
-  topImage: {
-    // width: '100%',
-    // height: 361,
-    // objectFit: 'contain',
-  },
-  textBlock: {
-  },
-  heading: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#000',
-    marginBottom: 8,
-    alignSelf: 'center',
-  },
-  paragraph: {
-    fontSize: 15,
-    lineHeight: 20,
-    marginTop: 16,
-    color: 'rgba(51, 51, 51, 1)',
-    textAlign: 'center',
-  },
-  paginationOuter: {
-    // alignItems: 'center',
-    // backgroundColor: 'red',
-    // marginTop: 30
-  },
-  paginationContainer: {
-    gap: 10,
-  },
+  container: { flex: 1, backgroundColor: 'white' },
+  carouselWrapper: { flex: 1, justifyContent: 'space-between', width: PAGE_WIDTH, margin: 'auto' },
+  slide: { height: '100%', width: PAGE_WIDTH * 0.85, alignItems: 'center', marginHorizontal: 'auto', justifyContent: 'center' },
+  heading: { fontSize: 20, fontWeight: '700', color: '#000', marginBottom: 12, alignSelf: 'left' },
+  bulletContainer: { marginTop: 8, width: '90%', alignSelf: 'center' },
+  bulletRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 10 },
+  bulletDot: { width: 8, height: 8, borderRadius: 50, backgroundColor: '#000', marginTop: 5, marginRight: 10 },
+  bulletText: { fontSize: 15, color: 'rgba(51, 51, 51, 1)', flexShrink: 1, textAlign: 'left', lineHeight: 20 },
+  paginationOuter: {},
   bottom: { width: '85%', marginHorizontal: 'auto' },
-  button: {
-    backgroundColor: 'rgba(0, 0, 0, 1)',
-    paddingVertical: 15,
-    borderRadius: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
-    lineHeight: '170%',
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '600',
-    lineHeight: 27
-  },
-  bottomBlackLine: {
-    marginTop: 36,
-    height: 5,
-    width: 135,
-    backgroundColor: 'rgba(17, 17, 17, 1)',
-    alignSelf: 'center',
-  },
+  button: { backgroundColor: 'rgba(0, 0, 0, 1)', paddingVertical: 15, borderRadius: 30, alignItems: 'center', justifyContent: 'center' },
+  buttonText: { color: 'white', fontSize: 16, fontWeight: '600', lineHeight: 27 },
 });
