@@ -11,7 +11,7 @@ export default function BackgroundGradient2() {
                 position: 'absolute',
                 top: 0,
                 left: 0,
-                transform: 'translateY(200%)',
+                transform: 'translateY(100%)',
                 height: '100%',
             }}
             resizeMode="cover"

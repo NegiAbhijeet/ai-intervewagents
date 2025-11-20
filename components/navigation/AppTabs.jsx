@@ -20,7 +20,7 @@ const AppTabs = () => {
     >
       <Tab.Screen name="index" component={HomePage} />
       <Tab.Screen name="jobs" component={JobsPage} />
-      {/* <Tab.Screen name="interview" component={Interview} /> */}
+      <Tab.Screen name="interview" component={Interview} />
       <Tab.Screen name="reports" component={Reports} />
       <Tab.Screen name="leaderBoard" component={Leaderboard} />
       <Tab.Screen name="profile" component={ProfileScreen} />

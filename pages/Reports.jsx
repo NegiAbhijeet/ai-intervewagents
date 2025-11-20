@@ -6,6 +6,8 @@ import {
   View,
   Animated,
   RefreshControl,
+  Image,
+  Pressable,
 } from 'react-native';
 import Layout from './Layout';
 import { AppStateContext } from '../components/AppContext';
@@ -16,6 +18,9 @@ import { useNavigation } from '@react-navigation/native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import TopBar from '../components/TopBar';
 import ReportModal from '../components/reportModal';
+import BackgroundGradient2 from '../components/backgroundGradient2';
+import StatusBoxes from '../components/ReportsStatusBoxes';
+import LinearGradient from 'react-native-linear-gradient';
 const Reports = () => {
   const { userProfile } = useContext(AppStateContext);
   const [meetings, setMeetings] = useState([]);
@@ -24,6 +29,9 @@ const Reports = () => {
   const [currentReport, setCurrentReport] = useState(null);
   const [isViewDetails, setIsViewDetails] = useState(false);
   const [isViewSkills, setIsViewSkills] = useState(false);
+  const [rowTotalMeetings, setRowTotalMeetings] = useState(0)
+
+  const [activeFilter, setActiveFilter] = useState('all');
 
   // small animated rotation for the refresh icon when active
   const rotateAnim = useRef(new Animated.Value(0)).current;
@@ -49,7 +57,8 @@ const Reports = () => {
         `${JAVA_API_URL}/api/meetings/uid/${userProfile.uid}`,
       );
       const data = await response.json();
-      if (data?.data) {
+      if (data?.data && Array.isArray(data.data)) {
+        setRowTotalMeetings(data.data.length)
         const finalMeetings = data.data.filter(
           item => item.status === 'Completed',
         );
@@ -83,14 +92,20 @@ const Reports = () => {
   };
 
   const formatDateTime = (dateStr, timeStr) => {
-    const dateTime = new Date(`${dateStr}T${timeStr}`);
+    // const dateTime = new Date(`${dateStr}T${timeStr}`);
+    // return dateTime.toLocaleString('en-US', {
+    //   month: 'short',
+    //   day: 'numeric',
+    //   year: 'numeric',
+    //   hour: 'numeric',
+    //   minute: '2-digit',
+    //   hour12: true,
+    // });
+    const dateTime = new Date(`${dateStr}`);
     return dateTime.toLocaleString('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
     });
   };
 
@@ -113,12 +128,18 @@ const Reports = () => {
     inputRange: [0, 1],
     outputRange: ['0deg', '360deg'],
   });
-
+  const filteredMeetings = meetings.filter(report => {
+    if (activeFilter === 'all') return true;
+    const t = (report.type || '').toLowerCase();
+    if (activeFilter === 'mock') return t === 'revise';
+    if (activeFilter === 'trainer') return t === 'practice';
+    return true;
+  });
   // Single return. Child areas are conditional inside the layout.
   return (
     <>
       <TopBar />
-      <Layout>
+      <Layout><BackgroundGradient2 />
         <ScrollView
           showsVerticalScrollIndicator={false}
           className="py-5"
@@ -126,57 +147,15 @@ const Reports = () => {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
         >
-          <View className="flex-row justify-between items-center mb-4">
+          {/* <View className="flex-row justify-between items-center mb-4">
             <Text className="text-2xl font-semibold">Interview Reports</Text>
-            {/* <View
-              style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
-            >
-              <TouchableOpacity
-                onPress={onRefresh}
-                style={{
-                  paddingHorizontal: 12,
-                  paddingVertical: 8,
-                  borderRadius: 8,
-                  backgroundColor: '#EFF6FF',
-                  borderWidth: 1,
-                  borderColor: '#DBEAFE',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: 6,
-                }}
-              >
-                <Animated.View
-                  style={{ transform: [{ rotate: rotateInterpolate }] }}
-                >
-                  <Ionicons name="refresh" size={18} />
-                </Animated.View>
-                <Text style={{ fontWeight: '600' }}>Refresh</Text>
-              </TouchableOpacity>
-            </View> */}
-          </View>
+          </View> */}
 
-          {/* Top user-friendly status banner */}
-          <View
-            style={{
-              // flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: 12,
-              marginBottom: 12,
-              backgroundColor: '#FFF7ED',
-              borderRadius: 10,
-              borderWidth: 1,
-              borderColor: '#FDE3BF',
-              gap: 10,
-            }}
-          >
-            <View
-              style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
-            >
-              <Text style={{ fontSize: 14 }}>
-                Your reports may take a moment to load
-              </Text>
-            </View>
+          <View style={{ width: "100%", }}>
+            <StatusBoxes
+              total={rowTotalMeetings}
+              completed={meetings.length}
+              pending={0} />
           </View>
 
           {/* Loading skeleton block (visible when loading) */}
@@ -288,18 +267,79 @@ const Reports = () => {
           {/* Content list (visible when not loading and there are meetings) */}
           {!loading && meetings.length > 0 && (
             <>
-              {meetings.map(report => {
+              <View style={{ flexDirection: 'row', gap: 8, marginBottom: 12, alignSelf: "center", marginTop: 40, marginBottom: 15 }}>
+                {[
+                  { key: 'all', label: 'All Reports' },
+                  { key: 'mock', label: 'Mock' },
+                  { key: 'trainer', label: 'Trainer' },
+                ].map(btn => {
+                  const isActive = activeFilter === btn.key;
+
+                  const Button = (
+                    <Pressable
+                      key={btn.key}
+                      onPress={() => setActiveFilter(btn.key)}
+                      style={{
+                        paddingVertical: 8,
+                        paddingHorizontal: 20,
+                        backgroundColor: 'rgba(243, 244, 246, 1)',
+                        justifyContent: 'center',
+                        alignItems: 'center', borderRadius: 9999
+                      }}
+                    >
+                      <Text style={{ color: 'rgba(55, 65, 81, 1)', fontWeight: '500', fontSize: 14 }}>
+                        {btn.label}
+                      </Text>
+                    </Pressable>
+                  );
+
+                  if (!isActive) return Button;
+
+                  return (
+                    <LinearGradient
+                      key={btn.key}
+                      colors={['rgba(8, 77, 197, 1)', 'rgba(123, 18, 196, 1)']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 0 }}
+                      style={{
+                        borderRadius: 9999,
+                        padding: 1,
+                        justifyContent: 'center',
+                        alignItems: 'flex-end'
+                      }}
+                    >
+                      <Pressable
+                        key={btn.key}
+                        onPress={() => setActiveFilter(btn.key)}
+                        style={{
+                          paddingVertical: 8,
+                          paddingHorizontal: 20,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Text style={{ color: isActive ? '#ffffff' : '#111827', fontWeight: '600', fontSize: 14 }}>
+                          {btn.label}
+                        </Text>
+                      </Pressable>
+                    </LinearGradient>
+                  );
+                })}
+
+              </View>
+
+              {filteredMeetings.map(report => {
                 const percentage = report?.feedback?.averagePercentage || 0;
                 return (
                   <View
                     key={report.meetingId}
                     style={{
-                      backgroundColor: '#F9FAFB',
-                      padding: 16,
+                      backgroundColor: 'rgba(255, 255, 255, 0.4)',
+                      padding: 20,
                       marginBottom: 12,
-                      borderRadius: 12,
+                      borderRadius: 24,
                       borderWidth: 1,
-                      borderColor: '#E5E7EB',
+                      borderColor: 'rgba(243, 244, 246, 1)',
                     }}
                   >
                     <View
@@ -310,92 +350,115 @@ const Reports = () => {
                       }}
                     >
                       <View
-                        style={{ flexDirection: 'row', alignItems: 'center' }}
+                        style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
                       >
-                        <View>
-                          <Text style={{ fontWeight: '600', fontSize: 16 }}>
-                            {report.position}
-                          </Text>
-                          <View
-                            style={{
-                              flexDirection: 'row',
-                              alignItems: 'center',
-                            }}
-                          >
-                            <Text style={{ fontWeight: '500' }}>
-                              Duration:{' '}
-                            </Text>
-                            <Text
-                              style={{ fontWeight: '500', color: '#6B7280' }}
-                            >
-                              {formatDuration(report.interviewDuration)}
-                            </Text>
-                          </View>
+                        <View
+                          style={{ flexDirection: 'row', alignItems: 'center', justifyContent: "center", padding: 8, borderRadius: "100%", backgroundColor: 'rgba(219, 234, 254, 1)' }}
+                        >
+                          <Image
+                            source={require('../assets/images/code.png')}
+                            style={{ width: 20, height: 20, resizeMode: 'contain' }}
+                          />
                         </View>
+                        <Text style={{ fontWeight: 700, fontSize: 16 }} numberOfLines={1}>
+                          {report.position}
+                        </Text>
                       </View>
 
                       <View
                         style={{
-                          paddingHorizontal: 8,
-                          paddingVertical: 4,
-                          borderRadius: 6,
+                          paddingHorizontal: 12,
+                          paddingVertical: 8,
+                          borderRadius: "100%",
                           backgroundColor:
                             percentage >= 85
-                              ? '#DCFCE7'
+                              ? 'rgba(220, 252, 231, 1)'
                               : percentage >= 70
-                              ? '#FEF3C7'
-                              : '#FEE2E2',
-                          borderWidth: 1,
-                          borderColor:
-                            percentage >= 85
-                              ? '#BBF7D0'
-                              : percentage >= 70
-                              ? '#FCD34D'
-                              : '#FECACA',
+                                ? 'rgba(255, 237, 213, 1)'
+                                : '#FEE2E2',
                         }}
                       >
                         <Text
                           style={{
                             fontSize: 12,
-                            fontWeight: '500',
+                            fontWeight: '700',
                             color:
                               percentage >= 85
-                                ? '#166534'
+                                ? 'rgba(52, 199, 89, 1)'
                                 : percentage >= 70
-                                ? '#B45309'
-                                : '#991B1B',
+                                  ? 'rgba(255, 149, 0, 1)'
+                                  : 'red',
                           }}
                         >
-                          {percentage}% Match
+                          {percentage}%
                         </Text>
                       </View>
                     </View>
 
                     <Text
-                      style={{ color: '#9CA3AF', fontSize: 12, marginTop: 8 }}
+                      style={{ fontWeight: '500', fontSize: 14, color: 'rgba(75, 85, 99, 1)', marginTop: 8 }}
                     >
-                      {formatDateTime(
-                        report.interviewDate,
-                        report.interviewTime,
-                      )}
+                      {report.interviewType} Interview
                     </Text>
-
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 16, marginTop: 16 }}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center', gap: 4
+                        }}
+                      >
+                        <Ionicons name="time-outline" size={14} color="rgba(75, 85, 99, 1)" />
+                        <Text
+                          style={{ fontWeight: '500', color: '#6B7280', fontSize: 14 }}
+                        >
+                          {formatDuration(report.interviewDuration)}
+                        </Text>
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center', gap: 4
+                        }}
+                      >
+                        <Ionicons name="calendar-outline" size={14} color="rgba(75, 85, 99, 1)" />
+                        <Text
+                          style={{ color: 'rgba(75, 85, 99, 1)', fontSize: 14 }}
+                        >
+                          {formatDateTime(
+                            report.interviewDate,
+                          )}
+                        </Text>
+                      </View>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center', gap: 4
+                        }}
+                      >
+                        <Ionicons name="calendar-outline" size={14} color="rgba(75, 85, 99, 1)" />
+                        <Text
+                          style={{ color: 'rgba(75, 85, 99, 1)', fontSize: 14 }}
+                        >
+                          {report?.type === "revise" ? "Revise" : "Practice"}
+                        </Text>
+                      </View>
+                    </View>
                     <View
                       style={{ flexDirection: 'row', marginTop: 12, gap: 8 }}
                     >
                       <TouchableOpacity
                         style={{
                           flex: 1,
-                          backgroundColor: '#2563EB',
-                          paddingVertical: 10,
-                          borderRadius: 8,
+                          backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                          paddingVertical: 14,
+                          borderRadius: 16,
                           justifyContent: 'center',
                           alignItems: 'center',
                         }}
                         onPress={() => setCurrentReport(report)}
                       >
-                        <Text style={{ color: 'white', fontWeight: '600' }}>
-                          Report
+                        <Text style={{ color: 'white', fontWeight: '600', fontSize: 14 }}>
+                          View Report
                         </Text>
                       </TouchableOpacity>
                     </View>
