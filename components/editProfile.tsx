@@ -20,10 +20,10 @@ import EditAvatarModal from './editAvatar'
 import { GradientBorderView } from '@good-react-native/gradient-border'
 import { Picker } from '@react-native-picker/picker'
 const levels = [
-    { label: 'Entry level', value: '1' },
-    { label: 'Mid-level', value: '8' },
-    { label: 'Senior', value: '12' },
-    { label: 'Executive', value: '20' }
+    { label: 'Entry level', value: 1 },
+    { label: 'Mid-level', value: 8 },
+    { label: 'Senior', value: 12 },
+    { label: 'Executive', value: 20 }
 ];
 // load industries/positions from local JSON
 const industries = require('../libs/industryJson.json')
@@ -45,17 +45,21 @@ export default function EditProfileModal({
 
     // new state for industry and role
     const [industry, setIndustry] = useState(initialIndustry || '')
-    const [level, setLevel] = useState(initialLevel || '')
+    // replace existing useState for level with:
+    const [level, setLevel] = useState(
+        initialLevel !== undefined && initialLevel !== null ? Number(initialLevel) : ''
+    )
+
     const [position, setPosition] = useState(initialPosition || '')
     const [availableRoles, setAvailableRoles] = useState([])
 
     useEffect(() => {
-        // sync when props change
         setName(currentName)
         setIndustry(initialIndustry || '')
         setPosition(initialPosition || '')
-        setLevel(initialLevel || "")
-    }, [currentName, initialIndustry, initialPosition, level, visible])
+        setLevel(initialLevel !== undefined && initialLevel !== null ? Number(initialLevel) : '')
+    }, [currentName, initialIndustry, initialPosition, initialLevel, visible])
+
 
     // update roles when industry changes
     useEffect(() => {
@@ -74,7 +78,7 @@ export default function EditProfileModal({
     async function handleSave() {
         if (!name) {
             return
-        }        console.log( "==================1")
+        }
 
         const nameArray = name.trim().split(' ')
         let firstName = nameArray[0]
@@ -85,7 +89,6 @@ export default function EditProfileModal({
         if (industry) payload.industry = industry
         if (position) payload.position = position
         if (level) payload.experienceYears = level
-        console.log(url, payload, "==================")
         try {
             setIsLoading(true)
 
@@ -174,13 +177,15 @@ export default function EditProfileModal({
                                     selectedValue={level}
                                     onValueChange={val => setLevel(val)}
                                     enabled={!isLoading}
+                                    style={{ color: 'black' }}
                                 >
-                                    <Picker.Item label="Select level" value="" />
+                                    <Picker.Item label="Select level" value="" style={{ color: 'black' }} />
                                     {levels.map(item => (
                                         <Picker.Item
-                                            key={item.value}
+                                            key={String(item.value)}
                                             label={item.label}
                                             value={item.value}
+                                            style={{ color: 'black' }}
                                         />
                                     ))}
                                 </Picker>
@@ -190,12 +195,18 @@ export default function EditProfileModal({
                             <View style={styles.pickerWrapper}>
                                 <Picker
                                     selectedValue={industry}
-                                    onValueChange={(val) => { setPosition(""); setIndustry(val) }}
+                                    onValueChange={val => { setPosition(''); setIndustry(val) }}
                                     enabled={!isLoading}
+                                    style={{ color: 'black' }}
                                 >
-                                    <Picker.Item label="Select industry" value="" />
-                                    {Object.keys(industries).map((ind) => (
-                                        <Picker.Item key={ind} label={ind} value={ind} />
+                                    <Picker.Item label="Select industry" value="" style={{ color: 'black' }} />
+                                    {Object.keys(industries).map(ind => (
+                                        <Picker.Item
+                                            key={ind}
+                                            label={ind}
+                                            value={ind}
+                                            style={{ color: 'black' }}
+                                        />
                                     ))}
                                 </Picker>
                             </View>
@@ -204,12 +215,22 @@ export default function EditProfileModal({
                             <View style={styles.pickerWrapper}>
                                 <Picker
                                     selectedValue={position}
-                                    onValueChange={(val) => setPosition(val)}
+                                    onValueChange={val => setPosition(val)}
                                     enabled={!isLoading && availableRoles.length > 0}
+                                    style={{ color: 'black' }}
                                 >
-                                    <Picker.Item label={availableRoles.length ? 'Select role' : 'Choose industry first'} value="" />
-                                    {availableRoles.map((role) => (
-                                        <Picker.Item key={role} label={role} value={role} />
+                                    <Picker.Item
+                                        label={availableRoles.length ? 'Select role' : 'Choose industry first'}
+                                        value=""
+                                        style={{ color: 'black' }}
+                                    />
+                                    {availableRoles.map(role => (
+                                        <Picker.Item
+                                            key={role}
+                                            label={role}
+                                            value={role}
+                                            style={{ color: 'black' }}
+                                        />
                                     ))}
                                 </Picker>
                             </View>

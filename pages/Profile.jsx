@@ -31,10 +31,10 @@ import BackgroundGradient2 from '../components/backgroundGradient2';
 import TopBar from '../components/TopBar';
 import EditProfileModal from '../components/editProfile';
 const levels = [
-  { label: 'Entry level', value: '1' },
-  { label: 'Mid-level', value: '8' },
-  { label: 'Senior', value: '12' },
-  { label: 'Executive', value: '20' }
+  { label: 'Entry level', value: 1 },
+  { label: 'Mid-level', value: 8 },
+  { label: 'Senior', value: 12 },
+  { label: 'Executive', value: 20 }
 ];
 export default function ProfileScreen() {
   const {
@@ -52,6 +52,8 @@ export default function ProfileScreen() {
     : '';
   const [loading, setLoading] = useState(false);
   const [isIsEditProfile, setIsEditProfile] = useState(false)
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
   const [profileData, setProfileData] = useState({
     canId: "",
     avatar: userProfile?.avatar,
@@ -122,7 +124,7 @@ export default function ProfileScreen() {
 
   const logout = async () => {
     try {
-      setLoading(true);
+      setIsLoggingOut(true);
 
       const currentUser = auth().currentUser;
 
@@ -156,7 +158,7 @@ export default function ProfileScreen() {
       console.error('Error signing out:', err);
       Alert.alert('Error', 'Failed to log out. Please try again.');
     } finally {
-      setLoading(false);
+      setIsLoggingOut(false);
     }
   }; const safe = (v, fallback = 'N/A') => {
     if (v === null || v === undefined || v === '') return fallback
@@ -270,6 +272,7 @@ export default function ProfileScreen() {
     <>
       <TopBar />
       <ScrollView
+        contentContainerStyle={{ paddingBottom: 60 }}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={loading} onRefresh={onRefresh} />
@@ -449,6 +452,17 @@ export default function ProfileScreen() {
                 <Text className="text-sm text-gray-500 mb-2">
                   Irreversible account actions.
                 </Text>
+                <TouchableOpacity
+                  className="bg-black rounded-lg p-3 items-center mb-4"
+                  onPress={logout}
+                  disabled={isLoggingOut}
+                >
+                  {isLoggingOut ? (
+                    <ActivityIndicator color="white" />
+                  ) : (
+                    <Text className="text-white font-bold">Logout</Text>
+                  )}
+                </TouchableOpacity>
                 <Text className="font-medium">Delete Account</Text>
                 <Text className="text-sm text-gray-600 mb-2">
                   Permanently delete your account and all associated data. This

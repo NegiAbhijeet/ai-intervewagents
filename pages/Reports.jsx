@@ -139,7 +139,8 @@ const Reports = () => {
   return (
     <>
       <TopBar />
-      <Layout><BackgroundGradient2 />
+      <Layout>
+        <BackgroundGradient2 />
         <ScrollView
           showsVerticalScrollIndicator={false}
           className="py-5"
@@ -238,6 +239,7 @@ const Reports = () => {
                 backgroundColor: '#fff',
                 height: 200,
                 padding: 16,
+                marginTop: 40
               }}
             >
               <Text

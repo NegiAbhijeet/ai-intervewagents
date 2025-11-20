@@ -31,7 +31,7 @@ export default function LeagueCarousel({
   function renderItem({ item, index }) {
     const isUnlocked = index <= userLeagueIndex;
     const isCurrent = index === userLeagueIndex;
-    const size = isCurrent ? 96 : 72;
+    const size = isCurrent ? 90 : 72;
     const fontWeight = isCurrent ? '700' : isUnlocked ? '600' : '400';
     const labelColor = isUnlocked ? '#111' : '#8b8b8b';
 

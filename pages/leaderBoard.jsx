@@ -192,8 +192,8 @@ export default function Leaderboard() {
     <>
       <TopBar />
       <ScrollView
-        style={{ flex: 1, backgroundColor: '#fff' }}
-        contentContainerStyle={{ paddingBottom: 60 }}
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: 160 }}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
