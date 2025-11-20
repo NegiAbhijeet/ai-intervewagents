@@ -227,7 +227,7 @@ export default function JobsPage() {
       <TopBar />
       <Layout>
         {openPopup ? (
-          <ScrollView showsVerticalScrollIndicator={false} className="py-5">
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }} className="py-5">
             <View className="flex-1 items-center justify-center w-full">
               <JobsFormDetails
                 uid={userProfile?.uid}

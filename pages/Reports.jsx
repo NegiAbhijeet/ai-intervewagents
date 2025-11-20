@@ -144,6 +144,7 @@ const Reports = () => {
         <ScrollView
           showsVerticalScrollIndicator={false}
           className="py-5"
+          contentContainerStyle={{ paddingBottom: 120 }}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }

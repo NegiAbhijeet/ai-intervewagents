@@ -84,10 +84,23 @@ export default function EditProfileModal({
         let firstName = nameArray[0]
         let lastName = nameArray.slice(1).join(' ')
         let url = `${JAVA_API_URL}/api/candidates/update/${canId}`
+        let skills = []
+
+        // extract skills based on selected industry and position
+        if (industry && position) {
+            const industryData = industries[industry]
+            if (industryData && industryData[position]) {
+                skills = industryData[position]
+            }
+        }
         const payload = { firstName, lastName, }
         // include industry/position only when selected
-        if (industry) payload.industry = industry
-        if (position) payload.position = position
+        if (industry && position) {
+            payload.industry = industry
+            payload.position = position
+            payload.requiredSkills = skills
+        }
+
         if (level) payload.experienceYears = level
         try {
             setIsLoading(true)

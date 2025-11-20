@@ -299,7 +299,8 @@ const HomePage = () => {
                 <BackgroundGradient2 />
                 <ScrollView
                     showsVerticalScrollIndicator={false}
-                    className="py-5"
+                    className="py-5 "
+                    contentContainerStyle={{ paddingBottom: 120 }}
                     refreshControl={
                         <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
                     }
