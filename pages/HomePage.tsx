@@ -1,6 +1,6 @@
 import Layout from './Layout';
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, Button, Easing, Image, ImageBackground, ImageSourcePropType, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Animated, Button, Easing, Image, ImageBackground, ImageSourcePropType, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import StatsCard from '../components/StatsCard';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import { AppStateContext } from '../components/AppContext';
@@ -58,7 +58,9 @@ const HomePage = () => {
     const [lastMeeting, setLastMeeting] = useState([]);
     const [overallScore, setOverallScore] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
+    const [isInterviewStart, setIsInterviewStart] = useState(false)
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const [myCandidate, setMyCandidate] = useState(null);
     const finalLoading = isLoading || !userProfile;
 
     const spin = useRef(new Animated.Value(0)).current
@@ -89,6 +91,20 @@ const HomePage = () => {
         inputRange: [0, 1],
         outputRange: ['0deg', '360deg']
     })
+    const fetchCandidatedata = async () => {
+        try {
+            const response = await fetchWithAuth(
+                `${JAVA_API_URL}/api/candidates/uid/${userProfile?.uid}`,
+            );
+            const data = await response.json();
+            if (data?.data && data?.data.length > 0) {
+                console.log(data?.data[0])
+                setMyCandidate(data.data[0]);
+            }
+        } catch (error) {
+            console.error('Failed to fetch candidate:', error);
+        }
+    };
     async function fetchMeetings(isRefreshingCall = false) {
         setIsLoading(true);
         if (isRefreshingCall) {
@@ -160,12 +176,14 @@ const HomePage = () => {
         if (userProfile?.uid) {
             fetchMeetings();
             fetchUserRank();
+            fetchCandidatedata()
         }
     }, [userProfile?.uid]);
     const onRefresh = () => {
         setIsLoading(true);
         fetchMeetings(true);
         fetchUserRank();
+        fetchCandidatedata()
     };
     useEffect(() => {
         if (meetings.length > 0) {
@@ -179,11 +197,96 @@ const HomePage = () => {
             setOverallScore(calculatedScore);
         }
     }, [meetings]);
+    const extractMeetingDateTimeParts = dateTime => {
+        const date = new Date(dateTime);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hour = String(date.getHours()).padStart(2, '0');
+        const minute = String(date.getMinutes()).padStart(2, '0');
 
-    const totalInterviews = meetings.length;
-    // const [open, setOpen] = useState(false);
+        return {
+            date: `${year}-${month}-${day}`,
+            hour,
+            minute,
+        };
+    };
+    const handleSubmit = async (practiceOrRevise) => {
+        try {
+            setIsInterviewStart(true);
+
+            const now = new Date();
+            const { date, hour, minute } = extractMeetingDateTimeParts(now);
+            const parsedDuration = parseInt(10);
+            const payload = {
+                uid: userProfile?.uid,
+                hour,
+                minute,
+                date,
+                duration: parsedDuration * 60,
+                position: myCandidate?.position,
+                role: 'candidate',
+                candidateId: myCandidate?.canId || '',
+                canEmail: userProfile?.email || userProfile?.user_email || '',
+                interviewType: "Technical" || '',
+                type: practiceOrRevise,
+                requiredSkills: myCandidate?.requiredSkills,
+                experience: myCandidate?.experienceYears || 0,
+            };
+
+
+            const response = await fetchWithAuth(`${API_URL}/interview-agent/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData?.error || 'Failed to create interview.');
+            }
+
+            const result = await response.json();
+            const meetingUrl = result?.meeting_url;
+
+            if (meetingUrl) {
+                const urlParams = new URLSearchParams(meetingUrl.split('?')[1]);
+
+                const meetingId = urlParams.get('meetingId');
+                const canId = urlParams.get('canId');
+                const interviewType = urlParams.get('interviewType');
+                const candidateName = urlParams.get('candidateName') || 'User';
+                const interviewTime = urlParams.get('interviewTime');
+
+                const firstPayload = {
+                    canId,
+                    meetingId,
+                    interviewType,
+                    interviewTime,
+                    candidateName,
+                    adminId: userProfile?.uid
+                }
+                setFirstInterviewObject(firstPayload)
+            }
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setIsInterviewStart(false);
+        }
+    };
     return (
         <>
+            {isInterviewStart && (
+                <Modal transparent visible animationType="fade">
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.spinnerContainer}>
+                            <ActivityIndicator size="large" style={styles.spinner} />
+                        </View>
+                    </View>
+                </Modal>
+            )}
             <TopBar />
             {
                 firstInterviewObject && <InterviewScreen
@@ -213,7 +316,7 @@ const HomePage = () => {
                         <View className='px-4 flex-row items-center justify-between'>
                             <View className=''>
                                 <Text style={{ fontSize: 18, fontWeight: 700, lineHeight: 18 }}>
-                                    Hello {userProfile?.first_name || '_'} 👋
+                                    Hello {myCandidate?.firstName || 'User'} 👋
                                 </Text>
                                 <Text style={{ fontSize: 15, fontWeight: 400 }}>
                                     Welcome to your home!
@@ -254,7 +357,7 @@ const HomePage = () => {
                         </Text>
                         {interviews.map(({ title, description, icon, value, bottomLine }, index) =>
                         (
-                            <Pressable key={index} onPress={() => navigation.navigate('interview', { type: value })} style={{ marginBottom: 8 }}>
+                            <Pressable key={index} onPress={() => handleSubmit(value)} style={{ marginBottom: 8 }}>
                                 <ImageBackground source={require('../assets/images/homeCardWrapper.png')} style={{ width: '100%', aspectRatio: 371 / 209 }} imageStyle={{ resizeMode: 'contain' }}>
                                     <View className="absolute h-full w-full top-0 left-0 p-8">
                                         <View className="w-full items-center flex-row justify-center gap-4">
@@ -281,3 +384,29 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
+
+const styles = StyleSheet.create({
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.25)',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    spinnerContainer: {
+        width: 96,
+        height: 96,
+        borderRadius: 12,
+        backgroundColor: 'rgba(255,255,255,0.95)',
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.12,
+        shadowRadius: 12,
+        elevation: 10
+    },
+    spinner: {
+        transform: [{ scale: 1 }]
+    }
+})
