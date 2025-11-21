@@ -36,7 +36,11 @@ const ReportModal = ({
   const [showSummary, setShowSummary] = useState(false);
   const [showImprovementPoints, setShowImprovementPoints] = useState(false);
   const [activeTab, setActiveTab] = useState('details'); //details or transcript
-  console.log(report);
+  function getScoreText(score) {
+    if (score <= 25) return 'Bad';
+    if (score <= 75) return 'Good';
+    return 'Excellent';
+  }
   return (
     <Modal
       visible={visible}
@@ -180,7 +184,7 @@ const ReportModal = ({
                   </View>
 
                   <Text style={{ fontSize: 14, color: '#333', fontSize: 12 }}>
-                    You Scored well
+                    You scored {getScoreText(report?.feedback?.averagePercentage || 0)}
                   </Text>
 
                   <Pressable onPress={() => setShowSummary(true)} hitSlop={6}>

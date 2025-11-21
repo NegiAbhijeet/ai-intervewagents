@@ -250,6 +250,12 @@ const HomePage = () => {
             setIsInterviewStart(false);
         }
     };
+    function getScoreText(score) {
+        if (score <= 25) return 'Bad';
+        if (score <= 75) return 'Good';
+        return 'Excellent';
+    }
+
     return (
         <>
             {isInterviewStart && (
@@ -303,7 +309,9 @@ const HomePage = () => {
                         <View>
                             <Text style={{ fontSize: 12, fontWeight: 700 }}>{lastMeeting?.position || "No Interview Found"}</Text>
                             <Text style={{ fontSize: 10, fontWeight: 600 }}>Score : {lastMeeting?.feedback?.averagePercentage || "N/A"}{lastMeeting?.feedback?.averagePercentage && "%"}</Text>
-                            <Text style={{ fontSize: 10, fontWeight: 400 }}>You're Getting Better!</Text>
+                            <Text style={{ fontSize: 10, fontWeight: 400 }}>
+                                You scored {getScoreText(lastMeeting?.feedback?.averagePercentage || 0)}
+                            </Text>
                         </View>
 
 
