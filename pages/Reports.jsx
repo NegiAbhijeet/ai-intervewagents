@@ -149,11 +149,15 @@ const Reports = () => {
   const filteredMeetings = meetings.filter(report => {
     if (activeFilter === 'all') return true;
     const t = (report.type || '').toLowerCase();
-    if (activeFilter === 'mock') return t === 'revise';
-    if (activeFilter === 'trainer') return t === 'practice';
+    if (activeFilter === 'mock') return t === 'practice';
+    if (activeFilter === 'trainer') return t === 'revise';
     return true;
   });
-  // Single return. Child areas are conditional inside the layout.
+  const capitalizeFirst = text => {
+    if (!text || typeof text !== 'string') return '';
+    return text.charAt(0).toUpperCase() + text.slice(1);
+  };
+
   return (
     <>
       <TopBar />
@@ -440,7 +444,7 @@ const Reports = () => {
                     <Text
                       style={{ fontWeight: '500', fontSize: 14, color: 'rgba(75, 85, 99, 1)', marginTop: 8 }}
                     >
-                      {report.interviewType} Interview
+                      {capitalizeFirst(report?.interviewType)} Interview
                     </Text>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 16, marginTop: 16 }}>
                       <View
@@ -478,10 +482,8 @@ const Reports = () => {
                         }}
                       >
                         <Ionicons name="calendar-outline" size={14} color="rgba(75, 85, 99, 1)" />
-                        <Text
-                          style={{ color: 'rgba(75, 85, 99, 1)', fontSize: 14 }}
-                        >
-                          {report?.type === "revise" ? "Revise" : "Practice"}
+                        <Text style={{ color: 'rgba(75, 85, 99, 1)', fontSize: 14 }}>
+                          {capitalizeFirst(report?.type)}
                         </Text>
                       </View>
                     </View>

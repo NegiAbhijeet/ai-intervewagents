@@ -202,7 +202,7 @@ const HomePage = () => {
                 role: 'candidate',
                 candidateId: myCandidate?.canId || '',
                 canEmail: userProfile?.email || userProfile?.user_email || '',
-                interviewType: "Technical" || '',
+                interviewType: "Technical",
                 type: practiceOrRevise,
                 requiredSkills: myCandidate?.requiredSkills,
                 experience: myCandidate?.experienceYears || 0,

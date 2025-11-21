@@ -136,7 +136,9 @@ export default function AvatarSelectionScreen({ route }) {
           ...userProfile,
           role: 'candidate',
           avatar: selectedAvatar,
-          full_name: candidateName
+          full_name: candidateName,
+          industry: selectedIndustry,
+          position: selectedRole
         });
         const firstPayload = {
           canId,

@@ -69,7 +69,11 @@ const RootNavigator = () => {
 
 
   // If user is logged in and has a profile with a role, show the main app tabs
-  if (firebaseUser && userProfile && userProfile.role) {
+  if (firebaseUser && userProfile &&
+    userProfile.role &&
+    userProfile.position &&
+    userProfile.industry
+  ) {
     return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="AppTabs" component={AppTabs} />
@@ -108,7 +112,11 @@ const RootNavigator = () => {
   }
 
   // If user is logged in but has no role yet or avatar, show onboarding avatar selection
-  if (firebaseUser && userProfile && !userProfile.role) {
+  if (firebaseUser && userProfile && (
+    !userProfile?.role ||
+    !userProfile?.position ||
+    !userProfile?.industry
+  )) {
     return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="ChooseRole" component={IndustryRoleScreen} />
