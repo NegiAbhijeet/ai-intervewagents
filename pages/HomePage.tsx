@@ -325,7 +325,7 @@ const HomePage = () => {
                                     resizeMode: 'contain'
                                 }}
                             />
-                        ) : (<Pressable onPress={fetchMeetings}>
+                        ) : (<Pressable onPress={() => { handleSubmit(lastMeeting?.type) }}>
                             <Image
                                 source={require('../assets/images/reload.png')}
                                 style={{ width: 28, height: 28, resizeMode: 'contain' }}
