@@ -87,6 +87,7 @@ const TopBar = () => {
             /> */}
             <Image
               source={require("../assets/images/fire.png")}
+              style={{ width: 18, height: 18 }}
             />
             {/* <Ionicons name="trophy" size={14} color="#FBBF24" /> */}
             <Text className="text-base font-semibold">

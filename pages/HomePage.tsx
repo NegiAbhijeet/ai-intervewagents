@@ -131,29 +131,7 @@ const HomePage = () => {
         }
     }
     function fetchUserRank() {
-        fetchWithAuth(`${API_URL}/get-users-rating/`)
-            .then(res => res.json())
-            .then(res => {
-                let data = res.profiles || [];
-                if (userProfile?.user_email) {
-                    let sortedUsers = [...data]
-                        .sort((a, b) => b.rating - a.rating)
-                        .map((user, index) => ({
-                            ...user,
-                            rank: index + 1,
-                            image: user.user_photo_url,
-                        }));
-                    const found = sortedUsers.find(
-                        u => u.user_email === userProfile.user_email,
-                    );
-                    if (found) {
-                        setLeaderboardRank(found?.rank || 0);
-                    }
-                }
-            })
-            .catch(err => {
-                console.error('Failed to fetch leaderboard:', err);
-            });
+        setLeaderboardRank(userProfile?.current_streak || 0);
     }
     useNotification(userProfile?.uid, fcmTokenUpdated, setFcmTokenUpdated);
 
