@@ -10,12 +10,13 @@ import {
     KeyboardAvoidingView,
     Platform,
     ScrollView,
-    ActivityIndicator
+    
 } from 'react-native'
 import fetchWithAuth from '../libs/fetchWithAuth'
 import { JAVA_API_URL } from './config'
 import Toast from 'react-native-toast-message'
 import Ionicons from '@react-native-vector-icons/ionicons'
+import Layout from '../pages/Layout'
 
 // Safe JSON loading
 let industriesData = {};
@@ -149,7 +150,7 @@ export default function EditProfileModal({
             </TouchableOpacity>
 
             {/* Custom Industry Selector (Click opens list) */}
-            <Text style={styles.label}>Industry</Text>
+            <Text style={styles.label}>Domain</Text>
             <TouchableOpacity
                 style={styles.selectorBtn}
                 onPress={() => setViewMode('industry')}
@@ -211,70 +212,71 @@ export default function EditProfileModal({
 
     return (
         <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
-            <View style={styles.backdrop}>
-                <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.modalWrap}>
-                    <View style={styles.sheet}>
+            <Layout>
+                <View style={styles.backdrop}>
+                    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.modalWrap}>
+                        <View style={styles.sheet}>
 
-                        {/* Header only shows in Form mode */}
-                        {viewMode === 'form' && (
-                            <View style={styles.headerRow}>
-                                <TouchableOpacity
-                                    onPress={onClose}
-                                    accessibilityRole="button"
-                                    style={{ borderWidth: 1, borderColor: 'rgba(217, 217, 217, 1)', padding: 6, borderRadius: 50 }}
-                                >
-                                    <Ionicons name="close" size={26} color="#475569" />
-                                </TouchableOpacity>
+                            {/* Header only shows in Form mode */}
+                            {viewMode === 'form' && (
+                                <View style={styles.headerRow}>
+                                    <TouchableOpacity
+                                        onPress={onClose}
+                                        accessibilityRole="button"
+                                        style={{ borderWidth: 1, borderColor: 'rgba(217, 217, 217, 1)', padding: 6, borderRadius: 50 }}
+                                    >
+                                        <Ionicons name="close" size={26} color="#475569" />
+                                    </TouchableOpacity>
 
-                                <TouchableOpacity onPress={handleSave} accessibilityRole="button" disabled={isLoading} style={{ borderColor: 'rgba(217, 217, 217, 1)', borderWidth: 0.5, borderRadius: 10, paddingHorizontal: 8, paddingVertical: 4 }}>
-                                    <Text style={styles.doneText}>{isLoading ? 'Saving...' : 'Done'}</Text>
-                                </TouchableOpacity>
-                            </View>
-                        )}
+                                    <TouchableOpacity onPress={handleSave} accessibilityRole="button" disabled={isLoading} style={{ borderColor: 'rgba(217, 217, 217, 1)', borderWidth: 0.5, borderRadius: 10, paddingHorizontal: 8, paddingVertical: 4 }}>
+                                        <Text style={styles.doneText}>{isLoading ? 'Saving...' : 'Done'}</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            )}
 
-                        {/* Conditional Rendering based on View Mode */}
-                        {viewMode === 'form' && renderForm()}
+                            {/* Conditional Rendering based on View Mode */}
+                            {viewMode === 'form' && renderForm()}
 
-                        {viewMode === 'industry' && renderListSelection(
-                            Object.keys(industriesData),
-                            (val) => { setIndustry(val); setPosition(''); },
-                            "Select Industry"
-                        )}
+                            {viewMode === 'industry' && renderListSelection(
+                                Object.keys(industriesData),
+                                (val) => { setIndustry(val); setPosition(''); },
+                                "Select Industry"
+                            )}
 
-                        {viewMode === 'role' && renderListSelection(
-                            industry ? Object.keys(industriesData[industry] || {}) : [],
-                            setPosition,
-                            "Select Role"
-                        )}
+                            {viewMode === 'role' && renderListSelection(
+                                industry ? Object.keys(industriesData[industry] || {}) : [],
+                                setPosition,
+                                "Select Role"
+                            )}
 
-                        {viewMode === 'level' && renderListSelection(
-                            LEVELS,
-                            (item) => {
-                                // item is an object {label, value}
-                                if (typeof item === 'object' && item !== null) setLevel(item.value)
-                                else {
-                                    // fallback: try to find by label
-                                    const found = LEVELS.find(l => l.label === item)
-                                    if (found) setLevel(found.value)
-                                }
-                            },
-                            "Select Level"
-                        )}
+                            {viewMode === 'level' && renderListSelection(
+                                LEVELS,
+                                (item) => {
+                                    // item is an object {label, value}
+                                    if (typeof item === 'object' && item !== null) setLevel(item.value)
+                                    else {
+                                        // fallback: try to find by label
+                                        const found = LEVELS.find(l => l.label === item)
+                                        if (found) setLevel(found.value)
+                                    }
+                                },
+                                "Select Level"
+                            )}
 
-                    </View>
-                </KeyboardAvoidingView>
-            </View>
+                        </View>
+                    </KeyboardAvoidingView>
+                </View>
+            </Layout>
         </Modal>
     )
 }
 
 const styles = StyleSheet.create({
-    backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)' },
+    backdrop: { flex: 1, },
     modalWrap: { flex: 1, justifyContent: 'flex-end' },
     sheet: {
         height: '100%',
-        backgroundColor: '#fff',
-        padding: 20,
+        paddingTop: 20,
         overflow: 'hidden'
     },
     headerRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 15, alignItems: 'center' },

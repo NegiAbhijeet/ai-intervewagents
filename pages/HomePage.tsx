@@ -1,18 +1,15 @@
 import Layout from './Layout';
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Animated, Button, Easing, Image, ImageBackground, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Animated, Easing, Image, ImageBackground, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import { AppStateContext } from '../components/AppContext';
 import { API_URL, JAVA_API_URL } from '../components/config';
-import { useNavigation } from '@react-navigation/native';
 import TopBar from '../components/TopBar';
 import { useNotification } from '../hooks/useNotifications';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import { RefreshControl } from 'react-native-gesture-handler';
 import InterviewScreen from '../components/interviewScreen';
 import HomeTopPenguin from "../assets/images/homeTopPeng.svg"
-const img = require('../assets/images/homeCardWrapper.png');
-const { width: imgW, height: imgH } = Image.resolveAssetSource(img);
 const interviews = [
     {
         title: 'Test Yourself',
@@ -36,14 +33,9 @@ const interviews = [
     },
 ];
 
-
 const HomePage = () => {
-    const ratio = useMemo(() => imgW / imgH || 1, [imgW, imgH]);
-
-    const navigation = useNavigation();
     const {
         userProfile,
-        mainUsedMinutes,
         fcmTokenUpdated,
         setFcmTokenUpdated,
         setLeaderboardRank,
@@ -52,13 +44,10 @@ const HomePage = () => {
         myCandidate,
         setMyCandidate
     } = useContext(AppStateContext);
-    const [meetings, setMeetings] = useState([]);
     const [lastMeeting, setLastMeeting] = useState([]);
-    const [overallScore, setOverallScore] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [isInterviewStart, setIsInterviewStart] = useState(false)
     const [isRefreshing, setIsRefreshing] = useState(false);
-    const finalLoading = isLoading || !userProfile;
 
     const spin = useRef(new Animated.Value(0)).current
 
@@ -95,7 +84,6 @@ const HomePage = () => {
             );
             const data = await response.json();
             if (data?.data && data?.data.length > 0) {
-                console.log(data?.data[0])
                 setMyCandidate(data.data[0]);
             }
         } catch (error) {
@@ -182,18 +170,7 @@ const HomePage = () => {
         fetchUserRank();
         fetchCandidatedata()
     };
-    useEffect(() => {
-        if (meetings.length > 0) {
-            const totalScore = meetings.reduce(
-                (acc, item) => acc + (item.feedback?.averagePercentage ?? 0),
-                0,
-            );
-            const calculatedScore = parseFloat(
-                (totalScore / meetings.length).toFixed(2),
-            );
-            setOverallScore(calculatedScore);
-        }
-    }, [meetings]);
+
     const extractMeetingDateTimeParts = dateTime => {
         const date = new Date(dateTime);
         const year = date.getFullYear();
