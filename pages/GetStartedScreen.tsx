@@ -5,15 +5,12 @@ import {
   View,
   Text,
   Image,
-  ImageBackground,
   Dimensions,
-  StatusBar,
-  Pressable,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import BackgroundGradient1 from '../components/backgroundGradient1';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppStateContext } from '../components/AppContext';
+import MainButton from '../components/mainButton';
 
 const { width, height } = Dimensions.get('window');
 
@@ -35,7 +32,7 @@ export default function GetStartedScreen() {
     }
   }
   return (
-    <SafeAreaView style={styles.safe}>
+    <>
       <BackgroundGradient1 />
       <View
         style={styles.bg}
@@ -72,31 +69,15 @@ export default function GetStartedScreen() {
         </View>
 
         <View style={styles.bottomSpacer}>
-          <Pressable
-            style={styles.primaryButton}
-            onPress={() => navigation.navigate('Onboarding')}
-          >
-            <Text style={styles.primaryButtonText}>Get Started</Text>
-          </Pressable>
-
-          <Pressable
-            style={styles.secondaryButton}
-            onPress={onFinish}
-          >
-            <Text style={styles.secondaryButtonText}>
-              Already Have An Account ? Login
-            </Text>
-          </Pressable>
+          <MainButton text={'Get Started'} onPress={() => navigation.navigate('Onboarding')} />
+          <MainButton text={'Already Have An Account ? Login'} onPress={onFinish} outline={true} />
         </View>
       </View>
-    </SafeAreaView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-  },
   bg: {
     flex: 1,
     width: width,

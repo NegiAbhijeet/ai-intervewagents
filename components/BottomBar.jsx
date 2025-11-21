@@ -2,7 +2,6 @@ import React, { useContext, useState } from 'react';
 import { View, Pressable, StyleSheet, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
-import { BlurView } from '@react-native-community/blur';
 
 // SVG imports (assumes react-native-svg + svg transformer configured)
 import HomeIcon from '../assets/images/bottomBar/homeicon.svg';
@@ -42,14 +41,9 @@ const BottomTabBar = ({ state, descriptors, navigation }) => {
   return (
     <View style={[styles.wrapper, { bottom: containerBottom }]}>
       <View style={styles.backdrop}>
-        <BlurView
-          style={styles.blurContainer}
-          blurType="light"
-          blurAmount={6}
-          reducedTransparencyFallbackColor="rgba(255,255,255,0.12)"
-        />
+        
         <LinearGradient
-          colors={['rgba(255,255,255,0.06)', 'rgba(255,255,255,0.03)']}
+          colors={['rgba(255,255,255,1)', 'rgba(255,255,255,1)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.gradient}
@@ -130,7 +124,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: '4.5%',
     right: '4.5%',
-    marginBottom: 20,
+    marginBottom: 10,
     alignSelf: 'center',
     height: 68,
     borderRadius: 40,
@@ -151,9 +145,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     position: 'relative',
   },
-  blurContainer: {
-    ...StyleSheet.absoluteFillObject,
-  },
+
   gradient: {
     flex: 1,
     width: '100%',
