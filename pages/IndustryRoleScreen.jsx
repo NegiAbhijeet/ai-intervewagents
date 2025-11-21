@@ -146,10 +146,10 @@ const IndustryRoleScreen = () => {
         {step === 1 && (
           <>
             <View style={styles.header}>
-              <Text style={styles.title}>Choose Your Industry</Text>
+              <Text style={styles.title}>Choose Your Domain</Text>
             </View>
             <Text style={styles.dropdownLabel}>
-              Select your industry for better matches.
+              Select your domain for better matches.
             </Text>
             <FlatList
               data={data}
@@ -179,7 +179,7 @@ const IndustryRoleScreen = () => {
         {step === 3 && (
           <>
             <View style={styles.header}>
-              <Text style={styles.title}>Select your level</Text>
+              <Text style={styles.title}>Select Your Level</Text>
             </View>
             <Text style={styles.dropdownLabel}>
               Pick your experience level.

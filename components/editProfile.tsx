@@ -1,4 +1,3 @@
-// EditProfileModal.js
 import React, { useEffect, useState } from 'react'
 import {
     Modal,
@@ -10,23 +9,28 @@ import {
     StyleSheet,
     KeyboardAvoidingView,
     Platform,
+    ScrollView,
+    ActivityIndicator
 } from 'react-native'
-import BackgroundGradient2 from './backgroundGradient2'
 import fetchWithAuth from '../libs/fetchWithAuth'
-import Ionicons from '@react-native-vector-icons/ionicons'
 import { JAVA_API_URL } from './config'
 import Toast from 'react-native-toast-message'
-import EditAvatarModal from './editAvatar'
-import { GradientBorderView } from '@good-react-native/gradient-border'
-import { Picker } from '@react-native-picker/picker'
-const levels = [
-    { label: 'Entry level', value: 1 },
-    { label: 'Mid-level', value: 8 },
+import Ionicons from '@react-native-vector-icons/ionicons'
+
+// Safe JSON loading
+let industriesData = {};
+try {
+    industriesData = require('../libs/industryJson.json');
+} catch (e) {
+    console.warn("Industry JSON missing");
+}
+
+const LEVELS = [
+    { label: 'Entry', value: 1 },
+    { label: 'Mid', value: 8 },
     { label: 'Senior', value: 12 },
-    { label: 'Executive', value: 20 }
+    { label: 'Exec', value: 20 }
 ];
-// load industries/positions from local JSON
-const industries = require('../libs/industryJson.json')
 
 export default function EditProfileModal({
     visible,
@@ -39,301 +43,258 @@ export default function EditProfileModal({
     canId,
     onSuccess,
 }) {
-    const [name, setName] = useState(currentName)
+    // Form State
+    const [name, setName] = useState('')
+    const [level, setLevel] = useState(0) // 0 = numeric safe default
+    const [industry, setIndustry] = useState('')
+    const [position, setPosition] = useState('')
     const [isLoading, setIsLoading] = useState(false)
-    const [isAvatarEdit, setIsAvatarEdit] = useState(false)
 
-    // new state for industry and role
-    const [industry, setIndustry] = useState(initialIndustry || '')
-    // replace existing useState for level with:
-    const [level, setLevel] = useState(
-        initialLevel !== undefined && initialLevel !== null ? Number(initialLevel) : ''
-    )
+    // UI State (Controls which screen is visible: 'form' | 'industry' | 'role' | 'level')
+    const [viewMode, setViewMode] = useState('form')
 
-    const [position, setPosition] = useState(initialPosition || '')
-    const [availableRoles, setAvailableRoles] = useState([])
-
+    // Initialize Data
     useEffect(() => {
-        setName(currentName)
-        setIndustry(initialIndustry || '')
-        setPosition(initialPosition || '')
-        setLevel(initialLevel !== undefined && initialLevel !== null ? Number(initialLevel) : '')
-    }, [currentName, initialIndustry, initialPosition, initialLevel, visible])
+        if (visible) {
+            setName(currentName || '')
+            setIndustry(initialIndustry || '')
+            setPosition(initialPosition || '')
 
+            // Safe Number Conversion
+            const safeLevel = parseInt(initialLevel);
+            setLevel(!isNaN(safeLevel) ? safeLevel : 0);
 
-    // update roles when industry changes
-    useEffect(() => {
-        if (industry && industries[industry]) {
-            setAvailableRoles(Object.keys(industries[industry]))
-            // if current position is not present in new industry, clear it
-            if (!industries[industry][position]) {
-                setPosition('')
-            }
-        } else {
-            setAvailableRoles([])
-            setPosition('')
+            setViewMode('form'); // Reset view
         }
-    }, [industry])
+    }, [visible, currentName, initialIndustry, initialPosition, initialLevel])
 
+    // --- SAVE LOGIC ---
     async function handleSave() {
-        if (!name) {
-            return
-        }
+        if (!name.trim()) return Toast.show({ type: 'error', text1: 'Name is required' });
 
-        const nameArray = name.trim().split(' ')
-        let firstName = nameArray[0]
-        let lastName = nameArray.slice(1).join(' ')
-        let url = `${JAVA_API_URL}/api/candidates/update/${canId}`
-        let skills = []
-
-        // extract skills based on selected industry and position
-        if (industry && position) {
-            const industryData = industries[industry]
-            if (industryData && industryData[position]) {
-                skills = industryData[position]
-            }
-        }
-        const payload = { firstName, lastName, }
-        // include industry/position only when selected
-        if (industry && position) {
-            payload.industry = industry
-            payload.position = position
-            payload.requiredSkills = skills
-        }
-
-        if (level) payload.experienceYears = level
+        setIsLoading(true)
         try {
-            setIsLoading(true)
+            const nameArray = name.trim().split(' ')
+            const firstName = nameArray[0]
+            const lastName = nameArray.slice(1).join(' ') || ''
 
-            const response = await fetchWithAuth(url
-                ,
-                {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(payload),
-                }
-            )
-
-            if (!response.ok) {
-                const errorData = await response.json()
-                throw new Error(errorData?.error || 'Failed to update candidate')
+            let skills = []
+            if (industry && position && industriesData[industry]) {
+                skills = industriesData[industry][position] || []
             }
 
-            Toast.show({ type: 'success', text1: 'Candidate updated successfully' })
-            onClose()
-            onSuccess()
+            const payload = {
+                firstName,
+                lastName,
+                industry,
+                position,
+                requiredSkills: skills.length > 0 ? skills : undefined,
+                experienceYears: level > 0 ? level : undefined
+            }
+
+            const url = `${JAVA_API_URL}/api/candidates/update/${canId}`
+            const response = await fetchWithAuth(url, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            })
+
+            if (!response.ok) throw new Error('Update failed');
+
+            Toast.show({ type: 'success', text1: 'Profile updated!' })
+            if (onSuccess) onSuccess();
+            onClose();
         } catch (error) {
-            console.error('Error updating candidate:', error)
-            Toast.show({ type: 'error', text1: error.message || 'Something went wrong' })
+            console.error(error);
+            Toast.show({ type: 'error', text1: 'Failed to update profile' })
         } finally {
             setIsLoading(false)
         }
     }
 
+    // --- RENDER HELPERS ---
+
+    // 1. The Main Form
+    const renderForm = () => (
+        <ScrollView showsVerticalScrollIndicator={false}>
+            {/* Avatar */}
+            <View style={styles.avatarSection}>
+                <View style={styles.avatarWrapper}>
+                    {avatarUrl && !avatarUrl.includes("profileData") ? (
+                        <Image source={{ uri: avatarUrl }} style={styles.avatarImage} />
+                    ) : (
+                        <View style={styles.avatarPlaceholder} />
+                    )}
+                </View>
+            </View>
+
+            {/* Name Input */}
+            <Text style={styles.label}>Full Name</Text>
+            <TextInput
+                value={name}
+                onChangeText={setName}
+                style={styles.input}
+                placeholder="Enter your name"
+                placeholderTextColor="#999"
+            />
+
+            {/* Level Selector now uses a dropdown like Industry/Role */}
+            <Text style={styles.label}>Experience Level</Text>
+            <TouchableOpacity
+                style={styles.selectorBtn}
+                onPress={() => setViewMode('level')}
+            >
+                <Text style={styles.selectorText}>{LEVELS.find(l => l.value === level)?.label || 'Select Level >'}</Text>
+                <Ionicons name="chevron-down" size={20} color="#333" />
+            </TouchableOpacity>
+
+            {/* Custom Industry Selector (Click opens list) */}
+            <Text style={styles.label}>Industry</Text>
+            <TouchableOpacity
+                style={styles.selectorBtn}
+                onPress={() => setViewMode('industry')}
+            >
+                <Text style={styles.selectorText}>
+                    {industry || "Select Industry >"}
+                </Text>
+                <Ionicons name="chevron-down" size={20} color="#333" />
+            </TouchableOpacity>
+
+            {/* Custom Role Selector */}
+            <Text style={styles.label}>Role / Position</Text>
+            <TouchableOpacity
+                style={[styles.selectorBtn, !industry && styles.disabledBtn]}
+                disabled={!industry}
+                onPress={() => setViewMode('role')}
+            >
+                <Text style={styles.selectorText}>
+                    {position || (industry ? "Select Role >" : "Select Industry first")}
+                </Text>
+                <Ionicons name="chevron-down" size={20} color="#333" />
+            </TouchableOpacity>
+
+            <View style={{ height: 40 }} />
+        </ScrollView>
+    );
+
+    // 2. The List Selection View (Replaces Picker)
+    const renderListSelection = (dataArray, onSelect, title) => (
+        <View style={{ flex: 1 }}>
+            <View style={styles.subHeader}>
+                <TouchableOpacity onPress={() => setViewMode('form')}>
+                    <Text style={styles.backText}>{'< Back'}</Text>
+                </TouchableOpacity>
+                <Text style={styles.subTitle}>{title}</Text>
+                <View style={{ width: 40 }} />
+            </View>
+            <ScrollView>
+                {dataArray.map((item) => {
+                    const display = typeof item === 'string' ? item : item.label;
+                    const key = typeof item === 'string' ? item : String(item.value);
+                    return (
+                        <TouchableOpacity
+                            key={key}
+                            style={styles.listItem}
+                            onPress={() => {
+                                onSelect(item);
+                                setViewMode('form');
+                            }}
+                        >
+                            <Text style={styles.listItemText}>{display}</Text>
+                        </TouchableOpacity>
+                    )
+                })}
+                {dataArray.length === 0 && <Text style={{ padding: 20, textAlign: 'center' }}>No options available</Text>}
+            </ScrollView>
+        </View>
+    );
+
     return (
         <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
             <View style={styles.backdrop}>
-                <KeyboardAvoidingView
-                    behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-                    style={styles.modalWrap}
-                >
-                    <BackgroundGradient2 style={StyleSheet.absoluteFill} />
+                <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.modalWrap}>
                     <View style={styles.sheet}>
-                        <View style={styles.headerRow}>
-                            <TouchableOpacity
-                                onPress={onClose}
-                                accessibilityRole="button"
-                                style={{ borderWidth: 1, borderColor: 'rgba(217, 217, 217, 1)', padding: 6, borderRadius: 50 }}
-                            >
-                                <Ionicons name="close" size={26} color="#475569" />
-                            </TouchableOpacity>
 
-                            <TouchableOpacity onPress={handleSave} accessibilityRole="button" disabled={isLoading} style={{ borderColor: 'rgba(217, 217, 217, 1)', borderWidth: 0.5, borderRadius: 10, paddingHorizontal: 8, paddingVertical: 4 }}>
-                                <Text style={styles.doneText}>{isLoading ? 'Saving...' : 'Done'}</Text>
-                            </TouchableOpacity>
-                        </View>
-
-                        <View style={styles.avatarSection}>
-                            <GradientBorderView
-                                gradientProps={{
-                                    colors: ['rgba(93, 91, 239, 1)', 'rgba(140, 66, 236, 1)'],
-                                    start: { x: 0, y: 0 },
-                                    end: { x: 0, y: 1 },
-                                }}
-                                style={styles.avatarWrapper}
-                            >
-                                {avatarUrl ? (
-                                    <Image source={{ uri: avatarUrl }} style={styles.avatarImage} />
-                                ) : (
-                                    <View style={styles.avatarPlaceholder} />
-                                )}
-                            </GradientBorderView>
-                        </View>
-
-                        <View style={styles.form}>
-                            <Text style={styles.label}>Your Full Name</Text>
-                            <TextInput
-                                value={name}
-                                onChangeText={setName}
-                                placeholder="Enter name"
-                                style={styles.input}
-                                placeholderTextColor="gray"
-                                maxLength={50}
-                                editable={!isLoading}
-                            />
-
-                            <Text style={[styles.label, { marginTop: 16 }]}>Your Level</Text>
-                            <View style={styles.pickerWrapper}>
-                                <Picker
-                                    selectedValue={level}
-                                    onValueChange={val => setLevel(val)}
-                                    enabled={!isLoading}
-                                    style={{ color: 'black' }}
+                        {/* Header only shows in Form mode */}
+                        {viewMode === 'form' && (
+                            <View style={styles.headerRow}>
+                                <TouchableOpacity
+                                    onPress={onClose}
+                                    accessibilityRole="button"
+                                    style={{ borderWidth: 1, borderColor: 'rgba(217, 217, 217, 1)', padding: 6, borderRadius: 50 }}
                                 >
-                                    <Picker.Item label="Select level" value="" style={{ color: 'black' }} />
-                                    {levels.map(item => (
-                                        <Picker.Item
-                                            key={String(item.value)}
-                                            label={item.label}
-                                            value={item.value}
-                                            style={{ color: 'black' }}
-                                        />
-                                    ))}
-                                </Picker>
-                            </View>
+                                    <Ionicons name="close" size={26} color="#475569" />
+                                </TouchableOpacity>
 
-                            <Text style={[styles.label, { marginTop: 16 }]}>Industry</Text>
-                            <View style={styles.pickerWrapper}>
-                                <Picker
-                                    selectedValue={industry}
-                                    onValueChange={val => { setPosition(''); setIndustry(val) }}
-                                    enabled={!isLoading}
-                                    style={{ color: 'black' }}
-                                >
-                                    <Picker.Item label="Select industry" value="" style={{ color: 'black' }} />
-                                    {Object.keys(industries).map(ind => (
-                                        <Picker.Item
-                                            key={ind}
-                                            label={ind}
-                                            value={ind}
-                                            style={{ color: 'black' }}
-                                        />
-                                    ))}
-                                </Picker>
+                                <TouchableOpacity onPress={handleSave} accessibilityRole="button" disabled={isLoading} style={{ borderColor: 'rgba(217, 217, 217, 1)', borderWidth: 0.5, borderRadius: 10, paddingHorizontal: 8, paddingVertical: 4 }}>
+                                    <Text style={styles.doneText}>{isLoading ? 'Saving...' : 'Done'}</Text>
+                                </TouchableOpacity>
                             </View>
+                        )}
 
-                            <Text style={[styles.label, { marginTop: 16 }]}>Role / Position</Text>
-                            <View style={styles.pickerWrapper}>
-                                <Picker
-                                    selectedValue={position}
-                                    onValueChange={val => setPosition(val)}
-                                    enabled={!isLoading && availableRoles.length > 0}
-                                    style={{ color: 'black' }}
-                                >
-                                    <Picker.Item
-                                        label={availableRoles.length ? 'Select role' : 'Choose industry first'}
-                                        value=""
-                                        style={{ color: 'black' }}
-                                    />
-                                    {availableRoles.map(role => (
-                                        <Picker.Item
-                                            key={role}
-                                            label={role}
-                                            value={role}
-                                            style={{ color: 'black' }}
-                                        />
-                                    ))}
-                                </Picker>
-                            </View>
-                        </View>
+                        {/* Conditional Rendering based on View Mode */}
+                        {viewMode === 'form' && renderForm()}
+
+                        {viewMode === 'industry' && renderListSelection(
+                            Object.keys(industriesData),
+                            (val) => { setIndustry(val); setPosition(''); },
+                            "Select Industry"
+                        )}
+
+                        {viewMode === 'role' && renderListSelection(
+                            industry ? Object.keys(industriesData[industry] || {}) : [],
+                            setPosition,
+                            "Select Role"
+                        )}
+
+                        {viewMode === 'level' && renderListSelection(
+                            LEVELS,
+                            (item) => {
+                                // item is an object {label, value}
+                                if (typeof item === 'object' && item !== null) setLevel(item.value)
+                                else {
+                                    // fallback: try to find by label
+                                    const found = LEVELS.find(l => l.label === item)
+                                    if (found) setLevel(found.value)
+                                }
+                            },
+                            "Select Level"
+                        )}
+
                     </View>
                 </KeyboardAvoidingView>
             </View>
-            <EditAvatarModal visible={isAvatarEdit} onClose={() => setIsAvatarEdit(false)} currentAvatar={avatarUrl} canId={canId} />
         </Modal>
     )
 }
 
 const styles = StyleSheet.create({
-    backdrop: {
-        flex: 1,
-        backgroundColor: 'white',
-    },
-    modalWrap: {
-        flex: 1,
-        justifyContent: 'flex-end',
-    },
+    backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)' },
+    modalWrap: { flex: 1, justifyContent: 'flex-end' },
     sheet: {
         height: '100%',
-        width: '100%',
-        alignSelf: 'center',
-        borderTopLeftRadius: 18,
-        borderTopRightRadius: 18,
-        overflow: 'hidden',
-        paddingHorizontal: 24,
-        paddingTop: 18,
-        paddingBottom: 36,
-        backgroundColor: 'transparent',
+        backgroundColor: '#fff',
+        padding: 20,
+        overflow: 'hidden'
     },
-    headerRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 8,
-    },
-    closeText: {
-        color: '#475569',
-        fontSize: 16,
-    },
+    headerRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 15, alignItems: 'center' },
+    iconBtn: { padding: 8, backgroundColor: '#f3f4f6', borderRadius: 20 },
+    closeX: { fontSize: 18, fontWeight: 'bold', color: '#333' },
+    doneBtn: { backgroundColor: '#000', paddingVertical: 8, paddingHorizontal: 16, borderRadius: 20 },
     doneText: {
         color: '#111827',
         fontSize: 16,
         fontWeight: '600',
     },
-    avatarSection: {
-        alignItems: 'center',
-        marginBottom: 18,
-    },
-    avatarWrapper: {
-        width: 96,
-        height: 96,
-        borderRadius: 48,
-        borderWidth: 3,
-        borderColor: 'rgba(139,72,239,0.25)',
-        overflow: 'hidden',
-        backgroundColor: '#fff',
-        marginBottom: 8,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    avatarImage: {
-        width: '100%',
-        height: '100%',
-        resizeMode: 'cover',
-    },
-    avatarPlaceholder: {
-        width: '100%',
-        height: '100%',
-        backgroundColor: '#e6e6e6',
-    },
-    changeAvatarText: {
-        color: 'rgba(0, 0, 0, 1)',
-        textDecorationLine: 'underline',
-        marginTop: 4,
-        fontSize: 12,
-    },
-    form: {
-        marginTop: 6,
-        width: '100%',
-    },
-    label: {
-        color: 'rgba(0, 0, 0, 1)',
-        fontSize: 12,
-        fontWeight: '600',
-        marginBottom: 8,
-    },
+
+    // Avatar
+    avatarSection: { alignItems: 'center', marginBottom: 20 },
+    avatarWrapper: { width: 100, height: 100, borderRadius: 50, borderWidth: 3, borderColor: '#8c42ec', overflow: 'hidden', backgroundColor: '#eee' },
+    avatarImage: { width: '100%', height: '100%' },
+    avatarPlaceholder: { width: '100%', height: '100%', backgroundColor: '#ddd' },
+
+    // Form
+    label: { fontSize: 12, fontWeight: '600', color: '#333', marginBottom: 6, marginTop: 12 },
     input: {
         borderWidth: 1.2,
         borderColor: 'rgba(0, 0, 0, 1)',
@@ -343,27 +304,23 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(255,255,255,0.6)',
         fontSize: 16,
     },
-    pickerWrapper: {
-        borderWidth: 1,
-        borderColor: 'rgba(0, 0, 0, 1)',
-        borderRadius: 8,
-        overflow: 'hidden',
-        backgroundColor: 'rgba(255,255,255,0.6)',
+
+    levelRow: { flexDirection: 'row', justifyContent: 'space-between' },
+    levelBtn: { flex: 1, paddingVertical: 10, marginHorizontal: 4, borderWidth: 1, borderColor: '#e5e7eb', borderRadius: 8, alignItems: 'center', backgroundColor: '#fff' },
+    levelBtnActive: { backgroundColor: '#8c42ec', borderColor: '#8c42ec' },
+    levelText: { fontSize: 12, color: '#333' },
+    levelTextActive: { color: '#fff', fontWeight: '600' },
+
+    selectorBtn: {
+        borderWidth: 1.2,
+        borderColor: 'rgba(0, 0, 0, 1)', backgroundColor: 'rgba(255,255,255,0.6)', borderRadius: 8, padding: 14, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'
     },
-    saveButton: {
-        marginTop: 28,
-        backgroundColor: '#000',
-        paddingVertical: 14,
-        borderRadius: 30,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    saveButtonDisabled: {
-        backgroundColor: 'rgba(0,0,0,0.2)',
-    },
-    saveText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: '500',
-    },
+    disabledBtn: { opacity: 0.5 },
+    selectorText: { fontSize: 16, color: '#000' },
+
+    subHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 15, borderBottomWidth: 1, borderBottomColor: '#eee' },
+    backText: { color: '#8c42ec', fontSize: 16, fontWeight: '500' },
+    subTitle: { fontSize: 18, fontWeight: 'bold', color: '#000' },
+    listItem: { paddingVertical: 16, borderBottomWidth: 1, borderBottomColor: '#f3f4f6' },
+    listItemText: { fontSize: 16, color: '#333' }
 })

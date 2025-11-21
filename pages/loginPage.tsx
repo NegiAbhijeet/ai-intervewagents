@@ -2,7 +2,6 @@ import React, { useRef, useState, useEffect, useContext } from 'react';
 import {
   View,
   Text,
-  Image,
   TextInput,
   TouchableOpacity,
   StyleSheet,
@@ -12,8 +11,6 @@ import {
   Dimensions,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
 import Toast from 'react-native-toast-message';
 import fetchUserDetails from '../libs/fetchUser';
 import { AppStateContext } from '../components/AppContext';
@@ -23,6 +20,7 @@ import { API_URL } from '../components/config';
 import auth from '@react-native-firebase/auth';
 import GoogleLoginButton from '../components/GoogleLoginButton';
 import LoginPen from "../assets/images/loginPeng.svg"
+import Layout from './Layout';
 const { width: screenWidth } = Dimensions.get('window');
 
 export default function LoginScreen() {
@@ -238,7 +236,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <Layout gradient={false}>
       <View style={styles.bg}>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -397,15 +395,11 @@ export default function LoginScreen() {
           </View>
         </KeyboardAvoidingView>
       </View>
-    </SafeAreaView>
+    </Layout>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
   bg: {
     flex: 1,
     width: '100%',
@@ -425,7 +419,7 @@ const styles = StyleSheet.create({
     height: 230,
   },
   card: {
-    width: '85%',
+    width: '100%',
     alignItems: 'center',
   },
   title: {
@@ -457,7 +451,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 18,
     width: '100%',
-    maxWidth: Math.min(360, screenWidth * 0.85),
+    maxWidth: Math.min(360, screenWidth),
   },
   otpBox: {
     width: 48,

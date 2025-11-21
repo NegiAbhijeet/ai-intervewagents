@@ -124,7 +124,7 @@ const TopBar = () => {
     typeof unreadNotification === 'number' ? unreadNotification : 0;
 
   return (
-    <View className="flex-row justify-between items-center px-[6%] pt-4 pb-3 bg-white shadow-md">
+    <View className="flex-row justify-between items-center px-[8%] pt-4 pb-3 bg-white">
       <TouchableOpacity
         onPress={() => setMenuVisible(true)}
         className="flex-row items-center gap-2"

@@ -18,7 +18,7 @@ export default MainButton
 
 const styles = StyleSheet.create({
     primaryButton: {
-        width: '85%',
+        width: '100%',
         backgroundColor: '#000',
         paddingVertical: 12,
         borderRadius: 30,
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
         lineHeight: 27.2
     },
     secondaryButton: {
-        width: '85%',
+        width: '100%',
         paddingVertical: 12,
         borderRadius: 30,
         alignItems: 'center',

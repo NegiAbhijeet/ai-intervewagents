@@ -59,10 +59,10 @@ function NotificationRow({ item, timeLabel, expanded, onToggle }: Props) {
     item.type === 'success'
       ? 'checkmark-circle'
       : item.type === 'warning'
-      ? 'alert-circle'
-      : item.type === 'error'
-      ? 'alert' // use a different icon for error
-      : 'notifications';
+        ? 'alert-circle'
+        : item.type === 'error'
+          ? 'alert' 
+          : 'notifications';
 
   return (
     <TouchableOpacity
@@ -73,9 +73,9 @@ function NotificationRow({ item, timeLabel, expanded, onToggle }: Props) {
         item.read ? styles.itemRead : styles.itemUnread,
         expanded
           ? {
-              borderColor: fade('#93C5FD', 0.55),
-              backgroundColor: fade('#60A5FA', 0.08),
-            }
+            borderColor: fade('#93C5FD', 0.55),
+            backgroundColor: fade('#60A5FA', 0.08),
+          }
           : null,
       ]}
     >
@@ -96,7 +96,7 @@ function NotificationRow({ item, timeLabel, expanded, onToggle }: Props) {
               { color: item.read ? '#111827' : '#0F172A' },
               { borderLeftWidth: 4, borderLeftColor: accent, paddingLeft: 8 },
             ]}
-            numberOfLines={1}
+            numberOfLines={expanded ? undefined : 1}
           >
             {item.title}
           </Text>

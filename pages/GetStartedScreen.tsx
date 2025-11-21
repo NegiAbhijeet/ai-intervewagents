@@ -7,10 +7,10 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import BackgroundGradient1 from '../components/backgroundGradient1';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppStateContext } from '../components/AppContext';
 import MainButton from '../components/mainButton';
+import Layout from './Layout';
 
 const { width, height } = Dimensions.get('window');
 
@@ -32,8 +32,7 @@ export default function GetStartedScreen() {
     }
   }
   return (
-    <>
-      <BackgroundGradient1 />
+    <Layout>
       <View
         style={styles.bg}
       >
@@ -73,21 +72,17 @@ export default function GetStartedScreen() {
           <MainButton text={'Already Have An Account ? Login'} onPress={onFinish} outline={true} />
         </View>
       </View>
-    </>
+    </Layout>
   );
 }
 
 const styles = StyleSheet.create({
   bg: {
-    flex: 1,
-    width: width,
-    height: height,
+    width: "100%",
+    height: "100%",
     justifyContent: 'space-between',
   },
   header: {
-    // paddingHorizontal: 24,
-    width: '85%',
-    marginHorizontal: 'auto',
     paddingTop: 18,
   },
   logoWrap: {
@@ -113,9 +108,8 @@ const styles = StyleSheet.create({
   centerArea: {
     alignItems: 'center',
     marginTop: 20,
-    width: '85%',
+    width: '100%',
     marginHorizontal: 'auto',
-    // paddingHorizontal: 28,
   },
   penguinWrap: {
     width: 220,
@@ -128,45 +122,12 @@ const styles = StyleSheet.create({
     width: 250,
     height: 300,
   },
-
   tagline: {
-    width: '80%',
+    width: '90%',
     textAlign: 'center',
     fontSize: 16,
     color: '#374151',
     marginTop: 30,
-    lineHeight: 27.2
-  },
-  primaryButton: {
-    width: '85%',
-    backgroundColor: '#000',
-    paddingVertical: 15,
-    borderRadius: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 12,
-    borderWidth: 2,
-    borderColor: 'rgba(0,0,0,1)',
-  },
-  primaryButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '700',
-    lineHeight: 27.2
-  },
-  secondaryButton: {
-    width: '85%',
-    paddingVertical: 15,
-    borderRadius: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: 'rgba(0,0,0,1)',
-  },
-  secondaryButtonText: {
-    color: '#111827',
-    fontSize: 16,
-    fontWeight: 600,
     lineHeight: 27.2
   },
   bottomSpacer: {

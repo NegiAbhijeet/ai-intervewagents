@@ -1,13 +1,10 @@
-// OnboardingCarousel.js 
+// dont change in this file, because images are cutting then on slide
 import React, { useContext, useRef, useState } from 'react';
 import {
   StyleSheet,
   Text,
   View,
-  Image,
-  TouchableOpacity,
   Dimensions,
-  Pressable,
 } from 'react-native';
 import Carousel, { Pagination } from 'react-native-reanimated-carousel';
 import {
@@ -21,6 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import CarouselImage1 from '../assets/images/onboarding/1.svg';
 import CarouselImage2 from '../assets/images/onboarding/2.svg';
 import BackgroundGradient2 from '../components/backgroundGradient2';
+import MainButton from '../components/mainButton';
 
 const AutoSvg = ({ Svg }) => (
   <View style={{ width: '100%', height: 320, justifyContent: 'center', alignItems: 'center' }}>
@@ -81,7 +79,7 @@ export default function OnboardingCarousel() {
     } catch (e) {
       try {
         ref.current?.scrollTo(next);
-      } catch (err) {}
+      } catch (err) { }
     }
     if (index === data.length - 1) onFinish();
     setIndex(next);
@@ -93,7 +91,7 @@ export default function OnboardingCarousel() {
     } catch (e) {
       try {
         ref.current?.scrollTo(targetIndex);
-      } catch (err) {}
+      } catch (err) { }
     }
     setIndex(targetIndex);
   };
@@ -168,9 +166,7 @@ export default function OnboardingCarousel() {
         <View style={{ height: 30 }} />
 
         <View style={styles.bottom}>
-          <Pressable onPress={goNext} style={styles.button}>
-            <Text style={styles.buttonText}>Next</Text>
-          </Pressable>
+          <MainButton text={'Next'} onPress={goNext} />
         </View>
 
         <View style={{ height: 40 }} />

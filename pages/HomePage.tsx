@@ -1,25 +1,21 @@
 import Layout from './Layout';
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Animated, Button, Easing, Image, ImageBackground, ImageSourcePropType, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import StatsCard from '../components/StatsCard';
+import { ActivityIndicator, Animated, Button, Easing, Image, ImageBackground, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import { AppStateContext } from '../components/AppContext';
 import { API_URL, JAVA_API_URL } from '../components/config';
-import GradientCard from '../components/GradientCard';
 import { useNavigation } from '@react-navigation/native';
-import Ionicons from '@react-native-vector-icons/ionicons';
 import TopBar from '../components/TopBar';
 import { useNotification } from '../hooks/useNotifications';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import { RefreshControl } from 'react-native-gesture-handler';
 import InterviewScreen from '../components/interviewScreen';
-import BackgroundGradient2 from '../components/backgroundGradient2';
 import HomeTopPenguin from "../assets/images/homeTopPeng.svg"
 const img = require('../assets/images/homeCardWrapper.png');
 const { width: imgW, height: imgH } = Image.resolveAssetSource(img);
 const interviews = [
     {
-        title: 'Mock Interview',
+        title: 'Test Yourself',
         description:
             'Mock Interview with instant feedback to boost your skill and knowledge.',
         gradient: 'blue',
@@ -29,9 +25,9 @@ const interviews = [
         bottomLine: "Test Now >>"
     },
     {
-        title: 'Trainer Interview',
+        title: 'Train Yourself',
         description:
-            'Trainer mode guides you like a coach correcting errors, completing answers, and teaching you how to respond confidently every time.',
+            'Trainer mode acts like a coach that improves your answers and builds your confidence.',
         gradient: 'purple',
         action: 'Start',
         value: 'Revise',
@@ -52,7 +48,9 @@ const HomePage = () => {
         setFcmTokenUpdated,
         setLeaderboardRank,
         firstInterviewObject,
-        setFirstInterviewObject
+        setFirstInterviewObject,
+        myCandidate,
+        setMyCandidate
     } = useContext(AppStateContext);
     const [meetings, setMeetings] = useState([]);
     const [lastMeeting, setLastMeeting] = useState([]);
@@ -60,7 +58,6 @@ const HomePage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isInterviewStart, setIsInterviewStart] = useState(false)
     const [isRefreshing, setIsRefreshing] = useState(false);
-    const [myCandidate, setMyCandidate] = useState(null);
     const finalLoading = isLoading || !userProfile;
 
     const spin = useRef(new Animated.Value(0)).current
@@ -296,7 +293,6 @@ const HomePage = () => {
                 />
             }
             <Layout>
-                <BackgroundGradient2 />
                 <ScrollView
                     showsVerticalScrollIndicator={false}
                     className="py-5 "

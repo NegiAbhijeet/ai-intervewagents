@@ -43,7 +43,8 @@ export default function ProfileScreen() {
     usedMinutes,
     firebaseUser,
     setUserProfile,
-    resetAppState
+    resetAppState,
+    setMyCandidate
   } = useContext(AppStateContext);
   const navigation = useNavigation();
   const activeUsedMinutes = usedMinutes;
@@ -51,7 +52,7 @@ export default function ProfileScreen() {
     ? new Date(userProfile.plan_expiry).toLocaleDateString('en-GB')
     : '';
   const [loading, setLoading] = useState(false);
-  const [isIsEditProfile, setIsEditProfile] = useState(false)
+  const [isEditProfile, setIsEditProfile] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const [profileData, setProfileData] = useState({
@@ -73,6 +74,7 @@ export default function ProfileScreen() {
       if (Array.isArray(result?.data) && result.data.length > 0) {
         const candidate = result.data[0];
         console.log(candidate)
+        setMyCandidate((prev) => ({ ...prev, firstName: candidate?.firstName }))
         setProfileData({
           avatar: userProfile?.avatar,
           name: `${candidate?.firstName} ${candidate?.lastName}`,
@@ -485,7 +487,7 @@ export default function ProfileScreen() {
         </View>
 
         <EditProfileModal
-          visible={isIsEditProfile}
+          visible={isEditProfile}
           onClose={() => setIsEditProfile(false)}
           currentName={profileData?.name}
           avatarUrl={profileData?.avatar}
