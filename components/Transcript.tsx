@@ -29,21 +29,20 @@ export default function Transcript({
         <View key={item.id} style={item.speaker ? {} : { marginBottom: 10 }}>
           <Text
             style={
-              item.speaker
-                ? {
-                    fontSize: 14,
-                    color: '#111827',
-                    lineHeight: 20,
-                    fontWeight: '700',
-                  }
-                : {
-                    fontSize: 14,
-                    color: '#111827',
-                    lineHeight: 20,
-                  }
+              {
+                fontSize: 14,
+                color: '#111827',
+                lineHeight: 20,
+              }
             }
             accessibilityRole="text"
           >
+            <Text style={{
+              fontSize: 14,
+              color: '#111827',
+              lineHeight: 20,
+              fontWeight: '700',
+            }}>{item.speaker ? "User" : "Nova"}:{' '}</Text>
             {item.text || 'Not enough data'}
           </Text>
           <View style={styles.separator} />

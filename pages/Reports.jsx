@@ -14,7 +14,6 @@ import { AppStateContext } from '../components/AppContext';
 import { JAVA_API_URL } from '../components/config';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
-import { useNavigation } from '@react-navigation/native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import TopBar from '../components/TopBar';
 import ReportModal from '../components/reportModal';
@@ -30,7 +29,7 @@ const Reports = () => {
   const [isViewDetails, setIsViewDetails] = useState(false);
   const [isViewSkills, setIsViewSkills] = useState(false);
   const [rowTotalMeetings, setRowTotalMeetings] = useState(0)
-
+  const [pendingReports, setPendindReports] = useState(0)
   const [activeFilter, setActiveFilter] = useState('all');
 
   // small animated rotation for the refresh icon when active
@@ -54,23 +53,36 @@ const Reports = () => {
     setLoading(true);
     try {
       const response = await fetchWithAuth(
-        `${JAVA_API_URL}/api/meetings/uid/${userProfile.uid}`,
+        `${JAVA_API_URL}/api/meetings/uid/${userProfile.uid}`
       );
       const data = await response.json();
-      if (data?.data && Array.isArray(data.data)) {
-        setRowTotalMeetings(data.data.length)
-        const finalMeetings = data.data.filter(
-          item => item.status === 'Completed',
-        );
-        const sortedMeetings = finalMeetings.sort((a, b) => {
-          const dateTimeA = new Date(`${a.interviewDate}T${a.interviewTime}`);
-          const dateTimeB = new Date(`${b.interviewDate}T${b.interviewTime}`);
-          return dateTimeB - dateTimeA;
-        });
-        setMeetings(sortedMeetings);
-      } else {
-        setMeetings([]);
-      }
+
+      const items = Array.isArray(data?.data) ? data.data : [];
+      setRowTotalMeetings(items.length);
+
+      // only completed meetings
+      const completedMeetings = items.filter(item => item.status === 'Completed');
+
+      // completed that have feedback
+      const completedWithFeedback = completedMeetings.filter(item => !!item.feedback);
+
+      // pending reports = completed - completedWithFeedback
+      const pendingReportsLen = Math.max(0, completedMeetings.length - completedWithFeedback.length);
+      setPendindReports(pendingReportsLen);
+
+      // attach a numeric timestamp for reliable sorting, then sort once
+      const withTimestamps = completedMeetings.map(item => {
+        const datePart = item.interviewDate ?? '';
+        const timePart = item.interviewTime ?? '00:00';
+        const iso = `${datePart}T${timePart}`;
+        const ts = Date.parse(iso);
+        return { item, ts: isNaN(ts) ? 0 : ts };
+      });
+
+      withTimestamps.sort((a, b) => b.ts - a.ts);
+
+      const sortedMeetings = withTimestamps.map(({ item }) => item);
+      setMeetings(sortedMeetings);
     } catch (error) {
       console.error('Failed to fetch meetings:', error);
       setMeetings([]);
@@ -80,6 +92,7 @@ const Reports = () => {
       stopRotate();
     }
   };
+
 
   useEffect(() => {
     if (userProfile?.uid) fetchMeetings();
@@ -120,6 +133,11 @@ const Reports = () => {
     } else {
       return '0 min';
     }
+
+    if (seconds > 0 && seconds < 60) {
+      return `${seconds} sec`;
+    }
+
     const minutes = Math.floor(seconds / 60);
     return `${minutes} min`;
   };
@@ -149,18 +167,13 @@ const Reports = () => {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
         >
-          {/* <View className="flex-row justify-between items-center mb-4">
-            <Text className="text-2xl font-semibold">Interview Reports</Text>
-          </View> */}
-
           <View style={{ width: "100%", }}>
             <StatusBoxes
               total={rowTotalMeetings}
               completed={meetings.length}
-              pending={0} />
+              pending={pendingReports} />
           </View>
 
-          {/* Loading skeleton block (visible when loading) */}
           {loading && (
             <SkeletonPlaceholder borderRadius={12}>
               {[...Array(4)].map((_, index) => (
@@ -353,17 +366,42 @@ const Reports = () => {
                       }}
                     >
                       <View
-                        style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          gap: 8,
+                          flex: 1,                // allow this group to grow/shrink
+                          marginRight: 8,        // space before the badge
+                        }}
                       >
                         <View
-                          style={{ flexDirection: 'row', alignItems: 'center', justifyContent: "center", padding: 8, borderRadius: "100%", backgroundColor: 'rgba(219, 234, 254, 1)' }}
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: 8,
+                            borderRadius: 999, // use numeric radius
+                            backgroundColor: 'rgba(219, 234, 254, 1)',
+                          }}
                         >
                           <Image
                             source={require('../assets/images/code.png')}
                             style={{ width: 20, height: 20, resizeMode: 'contain' }}
                           />
                         </View>
-                        <Text style={{ fontWeight: 700, fontSize: 16 }} numberOfLines={1}>
+
+                        <Text
+                          style={{
+                            fontWeight: '700',
+                            fontSize: 16,
+                            // prevent leaking and push badge
+                            flexShrink: 1,        // allow text to shrink
+                            flexGrow: 0,
+                            numberOfLines: 1,     // ensure single line with ellipsis
+                          }}
+                          numberOfLines={1}
+                          ellipsizeMode="tail"
+                        >
                           {report.position}
                         </Text>
                       </View>
@@ -372,13 +410,14 @@ const Reports = () => {
                         style={{
                           paddingHorizontal: 12,
                           paddingVertical: 8,
-                          borderRadius: "100%",
+                          borderRadius: 999,
                           backgroundColor:
                             percentage >= 85
                               ? 'rgba(220, 252, 231, 1)'
                               : percentage >= 70
                                 ? 'rgba(255, 237, 213, 1)'
                                 : '#FEE2E2',
+                          flexShrink: 0,         // keep badge size stable
                         }}
                       >
                         <Text
@@ -393,7 +432,7 @@ const Reports = () => {
                                   : 'red',
                           }}
                         >
-                          {percentage}%
+                          {report?.feedback ? `${percentage}%` : 'Pending...'}
                         </Text>
                       </View>
                     </View>
@@ -452,15 +491,18 @@ const Reports = () => {
                       <TouchableOpacity
                         style={{
                           flex: 1,
-                          backgroundColor: 'black',
+                          backgroundColor: report?.feedback
+                            ? "rgba(0,0,0)"
+                            : "rgba(0,0,0,0.3)",
                           paddingVertical: 14,
                           borderRadius: 16,
-                          justifyContent: 'center',
-                          alignItems: 'center',
+                          justifyContent: "center",
+                          alignItems: "center"
                         }}
-                        onPress={() => setCurrentReport(report)}
+                        disabled={!report?.feedback}
+                        onPress={() => report?.feedback && setCurrentReport(report)}
                       >
-                        <Text style={{ color: 'white', fontWeight: '600', fontSize: 14 }}>
+                        <Text style={{ color: "white", fontWeight: "600", fontSize: 14 }}>
                           View Report
                         </Text>
                       </TouchableOpacity>
