@@ -9,6 +9,9 @@ import {
   KeyboardAvoidingView,
   ActivityIndicator,
   Dimensions,
+  Image,
+  Pressable,
+  Linking,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Toast from 'react-native-toast-message';
@@ -16,10 +19,9 @@ import fetchUserDetails from '../libs/fetchUser';
 import { AppStateContext } from '../components/AppContext';
 
 import fetchWithAuth from '../libs/fetchWithAuth';
-import { API_URL } from '../components/config';
+import { API_URL, PRIVACY_POILCY_URL, TERMS_OF_USE_URL } from '../components/config';
 import auth from '@react-native-firebase/auth';
 import GoogleLoginButton from '../components/GoogleLoginButton';
-import LoginPen from "../assets/images/loginPeng.svg"
 import Layout from './Layout';
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -243,12 +245,12 @@ export default function LoginScreen() {
           style={styles.container}
         >
           <View style={styles.topLogoWrapper}>
-            <LoginPen width={280} height={230} />
-            {/* <Image source={penguin} style={styles.penguin} /> */}
+            {/* <LoginPen width={280} height={230} /> */}
+            <Image source={require("../assets/images/loginPeng.png")} style={styles.penguin} />
           </View>
 
           <View style={styles.card}>
-            <Text style={styles.title}>Let’s You In</Text>
+            <Text style={styles.title}>Log in or sign up</Text>
 
             <View style={styles.field}>
               <Text style={styles.label}>Mobile Number</Text>
@@ -394,6 +396,25 @@ export default function LoginScreen() {
             />
           </View>
         </KeyboardAvoidingView>
+        <View className="flex-row justify-center items-center mb-1">
+          <Pressable onPress={() => Linking.openURL(TERMS_OF_USE_URL)}>
+            <Text className="text-black underline">
+              Terms of Use
+            </Text>
+          </Pressable>
+
+          <Text className="text-black mx-1 -translate-y-1 font-bold">
+            .
+          </Text>
+
+          <Pressable onPress={() => Linking.openURL(PRIVACY_POILCY_URL)}>
+            <Text className="text-black underline">
+              Privacy Policy
+            </Text>
+          </Pressable>
+        </View>
+
+
       </View>
     </Layout>
   );
@@ -412,7 +433,6 @@ const styles = StyleSheet.create({
   topLogoWrapper: {
     alignItems: 'center',
     marginTop: 10,
-    marginBottom: 35,
   },
   penguin: {
     width: 280,
