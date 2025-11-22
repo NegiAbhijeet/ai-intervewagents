@@ -10,14 +10,14 @@ import {
     KeyboardAvoidingView,
     Platform,
     ScrollView,
-    
+
 } from 'react-native'
 import fetchWithAuth from '../libs/fetchWithAuth'
 import { JAVA_API_URL } from './config'
 import Toast from 'react-native-toast-message'
 import Ionicons from '@react-native-vector-icons/ionicons'
 import Layout from '../pages/Layout'
-
+import { LEVELS } from "../libs/levels"
 // Safe JSON loading
 let industriesData = {};
 try {
@@ -26,12 +26,7 @@ try {
     console.warn("Industry JSON missing");
 }
 
-const LEVELS = [
-    { label: 'Entry', value: 1 },
-    { label: 'Mid', value: 8 },
-    { label: 'Senior', value: 12 },
-    { label: 'Exec', value: 20 }
-];
+
 
 export default function EditProfileModal({
     visible,

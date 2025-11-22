@@ -30,12 +30,7 @@ import { GradientBorderView } from '@good-react-native/gradient-border';
 import BackgroundGradient2 from '../components/backgroundGradient2';
 import TopBar from '../components/TopBar';
 import EditProfileModal from '../components/editProfile';
-const levels = [
-  { label: 'Entry level', value: 1 },
-  { label: 'Mid-level', value: 8 },
-  { label: 'Senior', value: 12 },
-  { label: 'Executive', value: 20 }
-];
+import { LEVELS } from '../libs/levels';
 export default function ProfileScreen() {
   const {
     userProfile,
@@ -167,7 +162,7 @@ export default function ProfileScreen() {
     return v
   }
   const stats = useMemo(() => {
-    const findLevel = levels.find((item) => String(item?.value) === String(profileData?.level))
+    const findLevel = LEVELS.find((item) => String(item?.value) === String(profileData?.level))
     const fialLevel = findLevel?.label || ""
     return [
       { key: 'role', label: 'Role', value: safe(profileData.role, 'N/A') },

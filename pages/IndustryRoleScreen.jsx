@@ -12,13 +12,7 @@ import {
 import { AppStateContext } from '../components/AppContext';
 import industries from '../libs/industryJson.json'
 import BackgroundGradient2 from '../components/backgroundGradient2';
-
-const levels = [
-  { label: 'Entry level', value: 1 },
-  { label: 'Mid-level', value: 3 },
-  { label: 'Senior', value: 6 },
-  { label: 'Executive', value: 10 }
-];
+import { LEVELS } from '../libs/levels';
 
 const IndustryRoleScreen = () => {
   const navigation = useNavigation();
@@ -185,7 +179,7 @@ const IndustryRoleScreen = () => {
               Pick your experience level.
             </Text>
             <FlatList
-              data={levels || []}
+              data={LEVELS || []}
               renderItem={({ item }) => renderLevel({ item })}
               keyExtractor={(_, index) => index.toString()}
               showsVerticalScrollIndicator={false}
