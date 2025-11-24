@@ -17,7 +17,7 @@ import Toast from 'react-native-toast-message';
 
 const WEB_CLIENT_ID = '611623329833-4t054i14kdj2u7ccdvtb4b5tsev1jgfr.apps.googleusercontent.com';
 
-const GoogleLoginButton = ({ isGoogleLoading, setIsGoogleLoading }) => {
+const GoogleLoginButton = ({ isGoogleLoading, setIsGoogleLoading,setFirebaseUser }) => {
   const { setUserProfile, setOnboardingComplete } = useContext(AppStateContext);
 
   useEffect(() => {
@@ -45,7 +45,7 @@ const GoogleLoginButton = ({ isGoogleLoading, setIsGoogleLoading }) => {
       const credential = auth.GoogleAuthProvider.credential(idToken);
       const firebaseUser = await auth().signInWithCredential(credential);
       const user = firebaseUser.user;
-
+      setFirebaseUser(user)
       const displayName = user.displayName || '';
       const parts = displayName.trim().split(/\s+/);
       const first_name = parts[0] || '';

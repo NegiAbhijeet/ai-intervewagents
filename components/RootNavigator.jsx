@@ -8,19 +8,22 @@ import AvatarSelectionScreen from './AvatarSelectionScreen';
 import JobDetailPage from '../pages/JobDetailPage';
 import ReportDetailScreen from '../pages/ReportDetail';
 import NotificationsPage from '../pages/NotificationsDrawer';
-import ProfileScreen from '../pages/Profile';
 import OthersProfile from '../pages/othersProfile';
 import PricingPage from '../pages/pricing';
 import { AppStateContext } from './AppContext';
 import GetStartedScreen from '../pages/GetStartedScreen';
 import OnboardingCarousel from '../pages/onboarding';
 import LoginScreen from '../pages/loginPage';
+import SignupScreen from "../pages/signup"
 import IndustryRoleScreen from '../pages/IndustryRoleScreen';
+import ForgotPasswordScreen from '../pages/forgotPwd';
 const Stack = createNativeStackNavigator();
 const AuthStack = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="Signup" component={SignupScreen} />
+      <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
     </Stack.Navigator>
   );
 };
@@ -92,11 +95,7 @@ const RootNavigator = () => {
           component={ReportDetailScreen}
           options={{ headerShown: true, title: 'Report Details' }}
         />
-        {/* <Stack.Screen
-          name="profile"
-          component={ProfileScreen}
-          options={{ headerShown: true, title: 'Profile' }}
-        /> */}
+
         <Stack.Screen
           name="pricing"
           component={PricingPage}

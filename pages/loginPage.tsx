@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   View,
   Text,
@@ -17,225 +17,109 @@ import LinearGradient from 'react-native-linear-gradient';
 import Toast from 'react-native-toast-message';
 import fetchUserDetails from '../libs/fetchUser';
 import { AppStateContext } from '../components/AppContext';
-
-import fetchWithAuth from '../libs/fetchWithAuth';
 import { API_URL, PRIVACY_POILCY_URL, TERMS_OF_USE_URL } from '../components/config';
-import auth from '@react-native-firebase/auth';
+import auth, { signInWithEmailAndPassword } from '@react-native-firebase/auth';
 import GoogleLoginButton from '../components/GoogleLoginButton';
 import Layout from './Layout';
+import { useNavigation } from '@react-navigation/native';
+import Ionicons from '@react-native-vector-icons/ionicons';
+import fetchWithAuth from '../libs/fetchWithAuth';
 const { width: screenWidth } = Dimensions.get('window');
 
 export default function LoginScreen() {
   const { setUserProfile, setOnboardingComplete, setFirebaseUser } =
     useContext(AppStateContext);
-  const [phone, setPhone] = useState('');
-  const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const inputs = [
-    useRef(null),
-    useRef(null),
-    useRef(null),
-    useRef(null),
-    useRef(null),
-    useRef(null),
-  ];
-
-  const [confirmObj, setConfirmObj] = useState(null);
-  const [timer, setTimer] = useState(0);
-  const [otpLoading, setOtpLoading] = useState(false);
+  const navigation = useNavigation()
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  useEffect(() => {
-    let t;
-    if (timer > 0) {
-      t = setTimeout(() => setTimer(prev => prev - 1), 1000);
-    }
-    return () => clearTimeout(t);
-  }, [timer]);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  const normalizePhone = raw => {
-    if (!raw) return raw;
-    const trimmed = raw.trim();
-    if (trimmed.startsWith('+')) return trimmed;
-    const digits = trimmed.replace(/\D/g, '');
-    // default to +91 for local 10 digit input
-    if (digits.length === 10) return `+91${digits}`;
-    return `+${digits}`;
-  };
-
-  const sendOtp = async isResend => {
-    try {
-      setOtpLoading(true);
-      // let x = '+1 897-958-4098';
-      const phoneNumber = normalizePhone(phone);
-
-      if (!phoneNumber || phoneNumber.length < 6) {
-        Toast.show({
-          type: 'error',
-          text1: 'Invalid phone number',
-          text2: 'Please enter a valid phone number.',
-        });
-        setOtpLoading(false);
-        return;
-      }
-
-      // use the normalized phone number for sending OTP
-      const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
-      setConfirmObj(confirmation);
-      setOtp(['', '', '', '', '', '']);
-      setTimer(120); // 2 minutes cooldown
-
-      // autofocus first OTP box
-      setTimeout(() => {
-        if (inputs[0].current) inputs[0].current.focus();
-      }, 200);
-
-      console.log('OTP sent to', phoneNumber);
-      if (isResend) {
-        Toast.show({
-          type: 'success',
-          text1: 'New OTP sent',
-          text2: 'A new verification code has been sent to your phone.',
-        });
-      } else {
-        // success toast after send
-        Toast.show({
-          type: 'success',
-          text1: 'OTP sent',
-          text2: `A verification code was sent to ${phoneNumber}`,
-        });
-      }
-    } catch (err) {
-      console.error('send OTP error', err.code, err.message);
+  const validateInputs = () => {
+    if (!email || !email.includes('@')) {
       Toast.show({
         type: 'error',
-        text1: 'Send OTP failed',
-        text2: err.message || 'Unable to send OTP. Try again.',
+        text1: 'Invalid Email',
+        text2: 'Please enter a valid email address.',
       });
-    } finally {
-      setOtpLoading(false);
+      return false;
     }
+    if (!password || password.length < 6) {
+      Toast.show({
+        type: 'error',
+        text1: 'Weak Password',
+        text2: 'Password must be at least 6 characters long.',
+      });
+      return false;
+    }
+    return true;
   };
 
-  const verifyOtpAndLogin = async () => {
-    const code = otp.join('');
-    if (!confirmObj) {
-      Toast.show({
-        type: 'info',
-        text1: 'Request OTP first',
-        text2: 'Please request an OTP before verifying.',
-      });
-      return;
-    }
-    if (code.length < 6) {
-      Toast.show({
-        type: 'info',
-        text1: 'Enter full OTP',
-        text2: 'Please enter the 6 digit code you received.',
-      });
-      return;
-    }
-    try {
-      setOtpLoading(true);
+  const handleSubmit = async () => {
+    if (!validateInputs()) return
+    setLoading(true)
 
-      // confirm returns the user credential; use that to get the user
-      const firebaseUserCredential = await confirmObj.confirm(code);
-      const user = firebaseUserCredential?.user;
+    try {
+      const userCredential = await auth().signInWithEmailAndPassword(email, password)
+      const user = userCredential.user
 
       if (!user) {
-        throw new Error('No user returned after confirmation');
+        throw new Error('No user returned from signIn')
       }
-      setFirebaseUser(user);
 
-      const token = await user.getIdToken();
+      // if email not verified, send verification and stop the flow
+      if (!user.emailVerified) {
+        await auth().signOut()
 
-      // create or update profile on your backend
+        Toast.show({
+          type: 'error',
+          text1: 'Email not verified',
+          text2: 'Complete verification before logging in.'
+        })
+
+        return
+      }
+
+      // user is verified, continue with your profile creation flow
+      setFirebaseUser(user)
+      const token = await user.getIdToken()
       const response = await fetchWithAuth(`${API_URL}/profiles/`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           uid: user.uid,
-          mobile_number: user.phoneNumber || '',
+          email: user.email,
           plan: 1,
-          role: '',
-        }),
-      });
+          image_url: user.photoURL || '',
+          role: ''
+        })
+      })
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData?.error || 'Failed to create profile');
+        const data = await response.json().catch(() => ({}))
+        throw new Error(data?.error || 'Profile creation failed')
       }
 
-      // fetch profile details from backend and update local state
-      const final = await fetchUserDetails(user.uid);
-
-      setUserProfile(final);
-      setOnboardingComplete(true);
+      const final = await fetchUserDetails(user.uid)
+      setUserProfile(final)
+      setOnboardingComplete(true)
     } catch (err) {
-      // log the full error for debugging
-      console.error('confirmCode error', err);
-
-      // clear input boxes and focus the first input
-      setOtp(['', '', '', '', '', '']);
-      setTimeout(() => {
-        if (inputs?.[0]?.current) inputs[0].current.focus();
-      }, 200);
-
-      // map common firebase error codes to friendly messages
-      let friendly = 'Verification failed. Please try again.';
-      const code = err?.code;
-      const message = err?.message;
-
-      if (code === 'auth/invalid-verification-code') {
-        friendly =
-          'The code you entered is invalid. Check the code and try again.';
-      } else if (
-        code === 'auth/code-expired' ||
-        code === 'auth/session-expired'
-      ) {
-        friendly = 'The verification code expired. Request a new code.';
-      } else if (code === 'auth/invalid-phone-number') {
-        friendly = 'The phone number is invalid. Please request OTP again.';
-      } else if (message) {
-        friendly = message;
-      }
-
+      // log the whole error object for better debugging
+      console.error('Login error:', err)
       Toast.show({
         type: 'error',
-        text1: 'Verification failed',
-        text2: friendly,
-      });
+        text1: 'Login failed',
+        text2: 'Please check your credentials and try again.'
+      })
     } finally {
-      setOtpLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
-  const onOtpChange = (text, i) => {
-    const v = text.replace(/[^0-9]/g, '');
-    const newOtp = [...otp];
-    newOtp[i] = v.slice(-1);
-    setOtp(newOtp);
-    if (v && i < 5) {
-      inputs[i + 1].current?.focus();
-    }
-    if (!v && i > 0) {
-      inputs[i - 1].current?.focus();
-    }
-  };
-
-  const resendOtp = async () => {
-    if (timer > 0) {
-      Toast.show({
-        type: 'info',
-        text1: 'Please wait',
-        text2: `You can resend OTP after ${timer} seconds.`,
-      });
-      return;
-    }
-
-    await sendOtp(true);
-  };
 
   return (
     <Layout gradient={false}>
@@ -250,140 +134,84 @@ export default function LoginScreen() {
           </View>
 
           <View style={styles.card}>
-            <Text style={styles.title}>Log in or sign up</Text>
+            <Text style={styles.title}>Log In</Text>
 
             <View style={styles.field}>
-              <Text style={styles.label}>Mobile Number</Text>
+              <Text style={styles.label}>Email Address</Text>
               <TextInput
-                value={phone}
-                onChangeText={setPhone}
-                placeholder="e.g. 9876543210"
-                keyboardType="phone-pad"
+                value={email}
+                onChangeText={setEmail}
+                placeholder="hello@example.com"
+                keyboardType="email-address"
+                autoCapitalize="none"
                 style={styles.input}
                 placeholderTextColor="rgba(139, 71, 239, 0.4)"
-                maxLength={15}
-                editable={!isGoogleLoading || !otpLoading}
+                editable={!loading && !isGoogleLoading}
               />
             </View>
 
-            {/* Show Send OTP when no confirmation yet. Once OTP sent, hide send and show boxes */}
-            {!confirmObj ? (
-              <TouchableOpacity
-                style={[styles.loginButton, { marginTop: 24 }]}
-                onPress={sendOtp}
-                activeOpacity={0.8}
-                disabled={otpLoading || phone.length < 10}
-              >
-                <LinearGradient
-                  colors={['rgba(143, 68, 239, 1)', 'rgba(92, 92, 239, 1)']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    borderRadius: 35,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    opacity: phone.length >= 10 ? 1 : 0.5,
-                  }}
-                >
-                  {otpLoading ? (
-                    <ActivityIndicator size="small" color="#fff" />
-                  ) : (
-                    <Text style={styles.loginText}>Send OTP</Text>
-                  )}
-                </LinearGradient>
-              </TouchableOpacity>
-            ) : (
-              <>
-                <View style={styles.otpRow}>
-                  {otp.map((o, i) => (
-                    <TextInput
-                      key={i}
-                      ref={inputs[i]}
-                      value={o}
-                      onChangeText={t => onOtpChange(t, i)}
-                      keyboardType="numeric"
-                      maxLength={1}
-                      style={styles.otpBox}
-                      editable={!isGoogleLoading || !otpLoading}
-                    />
-                  ))}
-                </View>
+            <View style={[styles.field, { marginTop: 16 }]}>
+              <Text style={styles.label}>Password</Text>
+              <View style={{ justifyContent: 'center' }}>
+                <TextInput
+                  value={password}
+                  onChangeText={setPassword}
+                  placeholder="********"
+                  secureTextEntry={!isPasswordVisible}
+                  style={[styles.input, { paddingRight: 50 }]}
+                  placeholderTextColor="rgba(139, 71, 239, 0.4)"
+                  editable={!loading && !isGoogleLoading}
+                />
 
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    marginTop: 10,
-                  }}
-                >
-                  {/* When timer is active show timer and hide resend button.
-                      When timer is zero hide timer and show resend button. */}
-                  {timer > 0 ? (
-                    <>
-                      <Text style={styles.resend}>Resend OTP? </Text>
-                      <Text style={styles.resend2}>
-                        {`${String(Math.floor(timer / 60)).padStart(
-                          2,
-                          '0',
-                        )} : ${String(timer % 60).padStart(2, '0')}`}
-                      </Text>
-                      <View style={{ marginLeft: 12 }}>
-                        <Text style={{ color: '#999' }}>Wait</Text>
-                      </View>
-                    </>
-                  ) : (
-                    <>
-                      <Text style={styles.resend}>Resend OTP? </Text>
-                      <TouchableOpacity
-                        onPress={resendOtp}
-                        disabled={isGoogleLoading || otpLoading}
-                        style={{ marginLeft: 12 }}
-                      >
-                        <Text
-                          style={{
-                            color:
-                              isGoogleLoading || otpLoading
-                                ? '#999'
-                                : 'rgba(139, 70, 239, 1)',
-                          }}
-                        >
-                          Resend
-                        </Text>
-                      </TouchableOpacity>
-                    </>
-                  )}
-                </View>
                 <TouchableOpacity
-                  style={styles.loginButton}
-                  onPress={verifyOtpAndLogin}
-                  activeOpacity={0.8}
-                  disabled={!confirmObj || isGoogleLoading || otpLoading}
+                  onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+                  style={styles.eyeIcon}
                 >
-                  <LinearGradient
-                    colors={['rgba(143, 68, 239, 1)', 'rgba(92, 92, 239, 1)']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      borderRadius: 35,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}
-                  >
-                    {otpLoading ? (
-                      <ActivityIndicator size="small" color="#fff" />
-                    ) : (
-                      <Text style={styles.loginText}>Login</Text>
-                    )}
-                  </LinearGradient>
+                  <Ionicons
+                    name={isPasswordVisible ? 'eye-off' : 'eye'}
+                    size={22}
+                    color="rgba(139, 71, 239, 0.8)"
+                  />
                 </TouchableOpacity>
-              </>
-            )}
+              </View>
+            </View>
 
-            {/* Login button verifies OTP when confirmObj exists. If no confirmObj, it is disabled. */}
+            <TouchableOpacity
+              onPress={() => navigation.navigate("ForgotPassword")}
+              disabled={loading || isGoogleLoading}
+              style={{ alignSelf: "flex-end", marginTop: 10 }}
+            >
+              <Text style={{ color: 'rgba(139, 70, 239, 1)', fontWeight: '600' }}>
+                Forgot Password?
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.loginButton, { marginTop: 24 }]}
+              onPress={handleSubmit}
+              activeOpacity={0.8}
+              disabled={loading || isGoogleLoading}
+            >
+              <LinearGradient
+                colors={['rgba(143, 68, 239, 1)', 'rgba(92, 92, 239, 1)']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: 35,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  opacity: loading ? 0.7 : 1,
+                }}
+              >
+                {loading ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Text style={styles.loginText}>Log In</Text>
+                )}
+              </LinearGradient>
+            </TouchableOpacity>
 
             <View style={styles.orRow}>
               <View style={styles.line} />
@@ -393,7 +221,18 @@ export default function LoginScreen() {
             <GoogleLoginButton
               setIsGoogleLoading={setIsGoogleLoading}
               isGoogleLoading={isGoogleLoading}
+              setFirebaseUser={setFirebaseUser}
             />
+          </View>
+          <View style={{ marginTop: 15, alignItems: 'center' }}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Signup")}
+              disabled={loading || isGoogleLoading}
+            >
+              <Text style={{ color: 'rgba(139, 70, 239, 1)', fontWeight: '600' }}>
+                Don't have an account? Sign Up
+              </Text>
+            </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
         <View className="flex-row justify-center items-center mb-1">
@@ -413,8 +252,6 @@ export default function LoginScreen() {
             </Text>
           </Pressable>
         </View>
-
-
       </View>
     </Layout>
   );
@@ -435,8 +272,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   penguin: {
-    width: 280,
-    height: 230,
+    width: 230,
+    height: 180,
   },
   card: {
     width: '100%',
@@ -457,6 +294,7 @@ const styles = StyleSheet.create({
     fontWeight: 600
   },
   input: {
+    color: "black",
     borderWidth: 1.2,
     borderColor: 'rgba(139, 71, 239, 1)',
     borderRadius: 8,
@@ -551,5 +389,10 @@ const styles = StyleSheet.create({
   signupLink: {
     color: 'rgba(139, 70, 239, 1)',
     fontWeight: '600',
+  },
+  eyeIcon: {
+    position: 'absolute',
+    right: 15,
+    alignSelf: 'center',
   },
 });
