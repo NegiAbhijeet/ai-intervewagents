@@ -3,7 +3,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import AppTabs from './navigation/AppTabs';
-// import AuthStack from './navigation/AuthStack';
 import AvatarSelectionScreen from './AvatarSelectionScreen';
 import JobDetailPage from '../pages/JobDetailPage';
 import ReportDetailScreen from '../pages/ReportDetail';
@@ -14,28 +13,22 @@ import { AppStateContext } from './AppContext';
 import GetStartedScreen from '../pages/GetStartedScreen';
 import OnboardingCarousel from '../pages/onboarding';
 import LoginScreen from '../pages/loginPage';
-import SignupScreen from "../pages/signup"
+import SignupScreen from "../pages/signup";
 import IndustryRoleScreen from '../pages/IndustryRoleScreen';
 import ForgotPasswordScreen from '../pages/forgotPwd';
+import LanguageSelectionScreen from '../pages/languageSelect';
+
 const Stack = createNativeStackNavigator();
-const AuthStack = () => {
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Signup" component={SignupScreen} />
-      <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-    </Stack.Navigator>
-  );
-};
-const OnboardingStack = () => (
-  <Stack.Navigator
-    screenOptions={{ headerShown: false }}
-    initialRouteName="GetStarted"
-  >
-    <Stack.Screen name="GetStarted" component={GetStartedScreen} />
-    <Stack.Screen name="Onboarding" component={OnboardingCarousel} />
+
+const AuthStack = () => (
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="Login" component={LoginScreen} />
+    <Stack.Screen name="Signup" component={SignupScreen} />
+    <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
   </Stack.Navigator>
 );
+
+
 
 const RootNavigator = () => {
   const {
@@ -43,10 +36,13 @@ const RootNavigator = () => {
     userProfile,
     onboardingComplete,
     setOnboardingComplete,
+    langSelected,
+    setLangSelected
   } = useContext(AppStateContext);
 
+  const [checkingLanguage, setCheckingLanguage] = useState(true);
+
   useEffect(() => {
-    if (onboardingComplete) return;
     let mounted = true;
     const readOnboarding = async () => {
       try {
@@ -62,17 +58,67 @@ const RootNavigator = () => {
         setOnboardingComplete(false);
       }
     };
-    readOnboarding();
+    // only call if onboardingComplete not set yet
+    if (!onboardingComplete) readOnboarding();
+
     return () => {
       mounted = false;
     };
-  }, [onboardingComplete]);
+  }, [onboardingComplete, setOnboardingComplete]);
 
-  // If onboarding not completed, show the onboarding flow (GetStarted -> Onboarding)
+  useEffect(() => {
+    let mounted = true;
+    const checkLanguage = async () => {
+      try {
+        const saved = await AsyncStorage.getItem('user-language');
+        if (!mounted) return;
+        setLangSelected(!!saved);
+      } catch (e) {
+        if (!mounted) return;
+        setLangSelected(false);
+      } finally {
+        if (mounted) setCheckingLanguage(false);
+      }
+    };
+    checkLanguage();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
+  // while checking storage, render nothing (or a lightweight loader if you prefer)
+  if (checkingLanguage) return null;
+
+  // Show LanguageSelection only if language not chosen yet.
+  // We want the language screen to appear once at app first run.
+  if (!langSelected) {
+    return (
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen
+          name="LanguageSelection"
+          component={LanguageSelectionScreen}
+          options={{ headerShown: false }}
+        />
+        {/* After language selection, navigation.goBack() in LanguageSelectionScreen will return here
+            and the RootNavigator will re-evaluate storage and proceed to normal flow. */}
+      </Stack.Navigator>
+    );
+  }
+
+  // If onboarding not completed, show onboarding flow
+  if (!onboardingComplete) {
+    return (
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="GetStarted" component={GetStartedScreen} />
+        <Stack.Screen name="Onboarding" component={OnboardingCarousel} />
+      </Stack.Navigator>
+    );
+  }
 
   // If user is logged in and has a profile with a role, show the main app tabs
-  if (firebaseUser && userProfile &&
+  if (
+    firebaseUser &&
+    userProfile &&
     userProfile.role &&
     userProfile.position &&
     userProfile.industry
@@ -95,7 +141,6 @@ const RootNavigator = () => {
           component={ReportDetailScreen}
           options={{ headerShown: true, title: 'Report Details' }}
         />
-
         <Stack.Screen
           name="pricing"
           component={PricingPage}
@@ -126,9 +171,7 @@ const RootNavigator = () => {
       </Stack.Navigator>
     );
   }
-  if (!onboardingComplete) {
-    return <OnboardingStack />;
-  }
+
   // Default: not authenticated. show auth stack
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>

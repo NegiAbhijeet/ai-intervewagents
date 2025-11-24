@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PlayInstallReferrer } from 'react-native-play-install-referrer';
 import { JAVA_API_URL } from '../components/config';
 import fetchWithAuth from './fetchWithAuth';
+import { loadSavedLanguage } from "../libs/i18n"
 
 const ContextGate = ({ children }) => {
   const {
@@ -18,9 +19,20 @@ const ContextGate = ({ children }) => {
     setFirebaseUser,
     userProfile,
     setUnreadNotification,
+    setLanguage,
+    setLangSelected
   } = useContext(AppStateContext);
-
   const [authLoading, setAuthLoading] = useState(true);
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      const savedLang = await loadSavedLanguage();
+      if (!mounted) return;
+      setLanguage(savedLang);
+      setLangSelected(!!savedLang);
+    })();
+    return () => { mounted = false; };
+  }, []);
 
   const incrementInstall = useCallback(async referrer => {
     if (!referrer) return;

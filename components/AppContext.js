@@ -14,6 +14,8 @@ const AppStateProvider = ({ children }) => {
   const [firstInterviewObject, setFirstInterviewObject] = useState(null)
   const [leaderboardRank, setLeaderboardRank] = useState(0);
   const [myCandidate, setMyCandidate] = useState(null);
+  const [langSelected, setLangSelected] = useState(true)
+  const [language, setLanguage] = useState(null);
   // Determine if the user is on a free plan
   const isFreePlan = userProfile?.plan?.id === 1;
 
@@ -49,6 +51,8 @@ const AppStateProvider = ({ children }) => {
     setOnboardingComplete(false);
     setFirstInterviewObject(null)
     setMyCandidate(null)
+    setLangSelected(true)
+    setLanguage(null)
   };
 
   const contextValue = useMemo(
@@ -81,7 +85,11 @@ const AppStateProvider = ({ children }) => {
       firstInterviewObject,
       setFirstInterviewObject,
       myCandidate,
-      setMyCandidate
+      setMyCandidate,
+      langSelected,
+      setLangSelected,
+      language,
+      setLanguage
     }),
     [
       userProfile,
@@ -100,6 +108,8 @@ const AppStateProvider = ({ children }) => {
       onboardingComplete,
       firstInterviewObject,
       myCandidate,
+      langSelected,
+      language
     ],
   );
 
