@@ -11,9 +11,11 @@ import { useNavigation } from '@react-navigation/native'
 import { AppStateContext } from '../components/AppContext'
 import BackgroundGradient2 from '../components/backgroundGradient2'
 import { useContext, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const IndustryRoleScreen = () => {
   const navigation = useNavigation()
+  const { t } = useTranslation();
   const { language } = useContext(AppStateContext)
 
   const [step, setStep] = useState(1)
@@ -156,10 +158,11 @@ const IndustryRoleScreen = () => {
         {step === 1 && (
           <>
             <View style={styles.header}>
-              <Text style={styles.title}>Choose Your Domain</Text>
+              <Text style={styles.title}>{t('onboarding.chooseDomain')}</Text>
             </View>
+
             <Text style={styles.dropdownLabel}>
-              Select your domain for better matches.
+              {t('onboarding.selectDomain')}
             </Text>
             <FlatList
               data={data}
@@ -173,10 +176,11 @@ const IndustryRoleScreen = () => {
         {step === 2 && (
           <>
             <View style={styles.header}>
-              <Text style={styles.title}>Choose Your Role</Text>
+              <Text style={styles.title}>{t('onboarding.chooseRole')}</Text>
             </View>
+
             <Text style={styles.dropdownLabel}>
-              Pick a role for personalized practice.
+              {t('onboarding.pickRole')}
             </Text>
             <FlatList
               data={rolesArray || []}
@@ -189,10 +193,11 @@ const IndustryRoleScreen = () => {
         {step === 3 && (
           <>
             <View style={styles.header}>
-              <Text style={styles.title}>Select Your Level</Text>
+              <Text style={styles.title}>{t('onboarding.selectLevel')}</Text>
             </View>
+
             <Text style={styles.dropdownLabel}>
-              Pick your experience level.
+              {t('onboarding.pickExperience')}
             </Text>
             <FlatList
               data={LEVELS || []}
@@ -226,7 +231,7 @@ const IndustryRoleScreen = () => {
               styles.disabledButton,
             ]}
           >
-            <Text style={styles.buttonText}>Next</Text>
+            <Text style={styles.buttonText}>{t('onboarding.next')}</Text>
           </Pressable>
 
           {/* <View style={styles.bottomBlackLine} /> */}
@@ -234,7 +239,7 @@ const IndustryRoleScreen = () => {
 
         <View style={{ height: 40 }} />
       </View>
-    </View>
+    </View >
   );
 };
 

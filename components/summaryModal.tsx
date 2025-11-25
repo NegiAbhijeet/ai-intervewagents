@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Modal,
   Pressable,
@@ -13,6 +14,7 @@ export default function InterviewSummaryModal({
   onClose,
   summaryText = '',
 }) {
+  const { t } = useTranslation();
   return (
     <Modal
       visible={!!visible}
@@ -29,7 +31,8 @@ export default function InterviewSummaryModal({
         {/* give it pointerEvents="auto" explicitly to be clear */}
         <View style={styles.center} pointerEvents="auto">
           <View style={styles.card}>
-            <Text style={styles.title}>Interview Summary</Text>
+            <Text style={styles.title}>{t('reports.interviewSummary')}</Text>
+
 
             <ScrollView
               style={styles.scroll}

@@ -13,7 +13,8 @@
     "mock": "Mock",
     "trainer": "Trainer",
     "revise": "Revise",
-    "unknown": "Unknown"
+    "unknown": "Unknown",
+    "practice": "Practice"
   },
   "status": {
     "total": "Total",
@@ -45,7 +46,13 @@
         "Learn to structure and deliver better answers"
       ]
     },
-    "next": "Next"
+    "next": "Next",
+    "chooseDomain": "Choose Your Domain",
+    "selectDomain": "Select your domain for better matches.",
+    "chooseRole": "Choose Your Role",
+    "pickRole": "Pick a role for personalized practice.",
+    "selectLevel": "Select Your Level",
+    "pickExperience": "Pick your experience level."
   },
   "login": {
     "title": "Log In",
@@ -162,7 +169,11 @@
     "interview": "Interview",
     "viewReport": "View Report",
     "score": "Score",
-    "viewSummary": "View Summary"
+    "viewSummary": "View Summary",
+    "interviewSummary": "Interview Summary",
+    "seeFullReport": "See Full Report",
+    "detailedReport": "Detailed Report",
+    "skillOverview": "Skill Overview"
   },
   "profile": {
     "planExpiryPrefix": "Plan expiry:",
@@ -251,7 +262,12 @@
     "Team_Collaboration": "Team Collaboration",
     "Growth_Mindset": "Growth Mindset",
     "Conflict_Resolution": "Conflict Resolution",
-    "Outcome_Focus": "Outcome Focus"
+    "Outcome_Focus": "Outcome Focus",
+    "notEnoughData": "Not enough data",
+    "poor": "Poor",
+    "good": "Good",
+    "excellent": "Excellent",
+    "detailedAnalysis": "Detailed Skill Analysis"
   },
   "improvements": {
     "title": "Improvement steps",

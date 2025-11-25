@@ -1,12 +1,13 @@
 import Ionicons from '@react-native-vector-icons/ionicons';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { View, Text, Image, ScrollView } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 export default function OthersProfile({ route }) {
   const { avatar, name, trophies, interviewCompleted, minutes, lastRole } =
     route.params;
-
+  const { t } = useTranslation();
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: '#F9FAFB' }}
@@ -91,7 +92,7 @@ export default function OthersProfile({ route }) {
             marginBottom: 12,
           }}
         >
-          Interview Summary
+          {t('reports.interviewSummary')}
         </Text>
 
         <View

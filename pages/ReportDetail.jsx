@@ -26,11 +26,11 @@ import { AppStateContext } from '../components/AppContext';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import { JAVA_API_URL } from '../components/config';
 import { Ionicons } from '@react-native-vector-icons/ionicons';
-import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 
 const ReportDetailScreen = ({ route }) => {
   const { meetingId } = route.params;
-  const navigation = useNavigation();
+  const { t } = useTranslation();
   const { userProfile } = useContext(AppStateContext);
   const [reportData, setReportData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -178,7 +178,7 @@ const ReportDetailScreen = ({ route }) => {
                     color: '#333',
                   }}
                 >
-                  Interview Summary
+                  {t('reports.interviewSummary')}
                 </Text>
                 <Text style={{ fontSize: 16, color: '#555' }}>
                   {reportData?.feedback?.report?.analysis_summary ||
@@ -188,110 +188,110 @@ const ReportDetailScreen = ({ route }) => {
                 {/* Strengths & Weaknesses */}
                 {(reportData?.feedback?.report?.strengths.length > 0 ||
                   reportData?.feedback?.report?.weaknesses.length > 0) && (
-                  <View style={{ marginTop: 24 }}>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        flexWrap: 'wrap',
-                        justifyContent: 'space-between',
-                      }}
-                    >
-                      {/* Strengths */}
-                      {reportData?.feedback?.report?.strengths.length > 0 && (
-                        <View
-                          style={{ flex: 1, marginRight: 12, minWidth: '45%' }}
-                        >
-                          <Text
-                            style={{
-                              fontWeight: '700',
-                              fontSize: 16,
-                              marginBottom: 8,
-                              color: '#333',
-                            }}
+                    <View style={{ marginTop: 24 }}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          flexWrap: 'wrap',
+                          justifyContent: 'space-between',
+                        }}
+                      >
+                        {/* Strengths */}
+                        {reportData?.feedback?.report?.strengths.length > 0 && (
+                          <View
+                            style={{ flex: 1, marginRight: 12, minWidth: '45%' }}
                           >
-                            Strengths
-                          </Text>
-                          {reportData?.feedback?.report?.strengths.map(
-                            (s, i) => (
-                              <View
-                                key={i}
-                                style={{
-                                  flexDirection: 'row',
-                                  marginBottom: 6,
-                                }}
-                              >
-                                <Text
+                            <Text
+                              style={{
+                                fontWeight: '700',
+                                fontSize: 16,
+                                marginBottom: 8,
+                                color: '#333',
+                              }}
+                            >
+                              Strengths
+                            </Text>
+                            {reportData?.feedback?.report?.strengths.map(
+                              (s, i) => (
+                                <View
+                                  key={i}
                                   style={{
-                                    fontSize: 16,
-                                    color: '#555',
-                                    marginRight: 6,
+                                    flexDirection: 'row',
+                                    marginBottom: 6,
                                   }}
                                 >
-                                  •
-                                </Text>
-                                <Text
-                                  style={{
-                                    flex: 1,
-                                    fontSize: 16,
-                                    color: '#555',
-                                  }}
-                                >
-                                  {s}
-                                </Text>
-                              </View>
-                            ),
-                          )}
-                        </View>
-                      )}
+                                  <Text
+                                    style={{
+                                      fontSize: 16,
+                                      color: '#555',
+                                      marginRight: 6,
+                                    }}
+                                  >
+                                    •
+                                  </Text>
+                                  <Text
+                                    style={{
+                                      flex: 1,
+                                      fontSize: 16,
+                                      color: '#555',
+                                    }}
+                                  >
+                                    {s}
+                                  </Text>
+                                </View>
+                              ),
+                            )}
+                          </View>
+                        )}
 
-                      {/* Areas for Improvement */}
-                      {reportData?.feedback?.report?.weaknesses.length > 0 && (
-                        <View style={{ flex: 1, minWidth: '45%' }}>
-                          <Text
-                            style={{
-                              fontWeight: '700',
-                              fontSize: 16,
-                              marginBottom: 8,
-                              color: '#333',
-                            }}
-                          >
-                            Areas for Improvement
-                          </Text>
-                          {reportData?.feedback?.report?.weaknesses.map(
-                            (w, i) => (
-                              <View
-                                key={i}
-                                style={{
-                                  flexDirection: 'row',
-                                  marginBottom: 6,
-                                }}
-                              >
-                                <Text
+                        {/* Areas for Improvement */}
+                        {reportData?.feedback?.report?.weaknesses.length > 0 && (
+                          <View style={{ flex: 1, minWidth: '45%' }}>
+                            <Text
+                              style={{
+                                fontWeight: '700',
+                                fontSize: 16,
+                                marginBottom: 8,
+                                color: '#333',
+                              }}
+                            >
+                              Areas for Improvement
+                            </Text>
+                            {reportData?.feedback?.report?.weaknesses.map(
+                              (w, i) => (
+                                <View
+                                  key={i}
                                   style={{
-                                    fontSize: 16,
-                                    color: '#555',
-                                    marginRight: 6,
+                                    flexDirection: 'row',
+                                    marginBottom: 6,
                                   }}
                                 >
-                                  •
-                                </Text>
-                                <Text
-                                  style={{
-                                    flex: 1,
-                                    fontSize: 16,
-                                    color: '#555',
-                                  }}
-                                >
-                                  {w}
-                                </Text>
-                              </View>
-                            ),
-                          )}
-                        </View>
-                      )}
+                                  <Text
+                                    style={{
+                                      fontSize: 16,
+                                      color: '#555',
+                                      marginRight: 6,
+                                    }}
+                                  >
+                                    •
+                                  </Text>
+                                  <Text
+                                    style={{
+                                      flex: 1,
+                                      fontSize: 16,
+                                      color: '#555',
+                                    }}
+                                  >
+                                    {w}
+                                  </Text>
+                                </View>
+                              ),
+                            )}
+                          </View>
+                        )}
+                      </View>
                     </View>
-                  </View>
-                )}
+                  )}
 
                 {/* Next Steps */}
                 {reportData?.feedback?.nextSteps?.length > 0 && (

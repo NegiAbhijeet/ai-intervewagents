@@ -3,6 +3,7 @@ import { View, Text, Pressable, ScrollView } from 'react-native';
 
 import Gauge from './simpleGuage';
 import Ionicons from '@react-native-vector-icons/ionicons';
+import { useTranslation } from 'react-i18next';
 
 const colorVariants = [
   { bg: 'rgba(211, 127, 58, 0.3)', border: 'rgba(211, 127, 58, 1)' }, // orange
@@ -31,6 +32,7 @@ export default function SkillCards({
 }: {
   skills?: SkillItem[] | IncomingSkillObject;
 }) {
+  const { t } = useTranslation();
   // normalize input
   const normalized: SkillItem[] = React.useMemo(() => {
     if (!skills) return [];
@@ -106,17 +108,17 @@ export default function SkillCards({
                   size={75}
                   text={
                     gaugeValue <= 30
-                      ? 'Poor'
+                      ? t('skills.poor')
                       : gaugeValue <= 70
-                      ? 'Good'
-                      : 'Excellent'
+                        ? t('skills.good')
+                        : t('skills.excellent')
                   }
                   color={
                     gaugeValue <= 30
                       ? 'rgba(239, 68, 68, 1)'
                       : gaugeValue <= 70
-                      ? 'rgba(234, 179, 8, 1)'
-                      : 'rgba(34, 197, 94, 1)'
+                        ? 'rgba(234, 179, 8, 1)'
+                        : 'rgba(34, 197, 94, 1)'
                   }
                 />
               </View>
@@ -135,7 +137,7 @@ export default function SkillCards({
             className="text-base text-indigo-700"
             style={{ fontWeight: '600' }}
           >
-            See Full Report
+            {t('reports.seeFullReport')}
           </Text>
         </Pressable>
       </View>

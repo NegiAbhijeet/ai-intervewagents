@@ -103,11 +103,11 @@ const ReportModal = ({
 
           {isViewDetails ? (
             <Text style={{ fontSize: 24, fontWeight: '700', color: 'black' }}>
-              Detailed Report
+              {t('reports.detailedReport')}
             </Text>
           ) : isViewSkills ? (
             <Text style={{ fontSize: 24, fontWeight: '700', color: 'black' }}>
-              Skill Overview
+              {t('reports.skillOverview')}
             </Text>
           ) : (
             <Text

@@ -13,7 +13,8 @@
     "mock": "मॉक",
     "trainer": "ट्रेनर",
     "revise": "पुनरीक्षण",
-    "unknown": "अज्ञात"
+    "unknown": "अज्ञात",
+    "practice": "अभ्यास"
   },
   "status": {
     "total": "कुल",
@@ -45,7 +46,13 @@
         "बेहतर उत्तरों की संरचना और प्रस्तुति सीखें"
       ]
     },
-    "next": "अगला"
+    "next": "अगला",
+    "chooseDomain": "अपना डोमेन चुनें",
+    "selectDomain": "बेहतर सुझावों के लिए अपना डोमेन चुनें।",
+    "chooseRole": "अपनी भूमिका चुनें",
+    "pickRole": "व्यक्तिगत अभ्यास के लिए एक भूमिका चुनें।",
+    "selectLevel": "अपना स्तर चुनें",
+    "pickExperience": "अपना अनुभव स्तर चुनें।"
   },
   "login": {
     "title": "लॉग इन",
@@ -162,7 +169,11 @@
     "interview": "इंटरव्यू",
     "viewReport": "रिपोर्ट देखें",
     "score": "स्कोर",
-    "viewSummary": "सारांश देखें"
+    "viewSummary": "सारांश देखें",
+    "interviewSummary": "इंटरव्यू सारांश",
+    "seeFullReport": "पूरी रिपोर्ट देखें",
+    "detailedReport": "विस्तृत रिपोर्ट",
+    "skillOverview": "कौशल अवलोकन"
   },
   "profile": {
     "planExpiryPrefix": "प्लान समाप्ति:",
@@ -251,7 +262,12 @@
     "Team_Collaboration": "टीम सहयोग",
     "Growth_Mindset": "विकास मानसिकता",
     "Conflict_Resolution": "विवाद समाधान",
-    "Outcome_Focus": "परिणाम केंद्रित"
+    "Outcome_Focus": "परिणाम केंद्रित",
+    "notEnoughData": "पर्याप्त डेटा नहीं",
+    "poor": "कमज़ोर",
+    "good": "अच्छा",
+    "excellent": "उत्कृष्ट",
+    "detailedAnalysis": "विस्तृत कौशल विश्लेषण"
   },
   "improvements": {
     "title": "सुधार कदम",
