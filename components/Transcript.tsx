@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 
 export default function Transcript({
@@ -8,7 +9,7 @@ export default function Transcript({
   showLessText = 'Show less',
 }) {
   const [expanded, setExpanded] = React.useState(false);
-
+  const { t } = useTranslation();
   const normalized = React.useMemo(() => {
     return (transcript || []).map((t, i) => {
       if (typeof t === 'string') {
@@ -37,12 +38,17 @@ export default function Transcript({
             }
             accessibilityRole="text"
           >
-            <Text style={{
-              fontSize: 14,
-              color: '#111827',
-              lineHeight: 20,
-              fontWeight: '700',
-            }}>{item.speaker ? "User" : "Nova"}:{' '}</Text>
+            <Text
+              style={{
+                fontSize: 14,
+                color: '#111827',
+                lineHeight: 20,
+                fontWeight: '700',
+              }}
+            >
+              {item.speaker ? t('chat.user') : t('chat.nova')}{': '}
+            </Text>
+
             {item.text || 'Not enough data'}
           </Text>
           <View style={styles.separator} />

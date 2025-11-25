@@ -279,5 +279,9 @@
     "you": "You",
     "description": "This is the leaderboard",
     "league": "League"
+  },
+  "chat": {
+    "user": "User",
+    "nova": "Nova"
   }
 }

@@ -49,6 +49,7 @@ export default function ScheduleInterviewScreen({
     meetingId: null,
     interviewType: null,
     interviewTime: null,
+    languageCode: null
   });
 
   const practiceOrRevise = type || 'Practice';
@@ -240,6 +241,7 @@ export default function ScheduleInterviewScreen({
         const urlParams = new URLSearchParams(meetingUrl.split('?')[1]);
 
         const meetingId = urlParams.get('meetingId');
+        const languageCode = urlParams.get('languageCode');
         const canId = urlParams.get('canId');
         const interviewType = urlParams.get('interviewType');
         const candidateName = urlParams.get('candidateName') || 'User';
@@ -247,6 +249,7 @@ export default function ScheduleInterviewScreen({
         setInterviewData({
           canId,
           meetingId,
+          languageCode,
           interviewType,
           interviewTime,
         });

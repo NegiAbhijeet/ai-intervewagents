@@ -279,5 +279,9 @@
         "you": "Você",
         "description": "Este é o ranking",
         "league": "Liga"
+    },
+    "chat": {
+        "user": "Usuário",
+        "nova": "Nova"
     }
 }

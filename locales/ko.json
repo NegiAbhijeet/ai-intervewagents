@@ -279,5 +279,9 @@
         "you": "나",
         "description": "리더보드입니다",
         "league": "리그"
+    },
+    "chat": {
+        "user": "사용자",
+        "nova": "노바"
     }
 }

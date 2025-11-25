@@ -214,6 +214,7 @@ const HomePage = () => {
 
                 const meetingId = urlParams.get('meetingId');
                 const canId = urlParams.get('canId');
+                const languageCode = urlParams.get('languageCode');
                 const interviewType = urlParams.get('interviewType');
                 const candidateName = urlParams.get('candidateName') || 'User';
                 const interviewTime = urlParams.get('interviewTime');
@@ -221,6 +222,7 @@ const HomePage = () => {
                 const firstPayload = {
                     canId,
                     meetingId,
+                    languageCode,
                     interviewType,
                     interviewTime,
                     candidateName,
