@@ -5,7 +5,7 @@ import { AppStateContext } from '../components/AppContext';
 import TopBar from '../components/TopBar';
 
 const Interview = ({ route }) => {
-  const { userProfile } = useContext(AppStateContext);
+  const { userProfile, language } = useContext(AppStateContext);
   const [type, setType] = useState(route.params?.type || 'Practice');
   const [position, setPosition] = useState(route.params?.position || '');
   const [routeSkills, setRouteSkills] = useState(route.params?.skills || []);
@@ -30,6 +30,7 @@ const Interview = ({ route }) => {
           type={type}
           routePosition={position}
           routeSkills={routeSkills}
+          language={language}
         />
       </Layout>
     </>

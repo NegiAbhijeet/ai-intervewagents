@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import {
     Modal,
     View,
@@ -17,7 +17,6 @@ import { JAVA_API_URL } from './config'
 import Toast from 'react-native-toast-message'
 import Ionicons from '@react-native-vector-icons/ionicons'
 import Layout from '../pages/Layout'
-import { LEVELS } from "../libs/levels"
 // Safe JSON loading
 let industriesData = {};
 try {
@@ -37,7 +36,7 @@ export default function EditProfileModal({
     initialIndustry,
     initialLevel,
     canId,
-    onSuccess,
+    onSuccess, language
 }) {
     // Form State
     const [name, setName] = useState('')
@@ -48,7 +47,13 @@ export default function EditProfileModal({
 
     // UI State (Controls which screen is visible: 'form' | 'industry' | 'role' | 'level')
     const [viewMode, setViewMode] = useState('form')
+    function getLevelData(lang) {
+        if (lang === 'hi') return require('../libs/levels-hi.json')
+        if (lang === 'en') return require('../libs/levels.json')
+        return require('../libs/levels.json')
+    }
 
+    const LEVELS = useMemo(() => getLevelData(language) || {}, [language])
     // Initialize Data
     useEffect(() => {
         if (visible) {

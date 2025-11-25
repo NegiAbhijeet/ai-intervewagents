@@ -12,13 +12,15 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import { GradientBorderView } from '@good-react-native/gradient-border';
 import PlayButton from '../assets/images/playButton.svg';
+import { useTranslation } from 'react-i18next'
 
 export default function AnalysisCards({
   strengths = [],
   weaknesses = [],
   setShowImprovementPoints,
 }) {
-  const [openItem, setOpenItem] = useState(null); // 'strengths' | 'weaknesses' | null
+  const { t } = useTranslation()
+  const [openItem, setOpenItem] = useState(null)
 
   const open = key => setOpenItem(key);
   const close = () => setOpenItem(null);
@@ -54,18 +56,18 @@ export default function AnalysisCards({
         </View>
       </GradientBorderView>
     </Pressable>
-  );
+  )
 
   const renderListItems = (items, type) => {
     if (!items || items.length === 0) {
-      return <Text style={styles.emptyText}>No items found</Text>;
+      return <Text style={styles.emptyText}>{t('analysis.noItemsFound')}</Text>
     }
 
     return items.map((it, idx) => {
-      const text = typeof it === 'string' ? it : it.text ?? '';
-      const icon = type === 'strengths' ? '✓' : '✕';
+      const text = typeof it === 'string' ? it : it.text ?? ''
+      const icon = type === 'strengths' ? '✓' : '✕'
       const iconBgStyle =
-        type === 'strengths' ? styles.iconBgStrength : styles.iconBgWeak;
+        type === 'strengths' ? styles.iconBgStrength : styles.iconBgWeak
 
       return (
         <View key={idx} style={styles.listRow}>
@@ -74,22 +76,22 @@ export default function AnalysisCards({
           </View>
           <Text style={styles.itemText}>{text}</Text>
         </View>
-      );
-    });
-  };
+      )
+    })
+  }
 
   return (
     <View style={styles.container}>
       <View style={styles.row}>
         {renderCard(
           'strengths',
-          'Strengths',
-          'Tap to view the analyzed strength.',
+          t('analysis.strengthsTitle'),
+          t('analysis.tapToViewStrength'),
         )}
         {renderCard(
           'weaknesses',
-          'Weaknesses',
-          'Tap to view the analyzed weakness.',
+          t('analysis.weaknessesTitle'),
+          t('analysis.tapToViewWeakness'),
         )}
       </View>
 
@@ -115,7 +117,7 @@ export default function AnalysisCards({
                     : styles.weakTitle,
                 ]}
               >
-                {openItem === 'strengths' ? 'Strength' : 'Weakness'}
+                {openItem === 'strengths' ? t('analysis.strength') : t('analysis.weakness')}
               </Text>
 
               <ScrollView
@@ -147,7 +149,7 @@ export default function AnalysisCards({
                     end={{ x: 1, y: 0 }}
                     style={styles.cta}
                   >
-                    <Text style={styles.ctaText}>How to Improve</Text>
+                    <Text style={styles.ctaText}>{t('analysis.howToImprove')}</Text>
                   </LinearGradient>
                 </Pressable>
               </View>
@@ -159,15 +161,16 @@ export default function AnalysisCards({
         </View>
       </Modal>
     </View>
-  );
+  )
 }
+
 
 const styles = StyleSheet.create({
   container: { width: '100%' },
   row: { flexDirection: 'row', justifyContent: 'space-between' },
   cardWrapper: { width: '48%', aspectRatio: 1, },
   cardContent: {
-    paddingTop:"30%",
+    paddingTop: "30%",
     borderRadius: 10,
     height: "100%",
     overflow: 'hidden',

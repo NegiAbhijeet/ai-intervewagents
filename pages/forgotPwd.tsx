@@ -14,12 +14,12 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import Toast from 'react-native-toast-message';
 import auth from '@react-native-firebase/auth';
-import Layout from './Layout'; // Assuming you have a Layout component
+import Layout from './Layout'; 
 import { useNavigation } from '@react-navigation/native';
-
-const { width: screenWidth } = Dimensions.get('window');
+import { useTranslation } from 'react-i18next';
 
 export default function ForgotPasswordScreen() {
+    const { t } = useTranslation();
     const navigation = useNavigation();
     const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false);
@@ -81,17 +81,17 @@ export default function ForgotPasswordScreen() {
                     </View>
 
                     <View style={styles.card}>
-                        <Text style={styles.title}>Forgot Password</Text>
+                        <Text style={styles.title}>{t('forgot.title')}</Text>
                         <Text style={styles.subtitle}>
-                            Enter your email address to receive a verification code.
+                            {t('forgot.subtitle')}
                         </Text>
 
                         <View style={[styles.field, { marginTop: 20 }]}>
-                            <Text style={styles.label}>Email</Text>
+                            <Text style={styles.label}>{t('forgot.emailLabel')}</Text>
                             <TextInput
                                 value={email}
                                 onChangeText={setEmail}
-                                placeholder="hello@example.com"
+                                placeholder={t('forgot.emailPlaceholder')}
                                 keyboardType="email-address"
                                 autoCapitalize="none"
                                 style={styles.input}
@@ -122,16 +122,17 @@ export default function ForgotPasswordScreen() {
                                 {loading ? (
                                     <ActivityIndicator size="small" color="#fff" />
                                 ) : (
-                                    <Text style={styles.sendCodeText}>Send Code</Text>
+                                    <Text style={styles.sendCodeText}>{t('forgot.sendCode')}</Text>
                                 )}
                             </LinearGradient>
                         </TouchableOpacity>
+
                         <View style={styles.rememberPasswordRow}>
                             <TouchableOpacity
                                 onPress={() => navigation.navigate('Login')}
                             >
                                 <Text style={{ color: 'rgba(139, 70, 239, 1)', fontWeight: '600' }}>
-                                    Remember Password? Login
+                                    {t('forgot.remember')}
                                 </Text>
                             </TouchableOpacity>
                         </View>

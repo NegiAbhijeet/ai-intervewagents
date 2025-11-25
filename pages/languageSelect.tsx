@@ -10,21 +10,13 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BackgroundGradient2 from '../components/backgroundGradient2';
 import { AppStateContext } from '../components/AppContext';
-
-// A compact set of languages. Extend this list as needed.
-const LANGUAGES = [
-    { code: 'en', label: 'English', isRTL: false },
-    { code: 'es', label: 'Español', isRTL: false },
-    { code: 'hi', label: 'हिन्दी', isRTL: false },
-    { code: 'fr', label: 'Français', isRTL: false },
-    { code: 'ar', label: 'العربية', isRTL: true },
-    { code: 'zh', label: '中文', isRTL: false },
-];
+import { loadSavedLanguage } from '../libs/i18n';
+import LANGUAGES from "../libs/languages"
 
 const STORAGE_KEY = 'user-language';
 
 const LanguageSelectionScreen = () => {
-    const { setLangSelected } = useContext(AppStateContext) || {};
+    const { setLangSelected, setLanguage } = useContext(AppStateContext) || {};
     const [selected, setSelected] = useState(null);
 
     useEffect(() => {
@@ -64,8 +56,9 @@ const LanguageSelectionScreen = () => {
             } catch (e) {
                 // ignore, i18n not configured
             }
-
+            setLanguage(selected)
             setLangSelected(true)
+            await loadSavedLanguage();
         } catch (err) {
             console.warn('Failed to save language', err);
         }

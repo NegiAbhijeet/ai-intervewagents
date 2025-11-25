@@ -10,28 +10,8 @@ import fetchWithAuth from '../libs/fetchWithAuth';
 import { RefreshControl } from 'react-native-gesture-handler';
 import InterviewScreen from '../components/interviewScreen';
 import HomeTopPenguin from "../assets/images/homeTopPeng.svg"
-const interviews = [
-    {
-        title: 'Test Yourself',
-        description:
-            'Mock Interview with instant feedback to boost your skill and knowledge.',
-        gradient: 'blue',
-        action: 'Start',
-        value: 'Practice',
-        icon: require("../assets/images/mock.png"),
-        bottomLine: "Test Now >>"
-    },
-    {
-        title: 'Train Yourself',
-        description:
-            'Trainer mode acts like a coach that improves your answers and builds your confidence.',
-        gradient: 'purple',
-        action: 'Start',
-        value: 'Revise',
-        icon: require("../assets/images/trainer.png"),
-        bottomLine: "Train Now >>"
-    },
-];
+import { useTranslation } from 'react-i18next';
+import LANGUAGES from '../libs/languages';
 
 const HomePage = () => {
     const {
@@ -42,7 +22,8 @@ const HomePage = () => {
         firstInterviewObject,
         setFirstInterviewObject,
         myCandidate,
-        setMyCandidate
+        setMyCandidate,
+        language
     } = useContext(AppStateContext);
     const [lastMeeting, setLastMeeting] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -50,6 +31,29 @@ const HomePage = () => {
     const [isRefreshing, setIsRefreshing] = useState(false);
 
     const spin = useRef(new Animated.Value(0)).current
+    const { t } = useTranslation();
+    const interviews = [
+        {
+            key: 'practice',
+            title: t('home.interviews.practice.title'),
+            description: t('home.interviews.practice.description'),
+            gradient: 'blue',
+            action: t('home.interviews.common.action'),
+            value: 'Practice',
+            icon: require("../assets/images/mock.png"),
+            bottomLine: t('home.interviews.practice.bottomLine')
+        },
+        {
+            key: 'train',
+            title: t('home.interviews.train.title'),
+            description: t('home.interviews.train.description'),
+            gradient: 'purple',
+            action: t('home.interviews.common.action'),
+            value: 'Revise',
+            icon: require("../assets/images/trainer.png"),
+            bottomLine: t('home.interviews.train.bottomLine')
+        },
+    ];
 
     useEffect(() => {
         let animation = null
@@ -170,6 +174,7 @@ const HomePage = () => {
             const now = new Date();
             const { date, hour, minute } = extractMeetingDateTimeParts(now);
             const parsedDuration = parseInt(10);
+            const myLanguage = LANGUAGES.find((item) => item?.code === language)
             const payload = {
                 uid: userProfile?.uid,
                 hour,
@@ -184,6 +189,7 @@ const HomePage = () => {
                 type: practiceOrRevise,
                 requiredSkills: myCandidate?.requiredSkills,
                 experience: myCandidate?.experienceYears || 0,
+                language: myLanguage?.label_en || "English"
             };
 
 
@@ -229,9 +235,9 @@ const HomePage = () => {
         }
     };
     function getScoreText(score) {
-        if (score <= 25) return 'Bad';
-        if (score <= 75) return 'Good';
-        return 'Excellent';
+        if (score <= 25) return t('home.score.bad');
+        if (score <= 75) return t('home.score.good');
+        return t('home.score.excellent');
     }
 
     return (
@@ -245,18 +251,20 @@ const HomePage = () => {
                     </View>
                 </Modal>
             )}
+
             <TopBar />
-            {
-                firstInterviewObject && <InterviewScreen
+
+            {firstInterviewObject && (
+                <InterviewScreen
                     {...firstInterviewObject}
                     showInterviewScreen={true}
                     setShowInterviewScreen={() => setFirstInterviewObject(null)}
                 />
-            }
+            )}
+
             <Layout>
                 <ScrollView
                     showsVerticalScrollIndicator={false}
-                    className="py-5 "
                     contentContainerStyle={{ paddingBottom: 120 }}
                     refreshControl={
                         <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
@@ -264,34 +272,33 @@ const HomePage = () => {
                 >
                     {!userProfile ? (
                         <SkeletonPlaceholder borderRadius={8}>
-                            <SkeletonPlaceholder.Item
-                                width={200}
-                                height={28}
-                                marginBottom={16}
-                            />
+                            <SkeletonPlaceholder.Item width={200} height={28} marginBottom={16} />
                         </SkeletonPlaceholder>
                     ) : (
-                        <View className='px-4 flex-row items-center justify-between'>
-                            <View className=''>
-                                <Text style={{ fontSize: 18, fontWeight: 700, lineHeight: 18 }}>
-                                    Hello {myCandidate?.firstName || 'User'} 👋
+                        <View style={{ paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <View>
+                                <Text style={{ fontSize: 18, fontWeight: '700' }}>
+                                    {t('home.greeting', { name: myCandidate?.firstName || t('home.userFallback') })}
                                 </Text>
-                                <Text style={{ fontSize: 15, fontWeight: 400 }}>
-                                    Welcome to your home!
+                                <Text style={{ fontSize: 15, fontWeight: '400' }}>
+                                    {t('home.welcome')}
                                 </Text>
                             </View>
                             <HomeTopPenguin />
                         </View>
                     )}
-                    <View style={{ backgroundColor: "rgba(103, 86, 239, 0.08)", borderWidth: 1, borderRadius: 14, borderColor: "rgba(239, 239, 239, 1)", marginTop: 15 }} className='px-8 py-4 flex-row items-center justify-between w-[85%] mx-auto'>
+
+                    <View style={{ backgroundColor: "rgba(103, 86, 239, 0.08)", borderWidth: 1, borderRadius: 14, borderColor: "rgba(239, 239, 239, 1)", marginTop: 15, paddingHorizontal: 24, paddingVertical: 12, alignSelf: 'center', width: '85%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                         <View>
-                            <Text style={{ fontSize: 12, fontWeight: 700 }}>{lastMeeting?.position || "No Interview Found"}</Text>
-                            <Text style={{ fontSize: 10, fontWeight: 600 }}>Score : {lastMeeting?.feedback?.averagePercentage || "N/A"}{lastMeeting?.feedback?.averagePercentage && "%"}</Text>
-                            <Text style={{ fontSize: 10, fontWeight: 400 }}>
-                                You scored {getScoreText(lastMeeting?.feedback?.averagePercentage || 0)}
+                            <Text style={{ fontSize: 12, fontWeight: '700' }}>{lastMeeting?.position || t('home.noInterview')}</Text>
+                            <Text style={{ fontSize: 10, fontWeight: '600' }}>
+                                {t('home.scoreLabel')} {lastMeeting?.feedback?.averagePercentage || t('home.na')}
+                                {lastMeeting?.feedback?.averagePercentage ? '%' : ''}
+                            </Text>
+                            <Text style={{ fontSize: 10, fontWeight: '400' }}>
+                                {t('home.youScored', { scoreText: getScoreText(lastMeeting?.feedback?.averagePercentage || 0) })}
                             </Text>
                         </View>
-
 
                         {isLoading ? (
                             <Animated.Image
@@ -303,40 +310,42 @@ const HomePage = () => {
                                     resizeMode: 'contain'
                                 }}
                             />
-                        ) : (<Pressable onPress={() => { handleSubmit(lastMeeting?.type) }}>
-                            <Image
-                                source={require('../assets/images/reload.png')}
-                                style={{ width: 28, height: 28, resizeMode: 'contain' }}
-                            /></Pressable>
+                        ) : (
+                            <Pressable onPress={() => { handleSubmit(lastMeeting?.type) }}>
+                                <Image
+                                    source={require('../assets/images/reload.png')}
+                                    style={{ width: 28, height: 28, resizeMode: 'contain' }}
+                                />
+                            </Pressable>
                         )}
                     </View>
 
-                    <View className="mb-10">
-                        <Text className="text-center" style={{ fontSize: 16, fontWeight: 700, lineHeight: 21, marginBottom: 18, marginTop: 25 }}>
-                            Choose Your Interview Mode
+                    <View style={{ marginBottom: 40 }}>
+                        <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', lineHeight: 21, marginBottom: 18, marginTop: 25 }}>
+                            {t('home.chooseMode')}
                         </Text>
-                        {interviews.map(({ title, description, icon, value, bottomLine }, index) =>
-                        (
+
+                        {interviews.map(({ title, description, icon, value, bottomLine }, index) => (
                             <Pressable key={index} onPress={() => handleSubmit(value)} style={{ marginBottom: 8 }}>
                                 <ImageBackground source={require('../assets/images/homeCardWrapper.png')} style={{ width: '100%', aspectRatio: 371 / 209 }} imageStyle={{ resizeMode: 'contain' }}>
-                                    <View className="absolute h-full w-full top-0 left-0 p-8">
-                                        <View className="w-full items-center flex-row justify-center gap-4">
+                                    <View style={{ position: 'absolute', height: '100%', width: '100%', top: 0, left: 0, padding: 16, justifyContent: 'center', alignItems: 'center' }}>
+                                        <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
                                             <Image source={icon} />
-                                            <Text style={{ fontSize: 16, fontWeight: 600, lineHeight: 20 }}>
+                                            <Text style={{ fontSize: 16, fontWeight: '600', lineHeight: 20 }}>
                                                 {title}
                                             </Text>
                                         </View>
-                                        <Text style={{ fontSize: 12, fontWeight: 500, lineHeight: 20, marginTop: 16, textAlign: 'center', color: 'rgba(60,60,60,1)' }}>
+                                        <Text style={{ fontSize: 12, fontWeight: '500', lineHeight: 20, marginTop: 16, textAlign: 'center', color: 'rgba(60,60,60,1)' }}>
                                             {description}
                                         </Text>
                                     </View>
-                                    <Text className='absolute bottom-2 left-1/2 -translate-x-1/2 text-white' style={{ fontSize: 12 }}>
+                                    <Text style={{ position: 'absolute', bottom: 8, left: '50%', transform: [{ translateX: -50 }], color: 'white', fontSize: 12 }}>
                                         {bottomLine}
                                     </Text>
                                 </ImageBackground>
-                            </Pressable>))}
+                            </Pressable>
+                        ))}
                     </View>
-
                 </ScrollView>
             </Layout>
         </>

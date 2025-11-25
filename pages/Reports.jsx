@@ -20,7 +20,9 @@ import ReportModal from '../components/reportModal';
 import BackgroundGradient2 from '../components/backgroundGradient2';
 import StatusBoxes from '../components/ReportsStatusBoxes';
 import LinearGradient from 'react-native-linear-gradient';
+import { useTranslation } from 'react-i18next';
 const Reports = () => {
+  const { t } = useTranslation();
   const { userProfile } = useContext(AppStateContext);
   const [meetings, setMeetings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -142,10 +144,6 @@ const Reports = () => {
     return `${minutes} min`;
   };
 
-  const rotateInterpolate = rotateAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '360deg'],
-  });
   const filteredMeetings = meetings.filter(report => {
     if (activeFilter === 'all') return true;
     const t = (report.type || '').toLowerCase();
@@ -171,11 +169,12 @@ const Reports = () => {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
         >
-          <View style={{ width: "100%", }}>
+          <View style={{ width: "100%" }}>
             <StatusBoxes
               total={rowTotalMeetings}
               completed={meetings.length}
-              pending={pendingReports} />
+              pending={pendingReports}
+            />
           </View>
 
           {loading && (
@@ -245,7 +244,7 @@ const Reports = () => {
             </SkeletonPlaceholder>
           )}
 
-          {/* Empty state (visible when not loading and no meetings) */}
+          {/* Empty state */}
           {!loading && meetings.length === 0 && (
             <View
               style={{
@@ -269,7 +268,7 @@ const Reports = () => {
                   marginBottom: 12,
                 }}
               >
-                No Interview Reports Found
+                {t('reports.empty.title')}
               </Text>
               <Text
                 style={{
@@ -279,19 +278,19 @@ const Reports = () => {
                   lineHeight: 22,
                 }}
               >
-                Complete some interviews to see reports here.
+                {t('reports.empty.subtitle')}
               </Text>
             </View>
           )}
 
-          {/* Content list (visible when not loading and there are meetings) */}
+          {/* Content list */}
           {!loading && meetings.length > 0 && (
             <>
               <View style={{ flexDirection: 'row', gap: 8, marginBottom: 12, alignSelf: "center", marginTop: 40, marginBottom: 15 }}>
                 {[
-                  { key: 'all', label: 'All Reports' },
-                  { key: 'mock', label: 'Mock' },
-                  { key: 'trainer', label: 'Trainer' },
+                  { key: 'all', label: t('reports.filters.all') },
+                  { key: 'mock', label: t('reports.filters.mock') },
+                  { key: 'trainer', label: t('reports.filters.trainer') },
                 ].map(btn => {
                   const isActive = activeFilter === btn.key;
 
@@ -329,7 +328,6 @@ const Reports = () => {
                       }}
                     >
                       <Pressable
-                        key={btn.key}
                         onPress={() => setActiveFilter(btn.key)}
                         style={{
                           paddingVertical: 8,
@@ -345,7 +343,6 @@ const Reports = () => {
                     </LinearGradient>
                   );
                 })}
-
               </View>
 
               {filteredMeetings.map(report => {
@@ -362,32 +359,26 @@ const Reports = () => {
                       borderColor: 'rgba(243, 244, 246, 1)',
                     }}
                   >
-                    <View
-                      style={{
+                    <View style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}>
+                      <View style={{
                         flexDirection: 'row',
-                        justifyContent: 'space-between',
                         alignItems: 'center',
-                      }}
-                    >
-                      <View
-                        style={{
+                        gap: 8,
+                        flex: 1,
+                        marginRight: 8,
+                      }}>
+                        <View style={{
                           flexDirection: 'row',
                           alignItems: 'center',
-                          gap: 8,
-                          flex: 1,                // allow this group to grow/shrink
-                          marginRight: 8,        // space before the badge
-                        }}
-                      >
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            padding: 8,
-                            borderRadius: 999, // use numeric radius
-                            backgroundColor: 'rgba(219, 234, 254, 1)',
-                          }}
-                        >
+                          justifyContent: 'center',
+                          padding: 8,
+                          borderRadius: 999,
+                          backgroundColor: 'rgba(219, 234, 254, 1)',
+                        }}>
                           <Image
                             source={require('../assets/images/code.png')}
                             style={{ width: 20, height: 20, resizeMode: 'contain' }}
@@ -398,10 +389,8 @@ const Reports = () => {
                           style={{
                             fontWeight: '700',
                             fontSize: 16,
-                            // prevent leaking and push badge
-                            flexShrink: 1,        // allow text to shrink
+                            flexShrink: 1,
                             flexGrow: 0,
-                            numberOfLines: 1,     // ensure single line with ellipsis
                           }}
                           numberOfLines={1}
                           ellipsizeMode="tail"
@@ -410,92 +399,66 @@ const Reports = () => {
                         </Text>
                       </View>
 
-                      <View
-                        style={{
-                          paddingHorizontal: 12,
-                          paddingVertical: 8,
-                          borderRadius: 999,
-                          backgroundColor:
+                      <View style={{
+                        paddingHorizontal: 12,
+                        paddingVertical: 8,
+                        borderRadius: 999,
+                        backgroundColor:
+                          percentage >= 85
+                            ? 'rgba(220, 252, 231, 1)'
+                            : percentage >= 70
+                              ? 'rgba(255, 237, 213, 1)'
+                              : '#FEE2E2',
+                        flexShrink: 0,
+                      }}>
+                        <Text style={{
+                          fontSize: 12,
+                          fontWeight: '700',
+                          color:
                             percentage >= 85
-                              ? 'rgba(220, 252, 231, 1)'
+                              ? 'rgba(52, 199, 89, 1)'
                               : percentage >= 70
-                                ? 'rgba(255, 237, 213, 1)'
-                                : '#FEE2E2',
-                          flexShrink: 0,         // keep badge size stable
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: 12,
-                            fontWeight: '700',
-                            color:
-                              percentage >= 85
-                                ? 'rgba(52, 199, 89, 1)'
-                                : percentage >= 70
-                                  ? 'rgba(255, 149, 0, 1)'
-                                  : 'red',
-                          }}
-                        >
-                          {report?.feedback ? `${percentage}%` : 'Pending...'}
+                                ? 'rgba(255, 149, 0, 1)'
+                                : 'red',
+                        }}>
+                          {report?.feedback ? `${percentage}%` : t('reports.pending')}
                         </Text>
                       </View>
                     </View>
 
-                    <Text
-                      style={{ fontWeight: '500', fontSize: 14, color: 'rgba(75, 85, 99, 1)', marginTop: 8 }}
-                    >
-                      {capitalizeFirst(report?.interviewType)} Interview
+                    <Text style={{ fontWeight: '500', fontSize: 14, color: 'rgba(75, 85, 99, 1)', marginTop: 8 }}>
+                      {t(`types.${report?.interviewType.toLowerCase()}`)} {t('reports.interview')}
                     </Text>
+
+
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 16, marginTop: 16 }}>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          alignItems: 'center', gap: 4
-                        }}
-                      >
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                         <Ionicons name="time-outline" size={14} color="rgba(75, 85, 99, 1)" />
-                        <Text
-                          style={{ fontWeight: '500', color: '#6B7280', fontSize: 14 }}
-                        >
+                        <Text style={{ fontWeight: '500', color: '#6B7280', fontSize: 14 }}>
                           {formatDuration(report.interviewDuration)}
                         </Text>
                       </View>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          alignItems: 'center', gap: 4
-                        }}
-                      >
-                        <Ionicons name="calendar-outline" size={14} color="rgba(75, 85, 99, 1)" />
-                        <Text
-                          style={{ color: 'rgba(75, 85, 99, 1)', fontSize: 14 }}
-                        >
-                          {formatDateTime(
-                            report.interviewDate,
-                          )}
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          alignItems: 'center', gap: 4
-                        }}
-                      >
+
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                         <Ionicons name="calendar-outline" size={14} color="rgba(75, 85, 99, 1)" />
                         <Text style={{ color: 'rgba(75, 85, 99, 1)', fontSize: 14 }}>
-                          {capitalizeFirst(report?.type)}
+                          {formatDateTime(report.interviewDate)}
+                        </Text>
+                      </View>
+
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                        <Ionicons name="calendar-outline" size={14} color="rgba(75, 85, 99, 1)" />
+                        <Text style={{ color: 'rgba(75, 85, 99, 1)', fontSize: 14 }}>
+                           {t(`types.${report?.type?.toLowerCase() || 'unknown'}`)}
                         </Text>
                       </View>
                     </View>
-                    <View
-                      style={{ flexDirection: 'row', marginTop: 12, gap: 8 }}
-                    >
+
+                    <View style={{ flexDirection: 'row', marginTop: 12, gap: 8 }}>
                       <TouchableOpacity
                         style={{
                           flex: 1,
-                          backgroundColor: report?.feedback
-                            ? "rgba(0,0,0)"
-                            : "rgba(0,0,0,0.3)",
+                          backgroundColor: report?.feedback ? "rgba(0,0,0)" : "rgba(0,0,0,0.3)",
                           paddingVertical: 14,
                           borderRadius: 16,
                           justifyContent: "center",
@@ -505,7 +468,7 @@ const Reports = () => {
                         onPress={() => report?.feedback && setCurrentReport(report)}
                       >
                         <Text style={{ color: "white", fontWeight: "600", fontSize: 14 }}>
-                          View Report
+                          {t('reports.viewReport')}
                         </Text>
                       </TouchableOpacity>
                     </View>

@@ -18,17 +18,19 @@ import Toast from 'react-native-toast-message';
 import fetchUserDetails from '../libs/fetchUser';
 import { AppStateContext } from '../components/AppContext';
 import { API_URL, PRIVACY_POILCY_URL, TERMS_OF_USE_URL } from '../components/config';
-import auth, { signInWithEmailAndPassword } from '@react-native-firebase/auth';
+import auth from '@react-native-firebase/auth';
 import GoogleLoginButton from '../components/GoogleLoginButton';
 import Layout from './Layout';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import fetchWithAuth from '../libs/fetchWithAuth';
+import { useTranslation } from 'react-i18next';
 const { width: screenWidth } = Dimensions.get('window');
 
 export default function LoginScreen() {
   const { setUserProfile, setOnboardingComplete, setFirebaseUser } =
     useContext(AppStateContext);
+  const { t } = useTranslation();
   const navigation = useNavigation()
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -120,7 +122,6 @@ export default function LoginScreen() {
     }
   }
 
-
   return (
     <Layout gradient={false}>
       <View style={styles.bg}>
@@ -129,19 +130,18 @@ export default function LoginScreen() {
           style={styles.container}
         >
           <View style={styles.topLogoWrapper}>
-            {/* <LoginPen width={280} height={230} /> */}
             <Image source={require("../assets/images/loginPeng.png")} style={styles.penguin} />
           </View>
 
           <View style={styles.card}>
-            <Text style={styles.title}>Log In</Text>
+            <Text style={styles.title}>{t('login.title')}</Text>
 
             <View style={styles.field}>
-              <Text style={styles.label}>Email Address</Text>
+              <Text style={styles.label}>{t('login.emailLabel')}</Text>
               <TextInput
                 value={email}
                 onChangeText={setEmail}
-                placeholder="hello@example.com"
+                placeholder={t('login.emailPlaceholder')}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 style={styles.input}
@@ -151,12 +151,12 @@ export default function LoginScreen() {
             </View>
 
             <View style={[styles.field, { marginTop: 16 }]}>
-              <Text style={styles.label}>Password</Text>
+              <Text style={styles.label}>{t('login.passwordLabel')}</Text>
               <View style={{ justifyContent: 'center' }}>
                 <TextInput
                   value={password}
                   onChangeText={setPassword}
-                  placeholder="********"
+                  placeholder={t('login.passwordPlaceholder')}
                   secureTextEntry={!isPasswordVisible}
                   style={[styles.input, { paddingRight: 50 }]}
                   placeholderTextColor="rgba(139, 71, 239, 0.4)"
@@ -182,7 +182,7 @@ export default function LoginScreen() {
               style={{ alignSelf: "flex-end", marginTop: 10 }}
             >
               <Text style={{ color: 'rgba(139, 70, 239, 1)', fontWeight: '600' }}>
-                Forgot Password?
+                {t('login.forgotPassword')}
               </Text>
             </TouchableOpacity>
 
@@ -208,47 +208,50 @@ export default function LoginScreen() {
                 {loading ? (
                   <ActivityIndicator size="small" color="#fff" />
                 ) : (
-                  <Text style={styles.loginText}>Log In</Text>
+                  <Text style={styles.loginText}>{t('login.button')}</Text>
                 )}
               </LinearGradient>
             </TouchableOpacity>
 
             <View style={styles.orRow}>
               <View style={styles.line} />
-              <Text style={styles.orText}>or</Text>
+              <Text style={styles.orText}>{t('login.or')}</Text>
               <View style={styles.line} />
             </View>
+
             <GoogleLoginButton
               setIsGoogleLoading={setIsGoogleLoading}
               isGoogleLoading={isGoogleLoading}
               setFirebaseUser={setFirebaseUser}
             />
           </View>
+
           <View style={{ marginTop: 15, alignItems: 'center' }}>
             <TouchableOpacity
               onPress={() => navigation.navigate("Signup")}
               disabled={loading || isGoogleLoading}
             >
               <Text style={{ color: 'rgba(139, 70, 239, 1)', fontWeight: '600' }}>
-                Don't have an account? Sign Up
+                {t('login.noAccount')}
               </Text>
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
-        <View className="flex-row justify-center items-center mb-1">
+
+        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 8 }}>
           <Pressable onPress={() => Linking.openURL(TERMS_OF_USE_URL)}>
-            <Text className="text-black underline">
-              Terms of Use
+            <Text style={{ color: 'black', textDecorationLine: 'underline' }}>
+              {t('legal.terms')}
             </Text>
           </Pressable>
 
-          <Text className="text-black mx-1 -translate-y-1 font-bold">
+          <Text style={{ color: 'black', marginHorizontal: 6, fontWeight: '700' }}>
             .
           </Text>
 
           <Pressable onPress={() => Linking.openURL(PRIVACY_POILCY_URL)}>
-            <Text className="text-black underline">
-              Privacy Policy
+            <Text style={{ color: 'black', textDecorationLine: 'underline' }}>
+              {t('legal.privacy')}
             </Text>
           </Pressable>
         </View>

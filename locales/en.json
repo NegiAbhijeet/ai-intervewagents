@@ -1,0 +1,283 @@
+{
+  "nova": {
+    "greeting": "Hi, I'm Nova",
+    "beforeBegin": "Before we begin let me know the basic details about you!"
+  },
+  "splash": {
+    "brand": "AI Interview Agents",
+    "tagline": "Crack your dream company’s interview with confidence."
+  },
+  "types": {
+    "technical": "Technical",
+    "behavioural": "Behavioural",
+    "mock": "Mock",
+    "trainer": "Trainer",
+    "revise": "Revise",
+    "unknown": "Unknown"
+  },
+  "status": {
+    "total": "Total",
+    "completed": "Completed",
+    "pending": "Pending"
+  },
+  "minutes": "Minutes",
+  "getStarted": {
+    "brand": "AI Interview Agents",
+    "subBrand": "Your AI Interview Assistant",
+    "tagline": "I will help you crack your dream company’s interview with confidence.",
+    "ctaStart": "Get Started",
+    "ctaLogin": "Already Have An Account? Login"
+  },
+  "onboarding": {
+    "slide1": {
+      "heading": "Practice Realistic Interviews",
+      "bullets": [
+        "Experience AI interviews that feel truly human",
+        "Get recruiter-style feedback powered by advanced analytics",
+        "Track your growth with streaks, badges, and certificates"
+      ]
+    },
+    "slide2": {
+      "heading": "Overcome Interview Nerves",
+      "bullets": [
+        "Improve faster with personalized AI feedback",
+        "Build confidence through regular practice",
+        "Learn to structure and deliver better answers"
+      ]
+    },
+    "next": "Next"
+  },
+  "login": {
+    "title": "Log In",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "hello@example.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "********",
+    "forgotPassword": "Forgot Password?",
+    "button": "Log In",
+    "or": "or",
+    "noAccount": "Don't have an account? Sign Up"
+  },
+  "signup": {
+    "title": "Sign Up",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "hello@example.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "********",
+    "button": "Sign Up",
+    "or": "or",
+    "haveAccount": "Already have an account? Log In"
+  },
+  "forgot": {
+    "title": "Forgot Password",
+    "subtitle": "Enter your email address to receive a verification code.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "hello@example.com",
+    "sendCode": "Send Code",
+    "remember": "Remember Password? Login"
+  },
+  "legal": {
+    "terms": "Terms of Use",
+    "privacy": "Privacy Policy"
+  },
+  "auth": {
+    "googleContinue": "Continue with Google"
+  },
+  "home": {
+    "greeting": "Hello {{name}}",
+    "userFallback": "User",
+    "welcome": "Welcome to your home!",
+    "noInterview": "No Interview Found",
+    "scoreLabel": "Score:",
+    "na": "N/A",
+    "youScored": "You scored {{scoreText}}",
+    "chooseMode": "Choose Your Interview Mode",
+    "interviews": {
+      "common": {
+        "action": "Start"
+      },
+      "practice": {
+        "title": "Test Yourself",
+        "description": "Mock Interview with instant feedback to boost your skill and knowledge.",
+        "bottomLine": "Test Now >>"
+      },
+      "train": {
+        "title": "Train Yourself",
+        "description": "Trainer mode acts like a coach that improves your answers and builds your confidence.",
+        "bottomLine": "Train Now >>"
+      }
+    },
+    "score": {
+      "bad": "Bad",
+      "good": "Good",
+      "excellent": "Excellent"
+    }
+  },
+  "jobs": {
+    "recommendedCount": "Recommended Jobs ({{count}})",
+    "description": "Here is job recommendation for you for the role of {{position}}.",
+    "upcoming": "(Upcoming job update in 12 hours)",
+    "loader": {
+      "finding": "Finding jobs...",
+      "warming": "We’re warming up your job feed..."
+    },
+    "filters": {
+      "savedJobs": "Saved Jobs",
+      "allJobs": "All Jobs",
+      "allTypes": "All Types",
+      "fullTime": "Full Time",
+      "hybrid": "Hybrid",
+      "remote": "Remote",
+      "allLocations": "All Locations"
+    },
+    "form": {
+      "headerTitle": "Professional Details",
+      "headerDescription": "Share a brief summary of your role and experience",
+      "extraText": "(Upcoming job update in 12 hours)",
+      "positionLabel": "Position",
+      "positionPlaceholder": "Software Engineer",
+      "positionExample": "e.g. Software Engineer",
+      "positionA11y": "Position",
+      "positionHelp": "This helps match job titles to your profile",
+      "experienceLabel": "Years of Experience",
+      "experiencePlaceholder": "5",
+      "experienceA11y": "Years of experience",
+      "yearsSuffix": "years",
+      "experienceHelp": "Enter whole years only",
+      "pleaseWait": "Please wait...",
+      "continue": "Continue"
+    }
+  },
+  "reports": {
+    "empty": {
+      "title": "No Interview Reports Found",
+      "subtitle": "Complete some interviews to see reports here."
+    },
+    "filters": {
+      "all": "All Reports",
+      "mock": "Mock",
+      "trainer": "Trainer"
+    },
+    "pending": "Pending...",
+    "interview": "Interview",
+    "viewReport": "View Report",
+    "score": "Score",
+    "viewSummary": "View Summary"
+  },
+  "profile": {
+    "planExpiryPrefix": "Plan expiry:",
+    "editProfile": "Edit Profile",
+    "subscription": {
+      "title": "Subscription",
+      "subtitle": "Your current plan and billing information.",
+      "freePlan": "Free",
+      "active": "Active",
+      "of": "of",
+      "minutesUsed": "minutes used",
+      "minutesLeft": "minutes left",
+      "upgrade": "Upgrade to Pro",
+      "proActive": "Pro Plan Active"
+    },
+    "legal": {
+      "prefix": "By using this app, you agree to our",
+      "terms": "Terms of Service",
+      "and": "and",
+      "privacy": "Privacy Policy"
+    },
+    "danger": {
+      "title": "Danger Zone",
+      "subtitle": "Irreversible account actions.",
+      "logout": "Logout",
+      "deleteTitle": "Delete Account",
+      "deleteDesc": "Permanently delete your account and all associated data. This action cannot be undone.",
+      "deleteButton": "Delete Account"
+    },
+    "stats": {
+      "role": "Role",
+      "level": "Level",
+      "totalTime": "Total Time",
+      "rating": "Rating",
+      "minutes": "Minutes"
+    }
+  },
+  "avatar": {
+    "step1Title": "What should I call you?",
+    "step2Title": "Choose your avatar",
+    "fullNameLabel": "Your Full Name",
+    "namePlaceholder": "Enter name",
+    "nextButton": "Next",
+    "startButton": "Start Interview"
+  },
+  "interview": {
+    "title": "Interview Instructions",
+    "instr1": "Start the interview by saying Hello",
+    "instr2": "Sit in a quiet place without any background noise",
+    "instr3": "Ensure a stable internet connection for the best experience",
+    "instr4": "Sit in a quiet and well-lit place",
+    "cameraOffTitle": "Camera is Off",
+    "cameraOffMessage": "Please turn on your camera.",
+    "btn_wait": "Please wait...",
+    "btn_end": "End Interview",
+    "btn_start": "Start Interview"
+  },
+  "analysis": {
+    "strengthsTitle": "Strengths",
+    "weaknessesTitle": "Weaknesses",
+    "tapToViewStrength": "Tap to view the analyzed strength.",
+    "tapToViewWeakness": "Tap to view the analyzed weakness.",
+    "noItemsFound": "No items found",
+    "strength": "Strength",
+    "weakness": "Weakness",
+    "howToImprove": "How to Improve",
+    "tryAgain": "Try again"
+  },
+  "tabs": {
+    "reportAnalysis": "Report Analysis",
+    "transcript": "Transcript"
+  },
+  "carousel": {
+    "notEnoughData": "Not enough data",
+    "poor": "Poor",
+    "good": "Good",
+    "excellent": "Excellent",
+    "seeDetailedReport": "See Detailed Report"
+  },
+  "skills": {
+    "Technical_Expertise": "Technical Expertise",
+    "Problem_Solving": "Problem Solving",
+    "Decision_Judgment": "Decision Judgment",
+    "Debugging_Mindset": "Debugging Mindset",
+    "Accountability_Mindset": "Accountability Mindset",
+    "Team_Collaboration": "Team Collaboration",
+    "Growth_Mindset": "Growth Mindset",
+    "Conflict_Resolution": "Conflict Resolution",
+    "Outcome_Focus": "Outcome Focus"
+  },
+  "improvements": {
+    "title": "Improvement steps",
+    "openResource": "Open resource",
+    "cannotOpenLinkTitle": "Cannot open link",
+    "cannotOpenLinkMsg": "The link cannot be opened on this device.",
+    "errorTitle": "Error",
+    "errorMsg": "Failed to open the link.",
+    "empty": "No items found"
+  },
+  "leagues": {
+    "bronze": "Bronze",
+    "silver": "Silver",
+    "gold": "Gold",
+    "platinum": "Platinum",
+    "diamond": "Diamond",
+    "emerald": "Emerald",
+    "ruby": "Ruby",
+    "sapphire": "Sapphire",
+    "obsidian": "Obsidian",
+    "crystal": "Crystal"
+  },
+  "leaderboard": {
+    "loading": "Loading leaderboard...",
+    "you": "You",
+    "description": "This is the leaderboard",
+    "league": "League"
+  }
+}

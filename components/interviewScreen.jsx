@@ -23,6 +23,7 @@ import AIAgent from './AIAgent';
 import { useNavigation } from '@react-navigation/native';
 import { AppStateContext } from './AppContext';
 import { JAVA_API_URL } from './config';
+import { useTranslation } from 'react-i18next';
 
 const CallUI = ({
   agentId,
@@ -38,6 +39,7 @@ const CallUI = ({
   setShowInterviewScreen,
 }) => {
   const { userProfile, setUserProfile } = useContext(AppStateContext);
+  const { t } = useTranslation();
   const initialStartRef = useRef(null);
   const [hasStarted, setHasStarted] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -92,10 +94,10 @@ const CallUI = ({
     interviewType,
     adminId,
     interviewTime,
-    onWebSocketOpen: () => {},
-    onWebSocketClose: () => {},
-    onWebSocketError: () => {},
-    onReceivedError: () => {},
+    onWebSocketOpen: () => { },
+    onWebSocketClose: () => { },
+    onWebSocketError: () => { },
+    onReceivedError: () => { },
     onInterviewEndConfirmed: () => {
       handleInterviewCompletion();
     },
@@ -351,14 +353,13 @@ const CallUI = ({
           </>
         )}
 
-        {/* ✅ Main Area */}
         <View style={{ flex: 1, padding: hasStarted && cameraOn ? 0 : 20 }}>
           <View
             style={{
               flex: 1,
               borderRadius: hasStarted && cameraOn ? 0 : 16,
               overflow: 'hidden',
-              backgroundColor: 'black',
+              backgroundColor: 'black'
             }}
           >
             {!hasStarted ? (
@@ -366,9 +367,8 @@ const CallUI = ({
                 style={{
                   flex: 1,
                   justifyContent: 'center',
-
                   padding: 28,
-                  backgroundColor: '#141414',
+                  backgroundColor: '#141414'
                 }}
               >
                 <Text
@@ -376,46 +376,24 @@ const CallUI = ({
                     color: 'white',
                     fontSize: 26,
                     fontWeight: '700',
-                    marginBottom: 20,
+                    marginBottom: 20
                   }}
                 >
-                  Interview Instructions
+                  {t('interview.title')}
                 </Text>
 
-                <Text
-                  style={{
-                    color: '#e0e0e0',
-                    fontSize: 16,
-                    marginBottom: 10,
-                    textAlign: 'left',
-                    width: '100%',
-                  }}
-                >
-                  1. Start the interview by saying Hello
+                <Text style={instructionTextStyle}>
+                  1. {t('interview.instr1')}
                 </Text>
 
-                <Text
-                  style={{
-                    color: '#e0e0e0',
-                    fontSize: 16,
-                    marginBottom: 10,
-                    textAlign: 'left',
-                    width: '100%',
-                  }}
-                >
-                  2. Sit in a quiet place without any background noise
+                <Text style={instructionTextStyle}>
+                  2. {t('interview.instr2')}
                 </Text>
-                <Text
-                  style={{
-                    color: '#e0e0e0',
-                    fontSize: 16,
-                    marginBottom: 10,
-                    textAlign: 'left',
-                    width: '100%',
-                  }}
-                >
-                  3. Ensure a stable internet connection for the best experience
+
+                <Text style={instructionTextStyle}>
+                  3. {t('interview.instr3')}
                 </Text>
+
                 <Text
                   style={{
                     color: '#ffffff',
@@ -424,10 +402,10 @@ const CallUI = ({
                     marginBottom: 10,
                     textAlign: 'left',
                     width: '100%',
-                    fontStyle: 'italic',
+                    fontStyle: 'italic'
                   }}
                 >
-                  4. Sit in a quiet and well-lit place
+                  4. {t('interview.instr4')}
                 </Text>
               </View>
             ) : cameraOn && cameraDevice && hasCameraPermission ? (
@@ -436,7 +414,7 @@ const CallUI = ({
                   flex: 1,
                   borderRadius: 16,
                   overflow: 'hidden',
-                  width: '100%',
+                  width: '100%'
                 }}
                 device={cameraDevice}
                 isActive={cameraOn && showInterviewScreen}
@@ -448,7 +426,7 @@ const CallUI = ({
                   justifyContent: 'center',
                   alignItems: 'center',
                   padding: 24,
-                  backgroundColor: '#141414',
+                  backgroundColor: '#141414'
                 }}
               >
                 <Text
@@ -456,26 +434,25 @@ const CallUI = ({
                     color: 'white',
                     fontSize: 20,
                     fontWeight: 'bold',
-                    marginBottom: 12,
+                    marginBottom: 12
                   }}
                 >
-                  Camera is Off
+                  {t('interview.cameraOffTitle')}
                 </Text>
                 <Text
                   style={{
                     color: '#ffecec',
                     fontSize: 16,
-                    textAlign: 'center',
+                    textAlign: 'center'
                   }}
                 >
-                  Please turn on your camera.
+                  {t('interview.cameraOffMessage')}
                 </Text>
               </View>
             )}
           </View>
         </View>
 
-        {/* ✅ Bottom Controls */}
         <View
           style={{
             paddingHorizontal: 20,
@@ -484,7 +461,7 @@ const CallUI = ({
             position: 'absolute',
             bottom: 10,
             left: 0,
-            right: 0,
+            right: 0
           }}
         >
           <View
@@ -492,16 +469,15 @@ const CallUI = ({
               flexDirection: 'row',
               justifyContent: 'center',
               gap: 16,
-              alignItems: 'center',
+              alignItems: 'center'
             }}
           >
-            {/* Camera Toggle */}
             <TouchableOpacity
               onPress={handleCameraToggle}
               style={{
                 padding: 15,
                 backgroundColor: cameraOn ? '#4caf50' : '#f44336',
-                borderRadius: 50,
+                borderRadius: 50
               }}
             >
               <Ionicons
@@ -510,13 +486,13 @@ const CallUI = ({
                 color="white"
               />
             </TouchableOpacity>
-            {/* Mic Toggle */}
+
             <TouchableOpacity
               onPress={handleMicToggle}
               style={{
                 padding: 15,
                 backgroundColor: micOn ? '#4caf50' : '#f44336',
-                borderRadius: 50,
+                borderRadius: 50
               }}
             >
               <Ionicons
@@ -528,9 +504,7 @@ const CallUI = ({
 
             <TouchableOpacity
               disabled={isLoading || isFetching}
-              onPress={
-                hasStarted ? handleInterviewCompletion : handleManualStart
-              }
+              onPress={hasStarted ? handleInterviewCompletion : handleManualStart}
               style={{
                 paddingVertical: 10,
                 paddingHorizontal: 20,
@@ -539,7 +513,7 @@ const CallUI = ({
                 flexDirection: 'row',
                 justifyContent: 'center',
                 alignItems: 'center',
-                opacity: isLoading || isFetching ? 0.6 : 1,
+                opacity: isLoading || isFetching ? 0.6 : 1
               }}
             >
               {isLoading || isFetching ? (
@@ -549,15 +523,15 @@ const CallUI = ({
                     style={{
                       color: 'white',
                       fontWeight: 'bold',
-                      marginLeft: 8,
+                      marginLeft: 8
                     }}
                   >
-                    Please wait...
+                    {t('interview.btn_wait')}
                   </Text>
                 </View>
               ) : (
                 <Text style={{ color: 'white', fontWeight: 'bold' }}>
-                  {hasStarted ? 'End Interview' : 'Start Interview'}
+                  {hasStarted ? t('interview.btn_end') : t('interview.btn_start')}
                 </Text>
               )}
             </TouchableOpacity>
@@ -567,5 +541,11 @@ const CallUI = ({
     </Modal>
   );
 };
-
+const instructionTextStyle = {
+  color: '#e0e0e0',
+  fontSize: 16,
+  marginBottom: 10,
+  textAlign: 'left',
+  width: '100%'
+};
 export default CallUI;

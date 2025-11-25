@@ -14,12 +14,13 @@ import { API_URL } from './config';
 import fetchUserDetails from '../libs/fetchUser';
 import { AppStateContext } from './AppContext';
 import Toast from 'react-native-toast-message';
+import { useTranslation } from 'react-i18next';
 
 const WEB_CLIENT_ID = '611623329833-4t054i14kdj2u7ccdvtb4b5tsev1jgfr.apps.googleusercontent.com';
 
-const GoogleLoginButton = ({ isGoogleLoading, setIsGoogleLoading,setFirebaseUser }) => {
+const GoogleLoginButton = ({ isGoogleLoading, setIsGoogleLoading, setFirebaseUser }) => {
   const { setUserProfile, setOnboardingComplete } = useContext(AppStateContext);
-
+  const { t } = useTranslation();
   useEffect(() => {
     GoogleSignin.configure({
       webClientId: WEB_CLIENT_ID,
@@ -112,8 +113,9 @@ const GoogleLoginButton = ({ isGoogleLoading, setIsGoogleLoading,setFirebaseUser
             source={require('../assets/images/google.png')}
             style={styles.googleIcon}
           />
-          <Text style={styles.googleText}>Continue with Google</Text>
+          <Text style={styles.googleText}>{t('auth.googleContinue')}</Text>
         </View>
+
       )}
     </TouchableOpacity>
   );

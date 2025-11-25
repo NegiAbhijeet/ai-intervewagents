@@ -20,6 +20,7 @@ import InterviewTypeDropdown from './InterviewTypeDropdown';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Badge } from './ui/badge';
 import fetchWithAuth from '../libs/fetchWithAuth';
+import LANGUAGES from '../libs/languages';
 const typeOptions = [
   { label: 'Technical', value: 'Technical' },
   { label: 'Behavioral', value: 'Behavioral' },
@@ -30,6 +31,7 @@ export default function ScheduleInterviewScreen({
   userProfile,
   type,
   routeSkills,
+  language
 }) {
   const insets = useSafeAreaInsets();
   const [interviewType, setInterviewType] = useState('Technical');
@@ -198,7 +200,7 @@ export default function ScheduleInterviewScreen({
 
       const now = new Date();
       const { date, hour, minute } = extractMeetingDateTimeParts(now);
-
+      const myLanguage = LANGUAGES.find((item) => item?.code === language)
       const payload = {
         uid: userProfile?.uid,
         hour,
@@ -215,6 +217,7 @@ export default function ScheduleInterviewScreen({
         jobDescription: '',
         resumeText: myCandidate?.resumeText || '',
         experience: myCandidate?.experienceYears || 0,
+        language: myLanguage?.label_en || "English"
       };
 
       const response = await fetchWithAuth(`${API_URL}/interview-agent/`, {
@@ -291,9 +294,8 @@ export default function ScheduleInterviewScreen({
           <Text className="text-2xl font-semibold">Start Interview</Text>
 
           <Badge
-            className={`px-4 text-center py-1 rounded-full ${
-              isPractice ? 'bg-green-500' : 'bg-blue-500'
-            }`}
+            className={`px-4 text-center py-1 rounded-full ${isPractice ? 'bg-green-500' : 'bg-blue-500'
+              }`}
           >
             <Text className="text-white font-medium text-sm">
               {isPractice ? 'Real' : 'Trainer'}

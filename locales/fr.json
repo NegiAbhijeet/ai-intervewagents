@@ -1,0 +1,283 @@
+{
+    "nova": {
+        "greeting": "Salut, je suis Nova",
+        "beforeBegin": "Avant de commencer, dites moi quelques informations de base sur vous"
+    },
+    "splash": {
+        "brand": "Agents d'entretien IA",
+        "tagline": "Réussissez l'entretien de votre entreprise de rêve avec confiance"
+    },
+    "types": {
+        "technical": "Technique",
+        "behavioural": "Comportemental",
+        "mock": "Simulation",
+        "trainer": "Entraîneur",
+        "revise": "Réviser",
+        "unknown": "Inconnu"
+    },
+    "status": {
+        "total": "Total",
+        "completed": "Terminé",
+        "pending": "En attente"
+    },
+    "minutes": "Minutes",
+    "getStarted": {
+        "brand": "Agents d'entretien IA",
+        "subBrand": "Votre assistant d'entretien IA",
+        "tagline": "Je vous aide à réussir l'entretien de votre entreprise de rêve",
+        "ctaStart": "Commencer",
+        "ctaLogin": "Vous avez déjà un compte? Connexion"
+    },
+    "onboarding": {
+        "slide1": {
+            "heading": "Entraînez vous avec de vrais entretiens",
+            "bullets": [
+                "Vivez des entretiens IA naturels et humains",
+                "Recevez un retour de style recruteur basé sur des analyses avancées",
+                "Suivez votre progression avec séries, badges et certificats"
+            ]
+        },
+        "slide2": {
+            "heading": "Gérez votre stress d'entretien",
+            "bullets": [
+                "Progressez plus vite grâce à un retour personnalisé",
+                "Gagnez en confiance avec une pratique régulière",
+                "Apprenez à structurer et présenter de meilleures réponses"
+            ]
+        },
+        "next": "Suivant"
+    },
+    "login": {
+        "title": "Connexion",
+        "emailLabel": "Adresse e mail",
+        "emailPlaceholder": "hello@example.com",
+        "passwordLabel": "Mot de passe",
+        "passwordPlaceholder": "********",
+        "forgotPassword": "Mot de passe oublié?",
+        "button": "Connexion",
+        "or": "ou",
+        "noAccount": "Pas de compte? Inscription"
+    },
+    "signup": {
+        "title": "Inscription",
+        "emailLabel": "Adresse e mail",
+        "emailPlaceholder": "hello@example.com",
+        "passwordLabel": "Mot de passe",
+        "passwordPlaceholder": "********",
+        "button": "Inscription",
+        "or": "ou",
+        "haveAccount": "Vous avez déjà un compte? Connexion"
+    },
+    "forgot": {
+        "title": "Mot de passe oublié",
+        "subtitle": "Entrez votre adresse e mail pour recevoir un code de vérification",
+        "emailLabel": "E mail",
+        "emailPlaceholder": "hello@example.com",
+        "sendCode": "Envoyer le code",
+        "remember": "Vous vous souvenez du mot de passe? Connexion"
+    },
+    "legal": {
+        "terms": "Conditions d'utilisation",
+        "privacy": "Politique de confidentialité"
+    },
+    "auth": {
+        "googleContinue": "Continuer avec Google"
+    },
+    "home": {
+        "greeting": "Bonjour {{name}}",
+        "userFallback": "Utilisateur",
+        "welcome": "Bienvenue chez vous",
+        "noInterview": "Aucun entretien trouvé",
+        "scoreLabel": "Score:",
+        "na": "N/A",
+        "youScored": "Votre score est {{scoreText}}",
+        "chooseMode": "Choisissez votre mode d'entretien",
+        "interviews": {
+            "common": {
+                "action": "Commencer"
+            },
+            "practice": {
+                "title": "Testez vous",
+                "description": "Simulation d'entretien avec retour instantané pour renforcer vos compétences",
+                "bottomLine": "Tester maintenant >>"
+            },
+            "train": {
+                "title": "Entraînez vous",
+                "description": "Le mode entraîneur vous guide et améliore vos réponses pour plus d'assurance",
+                "bottomLine": "S'entraîner maintenant >>"
+            }
+        },
+        "score": {
+            "bad": "Faible",
+            "good": "Bon",
+            "excellent": "Excellent"
+        }
+    },
+    "jobs": {
+        "recommendedCount": "Emplois recommandés ({{count}})",
+        "description": "Voici une recommandation d'emploi pour le poste de {{position}}",
+        "upcoming": "(Mise à jour dans 12 heures)",
+        "loader": {
+            "finding": "Recherche d'emplois",
+            "warming": "Votre fil d'emplois se prépare"
+        },
+        "filters": {
+            "savedJobs": "Enregistrés",
+            "allJobs": "Tous les emplois",
+            "allTypes": "Tous les types",
+            "fullTime": "Temps plein",
+            "hybrid": "Hybride",
+            "remote": "À distance",
+            "allLocations": "Tous les lieux"
+        },
+        "form": {
+            "headerTitle": "Informations professionnelles",
+            "headerDescription": "Partagez un bref résumé de votre rôle et de votre expérience",
+            "extraText": "(Mise à jour dans 12 heures)",
+            "positionLabel": "Poste",
+            "positionPlaceholder": "Ingénieur logiciel",
+            "positionExample": "ex: Ingénieur logiciel",
+            "positionA11y": "Poste",
+            "positionHelp": "Aide à trouver des postes correspondant à votre profil",
+            "experienceLabel": "Années d'expérience",
+            "experiencePlaceholder": "5",
+            "experienceA11y": "Années d'expérience",
+            "yearsSuffix": "ans",
+            "experienceHelp": "Entrez uniquement des années complètes",
+            "pleaseWait": "Veuillez patienter",
+            "continue": "Continuer"
+        }
+    },
+    "reports": {
+        "empty": {
+            "title": "Aucun rapport trouvé",
+            "subtitle": "Complétez des entretiens pour voir vos rapports ici"
+        },
+        "filters": {
+            "all": "Tous les rapports",
+            "mock": "Simulation",
+            "trainer": "Entraîneur"
+        },
+        "pending": "En attente",
+        "interview": "Entretien",
+        "viewReport": "Voir le rapport",
+        "score": "Score",
+        "viewSummary": "Voir le résumé"
+    },
+    "profile": {
+        "planExpiryPrefix": "Expiration du plan",
+        "editProfile": "Modifier le profil",
+        "subscription": {
+            "title": "Abonnement",
+            "subtitle": "Votre plan et vos informations de facturation",
+            "freePlan": "Gratuit",
+            "active": "Actif",
+            "of": "sur",
+            "minutesUsed": "minutes utilisées",
+            "minutesLeft": "minutes restantes",
+            "upgrade": "Passer à Pro",
+            "proActive": "Plan Pro actif"
+        },
+        "legal": {
+            "prefix": "En utilisant cette application vous acceptez",
+            "terms": "les conditions de service",
+            "and": "et",
+            "privacy": "la politique de confidentialité"
+        },
+        "danger": {
+            "title": "Zone dangereuse",
+            "subtitle": "Actions irréversibles du compte",
+            "logout": "Déconnexion",
+            "deleteTitle": "Supprimer le compte",
+            "deleteDesc": "Supprime votre compte et toutes vos données. Cette action est définitive",
+            "deleteButton": "Supprimer le compte"
+        },
+        "stats": {
+            "role": "Rôle",
+            "level": "Niveau",
+            "totalTime": "Temps total",
+            "rating": "Note",
+            "minutes": "Minutes"
+        }
+    },
+    "avatar": {
+        "step1Title": "Comment dois je vous appeler",
+        "step2Title": "Choisissez votre avatar",
+        "fullNameLabel": "Nom complet",
+        "namePlaceholder": "Entrez votre nom",
+        "nextButton": "Suivant",
+        "startButton": "Commencer l'entretien"
+    },
+    "interview": {
+        "title": "Instructions de l'entretien",
+        "instr1": "Démarrez l'entretien en disant bonjour",
+        "instr2": "Asseyez vous dans un endroit calme sans bruit",
+        "instr3": "Assurez une connexion internet stable pour la meilleure expérience",
+        "instr4": "Asseyez vous dans un endroit calme et bien éclairé",
+        "cameraOffTitle": "Caméra désactivée",
+        "cameraOffMessage": "Activez votre caméra",
+        "btn_wait": "Veuillez patienter",
+        "btn_end": "Terminer l'entretien",
+        "btn_start": "Commencer l'entretien"
+    },
+    "analysis": {
+        "strengthsTitle": "Points forts",
+        "weaknessesTitle": "Points faibles",
+        "tapToViewStrength": "Appuyez pour voir le point fort analysé",
+        "tapToViewWeakness": "Appuyez pour voir le point faible analysé",
+        "noItemsFound": "Aucun élément trouvé",
+        "strength": "Force",
+        "weakness": "Faiblesse",
+        "howToImprove": "Comment améliorer",
+        "tryAgain": "Réessayer"
+    },
+    "tabs": {
+        "reportAnalysis": "Analyse du rapport",
+        "transcript": "Transcription"
+    },
+    "carousel": {
+        "notEnoughData": "Données insuffisantes",
+        "poor": "Faible",
+        "good": "Bon",
+        "excellent": "Excellent",
+        "seeDetailedReport": "Voir le rapport détaillé"
+    },
+    "skills": {
+        "Technical_Expertise": "Expertise technique",
+        "Problem_Solving": "Résolution de problèmes",
+        "Decision_Judgment": "Jugement et décision",
+        "Debugging_Mindset": "Esprit débogage",
+        "Accountability_Mindset": "Sens des responsabilités",
+        "Team_Collaboration": "Collaboration en équipe",
+        "Growth_Mindset": "Esprit d'évolution",
+        "Conflict_Resolution": "Résolution des conflits",
+        "Outcome_Focus": "Orientation résultat"
+    },
+    "improvements": {
+        "title": "Étapes d'amélioration",
+        "openResource": "Ouvrir la ressource",
+        "cannotOpenLinkTitle": "Impossible d'ouvrir le lien",
+        "cannotOpenLinkMsg": "Le lien ne peut pas être ouvert sur cet appareil",
+        "errorTitle": "Erreur",
+        "errorMsg": "Échec de l'ouverture du lien",
+        "empty": "Aucun élément trouvé"
+    },
+    "leagues": {
+        "bronze": "Bronze",
+        "silver": "Argent",
+        "gold": "Or",
+        "platinum": "Platine",
+        "diamond": "Diamant",
+        "emerald": "Émeraude",
+        "ruby": "Rubis",
+        "sapphire": "Saphir",
+        "obsidian": "Obsidienne",
+        "crystal": "Cristal"
+    },
+    "leaderboard": {
+        "loading": "Chargement du classement",
+        "you": "Vous",
+        "description": "Voici le classement",
+        "league": "Ligue"
+    }
+}

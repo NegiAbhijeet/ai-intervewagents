@@ -18,6 +18,8 @@ import LeagueCarousel from '../components/LeagueCarousel';
 import { LEAGUES } from '../libs/leagueData';
 import { RefreshControl, ScrollView } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
+
 function getInitials(name) {
   const words = name.trim().split(' ');
   if (words.length >= 2) {
@@ -27,12 +29,14 @@ function getInitials(name) {
 }
 
 export default function Leaderboard() {
+  const { t } = useTranslation();
   const { userProfile } = useContext(AppStateContext);
   const navigation = useNavigation();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [userRankDetails, setUserRankDetails] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+
   // Fetch, filter, sort and add rank index
   function getRatings(isRefreshingCall = false) {
     setLoading(true);
@@ -129,9 +133,8 @@ export default function Leaderboard() {
               });
             }
           }}
-          className={`flex-row justify-between items-center py-3 px-4 border-b border-gray-200 ${
-            isCurrentUser ? 'bg-blue-200' : ''
-          }`}
+          className={`flex-row justify-between items-center py-3 px-4 border-b border-gray-200 ${isCurrentUser ? 'bg-blue-200' : ''
+            }`}
         >
           <Text className="w-10 text-base font-bold">
             {trophyIcon ? null : `#${user.rank}`}
@@ -156,11 +159,8 @@ export default function Leaderboard() {
 
             <View className="flex-1">
               <Text className="text-base font-semibold" numberOfLines={1}>
-                {isCurrentUser ? 'You' : user.user_name}
+                {isCurrentUser ? t('leaderboard.you') : user.user_name}
               </Text>
-              {/* <Text className="text-sm text-gray-500" numberOfLines={1}>
-                {user.user_email}
-              </Text> */}
             </View>
           </View>
 
@@ -180,7 +180,7 @@ export default function Leaderboard() {
       {loading && users.length === 0 ? (
         <View className="w-full justify-center items-center py-8">
           <ActivityIndicator size="large" />
-          <Text className="mt-4">Loading leaderboard...</Text>
+          <Text className="mt-4">{t('leaderboard.loading')}</Text>
         </View>
       ) : (
         <></>
@@ -193,13 +193,13 @@ export default function Leaderboard() {
       <TopBar />
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: 120 }}
+        contentContainerStyle={{ paddingBottom: 120, }}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
         }
       >
-        <View>
+        <View style={{ backgroundColor: 'white' }}>
           <LeagueCarousel data={LEAGUES} userTrophies={rating} />
 
           <View style={{ marginTop: 16, paddingHorizontal: 20 }}>
@@ -211,7 +211,7 @@ export default function Leaderboard() {
               }}
             >
               <Text style={{ fontWeight: '700', fontSize: 20 }}>
-                {currentLeague.name} League
+                {t(currentLeague.name, { defaultValue: currentLeague.name })} {t('leaderboard.league')}
               </Text>
 
               <View className="flex-row items-center gap-2 bg-gray-800 rounded-full py-1 px-3">
@@ -221,30 +221,30 @@ export default function Leaderboard() {
             </View>
 
             <Text style={{ fontSize: 14, color: '#4B5563', marginTop: 6 }}>
-              This is Leaderboard
+              {t('leaderboard.description')}
             </Text>
           </View>
-        </View>
 
-        <View
-          style={{
-            backgroundColor: '#000',
-            width: '100%',
-            marginTop: 16,
-            marginBottom: 4,
-            height: 1,
-          }}
-        />
-
-        <View style={{ paddingHorizontal: 20 }}>
-          <FlatList
-            data={users}
-            keyExtractor={item => `${item.user_email}-${item.rank}`}
-            showsVerticalScrollIndicator={false}
-            ListHeaderComponent={<ListHeader />}
-            renderItem={renderUserItem}
-            scrollEnabled={false}
+          <View
+            style={{
+              backgroundColor: '#000',
+              width: '100%',
+              marginTop: 16,
+              marginBottom: 4,
+              height: 1,
+            }}
           />
+
+          <View style={{ paddingHorizontal: 20 }}>
+            <FlatList
+              data={users}
+              keyExtractor={item => `${item.user_email}-${item.rank}`}
+              showsVerticalScrollIndicator={false}
+              ListHeaderComponent={<ListHeader />}
+              renderItem={renderUserItem}
+              scrollEnabled={false}
+            />
+          </View>
         </View>
       </ScrollView>
     </>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Modal,
   Pressable,
@@ -11,29 +12,31 @@ import {
 } from 'react-native';
 
 export default function ImprovementsPoints({ visible, onClose, data = [] }) {
+  const { t } = useTranslation()
+
   const openLink = async url => {
     try {
       const safeUrl =
         typeof url === 'string' && !/^https?:\/\//i.test(url)
           ? `https://${url}`
-          : url;
-      const supported = await Linking.canOpenURL(safeUrl);
+          : url
+      const supported = await Linking.canOpenURL(safeUrl)
       if (supported) {
-        await Linking.openURL(safeUrl);
+        await Linking.openURL(safeUrl)
       } else {
         Alert.alert(
-          'Cannot open link',
-          'The link cannot be opened on this device.',
-        );
+          t('improvements.cannotOpenLinkTitle'),
+          t('improvements.cannotOpenLinkMsg'),
+        )
       }
     } catch (err) {
-      Alert.alert('Error', 'Failed to open the link.');
+      Alert.alert(t('improvements.errorTitle'), t('improvements.errorMsg'))
     }
-  };
+  }
 
   const renderItem = (item, idx) => {
-    const text = typeof item === 'string' ? item : item.step ?? '';
-    const url = item.resource ?? null;
+    const text = typeof item === 'string' ? item : item.step ?? ''
+    const url = item.resource ?? null
 
     return (
       <View key={idx} style={styles.row}>
@@ -49,13 +52,13 @@ export default function ImprovementsPoints({ visible, onClose, data = [] }) {
               onPress={() => openLink(url)}
               style={styles.resourceButton}
             >
-              <Text style={styles.resourceText}>Open resource</Text>
+              <Text style={styles.resourceText}>{t('improvements.openResource')}</Text>
             </Pressable>
           ) : null}
         </View>
       </View>
-    );
-  };
+    )
+  }
 
   return (
     <Modal
@@ -65,13 +68,11 @@ export default function ImprovementsPoints({ visible, onClose, data = [] }) {
       onRequestClose={onClose}
     >
       <View style={styles.full}>
-        {/* backdrop: full screen, closes on press */}
         <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
 
-        {/* modal content above backdrop */}
         <View style={styles.center}>
           <View style={styles.card}>
-            <Text style={styles.title}>Improvement steps</Text>
+            <Text style={styles.title}>{t('improvements.title')}</Text>
 
             <Pressable onPress={onClose} style={styles.closeButton}>
               <Text style={styles.closeText}>✕</Text>
@@ -85,7 +86,7 @@ export default function ImprovementsPoints({ visible, onClose, data = [] }) {
               keyboardShouldPersistTaps="handled"
             >
               {!data || data.length === 0 ? (
-                <Text style={styles.empty}>No items found</Text>
+                <Text style={styles.empty}>{t('improvements.empty')}</Text>
               ) : (
                 data.map((it, i) => renderItem(it, i))
               )}
@@ -95,7 +96,7 @@ export default function ImprovementsPoints({ visible, onClose, data = [] }) {
         </View>
       </View>
     </Modal>
-  );
+  )
 }
 
 const styles = StyleSheet.create({

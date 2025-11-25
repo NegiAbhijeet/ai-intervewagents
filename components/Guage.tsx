@@ -1,5 +1,6 @@
 // ArcGauge.js
 import React, { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   View,
   StyleSheet,
@@ -13,6 +14,7 @@ import Svg, { Defs, LinearGradient, Stop, Circle } from 'react-native-svg';
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 export default function ArcGauge({
+
   // if size is passed it becomes the max allowed diameter
   size: maxSize = 360,
   // Inner arc (main gauge)
@@ -48,6 +50,7 @@ export default function ArcGauge({
   // horizontal padding to leave from screen edges when computing size
   horizontalPadding = 16,
 }) {
+  const { t } = useTranslation()
   const { width: windowWidth } = useWindowDimensions();
 
   // compute usable width from device width and padding, then clamp to maxSize
@@ -180,7 +183,7 @@ export default function ArcGauge({
         ]}
       >
         <View style={{ alignItems: 'center', transform: 'translateY(70px)' }}>
-          <Text style={{ fontSize: Math.round(size * 0.05) }}>Score</Text>
+          <Text style={{ fontSize: Math.round(size * 0.05) }}>{t('reports.score')}</Text>
           <Text
             style={[styles.valueText, { fontSize: Math.round(size * 0.12) }]}
           >

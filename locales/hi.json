@@ -1,0 +1,283 @@
+{
+  "nova": {
+    "greeting": "नमस्ते, मैं नोवा हूँ",
+    "beforeBegin": "शुरू करने से पहले मुझे आपके बारे में कुछ बुनियादी जानकारी बताएं!"
+  },
+  "splash": {
+    "brand": "AI Interview Agents",
+    "tagline": "अपनी पसंद की कंपनी का इंटरव्यू आत्मविश्वास के साथ पास करें।"
+  },
+  "types": {
+    "technical": "तकनीकी",
+    "behavioural": "व्यवहारिक",
+    "mock": "मॉक",
+    "trainer": "ट्रेनर",
+    "revise": "पुनरीक्षण",
+    "unknown": "अज्ञात"
+  },
+  "status": {
+    "total": "कुल",
+    "completed": "पूरा हुआ",
+    "pending": "लंबित"
+  },
+  "minutes": "मिनट",
+  "getStarted": {
+    "brand": "AI Interview Agents",
+    "subBrand": "आपका एआई इंटरव्यू सहायक",
+    "tagline": "मैं आपको आपकी पसंद की कंपनी का इंटरव्यू आत्मविश्वास के साथ पास करने में मदद करता हूं.",
+    "ctaStart": "शुरू करें",
+    "ctaLogin": "क्या आपके पास खाता है? लॉगिन करें"
+  },
+  "onboarding": {
+    "slide1": {
+      "heading": "यथार्थवादी इंटरव्यू का अभ्यास करें",
+      "bullets": [
+        "ऐसे एआई इंटरव्यू का अनुभव पाएं जो वास्तव में मानवीय लगते हैं",
+        "उन्नत विश्लेषण के साथ रिक्रूटर-स्टाइल फीडबैक पाएं",
+        "स्ट्रीक्स, बैज और सर्टिफिकेट से अपनी प्रगति ट्रैक करें"
+      ]
+    },
+    "slide2": {
+      "heading": "इंटरव्यू की घबराहट पर काबू पाएं",
+      "bullets": [
+        "व्यक्तिगत एआई फीडबैक से तेज़ी से सुधार करें",
+        "नियमित अभ्यास से आत्मविश्वास बनाएं",
+        "बेहतर उत्तरों की संरचना और प्रस्तुति सीखें"
+      ]
+    },
+    "next": "अगला"
+  },
+  "login": {
+    "title": "लॉग इन",
+    "emailLabel": "ईमेल पता",
+    "emailPlaceholder": "hello@example.com",
+    "passwordLabel": "पासवर्ड",
+    "passwordPlaceholder": "********",
+    "forgotPassword": "पासवर्ड भूल गए?",
+    "button": "लॉग इन",
+    "or": "या",
+    "noAccount": "क्या आपके पास खाता नहीं है? साइन अप करें"
+  },
+  "signup": {
+    "title": "साइन अप",
+    "emailLabel": "ईमेल पता",
+    "emailPlaceholder": "hello@example.com",
+    "passwordLabel": "पासवर्ड",
+    "passwordPlaceholder": "********",
+    "button": "साइन अप",
+    "or": "या",
+    "haveAccount": "क्या आपके पास खाता है? लॉग इन करें"
+  },
+  "forgot": {
+    "title": "पासवर्ड भूल गए",
+    "subtitle": "एक सत्यापन कोड प्राप्त करने के लिए अपना ईमेल पता दर्ज करें।",
+    "emailLabel": "ईमेल",
+    "emailPlaceholder": "hello@example.com",
+    "sendCode": "कोड भेजें",
+    "remember": "पासवर्ड याद है? लॉगिन"
+  },
+  "legal": {
+    "terms": "उपयोग की शर्तें",
+    "privacy": "गोपनीयता नीति"
+  },
+  "auth": {
+    "googleContinue": "गूगल के साथ जारी रखें"
+  },
+  "home": {
+    "greeting": "नमस्ते {{name}}",
+    "userFallback": "उपयोगकर्ता",
+    "welcome": "आपके होम में स्वागत है!",
+    "noInterview": "कोई इंटरव्यू नहीं मिला",
+    "scoreLabel": "स्कोर:",
+    "na": "N/A",
+    "youScored": "आपका स्कोर {{scoreText}} है",
+    "chooseMode": "अपना इंटरव्यू मोड चुनें",
+    "interviews": {
+      "common": {
+        "action": "शुरू करें"
+      },
+      "practice": {
+        "title": "खुद को टेस्ट करें",
+        "description": "तत्काल फीडबैक के साथ मॉक इंटरव्यू जो आपकी स्किल और ज्ञान बढ़ाते हैं।",
+        "bottomLine": "अब टेस्ट करें >>"
+      },
+      "train": {
+        "title": "खुद को ट्रेन करें",
+        "description": "ट्रेनर मोड कोच की तरह काम करता है जो आपके उत्तरों में सुधार करता है और आत्मविश्वास बनाता है।",
+        "bottomLine": "अब ट्रेन करें >>"
+      }
+    },
+    "score": {
+      "bad": "कमज़ोर",
+      "good": "अच्छा",
+      "excellent": "उत्कृष्ट"
+    }
+  },
+  "jobs": {
+    "recommendedCount": "अनुशंसित जॉब्स ({{count}})",
+    "description": "यहाँ आपके लिए {{position}} की भूमिका के लिए नौकरी की सिफारिशें हैं।",
+    "upcoming": "(12 घंटे में आगामी नौकरी अपडेट)",
+    "loader": {
+      "finding": "नौकरियाँ ढूँढ रहे हैं...",
+      "warming": "हम आपका जॉब फीड तैयार कर रहे हैं..."
+    },
+    "filters": {
+      "savedJobs": "सहेजी गई जॉब्स",
+      "allJobs": "सभी जॉब्स",
+      "allTypes": "सभी प्रकार",
+      "fullTime": "फुल टाईम",
+      "hybrid": "हाइब्रिड",
+      "remote": "रिमोट",
+      "allLocations": "सभी स्थान"
+    },
+    "form": {
+      "headerTitle": "पेशेवर विवरण",
+      "headerDescription": "अपनी भूमिका और अनुभव का संक्षिप्त सार साझा करें",
+      "extraText": "(12 घंटे में आगामी नौकरी अपडेट)",
+      "positionLabel": "पद",
+      "positionPlaceholder": "सॉफ़्टवेयर इंजीनियर",
+      "positionExample": "उदा. सॉफ़्टवेयर इंजीनियर",
+      "positionA11y": "पद",
+      "positionHelp": "यह आपकी प्रोफ़ाइल से जॉब टाइटल मिलाने में मदद करता है",
+      "experienceLabel": "अनुभव के वर्ष",
+      "experiencePlaceholder": "5",
+      "experienceA11y": "अनुभव के वर्ष",
+      "yearsSuffix": "वर्ष",
+      "experienceHelp": "केवल पूरे साल दर्ज करें",
+      "pleaseWait": "कृपया प्रतीक्षा करें...",
+      "continue": "जारी रखें"
+    }
+  },
+  "reports": {
+    "empty": {
+      "title": "कोई इंटरव्यू रिपोर्ट नहीं मिली",
+      "subtitle": "रिपोर्ट्स देखने के लिए कुछ इंटरव्यू पूर्ण करें।"
+    },
+    "filters": {
+      "all": "सभी रिपोर्ट्स",
+      "mock": "मॉक",
+      "trainer": "ट्रेनर"
+    },
+    "pending": "लंबित...",
+    "interview": "इंटरव्यू",
+    "viewReport": "रिपोर्ट देखें",
+    "score": "स्कोर",
+    "viewSummary": "सारांश देखें"
+  },
+  "profile": {
+    "planExpiryPrefix": "प्लान समाप्ति:",
+    "editProfile": "प्रोफ़ाइल संपादित करें",
+    "subscription": {
+      "title": "सब्सक्रिप्शन",
+      "subtitle": "आपकी वर्तमान योजना और बिलिंग जानकारी।",
+      "freePlan": "फ्री",
+      "active": "सक्रिय",
+      "of": "में से",
+      "minutesUsed": "मिनट उपयोग किए गए",
+      "minutesLeft": "मिनट शेष",
+      "upgrade": "प्रो में अपग्रेड करें",
+      "proActive": "प्रो प्लान सक्रिय"
+    },
+    "legal": {
+      "prefix": "इस ऐप का उपयोग करके, आप हमारी सहमति देते हैं",
+      "terms": "सेवा की शर्तें",
+      "and": "और",
+      "privacy": "गोपनीयता नीति"
+    },
+    "danger": {
+      "title": "खतरे का क्षेत्र",
+      "subtitle": "अवापसी योग्य नहीं खाते की क्रियाएं।",
+      "logout": "लॉगआउट",
+      "deleteTitle": "खाता हटाएँ",
+      "deleteDesc": "स्थायी रूप से अपना खाता और सभी जुड़े डेटा हटा दें। यह क्रिया पूर्ववत नहीं की जा सकती।",
+      "deleteButton": "खाता हटाएँ"
+    },
+    "stats": {
+      "role": "भूमिका",
+      "level": "स्तर",
+      "totalTime": "कुल समय",
+      "rating": "रेटिंग",
+      "minutes": "मिनट"
+    }
+  },
+  "avatar": {
+    "step1Title": "आपको क्या बुलाऊँ?",
+    "step2Title": "अपना अवतार चुनें",
+    "fullNameLabel": "आपका पूरा नाम",
+    "namePlaceholder": "नाम दर्ज करें",
+    "nextButton": "आगे",
+    "startButton": "इंटरव्यू शुरू करें"
+  },
+  "interview": {
+    "title": "इंटरव्यू निर्देश",
+    "instr1": "हैलो बोलकर इंटरव्यू शुरू करें",
+    "instr2": "कोई पृष्ठभूमि शोर न हो, शांत जगह पर बैठें",
+    "instr3": "सर्वोत्तम अनुभव के लिए स्थिर इंटरनेट कनेक्शन सुनिश्चित करें",
+    "instr4": "एक शांत और अच्छी तरह से रोशनी वाली जगह पर बैठें",
+    "cameraOffTitle": "कैमरा बंद है",
+    "cameraOffMessage": "कृपया अपना कैमरा चालू करें।",
+    "btn_wait": "कृपया प्रतीक्षा करें...",
+    "btn_end": "इंटरव्यू समाप्त करें",
+    "btn_start": "इंटरव्यू शुरू करें"
+  },
+  "analysis": {
+    "strengthsTitle": "ताकत",
+    "weaknessesTitle": "कमज़ोरियाँ",
+    "tapToViewStrength": "विश्लेषित ताकत देखने के लिए टैप करें।",
+    "tapToViewWeakness": "विश्लेषित कमजोरी देखने के लिए टैप करें।",
+    "noItemsFound": "कोई आइटम नहीं मिला",
+    "strength": "ताकत",
+    "weakness": "कमज़ोरी",
+    "howToImprove": "कैसे बेहतर करें",
+    "tryAgain": "फिर से प्रयास करें"
+  },
+  "tabs": {
+    "reportAnalysis": "रिपोर्ट विश्लेषण",
+    "transcript": "प्रतिलेख"
+  },
+  "carousel": {
+    "notEnoughData": "पर्याप्त डेटा नहीं",
+    "poor": "कमज़ोर",
+    "good": "अच्छा",
+    "excellent": "उत्कृष्ट",
+    "seeDetailedReport": "विस्तृत रिपोर्ट देखें"
+  },
+  "skills": {
+    "Technical_Expertise": "तकनीकी विशेषज्ञता",
+    "Problem_Solving": "समस्या समाधान",
+    "Decision_Judgment": "निर्णय और विवेक",
+    "Debugging_Mindset": "डीबगिंग दृष्टिकोण",
+    "Accountability_Mindset": "जवाबदेही दृष्टिकोण",
+    "Team_Collaboration": "टीम सहयोग",
+    "Growth_Mindset": "विकास मानसिकता",
+    "Conflict_Resolution": "विवाद समाधान",
+    "Outcome_Focus": "परिणाम केंद्रित"
+  },
+  "improvements": {
+    "title": "सुधार कदम",
+    "openResource": "संसाधन खोलें",
+    "cannotOpenLinkTitle": "लिंक नहीं खुल सकती",
+    "cannotOpenLinkMsg": "यह लिंक इस डिवाइस पर नहीं खोला जा सकता।",
+    "errorTitle": "त्रुटि",
+    "errorMsg": "लिंक खोलने में असफल रहा।",
+    "empty": "कोई आइटम नहीं मिला"
+  },
+  "leagues": {
+    "bronze": "कांस्य",
+    "silver": "रजत",
+    "gold": "स्वर्ण",
+    "platinum": "प्लैटिनम",
+    "diamond": "हीरा",
+    "emerald": "पन्ना",
+    "ruby": "माणिक",
+    "sapphire": "नीलम",
+    "obsidian": "ओब्सीडियन",
+    "crystal": "क्रिस्टल"
+  },
+  "leaderboard": {
+    "loading": "लीडरबोर्ड लोड हो रहा है...",
+    "you": "आप",
+    "description": "यह लीडरबोर्ड है",
+    "league": "लीग"
+  }
+}

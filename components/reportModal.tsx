@@ -22,6 +22,7 @@ import Transcript from './Transcript';
 import { useNavigation } from '@react-navigation/native';
 import RewindImage from '../assets/images/Rewind.svg';
 import RetryIamge from '../assets/images/Repeat.svg';
+import { useTranslation } from 'react-i18next';
 const ReportModal = ({
   visible,
   onClose,
@@ -31,15 +32,16 @@ const ReportModal = ({
   isViewSkills,
   setIsViewSkills,
 }) => {
+  const { t } = useTranslation();
   const feedback = report?.feedback || null;
   const navigation = useNavigation();
   const [showSummary, setShowSummary] = useState(false);
   const [showImprovementPoints, setShowImprovementPoints] = useState(false);
   const [activeTab, setActiveTab] = useState('details'); //details or transcript
   function getScoreText(score) {
-    if (score <= 25) return 'Bad';
-    if (score <= 75) return 'Good';
-    return 'Excellent';
+    if (score <= 25) return t('home.score.bad');
+    if (score <= 75) return t('home.score.good');
+    return t('home.score.excellent');
   }
   return (
     <Modal
@@ -184,7 +186,7 @@ const ReportModal = ({
                   </View>
 
                   <Text style={{ fontSize: 14, color: '#333', fontSize: 12 }}>
-                    You scored {getScoreText(report?.feedback?.averagePercentage || 0)}
+                    {t('home.youScored', { scoreText: getScoreText(report?.feedback?.averagePercentage || 0) })}
                   </Text>
 
                   <Pressable onPress={() => setShowSummary(true)} hitSlop={6}>
@@ -192,10 +194,10 @@ const ReportModal = ({
                       style={{
                         fontSize: 12,
                         marginLeft: 6,
-                        textDecorationLine: 'underline',
+                        textDecorationLine: 'underline'
                       }}
                     >
-                      View Summary
+                      {t('reports.viewSummary')}
                     </Text>
                   </Pressable>
 
@@ -255,7 +257,7 @@ const ReportModal = ({
                         className="text-white"
                         style={{ fontSize: 20, fontWeight: 700 }}
                       >
-                        How to Improve
+                        {t('analysis.howToImprove')}
                       </Text>
 
                       <RewindImage />
@@ -286,7 +288,7 @@ const ReportModal = ({
                           color: 'rgba(60, 60, 60, 1)',
                         }}
                       >
-                        Try again
+                        {t('analysis.tryAgain')}
                       </Text>
                     </Pressable>
                   </View>

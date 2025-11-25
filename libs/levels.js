@@ -1,6 +1,0 @@
-export const LEVELS = [
-    { label: 'Entry level', value: 1 },
-    { label: 'Mid-level', value: 8 },
-    { label: 'Senior', value: 12 },
-    { label: 'Executive', value: 20 }
-];

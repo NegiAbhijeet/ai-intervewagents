@@ -52,7 +52,7 @@ const AppStateProvider = ({ children }) => {
     setFirstInterviewObject(null)
     setMyCandidate(null)
     setLangSelected(true)
-    setLanguage(null)
+    // setLanguage(null)
   };
 
   const contextValue = useMemo(

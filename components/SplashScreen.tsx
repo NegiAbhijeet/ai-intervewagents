@@ -1,7 +1,10 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { View, Text, StyleSheet, Image } from 'react-native';
 
 const SplashScreen = () => {
+  const { t } = useTranslation();
+
   return (
     <View style={styles.container}>
       <Image
@@ -10,7 +13,6 @@ const SplashScreen = () => {
         resizeMode="cover"
       />
       <View style={styles.content}>
-        {/* Logo Container */}
         <View style={styles.logoWrapper}>
           <View style={[styles.logo]}>
             <View style={styles.logoInner}>
@@ -23,17 +25,16 @@ const SplashScreen = () => {
           </View>
         </View>
 
-        {/* App Name and Tagline */}
         <View style={[styles.textContainer, { opacity: 1 }]}>
-          <Text style={styles.title}>AI Interview Agents</Text>
-          <Text style={styles.subtitle}>
-            Crack your dream company’s interview with confidence.
-          </Text>
+          <Text style={styles.title}>{t('splash.brand')}</Text>
+          <Text style={styles.subtitle}>{t('splash.tagline')}</Text>
         </View>
       </View>
     </View>
   );
 };
+
+export default SplashScreen;
 
 const styles = StyleSheet.create({
   container: {

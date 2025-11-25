@@ -1,0 +1,283 @@
+{
+  "nova": {
+    "greeting": "Hola, soy Nova",
+    "beforeBegin": "Antes de empezar, cuéntame algunos datos básicos sobre ti"
+  },
+  "splash": {
+    "brand": "Agentes de Entrevista IA",
+    "tagline": "Aprueba la entrevista de tu empresa ideal con confianza"
+  },
+  "types": {
+    "technical": "Técnica",
+    "behavioural": "Conductual",
+    "mock": "Simulación",
+    "trainer": "Entrenador",
+    "revise": "Revisar",
+    "unknown": "Desconocido"
+  },
+  "status": {
+    "total": "Total",
+    "completed": "Completado",
+    "pending": "Pendiente"
+  },
+  "minutes": "Minutos",
+  "getStarted": {
+    "brand": "Agentes de Entrevista IA",
+    "subBrand": "Tu asistente de entrevistas con IA",
+    "tagline": "Te ayudo a aprobar la entrevista de tu empresa soñada",
+    "ctaStart": "Empezar",
+    "ctaLogin": "¿Ya tienes una cuenta? Iniciar sesión"
+  },
+  "onboarding": {
+    "slide1": {
+      "heading": "Practica entrevistas reales",
+      "bullets": [
+        "Vive entrevistas con IA que se sienten naturales",
+        "Recibe retroalimentación estilo reclutador basada en análisis avanzados",
+        "Sigue tu progreso con rachas, insignias y certificados"
+      ]
+    },
+    "slide2": {
+      "heading": "Supera los nervios de la entrevista",
+      "bullets": [
+        "Mejora rápido con retroalimentación personalizada",
+        "Gana confianza con práctica constante",
+        "Aprende a estructurar y expresar mejores respuestas"
+      ]
+    },
+    "next": "Siguiente"
+  },
+  "login": {
+    "title": "Iniciar sesión",
+    "emailLabel": "Correo electrónico",
+    "emailPlaceholder": "hello@example.com",
+    "passwordLabel": "Contraseña",
+    "passwordPlaceholder": "********",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "button": "Iniciar sesión",
+    "or": "o",
+    "noAccount": "¿No tienes cuenta? Regístrate"
+  },
+  "signup": {
+    "title": "Registro",
+    "emailLabel": "Correo electrónico",
+    "emailPlaceholder": "hello@example.com",
+    "passwordLabel": "Contraseña",
+    "passwordPlaceholder": "********",
+    "button": "Registrarse",
+    "or": "o",
+    "haveAccount": "¿Ya tienes cuenta? Inicia sesión"
+  },
+  "forgot": {
+    "title": "Olvidé mi contraseña",
+    "subtitle": "Ingresa tu correo para recibir un código de verificación",
+    "emailLabel": "Correo",
+    "emailPlaceholder": "hello@example.com",
+    "sendCode": "Enviar código",
+    "remember": "¿Recordaste tu contraseña? Inicia sesión"
+  },
+  "legal": {
+    "terms": "Términos de uso",
+    "privacy": "Política de privacidad"
+  },
+  "auth": {
+    "googleContinue": "Continuar con Google"
+  },
+  "home": {
+    "greeting": "Hola {{name}}",
+    "userFallback": "Usuario",
+    "welcome": "Bienvenido a tu panel",
+    "noInterview": "No se encontró ninguna entrevista",
+    "scoreLabel": "Puntaje:",
+    "na": "N/A",
+    "youScored": "Tu puntaje es {{scoreText}}",
+    "chooseMode": "Elige tu modo de entrevista",
+    "interviews": {
+      "common": {
+        "action": "Iniciar"
+      },
+      "practice": {
+        "title": "Pruébate",
+        "description": "Simulación con retroalimentación instantánea para mejorar tu nivel",
+        "bottomLine": "Probar ahora >>"
+      },
+      "train": {
+        "title": "Entrénate",
+        "description": "El modo entrenador mejora tus respuestas y aumenta tu confianza",
+        "bottomLine": "Entrenar ahora >>"
+      }
+    },
+    "score": {
+      "bad": "Bajo",
+      "good": "Bueno",
+      "excellent": "Excelente"
+    }
+  },
+  "jobs": {
+    "recommendedCount": "Trabajos recomendados ({{count}})",
+    "description": "Aquí tienes recomendaciones para el puesto de {{position}}",
+    "upcoming": "(Nueva actualización en 12 horas)",
+    "loader": {
+      "finding": "Buscando trabajos",
+      "warming": "Preparando tu lista de empleos"
+    },
+    "filters": {
+      "savedJobs": "Guardados",
+      "allJobs": "Todos",
+      "allTypes": "Todos los tipos",
+      "fullTime": "Tiempo completo",
+      "hybrid": "Híbrido",
+      "remote": "Remoto",
+      "allLocations": "Todas las ubicaciones"
+    },
+    "form": {
+      "headerTitle": "Datos profesionales",
+      "headerDescription": "Comparte un breve resumen de tu rol y experiencia",
+      "extraText": "(Nueva actualización en 12 horas)",
+      "positionLabel": "Puesto",
+      "positionPlaceholder": "Ingeniero de software",
+      "positionExample": "Ej: Ingeniero de software",
+      "positionA11y": "Puesto",
+      "positionHelp": "Ayuda a encontrar trabajos que coincidan con tu perfil",
+      "experienceLabel": "Años de experiencia",
+      "experiencePlaceholder": "5",
+      "experienceA11y": "Años de experiencia",
+      "yearsSuffix": "años",
+      "experienceHelp": "Ingresa solo años completos",
+      "pleaseWait": "Espera un momento",
+      "continue": "Continuar"
+    }
+  },
+  "reports": {
+    "empty": {
+      "title": "No hay reportes disponibles",
+      "subtitle": "Completa entrevistas para ver tus reportes"
+    },
+    "filters": {
+      "all": "Todos",
+      "mock": "Simulación",
+      "trainer": "Entrenador"
+    },
+    "pending": "Pendiente",
+    "interview": "Entrevista",
+    "viewReport": "Ver reporte",
+    "score": "Puntaje",
+    "viewSummary": "Ver resumen"
+  },
+  "profile": {
+    "planExpiryPrefix": "Vencimiento del plan",
+    "editProfile": "Editar perfil",
+    "subscription": {
+      "title": "Suscripción",
+      "subtitle": "Tu plan actual e información de pago",
+      "freePlan": "Gratis",
+      "active": "Activo",
+      "of": "de",
+      "minutesUsed": "minutos usados",
+      "minutesLeft": "minutos restantes",
+      "upgrade": "Mejorar a Pro",
+      "proActive": "Plan Pro activo"
+    },
+    "legal": {
+      "prefix": "Al usar esta aplicación aceptas",
+      "terms": "los Términos de servicio",
+      "and": "y",
+      "privacy": "la Política de privacidad"
+    },
+    "danger": {
+      "title": "Zona de riesgo",
+      "subtitle": "Acciones permanentes de la cuenta",
+      "logout": "Cerrar sesión",
+      "deleteTitle": "Eliminar cuenta",
+      "deleteDesc": "Eliminará tu cuenta y todos tus datos. Esta acción es permanente",
+      "deleteButton": "Eliminar cuenta"
+    },
+    "stats": {
+      "role": "Rol",
+      "level": "Nivel",
+      "totalTime": "Tiempo total",
+      "rating": "Calificación",
+      "minutes": "Minutos"
+    }
+  },
+  "avatar": {
+    "step1Title": "¿Cómo debo llamarte?",
+    "step2Title": "Elige tu avatar",
+    "fullNameLabel": "Nombre completo",
+    "namePlaceholder": "Ingresa tu nombre",
+    "nextButton": "Siguiente",
+    "startButton": "Iniciar entrevista"
+  },
+  "interview": {
+    "title": "Instrucciones de la entrevista",
+    "instr1": "Empieza la entrevista diciendo hola",
+    "instr2": "Siéntate en un lugar tranquilo sin ruido",
+    "instr3": "Asegura una conexión estable",
+    "instr4": "Siéntate en un lugar tranquilo y bien iluminado",
+    "cameraOffTitle": "Cámara apagada",
+    "cameraOffMessage": "Activa tu cámara",
+    "btn_wait": "Espera un momento",
+    "btn_end": "Terminar entrevista",
+    "btn_start": "Iniciar entrevista"
+  },
+  "analysis": {
+    "strengthsTitle": "Fortalezas",
+    "weaknessesTitle": "Debilidades",
+    "tapToViewStrength": "Toca para ver la fortaleza analizada",
+    "tapToViewWeakness": "Toca para ver la debilidad analizada",
+    "noItemsFound": "No se encontraron elementos",
+    "strength": "Fortaleza",
+    "weakness": "Debilidad",
+    "howToImprove": "Cómo mejorar",
+    "tryAgain": "Intentar de nuevo"
+  },
+  "tabs": {
+    "reportAnalysis": "Análisis del reporte",
+    "transcript": "Transcripción"
+  },
+  "carousel": {
+    "notEnoughData": "Datos insuficientes",
+    "poor": "Bajo",
+    "good": "Bueno",
+    "excellent": "Excelente",
+    "seeDetailedReport": "Ver reporte detallado"
+  },
+  "skills": {
+    "Technical_Expertise": "Pericia técnica",
+    "Problem_Solving": "Resolución de problemas",
+    "Decision_Judgment": "Juicio y decisión",
+    "Debugging_Mindset": "Mentalidad de depuración",
+    "Accountability_Mindset": "Sentido de responsabilidad",
+    "Team_Collaboration": "Colaboración en equipo",
+    "Growth_Mindset": "Mentalidad de crecimiento",
+    "Conflict_Resolution": "Resolución de conflictos",
+    "Outcome_Focus": "Enfoque en resultados"
+  },
+  "improvements": {
+    "title": "Pasos de mejora",
+    "openResource": "Abrir recurso",
+    "cannotOpenLinkTitle": "No se pudo abrir el enlace",
+    "cannotOpenLinkMsg": "El enlace no puede abrirse en este dispositivo",
+    "errorTitle": "Error",
+    "errorMsg": "No fue posible abrir el enlace",
+    "empty": "No se encontraron elementos"
+  },
+  "leagues": {
+    "bronze": "Bronce",
+    "silver": "Plata",
+    "gold": "Oro",
+    "platinum": "Platino",
+    "diamond": "Diamante",
+    "emerald": "Esmeralda",
+    "ruby": "Rubí",
+    "sapphire": "Zafiro",
+    "obsidian": "Obsidiana",
+    "crystal": "Cristal"
+  },
+  "leaderboard": {
+    "loading": "Cargando clasificación",
+    "you": "Tú",
+    "description": "Esta es la clasificación",
+    "league": "Liga"
+  }
+}

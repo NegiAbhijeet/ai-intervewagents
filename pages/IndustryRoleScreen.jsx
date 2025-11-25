@@ -1,5 +1,3 @@
-import { useNavigation } from '@react-navigation/native';
-import React, { useState, useMemo, useContext } from 'react';
 import {
   View,
   Text,
@@ -8,26 +6,44 @@ import {
   ScrollView,
   StyleSheet,
   Image,
-} from 'react-native';
-import { AppStateContext } from '../components/AppContext';
-import industries from '../libs/industryJson.json'
-import BackgroundGradient2 from '../components/backgroundGradient2';
-import { LEVELS } from '../libs/levels';
+} from 'react-native'
+import { useNavigation } from '@react-navigation/native'
+import { AppStateContext } from '../components/AppContext'
+import BackgroundGradient2 from '../components/backgroundGradient2'
+import { useContext, useMemo, useState } from 'react';
 
 const IndustryRoleScreen = () => {
-  const navigation = useNavigation();
-  const { userProfile } = useContext(AppStateContext)
-  console.log(userProfile, "==")
-  const [step, setStep] = useState(1);
-  const [selectedIndustry, setSelectedIndustry] = useState(null);
-  const [selectedRole, setSelectedRole] = useState(null);
-  const [selectedSkills, setSelectedSkills] = useState([]);
-  const [selectedLevel, setSelectedLevel] = useState(null);
+  const navigation = useNavigation()
+  const { language } = useContext(AppStateContext)
 
-  const data = useMemo(
-    () => Object.keys(industries).map(k => ({ key: k, roles: industries[k] })),
-    [],
-  );
+  const [step, setStep] = useState(1)
+  const [selectedIndustry, setSelectedIndustry] = useState(null)
+  const [selectedRole, setSelectedRole] = useState(null)
+  const [selectedSkills, setSelectedSkills] = useState([])
+  const [selectedLevel, setSelectedLevel] = useState(null)
+
+  function getIndustryData(lang) {
+    if (lang === 'hi') return require('../libs/industryJson-hi.json')
+    if (lang === 'en') return require('../libs/industryJson.json')
+    return require('../libs/industryJson.json')
+  }
+
+  function getLevelData(lang) {
+    if (lang === 'hi') return require('../libs/levels-hi.json')
+    if (lang === 'en') return require('../libs/levels.json')
+    return require('../libs/levels.json')
+  }
+
+  // return value directly from useMemo
+  const industries = useMemo(() => getIndustryData(language) || {}, [language])
+  const LEVELS = useMemo(() => getLevelData(language) || {}, [language])
+
+  const data = useMemo(() => {
+    // ensure industries is an object before mapping
+    if (!industries || typeof industries !== 'object') return []
+    return Object.keys(industries).map(k => ({ key: k, roles: industries[k] }))
+  }, [industries])
+
 
   const onPressNext = () => {
     if (step === 1) {

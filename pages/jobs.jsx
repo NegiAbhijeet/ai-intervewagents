@@ -21,6 +21,7 @@ import { AppStateContext } from '../components/AppContext';
 import TopBar from '../components/TopBar';
 import Layout from './Layout';
 import { RefreshControl } from 'react-native-gesture-handler';
+import { useTranslation } from 'react-i18next';
 
 export default function JobsPage() {
   const navigation = useNavigation();
@@ -32,7 +33,7 @@ export default function JobsPage() {
     jobs,
     setJobs,
   } = useContext(AppStateContext);
-
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [loaderText, setLoaderText] = useState('Finding jobs');
   const [showSavedOnly, setShowSavedOnly] = useState(false);
@@ -133,13 +134,13 @@ export default function JobsPage() {
 
   useEffect(() => {
     if (loading) {
-      setLoaderText('Finding jobs...');
+      setLoaderText(t('jobs.loader.finding'));
       const timer = setTimeout(() => {
-        setLoaderText('We’re warming up your job feed...');
+        setLoaderText(t('jobs.loader.warming'));
       }, 3000);
       return () => clearTimeout(timer);
     }
-  }, [loading]);
+  }, [loading, t]);
 
   const uniqueLocations = useMemo(() => {
     const locations = jobs.map(job => job.location).filter(Boolean);
@@ -225,6 +226,7 @@ export default function JobsPage() {
   return (
     <>
       <TopBar />
+
       <Layout>
         {openPopup ? (
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }} className="py-5">
@@ -243,20 +245,15 @@ export default function JobsPage() {
             showsVerticalScrollIndicator={false}
             className="py-5"
             refreshControl={
-              <RefreshControl
-                refreshing={isRefreshing}
-                onRefresh={handleRefresh}
-              />
+              <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
             }
           >
             {/* Header */}
             <View className="flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <DashboardHeader
-                title={`Recommended Jobs (${filteredJobs?.length || 0})`}
-                description={`Here, is job recommendation for you for the role of ${
-                  candidate?.position || '_'
-                }.`}
-                extraText="(Upcoming job update in 12 hours)"
+                title={t('jobs.recommendedCount', { count: filteredJobs?.length || 0 })}
+                description={t('jobs.description', { position: candidate?.position || '_' })}
+                extraText={t('jobs.upcoming')}
               />
 
               <TouchableOpacity
@@ -264,7 +261,7 @@ export default function JobsPage() {
                 className="flex-row items-center justify-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg w-full sm:w-auto"
               >
                 <Text className="text-lg">
-                  {showSavedOnly ? 'All Jobs' : 'Saved Jobs'}
+                  {showSavedOnly ? t('jobs.filters.allJobs') : t('jobs.filters.savedJobs')}
                 </Text>
                 <View className="ml-2" style={{ width: 18, height: 18 }}>
                   <Ionicons
@@ -292,10 +289,10 @@ export default function JobsPage() {
                       }}
                       itemStyle={{ fontSize: 15, text: 'black' }}
                     >
-                      <Picker.Item label="All Types" value="" />
-                      <Picker.Item label="Full Time" value="full" />
-                      <Picker.Item label="Hybrid" value="hybrid" />
-                      <Picker.Item label="Remote" value="remote" />
+                      <Picker.Item label={t('jobs.filters.allTypes')} value="" />
+                      <Picker.Item label={t('jobs.filters.fullTime')} value="full" />
+                      <Picker.Item label={t('jobs.filters.hybrid')} value="hybrid" />
+                      <Picker.Item label={t('jobs.filters.remote')} value="remote" />
                     </Picker>
                   </View>
                 </View>
@@ -311,9 +308,9 @@ export default function JobsPage() {
                         paddingVertical: 6,
                         color: '#000',
                       }}
-                      itemStyle={{ fontSize: 15, text: 'black' }}
+                      itemStyle={{ fontSize: 15 }}
                     >
-                      <Picker.Item label="All Locations" value="" />
+                      <Picker.Item label={t('jobs.filters.allLocations')} value="" />
                       {uniqueLocations.map((loc, idx) => (
                         <Picker.Item key={idx} label={loc} value={loc} />
                       ))}

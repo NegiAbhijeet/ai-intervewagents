@@ -10,16 +10,20 @@ import {
   StyleSheet,
   Dimensions,
   TextInput,
+  ImageBackground,
 } from 'react-native';
 import { AppStateContext } from './AppContext';
 import { API_URL } from './config';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import Toast from 'react-native-toast-message';
 import BackgroundGradient2 from './backgroundGradient2';
+import { useTranslation } from 'react-i18next';
+import LANGUAGES from '../libs/languages';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const CONTAINER_HORIZONTAL_PADDING = 0; // total horizontal padding inside screenWrap
 const COLUMNS = 3;
 const GAP = 12;
+const { width: SCREEN_W } = Dimensions.get('window')
 
 // compute the container width that holds the grid (screenWrap uses 85% width)
 const CONTAINER_WIDTH = Math.floor(SCREEN_WIDTH * 0.85) - CONTAINER_HORIZONTAL_PADDING * 2;
@@ -28,6 +32,7 @@ const CONTAINER_WIDTH = Math.floor(SCREEN_WIDTH * 0.85) - CONTAINER_HORIZONTAL_P
 const CELL_SIZE = Math.floor((CONTAINER_WIDTH - GAP * (COLUMNS - 1)) / COLUMNS);
 
 export default function AvatarSelectionScreen({ route }) {
+
   const {
     selectedIndustry = "",
     selectedRole = "",
@@ -36,7 +41,8 @@ export default function AvatarSelectionScreen({ route }) {
   } = route?.params || {};
   const [step, setStep] = useState(1);
 
-  const { userProfile, setUserProfile, setFirstInterviewObject } = useContext(AppStateContext);
+  const { userProfile, setUserProfile, setFirstInterviewObject, language } = useContext(AppStateContext);
+  const { t } = useTranslation();
   const [userName, setUserName] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -85,7 +91,7 @@ export default function AvatarSelectionScreen({ route }) {
         : selectedSkills
           ? [selectedSkills]
           : [];
-
+      const myLanguage = LANGUAGES.find((item) => item?.code === language)
       const payload = {
         uid: userProfile?.uid,
         hour,
@@ -102,6 +108,7 @@ export default function AvatarSelectionScreen({ route }) {
         industry: selectedIndustry,
         first_name: firstName,
         last_name: lastName,
+        language: myLanguage?.label_en || "English"
       };
 
       setIsLoading(true);
@@ -194,13 +201,28 @@ export default function AvatarSelectionScreen({ route }) {
     <View style={styles.container}>
       <BackgroundGradient2 />
       <View style={styles.previewContainer}>
-        <View style={styles.previewWrapper}>
+        <View style={[styles.wrapper]}>
+          <View style={styles.cloudWrap} pointerEvents="none">
+            <ImageBackground
+              source={require('../assets/images/av-cloud.png')}
+              style={styles.cloud}
+              imageStyle={styles.cloudImage}
+            >
+              <Text numberOfLines={2} style={styles.cloudText}>
+                {t('nova.beforeBegin')}
+              </Text>
+
+
+            </ImageBackground>
+          </View>
+
           <Image
-            source={require('../assets/images/talkingPenguine.png')}
-            style={styles.previewImage}
+            source={require('../assets/images/av-penguin.png')}
+            style={styles.penguin}
             resizeMode="contain"
           />
         </View>
+
         <View style={{ width: "100%", alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 4, marginBottom: 30 }}>
           <View
             style={{
@@ -217,21 +239,23 @@ export default function AvatarSelectionScreen({ route }) {
             }}
           />
         </View>
+
         <View style={styles.headerContainer}>
           <Text style={styles.title}>
-            {step === 1 ? 'What should I call you?' : 'Choose your avatar'}
+            {step === 1 ? t('avatar.step1Title') : t('avatar.step2Title')}
           </Text>
         </View>
       </View>
+
       <View style={styles.screenWrap}>
         {step === 1 ? (
           <View style={{ width: '100%', marginHorizontal: 'auto' }}>
             <View style={styles.field}>
-              <Text style={styles.label}>Your Full Name</Text>
+              <Text style={styles.label}>{t('avatar.fullNameLabel')}</Text>
               <TextInput
                 value={userName}
                 onChangeText={setUserName}
-                placeholder="Enter name"
+                placeholder={t('avatar.namePlaceholder')}
                 keyboardType="default"
                 style={styles.input}
                 placeholderTextColor="rgba(139, 71, 239, 0.4)"
@@ -269,18 +293,21 @@ export default function AvatarSelectionScreen({ route }) {
           {isLoading ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.buttonText}>{step === 1 ? "Next" : "Start Interview"}</Text>
+            <Text style={styles.buttonText}>
+              {step === 1 ? t('avatar.nextButton') : t('avatar.startButton')}
+            </Text>
           )}
         </TouchableOpacity>
       </View>
     </View>
   );
 }
-
-
+const PENG_WIDTH = Math.min(320, Math.round(SCREEN_W * 0.25))
+const CLOUD_WIDTH = Math.min(320, Math.round(SCREEN_W * 0.85 * 0.80))
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "white"
   },
   headerContainer: {
     alignItems: 'center',
@@ -406,5 +433,53 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.6)',
     fontSize: 16,
   },
-
+  wrapper: {
+    marginTop: 20,
+    width: '85%',
+    position: 'relative',
+    height: 170
+  },
+  cloudWrap: {
+    position: 'absolute',
+    top: 0,
+    left: PENG_WIDTH - PENG_WIDTH * 0.3,
+    zIndex: 2,
+    alignItems: 'center',
+  },
+  cloud: {
+    width: CLOUD_WIDTH,
+    alignItems: 'center',
+    // height: 100,
+    justifyContent: 'center',
+    paddingTop: 12, paddingRight: 12, paddingLeft: 16, paddingBottom: 16
+  },
+  cloudImage: {
+    resizeMode: 'contain',
+  },
+  cloudText: {
+    fontSize: 12,
+    fontWeight: '600',
+    textAlign: 'center',
+    marginBottom: 12
+  },
+  penguin: {
+    width: PENG_WIDTH,
+    height: 100,
+    zIndex: 1,
+    marginTop: 45
+  },
+  tagline: {
+    width: '90%',
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#374151',
+    marginTop: 30,
+    lineHeight: 27.2
+  },
+  bottomSpacer: {
+    width: '100%',
+    flexDirection: 'column',
+    alignItems: 'center',
+    paddingBottom: '18%',
+  },
 });

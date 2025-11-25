@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react'
 import {
   View,
   Text,
@@ -6,13 +6,14 @@ import {
   Dimensions,
   Image,
   Pressable,
-} from 'react-native';
-import Carousel from 'react-native-reanimated-carousel';
-import Gauge from '../simpleGuage';
-import AnalysisCards from '../AnalysisCards';
+} from 'react-native'
+import Carousel from 'react-native-reanimated-carousel'
+import Gauge from '../simpleGuage'
+import AnalysisCards from '../AnalysisCards'
+import { useTranslation } from 'react-i18next'
 
-const WINDOW_WIDTH = Math.round(Dimensions.get('window').width);
-const HORIZONTAL_MARGIN = 20;
+const WINDOW_WIDTH = Math.round(Dimensions.get('window').width)
+const HORIZONTAL_MARGIN = 20
 
 export default function CarouselCard({
   setIsViewDetails,
@@ -20,24 +21,25 @@ export default function CarouselCard({
   report,
   setShowImprovementPoints,
 }) {
-  const carouselRef = useRef(null);
-  const [containerWidth, setContainerWidth] = useState(WINDOW_WIDTH || 360);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const { t } = useTranslation()
+  const carouselRef = useRef(null)
+  const [containerWidth, setContainerWidth] = useState(WINDOW_WIDTH || 360)
+  const [activeIndex, setActiveIndex] = useState(0)
   // put these near your other hooks
-  const lastActiveRef = useRef(activeIndex);
+  const lastActiveRef = useRef(activeIndex)
 
   // when you update state, also update the ref
   const setActive = idx => {
-    if (lastActiveRef.current === idx) return;
-    lastActiveRef.current = idx;
-    setActiveIndex(idx);
-  };
+    if (lastActiveRef.current === idx) return
+    lastActiveRef.current = idx
+    setActiveIndex(idx)
+  }
   const technicalKeys = [
     'Technical_Expertise',
     'Problem_Solving',
     'Decision_Judgment',
     'Debugging_Mindset',
-  ];
+  ]
   const nonTechnicalKeys = [
     'Accountability_Mindset',
     'Team_Collaboration',
@@ -45,9 +47,9 @@ export default function CarouselCard({
     'Growth_Mindset',
     'Conflict_Resolution',
     'Outcome_Focus',
-  ];
+  ]
   const selectedKeys =
-    interviewType === 'Technical' ? technicalKeys : nonTechnicalKeys;
+    interviewType === 'Technical' ? technicalKeys : nonTechnicalKeys
 
   const palette = [
     'rgba(211, 127, 58, 1)',
@@ -56,78 +58,77 @@ export default function CarouselCard({
     'rgba(122, 63, 191, 1)',
     'rgba(54, 109, 238, 1)',
     'rgba(81, 194, 211, 1)',
-  ];
+  ]
 
   const humanize = key =>
     (key || '')
       .replace(/_/g, ' ')
       .split(' ')
       .map(s => (s.length ? s[0].toUpperCase() + s.slice(1).toLowerCase() : s))
-      .join(' ');
+      .join(' ')
 
   const getFieldData = key => {
-    const fallback = { value: 0, description: 'Not enough data' };
-    if (!report) return fallback;
-    const top = report[key];
+    const fallback = { value: 0, description: t('carousel.notEnoughData') }
+    if (!report) return fallback
+    const top = report[key]
     if (top && typeof top === 'object') {
-      const value = top.score ?? top.value ?? top.percentage ?? null;
-      const description = top.description ?? top.note ?? top.details ?? null;
+      const value = top.score ?? top.value ?? top.percentage ?? null
+      const description = top.description ?? top.note ?? top.details ?? null
       if (value !== null && value !== undefined) {
         return {
           value: Number(value) || 0,
           description: description || fallback.description,
-        };
+        }
       }
-      if (description) return { value: 0, description };
+      if (description) return { value: 0, description }
     }
     if (report.technical_skills && report.technical_skills[key]) {
       const v =
-        report.technical_skills[key].score ??
-        report.technical_skills[key].value;
-      const d = report.technical_skills[key].description;
-      return { value: Number(v) || 0, description: d || fallback.description };
+        report.technical_skills[key].score ?? report.technical_skills[key].value
+      const d = report.technical_skills[key].description
+      return { value: Number(v) || 0, description: d || fallback.description }
     }
-    const keys = Object.keys(report || {});
-    const matched = keys.find(k => k.toLowerCase() === key.toLowerCase());
+    const keys = Object.keys(report || {})
+    const matched = keys.find(k => k.toLowerCase() === key.toLowerCase())
     if (matched && typeof report[matched] === 'object') {
-      const v = report[matched].score ?? report[matched].value ?? 0;
-      const d = report[matched].description ?? fallback.description;
-      return { value: Number(v) || 0, description: d };
+      const v = report[matched].score ?? report[matched].value ?? 0
+      const d = report[matched].description ?? fallback.description
+      return { value: Number(v) || 0, description: d }
     }
-    return fallback;
-  };
+    return fallback
+  }
 
   function clampNumber(n, min, max) {
-    const num = Number(n);
-    if (Number.isNaN(num)) return min;
-    if (num < min) return min;
-    if (num > max) return max;
-    return num;
+    const num = Number(n)
+    if (Number.isNaN(num)) return min
+    if (num < min) return min
+    if (num > max) return max
+    return num
   }
 
   const cards = selectedKeys.map((k, i) => {
-    const data = getFieldData(k);
-    const color = palette[i % palette.length];
+    const data = getFieldData(k)
+    const color = palette[i % palette.length]
     return {
       key: k,
-      title: humanize(k),
+      title: t(`skills.${k}`),
       description: data.description,
       value: clampNumber(data.value, 0, 100),
       color,
-    };
-  });
+    }
+  })
 
   const safeContainerWidth =
     typeof containerWidth === 'number' && containerWidth > 0
       ? containerWidth
-      : WINDOW_WIDTH;
-  const cardWidth = Math.max(0, safeContainerWidth - HORIZONTAL_MARGIN * 2);
+      : WINDOW_WIDTH
+  const cardWidth = Math.max(0, safeContainerWidth - HORIZONTAL_MARGIN * 2)
 
-  if (!Array.isArray(cards) || cards.length === 0) return null;
+  if (!Array.isArray(cards) || cards.length === 0) return null
 
   // defensive image sources. require will throw only at build time if not present
-  const leftArrow = require('../../assets/images/leftArrow.png');
-  const rightArrow = require('../../assets/images/rightArrow.png');
+  const leftArrow = require('../../assets/images/leftArrow.png')
+  const rightArrow = require('../../assets/images/rightArrow.png')
 
   return (
     <View className="w-full">
@@ -135,8 +136,8 @@ export default function CarouselCard({
         className="items-center justify-center relative w-full"
         style={{ height: 160 }}
         onLayout={ev => {
-          const w = Math.round(ev.nativeEvent.layout.width) || WINDOW_WIDTH;
-          setContainerWidth(w);
+          const w = Math.round(ev.nativeEvent.layout.width) || WINDOW_WIDTH
+          setContainerWidth(w)
         }}
       >
         <Carousel
@@ -147,57 +148,44 @@ export default function CarouselCard({
           autoPlay
           autoPlayInterval={2000}
           data={cards}
-          onSnapToItem={index => setActiveIndex(index)} // <-- update active index
-          // replace onProgressChange with this
+          onSnapToItem={index => setActiveIndex(index)}
           onProgressChange={(offsetProgress, absoluteProgress) => {
             if (absoluteProgress == null || Number.isNaN(absoluteProgress))
-              return;
+              return
 
-            // absoluteProgress is a fractional index, e.g. 0, 0.1, 0.5, 1, 1.2 ...
-            const total = cards.length;
-            // make sure progress is finite
-            const progress = Math.max(-1e9, Math.min(1e9, absoluteProgress));
+            const total = cards.length
+            const progress = Math.max(-1e9, Math.min(1e9, absoluteProgress))
+            const base = Math.floor(progress)
+            const frac = progress - base
 
-            // base index and fractional part
-            const base = Math.floor(progress);
-            const frac = progress - base;
+            const lowerThreshold = 0.35
+            const upperThreshold = 0.65
 
-            // hysteresis thresholds — adjust to taste
-            const lowerThreshold = 0.35;
-            const upperThreshold = 0.65;
-
-            // decide target index relative to base
-            let targetRelative;
+            let targetRelative
             if (frac <= lowerThreshold) {
-              targetRelative = 0;
+              targetRelative = 0
             } else if (frac >= upperThreshold) {
-              targetRelative = 1;
+              targetRelative = 1
             } else {
-              // in the middle zone, do not change from last known index
-              return;
+              return
             }
 
-            let tentative = base + targetRelative;
+            let tentative = base + targetRelative
+            const wrapped = ((tentative % total) + total) % total
 
-            // normalize for looping carousels
-            const wrapped = ((tentative % total) + total) % total;
-
-            setActive(wrapped);
+            setActive(wrapped)
           }}
           renderItem={({ item: cardItem }) => {
-            if (!cardItem) return null;
+            if (!cardItem) return null
 
-            const percentage = cardItem.value ? (cardItem.value / 10) * 100 : 0;
+            const percentage = cardItem.value ? (cardItem.value / 10) * 100 : 0
             const bgColor =
               cardItem.color && cardItem.color.replace
                 ? cardItem.color.replace('1)', '0.12)')
-                : 'rgba(0,0,0,0.05)';
+                : 'rgba(0,0,0,0.05)'
 
             return (
-              <View
-                style={{ width: safeContainerWidth }}
-                className="items-center"
-              >
+              <View style={{ width: safeContainerWidth }} className="items-center">
                 <View
                   className="min-h-[160px] flex-row items-center border mx-5"
                   style={{
@@ -232,24 +220,24 @@ export default function CarouselCard({
                       size={75}
                       text={
                         percentage <= 30
-                          ? 'Poor'
+                          ? t('carousel.poor')
                           : percentage <= 70
-                          ? 'Good'
-                          : 'Excellent'
+                            ? t('carousel.good')
+                            : t('carousel.excellent')
                       }
                       bgColor="rgba(51, 138, 14, 0.4)"
                       color={
                         percentage <= 30
                           ? 'rgba(239, 68, 68, 1)'
                           : percentage <= 70
-                          ? 'rgba(234, 179, 8, 1)'
-                          : 'rgba(51, 138, 14, 1)'
+                            ? 'rgba(234, 179, 8, 1)'
+                            : 'rgba(51, 138, 14, 1)'
                       }
                     />
                   </View>
                 </View>
               </View>
-            );
+            )
           }}
         />
 
@@ -302,11 +290,11 @@ export default function CarouselCard({
         style={{
           width: Math.min(cardWidth, safeContainerWidth - 40),
           alignSelf: 'center',
-          backgroundColor: cards[activeIndex]?.color || 'rgba(59,130,246,1)', // <-- dynamic color
+          backgroundColor: cards[activeIndex]?.color || 'rgba(59,130,246,1)',
         }}
       >
         <Text className="text-white text-[20px] font-extrabold">
-          See Detailed Report
+          {t('carousel.seeDetailedReport')}
         </Text>
       </Pressable>
 
@@ -320,5 +308,5 @@ export default function CarouselCard({
         />
       </View>
     </View>
-  );
+  )
 }

@@ -1,0 +1,283 @@
+{
+    "nova": {
+        "greeting": "Olá, eu sou a Nova",
+        "beforeBegin": "Antes de começarmos, conte algumas informações básicas sobre você"
+    },
+    "splash": {
+        "brand": "Agentes de Entrevista IA",
+        "tagline": "Prepare sua entrevista dos sonhos com confiança"
+    },
+    "types": {
+        "technical": "Técnico",
+        "behavioural": "Comportamental",
+        "mock": "Simulado",
+        "trainer": "Treinador",
+        "revise": "Revisar",
+        "unknown": "Desconhecido"
+    },
+    "status": {
+        "total": "Total",
+        "completed": "Concluído",
+        "pending": "Pendente"
+    },
+    "minutes": "Minutos",
+    "getStarted": {
+        "brand": "Agentes de Entrevista IA",
+        "subBrand": "Seu assistente de entrevistas com IA",
+        "tagline": "Eu ajudo você a passar na entrevista da sua empresa dos sonhos",
+        "ctaStart": "Começar",
+        "ctaLogin": "Já tem uma conta? Entrar"
+    },
+    "onboarding": {
+        "slide1": {
+            "heading": "Pratique entrevistas reais",
+            "bullets": [
+                "Experimente entrevistas com IA que parecem naturais",
+                "Receba feedback no estilo de recrutadores usando análises avançadas",
+                "Acompanhe seu progresso com séries, medalhas e certificados"
+            ]
+        },
+        "slide2": {
+            "heading": "Supere o nervosismo da entrevista",
+            "bullets": [
+                "Melhore rápido com feedback personalizado",
+                "Aumente sua confiança com prática regular",
+                "Aprenda a organizar e apresentar melhores respostas"
+            ]
+        },
+        "next": "Próximo"
+    },
+    "login": {
+        "title": "Entrar",
+        "emailLabel": "Endereço de e mail",
+        "emailPlaceholder": "hello@example.com",
+        "passwordLabel": "Senha",
+        "passwordPlaceholder": "********",
+        "forgotPassword": "Esqueceu a senha?",
+        "button": "Entrar",
+        "or": "ou",
+        "noAccount": "Não tem uma conta? Cadastre se"
+    },
+    "signup": {
+        "title": "Cadastro",
+        "emailLabel": "Endereço de e mail",
+        "emailPlaceholder": "hello@example.com",
+        "passwordLabel": "Senha",
+        "passwordPlaceholder": "********",
+        "button": "Cadastrar",
+        "or": "ou",
+        "haveAccount": "Já tem uma conta? Entrar"
+    },
+    "forgot": {
+        "title": "Recuperar senha",
+        "subtitle": "Digite seu e mail para receber um código de verificação",
+        "emailLabel": "E mail",
+        "emailPlaceholder": "hello@example.com",
+        "sendCode": "Enviar código",
+        "remember": "Lembrou a senha? Entrar"
+    },
+    "legal": {
+        "terms": "Termos de uso",
+        "privacy": "Política de privacidade"
+    },
+    "auth": {
+        "googleContinue": "Continuar com Google"
+    },
+    "home": {
+        "greeting": "Olá {{name}}",
+        "userFallback": "Usuário",
+        "welcome": "Bem vindo ao seu painel",
+        "noInterview": "Nenhuma entrevista encontrada",
+        "scoreLabel": "Pontuação:",
+        "na": "N/A",
+        "youScored": "Sua pontuação é {{scoreText}}",
+        "chooseMode": "Escolha o modo de entrevista",
+        "interviews": {
+            "common": {
+                "action": "Iniciar"
+            },
+            "practice": {
+                "title": "Teste se",
+                "description": "Entrevista simulada com feedback instantâneo para melhorar suas habilidades",
+                "bottomLine": "Testar agora >>"
+            },
+            "train": {
+                "title": "Treine se",
+                "description": "O modo treinador melhora suas respostas e aumenta sua confiança",
+                "bottomLine": "Treinar agora >>"
+            }
+        },
+        "score": {
+            "bad": "Baixa",
+            "good": "Boa",
+            "excellent": "Excelente"
+        }
+    },
+    "jobs": {
+        "recommendedCount": "Vagas recomendadas ({{count}})",
+        "description": "Aqui estão recomendações de vagas para o cargo de {{position}}",
+        "upcoming": "(Nova atualização em 12 horas)",
+        "loader": {
+            "finding": "Buscando vagas",
+            "warming": "Preparando seu feed de vagas"
+        },
+        "filters": {
+            "savedJobs": "Salvos",
+            "allJobs": "Todas as vagas",
+            "allTypes": "Todos os tipos",
+            "fullTime": "Tempo integral",
+            "hybrid": "Híbrido",
+            "remote": "Remoto",
+            "allLocations": "Todos os locais"
+        },
+        "form": {
+            "headerTitle": "Informações profissionais",
+            "headerDescription": "Compartilhe um breve resumo do seu cargo e experiência",
+            "extraText": "(Nova atualização em 12 horas)",
+            "positionLabel": "Cargo",
+            "positionPlaceholder": "Engenheiro de Software",
+            "positionExample": "ex: Engenheiro de Software",
+            "positionA11y": "Cargo",
+            "positionHelp": "Ajuda a encontrar vagas que correspondem ao seu perfil",
+            "experienceLabel": "Anos de experiência",
+            "experiencePlaceholder": "5",
+            "experienceA11y": "Anos de experiência",
+            "yearsSuffix": "anos",
+            "experienceHelp": "Insira apenas anos completos",
+            "pleaseWait": "Aguarde",
+            "continue": "Continuar"
+        }
+    },
+    "reports": {
+        "empty": {
+            "title": "Nenhum relatório encontrado",
+            "subtitle": "Conclua entrevistas para visualizar relatórios aqui"
+        },
+        "filters": {
+            "all": "Todos os relatórios",
+            "mock": "Simulado",
+            "trainer": "Treinador"
+        },
+        "pending": "Pendente",
+        "interview": "Entrevista",
+        "viewReport": "Ver relatório",
+        "score": "Pontuação",
+        "viewSummary": "Ver resumo"
+    },
+    "profile": {
+        "planExpiryPrefix": "Expiração do plano",
+        "editProfile": "Editar perfil",
+        "subscription": {
+            "title": "Assinatura",
+            "subtitle": "Seu plano atual e informações de cobrança",
+            "freePlan": "Gratuito",
+            "active": "Ativo",
+            "of": "de",
+            "minutesUsed": "minutos usados",
+            "minutesLeft": "minutos restantes",
+            "upgrade": "Atualizar para Pro",
+            "proActive": "Plano Pro ativo"
+        },
+        "legal": {
+            "prefix": "Ao usar este aplicativo você concorda com",
+            "terms": "os Termos de serviço",
+            "and": "e",
+            "privacy": "a Política de privacidade"
+        },
+        "danger": {
+            "title": "Zona de risco",
+            "subtitle": "Ações irreversíveis da conta",
+            "logout": "Sair",
+            "deleteTitle": "Excluir conta",
+            "deleteDesc": "Exclui permanentemente sua conta e todos os dados. Esta ação não pode ser desfeita",
+            "deleteButton": "Excluir conta"
+        },
+        "stats": {
+            "role": "Cargo",
+            "level": "Nível",
+            "totalTime": "Tempo total",
+            "rating": "Avaliação",
+            "minutes": "Minutos"
+        }
+    },
+    "avatar": {
+        "step1Title": "Como devo chamar você?",
+        "step2Title": "Escolha seu avatar",
+        "fullNameLabel": "Nome completo",
+        "namePlaceholder": "Digite seu nome",
+        "nextButton": "Próximo",
+        "startButton": "Iniciar entrevista"
+    },
+    "interview": {
+        "title": "Instruções da entrevista",
+        "instr1": "Comece a entrevista dizendo olá",
+        "instr2": "Sente se em um lugar silencioso sem barulho",
+        "instr3": "Certifique se de que sua conexão está estável",
+        "instr4": "Sente se em um lugar silencioso e bem iluminado",
+        "cameraOffTitle": "Câmera desligada",
+        "cameraOffMessage": "Ligue sua câmera",
+        "btn_wait": "Aguarde",
+        "btn_end": "Encerrar entrevista",
+        "btn_start": "Iniciar entrevista"
+    },
+    "analysis": {
+        "strengthsTitle": "Pontos fortes",
+        "weaknessesTitle": "Pontos fracos",
+        "tapToViewStrength": "Toque para ver o ponto forte analisado",
+        "tapToViewWeakness": "Toque para ver o ponto fraco analisado",
+        "noItemsFound": "Nenhum item encontrado",
+        "strength": "Força",
+        "weakness": "Fraqueza",
+        "howToImprove": "Como melhorar",
+        "tryAgain": "Tentar novamente"
+    },
+    "tabs": {
+        "reportAnalysis": "Análise do relatório",
+        "transcript": "Transcrição"
+    },
+    "carousel": {
+        "notEnoughData": "Dados insuficientes",
+        "poor": "Baixo",
+        "good": "Bom",
+        "excellent": "Excelente",
+        "seeDetailedReport": "Ver relatório detalhado"
+    },
+    "skills": {
+        "Technical_Expertise": "Especialidade técnica",
+        "Problem_Solving": "Resolução de problemas",
+        "Decision_Judgment": "Tomada de decisão",
+        "Debugging_Mindset": "Mentalidade de depuração",
+        "Accountability_Mindset": "Responsabilidade",
+        "Team_Collaboration": "Colaboração em equipe",
+        "Growth_Mindset": "Mentalidade de crescimento",
+        "Conflict_Resolution": "Resolução de conflitos",
+        "Outcome_Focus": "Foco em resultados"
+    },
+    "improvements": {
+        "title": "Passos de melhoria",
+        "openResource": "Abrir recurso",
+        "cannotOpenLinkTitle": "Não foi possível abrir o link",
+        "cannotOpenLinkMsg": "O link não pode ser aberto neste dispositivo",
+        "errorTitle": "Erro",
+        "errorMsg": "Falha ao abrir o link",
+        "empty": "Nenhum item encontrado"
+    },
+    "leagues": {
+        "bronze": "Bronze",
+        "silver": "Prata",
+        "gold": "Ouro",
+        "platinum": "Platina",
+        "diamond": "Diamante",
+        "emerald": "Esmeralda",
+        "ruby": "Rubi",
+        "sapphire": "Safira",
+        "obsidian": "Obsidiana",
+        "crystal": "Cristal"
+    },
+    "leaderboard": {
+        "loading": "Carregando ranking",
+        "you": "Você",
+        "description": "Este é o ranking",
+        "league": "Liga"
+    }
+}

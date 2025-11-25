@@ -12,13 +12,15 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 const { width } = Dimensions.get('window');
 
+import { useTranslation } from 'react-i18next'
+
 function findLeagueIndexByTrophies(data, trophies) {
   for (let i = 0; i < data.length; i++) {
-    const { min, max } = data[i];
-    if (trophies >= min && trophies <= max) return i;
+    const { min, max } = data[i]
+    if (trophies >= min && trophies <= max) return i
   }
-  if (trophies < data[0].min) return 0;
-  return data.length - 1;
+  if (trophies < data[0].min) return 0
+  return data.length - 1
 }
 
 export default function LeagueCarousel({
@@ -26,14 +28,16 @@ export default function LeagueCarousel({
   userTrophies = 0,
   itemWidth = Math.round(width * 0.22),
 }) {
-  const userLeagueIndex = findLeagueIndexByTrophies(data, userTrophies);
+  const { t } = useTranslation()
+
+  const userLeagueIndex = findLeagueIndexByTrophies(data, userTrophies)
 
   function renderItem({ item, index }) {
-    const isUnlocked = index <= userLeagueIndex;
-    const isCurrent = index === userLeagueIndex;
-    const size = isCurrent ? 90 : 72;
-    const fontWeight = isCurrent ? '700' : isUnlocked ? '600' : '400';
-    const labelColor = isUnlocked ? '#111' : '#8b8b8b';
+    const isUnlocked = index <= userLeagueIndex
+    const isCurrent = index === userLeagueIndex
+    const size = isCurrent ? 90 : 72
+    const fontWeight = isCurrent ? '700' : isUnlocked ? '600' : '400'
+    const labelColor = isUnlocked ? '#111' : '#8b8b8b'
 
     return (
       <TouchableOpacity
@@ -75,23 +79,21 @@ export default function LeagueCarousel({
             </>
           )}
 
-          {isCurrent && (
-            <View style={styles.currentGlow} pointerEvents="none" />
-          )}
+          {isCurrent && <View style={styles.currentGlow} pointerEvents="none" />}
         </View>
 
         <Text
           numberOfLines={1}
           style={[styles.nameText, { color: labelColor, fontWeight }]}
         >
-          {item.name}
+          {t(item.name)}
         </Text>
 
         <Text style={styles.rangeText}>
           {item.min} - {item.max}
         </Text>
       </TouchableOpacity>
-    );
+    )
   }
 
   return (
@@ -106,8 +108,9 @@ export default function LeagueCarousel({
         ItemSeparatorComponent={() => <View style={{ width: 14 }} />}
       />
     </View>
-  );
+  )
 }
+
 
 const styles = StyleSheet.create({
   container: {

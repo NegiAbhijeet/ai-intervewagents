@@ -5,18 +5,19 @@ import {
   View,
   Text,
   Image,
+  ImageBackground,
   Dimensions,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppStateContext } from '../components/AppContext';
 import MainButton from '../components/mainButton';
 import Layout from './Layout';
-
-const { width, height } = Dimensions.get('window');
-
+import { useTranslation } from 'react-i18next';
+const { width: SCREEN_W } = Dimensions.get('window')
 export default function GetStartedScreen() {
   const { setOnboardingComplete } = useContext(AppStateContext)
   const navigation = useNavigation();
+  const { t } = useTranslation();
   async function onFinish() {
     try {
       await AsyncStorage.setItem('onboardingComplete', 'true');
@@ -46,36 +47,56 @@ export default function GetStartedScreen() {
               />
             </View>
             <View>
-              <Text style={styles.brand}>AI Interview Agents</Text>
-              <Text style={styles.subBrand}>Your AI Interview Assistant</Text>
+              <Text style={styles.brand}>{t('getStarted.brand')}</Text>
+              <Text style={styles.subBrand}>{t('getStarted.subBrand')}</Text>
             </View>
           </View>
         </View>
 
         <View style={styles.centerArea}>
-          <View style={styles.penguinWrap}>
+          <View style={[styles.wrapper]}>
+            <View style={styles.cloudWrap} pointerEvents="none">
+              <ImageBackground
+                source={require('../assets/images/cloud.png')}
+                style={styles.cloud}
+                imageStyle={styles.cloudImage}
+              >
+                <Text numberOfLines={2} style={styles.cloudText}>
+                  {t('nova.greeting')}
+                </Text>
+
+              </ImageBackground>
+            </View>
+
             <Image
-              source={require('../assets/images/GetStartedPeng.png')}
+              source={require('../assets/images/3d-penguin.png')}
               style={styles.penguin}
               resizeMode="contain"
             />
           </View>
 
           <Text style={styles.tagline}>
-            I will help you crack your dream company’s interview with
-            confidence.
+            {t('getStarted.tagline')}
           </Text>
         </View>
 
         <View style={styles.bottomSpacer}>
-          <MainButton text={'Get Started'} onPress={() => navigation.navigate('Onboarding')} />
-          <MainButton text={'Already Have An Account ? Login'} onPress={onFinish} outline={true} />
+          <MainButton
+            text={t('getStarted.ctaStart')}
+            onPress={() => navigation.navigate('Onboarding')}
+          />
+          <MainButton
+            text={t('getStarted.ctaLogin')}
+            onPress={onFinish}
+            outline
+          />
+
         </View>
       </View>
     </Layout>
   );
 }
-
+const PENG_WIDTH = Math.min(320, Math.round(SCREEN_W * 0.7))
 const styles = StyleSheet.create({
   bg: {
     width: "100%",
@@ -111,16 +132,41 @@ const styles = StyleSheet.create({
     width: '100%',
     marginHorizontal: 'auto',
   },
-  penguinWrap: {
-    width: 220,
-    height: 220,
+  wrapper: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    position: 'relative',
+    paddingVertical: 24,
+  },
+  cloudWrap: {
+    position: 'absolute',
+    top: 8,
+    right: 20,
+    zIndex: 2,
+    alignItems: 'center',
+  },
+  cloud: {
+    width: 124,
+    height: 75,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 18,
+    paddingHorizontal: 12,
+    paddingTop: 6,
+  },
+  cloudImage: {
+    resizeMode: 'contain',
+  },
+  cloudText: {
+    fontSize: 12,
+    fontWeight: '600',
+    textAlign: 'center',
+    marginBottom: 12
   },
   penguin: {
-    width: 250,
-    height: 300,
+    width: PENG_WIDTH,
+    height: PENG_WIDTH,
+    zIndex: 1,
   },
   tagline: {
     width: '90%',

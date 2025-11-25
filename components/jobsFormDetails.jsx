@@ -12,6 +12,7 @@ import fetchWithAuth from '../libs/fetchWithAuth';
 import { JAVA_API_URL } from './config';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DashboardHeader from './dashboard-header';
+import { useTranslation } from 'react-i18next';
 
 export default function JobsFormDetails({
   uid,
@@ -20,6 +21,7 @@ export default function JobsFormDetails({
   setJobs,
   setOpenPopup,
 }) {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({ experience: '', position: '' });
 
@@ -80,23 +82,23 @@ export default function JobsFormDetails({
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-100">
+    <SafeAreaView className="flex-1">
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         className="flex-1 items-center justify-center"
       >
         <View className="flex-col gap-4 w-full">
           <DashboardHeader
-            title="Professional Details"
-            description="Share a brief summary of your role and experience"
-            extraText="(Upcoming job update in 12 hours)"
+            title={t('jobs.form.headerTitle')}
+            description={t('jobs.form.headerDescription')}
+            extraText={t('jobs.form.extraText')}
           />
 
           <View className="w-full max-w-xl rounded-xl overflow-hidden bg-white shadow-md">
             <View className="p-4 py-6 bg-white">
               <View className="mb-5">
                 <Text className="text-base font-semibold text-gray-900">
-                  Position
+                  {t('jobs.form.positionLabel')}
                 </Text>
                 <View className="mt-2 relative">
                   <TextInput
@@ -104,23 +106,23 @@ export default function JobsFormDetails({
                     onChangeText={text =>
                       setFormData({ ...formData, position: text })
                     }
-                    placeholder="Software Engineer"
-                    accessibilityLabel="Position"
+                    placeholder={t('jobs.form.positionPlaceholder')}
+                    accessibilityLabel={t('jobs.form.positionA11y')}
                     className="h-12 border border-gray-200 rounded-lg px-4 pr-24 bg-white text-base"
                     returnKeyType="done"
                   />
                   <Text className="absolute right-3 top-3 text-sm text-black/60">
-                    e.g. Software Engineer
+                    {t('jobs.form.positionExample')}
                   </Text>
                 </View>
                 <Text className="mt-2 text-sm text-gray-500">
-                  This helps match job titles to your profile
+                  {t('jobs.form.positionHelp')}
                 </Text>
               </View>
 
               <View className="mb-5">
                 <Text className="text-base font-semibold text-gray-900">
-                  Years of Experience
+                  {t('jobs.form.experienceLabel')}
                 </Text>
                 <View className="mt-2 relative">
                   <TextInput
@@ -131,19 +133,19 @@ export default function JobsFormDetails({
                         experience: text.replace(/[^0-9]/g, ''),
                       })
                     }
-                    placeholder="5"
+                    placeholder={t('jobs.form.experiencePlaceholder')}
                     keyboardType="numeric"
-                    accessibilityLabel="Years of experience"
+                    accessibilityLabel={t('jobs.form.experienceA11y')}
                     className="h-12 border border-gray-200 rounded-lg px-4 pr-20 bg-white text-base"
                     maxLength={2}
                     returnKeyType="done"
                   />
                   <Text className="absolute right-3 top-3 text-sm text-black/60">
-                    years
+                    {t('jobs.form.yearsSuffix')}
                   </Text>
                 </View>
                 <Text className="mt-2 text-sm text-gray-500">
-                  Enter whole years only
+                  {t('jobs.form.experienceHelp')}
                 </Text>
               </View>
 
@@ -152,20 +154,19 @@ export default function JobsFormDetails({
                   onPress={handleFormSubmit}
                   disabled={isLoading}
                   accessibilityRole="button"
-                  className={`h-12 rounded-lg items-center justify-center bg-blue-600 ${
-                    isLoading ? 'opacity-60' : ''
-                  }`}
+                  className={`h-12 rounded-lg items-center justify-center bg-blue-600 ${isLoading ? 'opacity-60' : ''
+                    }`}
                 >
                   {isLoading ? (
                     <View className="flex-row items-center space-x-2">
                       <ActivityIndicator size="small" color="#fff" />
                       <Text className="text-white text-lg font-medium">
-                        Please wait...
+                        {t('jobs.form.pleaseWait')}
                       </Text>
                     </View>
                   ) : (
                     <Text className="text-white text-lg font-medium">
-                      Continue
+                      {t('jobs.form.continue')}
                     </Text>
                   )}
                 </TouchableOpacity>
