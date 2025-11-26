@@ -82,6 +82,7 @@ export default function useRealTime({
   interviewType,
   adminId,
   interviewTime,
+  language
 }: Parameters) {
   const wsRef = useRef<WebSocket | null>(null);
 
@@ -132,7 +133,7 @@ export default function useRealTime({
           type: 'server_vad',
           threshold: 0.41,
           prefix_padding_ms: 300,
-          silence_duration_ms:1500,
+          silence_duration_ms: 1500,
           create_response: true,
           payload: {
             type: 'server_vad',
@@ -147,6 +148,7 @@ export default function useRealTime({
             adminId,
             interviewTime,
             value,
+            languageCode: language
           },
         },
       },

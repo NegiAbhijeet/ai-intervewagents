@@ -38,7 +38,7 @@ const CallUI = ({
   showInterviewScreen,
   setShowInterviewScreen,
 }) => {
-  const { userProfile, setUserProfile } = useContext(AppStateContext);
+  const { userProfile, setUserProfile, language } = useContext(AppStateContext);
   const { t } = useTranslation();
   const initialStartRef = useRef(null);
   const [hasStarted, setHasStarted] = useState(false);
@@ -94,6 +94,7 @@ const CallUI = ({
     interviewType,
     adminId,
     interviewTime,
+    language,
     onWebSocketOpen: () => { },
     onWebSocketClose: () => { },
     onWebSocketError: () => { },

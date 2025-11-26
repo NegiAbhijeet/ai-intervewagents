@@ -3,7 +3,7 @@
         "सॉफ्टवेयर इंजीनियर / डेवलपर": [
             "Java",
             "Python",
-            "डेटा स्ट्रक्चर और एल्गोरिदम",
+            "Data Structures and Algorithms",
             "Git",
             "SQL"
         ],
@@ -16,7 +16,7 @@
         ],
         "डेटा साइंटिस्ट": [
             "Python",
-            "मशीन लर्निंग",
+            "Machine Learning",
             "Pandas",
             "Tableau",
             "SQL"
@@ -43,8 +43,8 @@
             "Python"
         ],
         "साइबरसिक्योरिटी विश्लेषक": [
-            "नेटवर्क सुरक्षा",
-            "पेनिट्रेशन टेस्टिंग",
+            "Network Security",
+            "Penetration Testing",
             "SIEM",
             "Python",
             "Wireshark"
@@ -59,30 +59,30 @@
     },
     "कैट तैयारी": {
         "पर्सनल इंटरव्यू": [
-            "सेल्फ इंट्रोडक्शन",
-            "कहानी प्रस्तुतिकरण",
-            "करियर स्पष्टता",
-            "ताकत और कमजोरी विश्लेषण",
-            "बॉडी लैंग्वेज",
-            "करंट अफेयर्स जागरूकता",
-            "मॉक इंटरव्यू अभ्यास",
-            "संचार कौशल"
+            "Self Introduction",
+            "Story Presentation",
+            "Career Clarity",
+            "Strength and Weakness Analysis",
+            "Body Language",
+            "Current Affairs Awareness",
+            "Mock Interview Practice",
+            "Communication Skills"
         ],
         "ग्रुप डिस्कशन": [
-            "विचार संरचना",
-            "तार्किक सोच",
-            "सक्रिय सुनना",
-            "स्पष्ट संचार",
-            "टीम इंटरैक्शन",
-            "समय प्रबंधन",
-            "विषय विश्लेषण",
-            "करंट अफेयर्स जागरूकता"
+            "Idea Structuring",
+            "Logical Thinking",
+            "Active Listening",
+            "Clear Communication",
+            "Team Interaction",
+            "Time Management",
+            "Topic Analysis",
+            "Current Affairs Awareness"
         ]
     },
     "बैंकिंग, वित्त और बीमा": {
         "फाइनेंशियल विश्लेषक": [
             "Excel",
-            "फाइनेंशियल मॉडलिंग",
+            "Financial Modeling",
             "SQL",
             "Bloomberg Terminal",
             "PowerPoint"
@@ -90,7 +90,7 @@
         "इन्वेस्टमेंट बैंकर": [
             "Excel",
             "PowerPoint",
-            "फाइनेंशियल मॉडलिंग",
+            "Financial Modeling",
             "Bloomberg Terminal",
             "Capital IQ"
         ],
@@ -110,15 +110,15 @@
         ],
         "कंप्लायंस अधिकारी": [
             "AML/KYC",
-            "रिस्क मूल्यांकन",
-            "नियामक ज्ञान",
-            "ऑडिट टूल्स",
+            "Risk Assessment",
+            "Regulatory Knowledge",
+            "Audit Tools",
             "MS Office"
         ],
         "फिनटेक प्रोडक्ट मैनेजर": [
             "SQL",
             "JIRA",
-            "API इंटीग्रेशन",
+            "API Integration",
             "Figma",
             "Google Analytics"
         ],
@@ -132,9 +132,9 @@
         "पोर्टफोलियो मैनेजर": [
             "Bloomberg Terminal",
             "Excel",
-            "फाइनेंशियल मॉडलिंग",
+            "Financial Modeling",
             "Python",
-            "रिस्क मैनेजमेंट टूल्स"
+            "Risk Management Tools"
         ]
     },
     "इंजीनियरिंग": {
@@ -155,33 +155,33 @@
         "मैकेनिकल इंजीनियर": [
             "AutoCAD",
             "SolidWorks",
-            "लीन मैन्युफैक्चरिंग",
+            "Lean Manufacturing",
             "SAP",
-            "CNC प्रोग्रामिंग"
+            "CNC Programming"
         ],
         "सिविल साइट इंजीनियर": [
             "AutoCAD",
             "Civil 3D",
             "Primavera",
             "MS Project",
-            "टोटल स्टेशन"
+            "Total Station"
         ],
         "इलेक्ट्रिकल डिजाइन इंजीनियर": [
             "AutoCAD Electrical",
             "ETAP",
             "MATLAB",
-            "PLC प्रोग्रामिंग",
+            "PLC Programming",
             "EPLAN"
         ],
         "प्रोसेस इंजीनियर": [
             "Aspen HYSYS",
             "Aspen Plus",
-            "सिक्स सिग्मा",
+            "Six Sigma",
             "AutoCAD",
             "MATLAB"
         ],
         "ऑटोमेशन इंजीनियर": [
-            "PLC प्रोग्रामिंग",
+            "PLC Programming",
             "SCADA",
             "Siemens TIA Portal",
             "Allen Bradley",
@@ -189,16 +189,16 @@
         ],
         "क्वालिटी कंट्रोल इंजीनियर": [
             "ISO 9001",
-            "स्टैटिस्टिकल प्रोसेस कंट्रोल",
+            "Statistical Process Control",
             "Minitab",
-            "सिक्स सिग्मा",
+            "Six Sigma",
             "CMM"
         ]
     },
     "डेटा साइंस और एनालिटिक्स": {
         "डेटा साइंटिस्ट": [
             "Python",
-            "मशीन लर्निंग",
+            "Machine Learning",
             "Pandas",
             "SQL",
             "Scikit-learn"
@@ -243,7 +243,7 @@
             "MongoDB",
             "Snowflake",
             "AWS Redshift",
-            "ETL टूल्स"
+            "ETL Tools"
         ],
         "एनएलपी इंजीनियर": [
             "Python",
@@ -259,12 +259,12 @@
             "Excel",
             "Tableau",
             "SQL",
-            "मार्केट रिसर्च टूल्स"
+            "Market Research Tools"
         ],
         "स्ट्रेटजी कंसल्टेंट": [
             "Excel",
             "PowerPoint",
-            "फाइनेंशियल मॉडलिंग",
+            "Financial Modeling",
             "Tableau",
             "SQL"
         ],
@@ -273,58 +273,58 @@
             "PowerPoint",
             "SQL",
             "Tableau",
-            "फाइनेंशियल मॉडलिंग"
+            "Financial Modeling"
         ],
         "ऑपरेशंस कंसल्टेंट": [
-            "लीन सिक्स सिग्मा",
+            "Lean Six Sigma",
             "Excel",
-            "प्रोसेस मैपिंग टूल्स",
+            "Process Mapping Tools",
             "SQL",
             "Tableau"
         ],
         "डिजिटल ट्रांसफॉर्मेशन कंसल्टेंट": [
-            "क्लाउड प्लेटफॉर्म्स (AWS, Azure)",
-            "एजाइल टूल्स (JIRA)",
+            "Cloud Platforms (AWS, Azure)",
+            "Agile Tools (JIRA)",
             "PowerPoint",
             "Tableau",
             "SQL"
         ],
         "फाइनेंशियल कंसल्टेंट": [
             "Excel",
-            "फाइनेंशियल प्लानिंग सॉफ्टवेयर",
+            "Financial Planning Software",
             "QuickBooks",
             "SAP",
             "PowerPoint"
         ],
         "एचआर स्ट्रेटजी कंसल्टेंट": [
-            "HRIS सिस्टम",
+            "HRIS Systems",
             "Excel",
             "PowerPoint",
             "Tableau",
-            "सर्वे टूल्स"
+            "Survey Tools"
         ],
         "सस्टेनेबिलिटी": [
-            "ESG रिपोर्टिंग टूल्स",
+            "ESG Reporting Tools",
             "Excel",
             "Tableau",
             "PowerPoint",
-            "कार्बन अकाउंटिंग सॉफ्टवेयर"
+            "Carbon Accounting Software"
         ]
     },
     "एविएशन और एयरोस्पेस": {
         "कमर्शियल पायलट": [
-            "CPL लाइसेंस",
-            "ATPL लाइसेंस",
-            "फ्लाइट सिम्युलेटर्स",
-            "नेविगेशन सिस्टम",
-            "एविएशन नियम"
+            "CPL License",
+            "ATPL License",
+            "Flight Simulators",
+            "Navigation Systems",
+            "Aviation Regulations"
         ],
         "एयरक्राफ्ट मेंटेनेंस इंजीनियर": [
-            "एयरक्राफ्ट सिस्टम",
-            "AME लाइसेंस",
-            "ट्रबलशूटिंग टूल्स",
-            "DGCA नियम",
-            "मेंटेनेंस सॉफ्टवेयर"
+            "Aircraft Systems",
+            "AME License",
+            "Troubleshooting Tools",
+            "DGCA Regulations",
+            "Maintenance Software"
         ],
         "एयरोस्पेस इंजीनियर": [
             "CATIA",
@@ -334,39 +334,39 @@
             "Simulink"
         ],
         "एवियोनिक्स इंजीनियर": [
-            "एम्बेडेड सिस्टम",
-            "सर्किट डिजाइन",
+            "Embedded Systems",
+            "Circuit Design",
             "MATLAB",
             "DO-178C",
-            "टेस्टिंग टूल्स"
+            "Testing Tools"
         ],
         "फ्लाइट ऑपरेशंस मैनेजर": [
-            "फ्लाइट प्लानिंग सॉफ्टवेयर",
-            "सेफ्टी मैनेजमेंट सिस्टम",
-            "DGCA नियम",
+            "Flight Planning Software",
+            "Safety Management System",
+            "DGCA Regulations",
             "Excel",
-            "रिसोर्स मैनेजमेंट टूल्स"
+            "Resource Management Tools"
         ],
         "एविएशन सेफ्टी अधिकारी": [
-            "सेफ्टी मैनेजमेंट सिस्टम",
-            "DGCA नियम",
-            "रिस्क मूल्यांकन टूल्स",
-            "ऑडिट सॉफ्टवेयर",
-            "इंसिडेंट रिपोर्टिंग सिस्टम"
+            "Safety Management System",
+            "DGCA Regulations",
+            "Risk Assessment Tools",
+            "Audit Software",
+            "Incident Reporting System"
         ],
         "एयरोस्पेस प्रोजेक्ट मैनेजर": [
             "MS Project",
             "Primavera",
             "CATIA",
-            "रिस्क मैनेजमेंट टूल्स",
+            "Risk Management Tools",
             "Excel"
         ],
         "एयर ट्रैफिक कंट्रोलर": [
-            "रेडार सिस्टम",
-            "कम्युनिकेशन सिस्टम",
-            "एयर ट्रैफिक कंट्रोल प्रक्रियाएं",
-            "फ्लाइट प्लानिंग सॉफ्टवेयर",
-            "नेविगेशन टूल्स"
+            "Radar Systems",
+            "Communication Systems",
+            "Air Traffic Control Procedures",
+            "Flight Planning Software",
+            "Navigation Tools"
         ]
     },
     "शिपिंग, लॉजिस्टिक्स और सप्लाई चेन": {
@@ -374,36 +374,36 @@
             "SAP",
             "Oracle SCM",
             "Excel",
-            "डिमांड प्लानिंग सॉफ्टवेयर",
-            "ERP सिस्टम"
+            "Demand Planning Software",
+            "ERP Systems"
         ],
         "लॉजिस्टिक्स मैनेजर": [
             "TMS",
             "WMS",
             "Excel",
             "SAP",
-            "रूट ऑप्टिमाइजेशन सॉफ्टवेयर"
+            "Route Optimization Software"
         ],
         "प्रोक्योरमेंट विशेषज्ञ": [
             "SAP",
             "Oracle Procurement",
             "Excel",
-            "नेगोशिएशन टूल्स",
-            "ERP सिस्टम"
+            "Negotiation Tools",
+            "ERP Systems"
         ],
         "वेयरहाउस मैनेजर": [
             "WMS",
             "SAP",
             "Excel",
-            "इन्वेंटरी मैनेजमेंट सॉफ्टवेयर",
-            "बारकोड स्कैनर"
+            "Inventory Management Software",
+            "Barcode Scanner"
         ],
         "एक्सपोर्ट इम्पोर्ट एग्जीक्यूटिव": [
-            "कस्टम्स सॉफ्टवेयर",
+            "Customs Software",
             "Incoterms",
             "Excel",
-            "डॉक्यूमेंटेशन टूल्स",
-            "शिपिंग सॉफ्टवेयर"
+            "Documentation Tools",
+            "Shipping Software"
         ],
         "सप्लाई चेन विश्लेषक": [
             "Excel",
@@ -416,14 +416,14 @@
             "SAP",
             "Oracle",
             "Excel",
-            "सप्लायर मैनेजमेंट टूल्स",
-            "ERP सिस्टम"
+            "Supplier Management Tools",
+            "ERP Systems"
         ],
         "ट्रांसपोर्टेशन प्लानर": [
             "TMS",
-            "रूट ऑप्टिमाइजेशन सॉफ्टवेयर",
+            "Route Optimization Software",
             "Excel",
-            "GIS सॉफ्टवेयर",
+            "GIS Software",
             "SAP"
         ]
     },
@@ -443,37 +443,37 @@
             "SAP"
         ],
         "ऑपरेशंस और मेंटेनेंस इंजीनियर": [
-            "SCADA सिस्टम",
+            "SCADA Systems",
             "PVsyst",
-            "मॉनिटरिंग सॉफ्टवेयर",
-            "ट्रबलशूटिंग टूल्स",
-            "सुरक्षा उपकरण"
+            "Monitoring Software",
+            "Troubleshooting Tools",
+            "Safety Equipment"
         ],
         "बैटरी सिस्टम इंजीनियर": [
             "MATLAB",
             "Simulink",
-            "बैटरी मैनेजमेंट सिस्टम",
-            "पावर इलेक्ट्रॉनिक्स डिजाइन",
-            "टेस्टिंग उपकरण"
+            "Battery Management System",
+            "Power Electronics Design",
+            "Testing Equipment"
         ],
         "नवीकरणीय ऊर्जा कंसल्टेंट": [
             "PVsyst",
             "HOMER",
             "Excel",
-            "फाइनेंशियल मॉडलिंग",
+            "Financial Modeling",
             "RETScreen"
         ],
         "बिजनेस डेवलपमेंट": [
-            "CRM सॉफ्टवेयर",
+            "CRM Software",
             "Excel",
             "PowerPoint",
-            "मार्केट रिसर्च टूल्स",
+            "Market Research Tools",
             "PVsyst"
         ],
         "एनर्जी पॉलिसी विश्लेषक": [
             "Excel",
-            "स्टैटिस्टिकल सॉफ्टवेयर",
-            "पॉलिसी रिसर्च टूल्स",
+            "Statistical Software",
+            "Policy Research Tools",
             "Tableau",
             "PowerPoint"
         ],
@@ -482,123 +482,123 @@
             "MATLAB",
             "Simulink",
             "ETAP",
-            "पावर सिस्टम डिजाइन सॉफ्टवेयर"
+            "Power System Design Software"
         ]
     },
     "मैन्युफैक्चरिंग और प्रोडक्शन": {
         "प्रोडक्शन इंजीनियर": [
             "AutoCAD",
-            "लीन मैन्युफैक्चरिंग",
+            "Lean Manufacturing",
             "SAP",
-            "सिक्स सिग्मा",
-            "CNC प्रोग्रामिंग"
+            "Six Sigma",
+            "CNC Programming"
         ],
         "प्रोसेस इंजीनियर": [
             "Aspen HYSYS",
-            "सिक्स सिग्मा",
+            "Six Sigma",
             "AutoCAD",
             "MATLAB",
-            "प्रोसेस सिमुलेशन सॉफ्टवेयर"
+            "Process Simulation Software"
         ],
         "क्वालिटी एश्योरेंस इंजीनियर": [
             "ISO 9001",
             "Minitab",
-            "सिक्स सिग्मा",
-            "स्टैटिस्टिकल प्रोसेस कंट्रोल",
-            "क्वालिटी मैनेजमेंट सॉफ्टवेयर"
+            "Six Sigma",
+            "Statistical Process Control",
+            "Quality Management Software"
         ],
         "मेंटेनेंस इंजीनियर": [
-            "CMMS सॉफ्टवेयर",
+            "CMMS Software",
             "AutoCAD",
-            "ट्रबलशूटिंग टूल्स",
+            "Troubleshooting Tools",
             "SAP",
-            "वाइब्रेशन एनालिसिस टूल्स"
+            "Vibration Analysis Tools"
         ],
         "प्रोक्योरमेंट इंजीनियर": [
             "SAP",
             "Oracle",
             "Excel",
-            "ERP सिस्टम",
-            "वेंडर मैनेजमेंट सॉफ्टवेयर"
+            "ERP Systems",
+            "Vendor Management Software"
         ],
         "आर एंड डी इंजीनियर": [
-            "CAD सॉफ्टवेयर",
+            "CAD Software",
             "SolidWorks",
             "ANSYS",
             "MATLAB",
-            "प्रोटोटाइपिंग टूल्स"
+            "Prototyping Tools"
         ],
         "EHS अधिकारी": [
-            "सेफ्टी मैनेजमेंट सॉफ्टवेयर",
-            "रिस्क मूल्यांकन टूल्स",
+            "Safety Management Software",
+            "Risk Assessment Tools",
             "ISO 45001",
-            "इंसिडेंट मैनेजमेंट सिस्टम",
-            "ऑडिट टूल्स"
+            "Incident Management System",
+            "Audit Tools"
         ],
         "प्लांट मैनेजर": [
             "SAP",
-            "लीन सिक्स सिग्मा",
+            "Lean Six Sigma",
             "Excel",
-            "ERP सिस्टम",
-            "प्रोडक्शन प्लानिंग सॉफ्टवेयर"
+            "ERP Systems",
+            "Production Planning Software"
         ]
     },
     "हेल्थकेयर और फार्मास्यूटिकल्स": {
         "चिकित्सक": [
-            "EMR/EHR सिस्टम",
-            "मेडिकल डायग्नोसिस",
-            "क्लीनिकल प्रक्रियाएं",
-            "HIPAA अनुपालन",
-            "मेडिकल इमेजिंग सॉफ्टवेयर"
+            "EMR/EHR Systems",
+            "Medical Diagnosis",
+            "Clinical Procedures",
+            "HIPAA Compliance",
+            "Medical Imaging Software"
         ],
         "नर्स": [
-            "EMR/EHR सिस्टम",
-            "IV प्रशासन",
-            "पेशेंट मॉनिटरिंग सिस्टम",
-            "दवा प्रबंधन",
-            "क्लीनिकल प्रक्रियाएं"
+            "EMR/EHR Systems",
+            "IV Administration",
+            "Patient Monitoring Systems",
+            "Medication Management",
+            "Clinical Procedures"
         ],
         "फार्मासिस्ट": [
-            "फार्मेसी मैनेजमेंट सिस्टम",
-            "ड्रग डेटाबेस सॉफ्टवेयर",
-            "प्रिस्क्रिप्शन प्रोसेसिंग",
-            "इन्वेंटरी मैनेजमेंट",
-            "क्लीनिकल ज्ञान"
+            "Pharmacy Management Systems",
+            "Drug Database Software",
+            "Prescription Processing",
+            "Inventory Management",
+            "Clinical Knowledge"
         ],
         "क्लीनिकल रिसर्च एसोसिएट": [
-            "GCP दिशानिर्देश",
-            "क्लीनिकल ट्रायल मैनेजमेंट सिस्टम",
-            "EDC सिस्टम",
-            "नियामक दस्तावेज",
-            "साइट मॉनिटरिंग"
+            "GCP Guidelines",
+            "Clinical Trial Management Systems",
+            "EDC Systems",
+            "Regulatory Documents",
+            "Site Monitoring"
         ],
         "बायोमेडिकल इंजीनियर": [
-            "CAD सॉफ्टवेयर",
+            "CAD Software",
             "MATLAB",
-            "मेडिकल डिवाइस डिजाइन",
-            "FDA नियम",
-            "टेस्टिंग उपकरण"
+            "Medical Device Design",
+            "FDA Regulations",
+            "Testing Equipment"
         ],
         "अस्पताल प्रशासक": [
-            "हॉस्पिटल इंफॉर्मेशन सिस्टम",
+            "Hospital Information Systems",
             "Excel",
             "SAP",
-            "हेल्थकेयर अनुपालन",
-            "बजट मैनेजमेंट सॉफ्टवेयर"
+            "Healthcare Compliance",
+            "Budget Management Software"
         ],
         "मेडिकल रिप्रेजेंटेटिव": [
-            "CRM सॉफ्टवेयर",
+            "CRM Software",
             "PowerPoint",
-            "प्रोडक्ट ज्ञान",
+            "Product Knowledge",
             "Excel",
-            "टेरिटरी मैनेजमेंट टूल्स"
+            "Territory Management Tools"
         ],
         "पब्लिक हेल्थ अधिकारी": [
-            "एपिडेमियोलॉजिकल सॉफ्टवेयर",
-            "स्टैटिस्टिकल एनालिसिस टूल्स",
+            "Epidemiological Software",
+            "Statistical Analysis Tools",
             "Excel",
             "SPSS",
-            "हेल्थ सर्विलांस सिस्टम"
+            "Health Surveillance Systems"
         ]
     }
 }
