@@ -1,10 +1,10 @@
 {
+  "brand": "AI Interview Agents",
   "nova": {
     "greeting": "Hi, I'm Nova",
     "beforeBegin": "Before we begin let me know the basic details about you!"
   },
   "splash": {
-    "brand": "AI Interview Agents",
     "tagline": "Crack your dream company’s interview with confidence."
   },
   "types": {
@@ -23,7 +23,6 @@
   },
   "minutes": "Minutes",
   "getStarted": {
-    "brand": "AI Interview Agents",
     "subBrand": "Your AI Interview Assistant",
     "tagline": "I will help you crack your dream company’s interview with confidence.",
     "ctaStart": "Get Started",

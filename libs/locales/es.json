@@ -1,10 +1,10 @@
 {
+  "brand": "AI Interview Agents",
   "nova": {
     "greeting": "Hola, soy Nova",
     "beforeBegin": "Antes de empezar, cuéntame algunos datos básicos sobre ti."
   },
   "splash": {
-    "brand": "AI Interview Agents",
     "tagline": "Aprueba la entrevista de tu empresa ideal con confianza."
   },
   "types": {
@@ -23,7 +23,6 @@
   },
   "minutes": "Minutos",
   "getStarted": {
-    "brand": "AI Interview Agents",
     "subBrand": "Tu asistente de entrevistas con IA",
     "tagline": "Te ayudo a prepararte para la entrevista de tu empresa soñada con confianza.",
     "ctaStart": "Comenzar",

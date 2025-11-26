@@ -1,10 +1,10 @@
 {
+  "brand": "AI Interview Agents",
   "nova": {
     "greeting": "नमस्ते, मैं नोवा हूँ",
     "beforeBegin": "शुरू करने से पहले मुझे आपके बारे में कुछ बुनियादी जानकारी बताएं!"
   },
   "splash": {
-    "brand": "AI Interview Agents",
     "tagline": "अपनी पसंद की कंपनी का इंटरव्यू आत्मविश्वास के साथ पास करें।"
   },
   "types": {
@@ -23,7 +23,6 @@
   },
   "minutes": "मिनट",
   "getStarted": {
-    "brand": "AI Interview Agents",
     "subBrand": "आपका एआई इंटरव्यू सहायक",
     "tagline": "मैं आपको आपकी पसंद की कंपनी का इंटरव्यू आत्मविश्वास के साथ पास करने में मदद करता हूं.",
     "ctaStart": "शुरू करें",

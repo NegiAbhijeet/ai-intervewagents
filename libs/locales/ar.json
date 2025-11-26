@@ -1,10 +1,10 @@
 {
+    "brand": "AI Interview Agents",
     "nova": {
         "greeting": "مرحباً، أنا نوفا",
         "beforeBegin": "قبل أن نبدأ أخبرني ببعض المعلومات الأساسية عنك."
     },
     "splash": {
-        "brand": "AI Interview Agents",
         "tagline": "اجتز مقابلة شركتك المفضلة بثقة."
     },
     "types": {
@@ -23,7 +23,6 @@
     },
     "minutes": "دقائق",
     "getStarted": {
-        "brand": "AI Interview Agents",
         "subBrand": "مساعد المقابلات الذكي",
         "tagline": "أساعدك على اجتياز مقابلة شركتك المفضلة بثقة.",
         "ctaStart": "ابدأ",

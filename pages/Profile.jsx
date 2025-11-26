@@ -451,7 +451,7 @@ export default function ProfileScreen() {
               </View>
 
               {/* Danger Zone */}
-              <View style={{ marginTop: 24, backgroundColor: "rgba(255, 255, 255, 0.4)", padding: 16, borderRadius: 18 }}>
+              <View style={{ marginTop: 24, backgroundColor: "rgba(255, 255, 255, 0.4)", padding: 16, borderRadius: 18, width: "100%" }}>
                 <Text style={{ fontSize: 18, fontWeight: '700' }}>{t('profile.danger.title')}</Text>
                 <Text style={{ fontSize: 14, color: '#6B7280', marginBottom: 12 }}>{t('profile.danger.subtitle')}</Text>
 

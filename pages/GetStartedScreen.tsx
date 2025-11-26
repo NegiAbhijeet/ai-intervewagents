@@ -47,7 +47,7 @@ export default function GetStartedScreen() {
               />
             </View>
             <View>
-              <Text style={styles.brand}>{t('getStarted.brand')}</Text>
+              <Text style={styles.brand}>{t('brand')}</Text>
               <Text style={styles.subBrand}>{t('getStarted.subBrand')}</Text>
             </View>
           </View>

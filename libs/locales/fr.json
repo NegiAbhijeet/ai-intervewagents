@@ -1,10 +1,10 @@
 {
+    "brand": "AI Interview Agents",
     "nova": {
         "greeting": "Bonjour, je suis Nova",
         "beforeBegin": "Avant de commencer, partage quelques informations de base sur toi."
     },
     "splash": {
-        "brand": "AI Interview Agents",
         "tagline": "Réussis l’entretien de ton entreprise idéale avec confiance."
     },
     "types": {
@@ -23,7 +23,6 @@
     },
     "minutes": "Minutes",
     "getStarted": {
-        "brand": "AI Interview Agents",
         "subBrand": "Ton assistant d’entretien IA",
         "tagline": "Je t’aide à préparer l’entretien de ton entreprise idéale avec confiance.",
         "ctaStart": "Commencer",

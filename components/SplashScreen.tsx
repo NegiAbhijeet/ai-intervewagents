@@ -26,7 +26,7 @@ const SplashScreen = () => {
         </View>
 
         <View style={[styles.textContainer, { opacity: 1 }]}>
-          <Text style={styles.title}>{t('splash.brand')}</Text>
+          <Text style={styles.title}>{t('brand')}</Text>
           <Text style={styles.subtitle}>{t('splash.tagline')}</Text>
         </View>
       </View>
