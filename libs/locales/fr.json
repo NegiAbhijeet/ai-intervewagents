@@ -1,0 +1,311 @@
+{
+    "nova": {
+        "greeting": "Bonjour, je suis Nova",
+        "beforeBegin": "Avant de commencer, partage quelques informations de base sur toi."
+    },
+    "splash": {
+        "brand": "AI Interview Agents",
+        "tagline": "Réussis l’entretien de ton entreprise idéale avec confiance."
+    },
+    "types": {
+        "technical": "Technique",
+        "behavioural": "Comportemental",
+        "mock": "Simulé",
+        "trainer": "Coach",
+        "revise": "Révision",
+        "unknown": "Inconnu",
+        "practice": "Pratique"
+    },
+    "status": {
+        "total": "Total",
+        "completed": "Terminé",
+        "pending": "En attente"
+    },
+    "minutes": "Minutes",
+    "getStarted": {
+        "brand": "AI Interview Agents",
+        "subBrand": "Ton assistant d’entretien IA",
+        "tagline": "Je t’aide à préparer l’entretien de ton entreprise idéale avec confiance.",
+        "ctaStart": "Commencer",
+        "ctaLogin": "Tu as déjà un compte ? Connexion"
+    },
+    "onboarding": {
+        "slide1": {
+            "heading": "Pratique des entretiens réalistes",
+            "bullets": [
+                "Découvre des entretiens IA naturels et humains",
+                "Reçois un retour style recruteur grâce à l’analyse avancée",
+                "Suis tes progrès avec séries, badges et certificats"
+            ]
+        },
+        "slide2": {
+            "heading": "Surmonte le stress des entretiens",
+            "bullets": [
+                "Progresse vite avec un retour personnalisé",
+                "Gagne en confiance grâce à une pratique régulière",
+                "Apprends à structurer et présenter de meilleures réponses"
+            ]
+        },
+        "next": "Suivant",
+        "chooseDomain": "Choisis ton domaine",
+        "selectDomain": "Sélectionne ton domaine pour de meilleures recommandations.",
+        "chooseRole": "Choisis ton rôle",
+        "pickRole": "Sélectionne un rôle pour une pratique personnalisée.",
+        "selectLevel": "Sélectionne ton niveau",
+        "pickExperience": "Choisis ton niveau d’expérience."
+    },
+    "login": {
+        "title": "Connexion",
+        "emailLabel": "Adresse e-mail",
+        "emailPlaceholder": "hello@example.com",
+        "passwordLabel": "Mot de passe",
+        "passwordPlaceholder": "********",
+        "forgotPassword": "Mot de passe oublié ?",
+        "button": "Connexion",
+        "or": "ou",
+        "noAccount": "Pas de compte ? Inscription"
+    },
+    "signup": {
+        "title": "Inscription",
+        "emailLabel": "Adresse e-mail",
+        "emailPlaceholder": "hello@example.com",
+        "passwordLabel": "Mot de passe",
+        "passwordPlaceholder": "********",
+        "button": "S’inscrire",
+        "or": "ou",
+        "haveAccount": "Tu as déjà un compte ? Connexion"
+    },
+    "forgot": {
+        "title": "Mot de passe oublié",
+        "subtitle": "Entre ton e-mail pour recevoir un code de vérification.",
+        "emailLabel": "E-mail",
+        "emailPlaceholder": "hello@example.com",
+        "sendCode": "Envoyer le code",
+        "remember": "Tu te souviens du mot de passe ? Connexion"
+    },
+    "legal": {
+        "terms": "Conditions d’utilisation",
+        "privacy": "Politique de confidentialité"
+    },
+    "auth": {
+        "googleContinue": "Continuer avec Google"
+    },
+    "home": {
+        "greeting": "Bonjour {{name}}",
+        "userFallback": "Utilisateur",
+        "welcome": "Bienvenue sur ton espace.",
+        "noInterview": "Aucun entretien trouvé",
+        "scoreLabel": "Score:",
+        "na": "N/A",
+        "youScored": "Ton score est {{scoreText}}",
+        "chooseMode": "Choisis ton mode d’entretien",
+        "interviews": {
+            "common": {
+                "action": "Commencer"
+            },
+            "practice": {
+                "title": "Teste-toi",
+                "description": "Entretien simulé avec retour immédiat pour améliorer tes compétences.",
+                "bottomLine": "Tester maintenant >>"
+            },
+            "train": {
+                "title": "Entraîne-toi",
+                "description": "Le mode coach améliore tes réponses et ton assurance.",
+                "bottomLine": "S’entraîner >>"
+            }
+        },
+        "score": {
+            "bad": "Faible",
+            "good": "Bon",
+            "excellent": "Excellent"
+        }
+    },
+    "jobs": {
+        "recommendedCount": "Emplois recommandés ({{count}})",
+        "description": "Voici des emplois recommandés pour le poste de {{position}}.",
+        "upcoming": "(Nouvelle mise à jour dans 12 heures)",
+        "loader": {
+            "finding": "Recherche d’emplois...",
+            "warming": "Préparation de ton flux d’emplois..."
+        },
+        "filters": {
+            "savedJobs": "Sauvé",
+            "allJobs": "Tous",
+            "allTypes": "Types",
+            "fullTime": "Plein",
+            "hybrid": "Hybride",
+            "remote": "Distant",
+            "allLocations": "Lieux"
+        },
+        "form": {
+            "headerTitle": "Détails professionnels",
+            "headerDescription": "Partage un bref résumé de ton rôle et de ton expérience.",
+            "extraText": "(Nouvelle mise à jour dans 12 heures)",
+            "positionLabel": "Poste",
+            "positionPlaceholder": "Ingénieur logiciel",
+            "positionExample": "ex.: Ingénieur logiciel",
+            "positionA11y": "Poste",
+            "positionHelp": "Aide à faire correspondre les titres de poste",
+            "experienceLabel": "Années d’expérience",
+            "experiencePlaceholder": "5",
+            "experienceA11y": "Années d’expérience",
+            "yearsSuffix": "ans",
+            "experienceHelp": "Entre uniquement des années complètes",
+            "pleaseWait": "Veuillez attendre...",
+            "continue": "Continuer"
+        }
+    },
+    "reports": {
+        "empty": {
+            "title": "Aucun rapport trouvé",
+            "subtitle": "Termine quelques entretiens pour voir les rapports."
+        },
+        "filters": {
+            "all": "Tous",
+            "mock": "Simulé",
+            "trainer": "Coach"
+        },
+        "pending": "En attente...",
+        "interview": "Entretien",
+        "viewReport": "Voir rapport",
+        "score": "Score",
+        "viewSummary": "Voir résumé",
+        "interviewSummary": "Résumé de l’entretien",
+        "seeFullReport": "Voir rapport complet",
+        "detailedReport": "Rapport détaillé",
+        "skillOverview": "Aperçu des compétences"
+    },
+    "profile": {
+        "planExpiryPrefix": "Expiration:",
+        "editProfile": "Modifier le profil",
+        "subscription": {
+            "title": "Abonnement",
+            "subtitle": "Ton plan actuel et tes informations de facturation.",
+            "freePlan": "Gratuit",
+            "active": "Actif",
+            "of": "sur",
+            "minutesUsed": "minutes utilisées",
+            "minutesLeft": "minutes restantes",
+            "upgrade": "Passer en Pro",
+            "proActive": "Plan Pro actif"
+        },
+        "legal": {
+            "prefix": "En utilisant cette application, tu acceptes",
+            "terms": "Conditions du service",
+            "and": "et",
+            "privacy": "Politique de confidentialité"
+        },
+        "danger": {
+            "title": "Zone de risque",
+            "subtitle": "Actions irréversibles.",
+            "logout": "Déconnexion",
+            "deleteTitle": "Supprimer le compte",
+            "deleteDesc": "Supprime ton compte et toutes tes données de façon permanente.",
+            "deleteButton": "Supprimer le compte"
+        },
+        "stats": {
+            "role": "Rôle",
+            "level": "Niveau",
+            "totalTime": "Temps total",
+            "rating": "Évaluation",
+            "minutes": "Minutes"
+        }
+    },
+    "avatar": {
+        "step1Title": "Comment dois-je t’appeler?",
+        "step2Title": "Choisis ton avatar",
+        "fullNameLabel": "Nom complet",
+        "namePlaceholder": "Entrer le nom",
+        "nextButton": "Suivant",
+        "startButton": "Commencer l’entretien"
+    },
+    "interview": {
+        "title": "Instructions de l’entretien",
+        "instr1": "Commence l’entretien en disant Bonjour",
+        "instr2": "Assieds-toi dans un endroit calme",
+        "instr3": "Assure une connexion internet stable",
+        "instr4": "Assieds-toi dans un endroit bien éclairé",
+        "cameraOffTitle": "Caméra éteinte",
+        "cameraOffMessage": "Allume ta caméra.",
+        "btn_wait": "Veuillez attendre...",
+        "btn_end": "Terminer l’entretien",
+        "btn_start": "Commencer l’entretien"
+    },
+    "analysis": {
+        "strengthsTitle": "Forces",
+        "weaknessesTitle": "Faiblesses",
+        "tapToViewStrength": "Appuie pour voir la force.",
+        "tapToViewWeakness": "Appuie pour voir la faiblesse.",
+        "noItemsFound": "Aucun élément trouvé",
+        "strength": "Force",
+        "weakness": "Faiblesse",
+        "howToImprove": "Comment améliorer",
+        "tryAgain": "Réessayer"
+    },
+    "tabs": {
+        "reportAnalysis": "Analyse",
+        "transcript": "Transcription"
+    },
+    "carousel": {
+        "notEnoughData": "Données insuffisantes",
+        "poor": "Faible",
+        "good": "Bon",
+        "excellent": "Excellent",
+        "seeDetailedReport": "Voir rapport détaillé"
+    },
+    "skills": {
+        "Technical_Expertise": "Expertise technique",
+        "Problem_Solving": "Résolution de problèmes",
+        "Decision_Judgment": "Jugement",
+        "Debugging_Mindset": "Esprit débogage",
+        "Accountability_Mindset": "Responsabilité",
+        "Team_Collaboration": "Collaboration",
+        "Growth_Mindset": "Esprit de croissance",
+        "Conflict_Resolution": "Résolution de conflits",
+        "Outcome_Focus": "Orientation résultat",
+        "notEnoughData": "Pas assez de données",
+        "poor": "Faible",
+        "good": "Bon",
+        "excellent": "Excellent",
+        "detailedAnalysis": "Analyse détaillée"
+    },
+    "improvements": {
+        "title": "Étapes d’amélioration",
+        "openResource": "Ouvrir ressource",
+        "cannotOpenLinkTitle": "Impossible d’ouvrir le lien",
+        "cannotOpenLinkMsg": "Le lien ne peut pas être ouvert sur cet appareil.",
+        "errorTitle": "Erreur",
+        "errorMsg": "Échec de l’ouverture du lien.",
+        "empty": "Aucun élément trouvé"
+    },
+    "leagues": {
+        "bronze": "Bronze",
+        "silver": "Argent",
+        "gold": "Or",
+        "platinum": "Platine",
+        "diamond": "Diamant",
+        "emerald": "Émeraude",
+        "ruby": "Rubis",
+        "sapphire": "Saphir",
+        "obsidian": "Obsidienne",
+        "crystal": "Cristal"
+    },
+    "leaderboard": {
+        "loading": "Chargement du classement...",
+        "you": "Toi",
+        "description": "Voici le classement",
+        "league": "Ligue"
+    },
+    "chat": {
+        "user": "Utilisateur",
+        "nova": "Nova"
+    },
+    "account": {
+        "deleteConfirmTitle": "Confirmer la suppression",
+        "deleteConfirmMessage": "Veux-tu supprimer ton compte définitivement?",
+        "cancel": "Annuler",
+        "delete": "Supprimer",
+        "errorTitle": "Erreur",
+        "errorMessage": "Échec de la suppression du compte."
+    }
+}

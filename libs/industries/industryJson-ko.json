@@ -1,0 +1,604 @@
+{
+    "IT 및 소프트웨어": {
+        "소프트웨어 엔지니어 / 개발자": [
+            "Java",
+            "Python",
+            "Data Structures and Algorithms",
+            "Git",
+            "SQL"
+        ],
+        "풀스택 개발자": [
+            "React",
+            "Node.js",
+            "MongoDB",
+            "Express.js",
+            "JavaScript"
+        ],
+        "데이터 사이언티스트": [
+            "Python",
+            "Machine Learning",
+            "Pandas",
+            "Tableau",
+            "SQL"
+        ],
+        "머신러닝 엔지니어": [
+            "Python",
+            "TensorFlow",
+            "PyTorch",
+            "Kubernetes",
+            "Docker"
+        ],
+        "데브옵스 엔지니어": [
+            "Docker",
+            "Kubernetes",
+            "Jenkins",
+            "Terraform",
+            "AWS"
+        ],
+        "클라우드 엔지니어": [
+            "AWS",
+            "Azure",
+            "Terraform",
+            "Kubernetes",
+            "Python"
+        ],
+        "사이버보안 분석가": [
+            "Network Security",
+            "Penetration Testing",
+            "SIEM",
+            "Python",
+            "Wireshark"
+        ],
+        "프로덕트 매니저": [
+            "JIRA",
+            "SQL",
+            "Figma",
+            "Google Analytics",
+            "Excel"
+        ]
+    },
+    "CAT 준비": {
+        "개인 인터뷰": [
+            "Self Introduction",
+            "Story Presentation",
+            "Career Clarity",
+            "Strength and Weakness Analysis",
+            "Body Language",
+            "Current Affairs Awareness",
+            "Mock Interview Practice",
+            "Communication Skills"
+        ],
+        "그룹 토론": [
+            "Idea Structuring",
+            "Logical Thinking",
+            "Active Listening",
+            "Clear Communication",
+            "Team Interaction",
+            "Time Management",
+            "Topic Analysis",
+            "Current Affairs Awareness"
+        ]
+    },
+    "은행, 금융 및 보험": {
+        "재무 분석가": [
+            "Excel",
+            "Financial Modeling",
+            "SQL",
+            "Bloomberg Terminal",
+            "PowerPoint"
+        ],
+        "투자은행가": [
+            "Excel",
+            "PowerPoint",
+            "Financial Modeling",
+            "Bloomberg Terminal",
+            "Capital IQ"
+        ],
+        "리스크 분석가": [
+            "Python",
+            "R",
+            "SQL",
+            "Excel",
+            "SAS"
+        ],
+        "기업 재무 분석가": [
+            "Excel",
+            "SAP",
+            "Oracle",
+            "PowerPoint",
+            "SQL"
+        ],
+        "컴플라이언스 담당자": [
+            "AML/KYC",
+            "Risk Assessment",
+            "Regulatory Knowledge",
+            "Audit Tools",
+            "MS Office"
+        ],
+        "핀테크 프로덕트 매니저": [
+            "SQL",
+            "JIRA",
+            "API Integration",
+            "Figma",
+            "Google Analytics"
+        ],
+        "신용 리스크 매니저": [
+            "Python",
+            "SAS",
+            "Excel",
+            "SQL",
+            "R"
+        ],
+        "포트폴리오 매니저": [
+            "Bloomberg Terminal",
+            "Excel",
+            "Financial Modeling",
+            "Python",
+            "Risk Management Tools"
+        ]
+    },
+    "공학": {
+        "디자인 엔지니어": [
+            "AutoCAD",
+            "SolidWorks",
+            "CATIA",
+            "ANSYS",
+            "Creo"
+        ],
+        "프로젝트 매니저": [
+            "MS Project",
+            "Primavera P6",
+            "AutoCAD",
+            "Excel",
+            "SAP"
+        ],
+        "기계 엔지니어": [
+            "AutoCAD",
+            "SolidWorks",
+            "Lean Manufacturing",
+            "SAP",
+            "CNC Programming"
+        ],
+        "토목 현장 엔지니어": [
+            "AutoCAD",
+            "Civil 3D",
+            "Primavera",
+            "MS Project",
+            "Total Station"
+        ],
+        "전기 설계 엔지니어": [
+            "AutoCAD Electrical",
+            "ETAP",
+            "MATLAB",
+            "PLC Programming",
+            "EPLAN"
+        ],
+        "프로세스 엔지니어": [
+            "Aspen HYSYS",
+            "Aspen Plus",
+            "Six Sigma",
+            "AutoCAD",
+            "MATLAB"
+        ],
+        "자동화 엔지니어": [
+            "PLC Programming",
+            "SCADA",
+            "Siemens TIA Portal",
+            "Allen Bradley",
+            "HMI"
+        ],
+        "품질 관리 엔지니어": [
+            "ISO 9001",
+            "Statistical Process Control",
+            "Minitab",
+            "Six Sigma",
+            "CMM"
+        ]
+    },
+    "데이터 사이언스 및 분석": {
+        "데이터 사이언티스트": [
+            "Python",
+            "Machine Learning",
+            "Pandas",
+            "SQL",
+            "Scikit-learn"
+        ],
+        "머신러닝 엔지니어": [
+            "Python",
+            "TensorFlow",
+            "PyTorch",
+            "Docker",
+            "Kubernetes"
+        ],
+        "데이터 분석가": [
+            "SQL",
+            "Excel",
+            "Tableau",
+            "Power BI",
+            "Python"
+        ],
+        "데이터 엔지니어": [
+            "SQL",
+            "Python",
+            "Apache Spark",
+            "Airflow",
+            "AWS"
+        ],
+        "BI 분석가": [
+            "Tableau",
+            "Power BI",
+            "SQL",
+            "Excel",
+            "DAX"
+        ],
+        "MLOps 엔지니어": [
+            "Docker",
+            "Kubernetes",
+            "MLflow",
+            "Python",
+            "Jenkins"
+        ],
+        "데이터 아키텍트": [
+            "SQL",
+            "MongoDB",
+            "Snowflake",
+            "AWS Redshift",
+            "ETL Tools"
+        ],
+        "NLP 엔지니어": [
+            "Python",
+            "NLTK",
+            "spaCy",
+            "Transformers",
+            "PyTorch"
+        ]
+    },
+    "컨설팅 및 비즈니스 전략": {
+        "경영 컨설턴트": [
+            "PowerPoint",
+            "Excel",
+            "Tableau",
+            "SQL",
+            "Market Research Tools"
+        ],
+        "전략 컨설턴트": [
+            "Excel",
+            "PowerPoint",
+            "Financial Modeling",
+            "Tableau",
+            "SQL"
+        ],
+        "기업 전략 분석가": [
+            "Excel",
+            "PowerPoint",
+            "SQL",
+            "Tableau",
+            "Financial Modeling"
+        ],
+        "운영 컨설턴트": [
+            "Lean Six Sigma",
+            "Excel",
+            "Process Mapping Tools",
+            "SQL",
+            "Tableau"
+        ],
+        "디지털 전환 컨설턴트": [
+            "Cloud Platforms (AWS, Azure)",
+            "Agile Tools (JIRA)",
+            "PowerPoint",
+            "Tableau",
+            "SQL"
+        ],
+        "재무 컨설턴트": [
+            "Excel",
+            "Financial Planning Software",
+            "QuickBooks",
+            "SAP",
+            "PowerPoint"
+        ],
+        "HR 전략 컨설턴트": [
+            "HRIS Systems",
+            "Excel",
+            "PowerPoint",
+            "Tableau",
+            "Survey Tools"
+        ],
+        "지속 가능성": [
+            "ESG Reporting Tools",
+            "Excel",
+            "Tableau",
+            "PowerPoint",
+            "Carbon Accounting Software"
+        ]
+    },
+    "항공 및 우주": {
+        "상업용 파일럿": [
+            "CPL License",
+            "ATPL License",
+            "Flight Simulators",
+            "Navigation Systems",
+            "Aviation Regulations"
+        ],
+        "항공기 정비 엔지니어": [
+            "Aircraft Systems",
+            "AME License",
+            "Troubleshooting Tools",
+            "DGCA Regulations",
+            "Maintenance Software"
+        ],
+        "항공우주 엔지니어": [
+            "CATIA",
+            "SolidWorks",
+            "ANSYS",
+            "MATLAB",
+            "Simulink"
+        ],
+        "항공 전자 엔지니어": [
+            "Embedded Systems",
+            "Circuit Design",
+            "MATLAB",
+            "DO-178C",
+            "Testing Tools"
+        ],
+        "항공 운항 관리자": [
+            "Flight Planning Software",
+            "Safety Management System",
+            "DGCA Regulations",
+            "Excel",
+            "Resource Management Tools"
+        ],
+        "항공 안전 관리자": [
+            "Safety Management System",
+            "DGCA Regulations",
+            "Risk Assessment Tools",
+            "Audit Software",
+            "Incident Reporting System"
+        ],
+        "항공우주 프로젝트 매니저": [
+            "MS Project",
+            "Primavera",
+            "CATIA",
+            "Risk Management Tools",
+            "Excel"
+        ],
+        "항공 교통 관제사": [
+            "Radar Systems",
+            "Communication Systems",
+            "Air Traffic Control Procedures",
+            "Flight Planning Software",
+            "Navigation Tools"
+        ]
+    },
+    "해운, 물류 및 공급망": {
+        "공급망 관리자": [
+            "SAP",
+            "Oracle SCM",
+            "Excel",
+            "Demand Planning Software",
+            "ERP Systems"
+        ],
+        "물류 관리자": [
+            "TMS",
+            "WMS",
+            "Excel",
+            "SAP",
+            "Route Optimization Software"
+        ],
+        "구매 전문가": [
+            "SAP",
+            "Oracle Procurement",
+            "Excel",
+            "Negotiation Tools",
+            "ERP Systems"
+        ],
+        "창고 관리자": [
+            "WMS",
+            "SAP",
+            "Excel",
+            "Inventory Management Software",
+            "Barcode Scanner"
+        ],
+        "수출입 담당자": [
+            "Customs Software",
+            "Incoterms",
+            "Excel",
+            "Documentation Tools",
+            "Shipping Software"
+        ],
+        "공급망 분석가": [
+            "Excel",
+            "Tableau",
+            "SQL",
+            "SAP",
+            "Power BI"
+        ],
+        "글로벌 소싱 매니저": [
+            "SAP",
+            "Oracle",
+            "Excel",
+            "Supplier Management Tools",
+            "ERP Systems"
+        ],
+        "운송 플래너": [
+            "TMS",
+            "Route Optimization Software",
+            "Excel",
+            "GIS Software",
+            "SAP"
+        ]
+    },
+    "재생 에너지 및 태양광": {
+        "태양광 설계 엔지니어": [
+            "PVsyst",
+            "AutoCAD",
+            "Helioscope",
+            "SketchUp",
+            "MATLAB"
+        ],
+        "프로젝트 매니저": [
+            "MS Project",
+            "Primavera P6",
+            "AutoCAD",
+            "Excel",
+            "SAP"
+        ],
+        "운영 및 유지보수 엔지니어": [
+            "SCADA Systems",
+            "PVsyst",
+            "Monitoring Software",
+            "Troubleshooting Tools",
+            "Safety Equipment"
+        ],
+        "배터리 시스템 엔지니어": [
+            "MATLAB",
+            "Simulink",
+            "Battery Management System",
+            "Power Electronics Design",
+            "Testing Equipment"
+        ],
+        "재생 에너지 컨설턴트": [
+            "PVsyst",
+            "HOMER",
+            "Excel",
+            "Financial Modeling",
+            "RETScreen"
+        ],
+        "비즈니스 개발": [
+            "CRM Software",
+            "Excel",
+            "PowerPoint",
+            "Market Research Tools",
+            "PVsyst"
+        ],
+        "에너지 정책 분석가": [
+            "Excel",
+            "Statistical Software",
+            "Policy Research Tools",
+            "Tableau",
+            "PowerPoint"
+        ],
+        "마이크로그리드 엔지니어": [
+            "HOMER",
+            "MATLAB",
+            "Simulink",
+            "ETAP",
+            "Power System Design Software"
+        ]
+    },
+    "제조 및 생산": {
+        "생산 엔지니어": [
+            "AutoCAD",
+            "Lean Manufacturing",
+            "SAP",
+            "Six Sigma",
+            "CNC Programming"
+        ],
+        "프로세스 엔지니어": [
+            "Aspen HYSYS",
+            "Six Sigma",
+            "AutoCAD",
+            "MATLAB",
+            "Process Simulation Software"
+        ],
+        "품질 보증 엔지니어": [
+            "ISO 9001",
+            "Minitab",
+            "Six Sigma",
+            "Statistical Process Control",
+            "Quality Management Software"
+        ],
+        "유지보수 엔지니어": [
+            "CMMS Software",
+            "AutoCAD",
+            "Troubleshooting Tools",
+            "SAP",
+            "Vibration Analysis Tools"
+        ],
+        "구매 엔지니어": [
+            "SAP",
+            "Oracle",
+            "Excel",
+            "ERP Systems",
+            "Vendor Management Software"
+        ],
+        "R&D 엔지니어": [
+            "CAD Software",
+            "SolidWorks",
+            "ANSYS",
+            "MATLAB",
+            "Prototyping Tools"
+        ],
+        "EHS 담당자": [
+            "Safety Management Software",
+            "Risk Assessment Tools",
+            "ISO 45001",
+            "Incident Management System",
+            "Audit Tools"
+        ],
+        "플랜트 매니저": [
+            "SAP",
+            "Lean Six Sigma",
+            "Excel",
+            "ERP Systems",
+            "Production Planning Software"
+        ]
+    },
+    "헬스케어 및 제약": {
+        "의사": [
+            "EMR/EHR Systems",
+            "Medical Diagnosis",
+            "Clinical Procedures",
+            "HIPAA Compliance",
+            "Medical Imaging Software"
+        ],
+        "간호사": [
+            "EMR/EHR Systems",
+            "IV Administration",
+            "Patient Monitoring Systems",
+            "Medication Management",
+            "Clinical Procedures"
+        ],
+        "약사": [
+            "Pharmacy Management Systems",
+            "Drug Database Software",
+            "Prescription Processing",
+            "Inventory Management",
+            "Clinical Knowledge"
+        ],
+        "임상 연구 코디네이터": [
+            "GCP Guidelines",
+            "Clinical Trial Management Systems",
+            "EDC Systems",
+            "Regulatory Documents",
+            "Site Monitoring"
+        ],
+        "바이오메디컬 엔지니어": [
+            "CAD Software",
+            "MATLAB",
+            "Medical Device Design",
+            "FDA Regulations",
+            "Testing Equipment"
+        ],
+        "병원 관리자": [
+            "Hospital Information Systems",
+            "Excel",
+            "SAP",
+            "Healthcare Compliance",
+            "Budget Management Software"
+        ],
+        "의료 영업 대표": [
+            "CRM Software",
+            "PowerPoint",
+            "Product Knowledge",
+            "Excel",
+            "Territory Management Tools"
+        ],
+        "공중보건 담당자": [
+            "Epidemiological Software",
+            "Statistical Analysis Tools",
+            "Excel",
+            "SPSS",
+            "Health Surveillance Systems"
+        ]
+    }
+}

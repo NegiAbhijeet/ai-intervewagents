@@ -1,0 +1,18 @@
+[
+    {
+        "label": "Nível inicial",
+        "value": 1
+    },
+    {
+        "label": "Nível médio",
+        "value": 8
+    },
+    {
+        "label": "Sênior",
+        "value": 12
+    },
+    {
+        "label": "Executivo",
+        "value": 20
+    }
+]

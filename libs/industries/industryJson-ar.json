@@ -1,0 +1,604 @@
+{
+    "تكنولوجيا المعلومات والبرمجيات": {
+        "مهندس برمجيات / مطور": [
+            "Java",
+            "Python",
+            "Data Structures and Algorithms",
+            "Git",
+            "SQL"
+        ],
+        "مطور Full Stack": [
+            "React",
+            "Node.js",
+            "MongoDB",
+            "Express.js",
+            "JavaScript"
+        ],
+        "عالم بيانات": [
+            "Python",
+            "Machine Learning",
+            "Pandas",
+            "Tableau",
+            "SQL"
+        ],
+        "مهندس تعلم آلي": [
+            "Python",
+            "TensorFlow",
+            "PyTorch",
+            "Kubernetes",
+            "Docker"
+        ],
+        "مهندس DevOps": [
+            "Docker",
+            "Kubernetes",
+            "Jenkins",
+            "Terraform",
+            "AWS"
+        ],
+        "مهندس سحابي": [
+            "AWS",
+            "Azure",
+            "Terraform",
+            "Kubernetes",
+            "Python"
+        ],
+        "محلل أمن سيبراني": [
+            "Network Security",
+            "Penetration Testing",
+            "SIEM",
+            "Python",
+            "Wireshark"
+        ],
+        "مدير منتج": [
+            "JIRA",
+            "SQL",
+            "Figma",
+            "Google Analytics",
+            "Excel"
+        ]
+    },
+    "التحضير لاختبار CAT": {
+        "المقابلة الشخصية": [
+            "Self Introduction",
+            "Story Presentation",
+            "Career Clarity",
+            "Strength and Weakness Analysis",
+            "Body Language",
+            "Current Affairs Awareness",
+            "Mock Interview Practice",
+            "Communication Skills"
+        ],
+        "مناقشة جماعية": [
+            "Idea Structuring",
+            "Logical Thinking",
+            "Active Listening",
+            "Clear Communication",
+            "Team Interaction",
+            "Time Management",
+            "Topic Analysis",
+            "Current Affairs Awareness"
+        ]
+    },
+    "البنوك والتمويل والتأمين": {
+        "محلل مالي": [
+            "Excel",
+            "Financial Modeling",
+            "SQL",
+            "Bloomberg Terminal",
+            "PowerPoint"
+        ],
+        "مصرفي استثماري": [
+            "Excel",
+            "PowerPoint",
+            "Financial Modeling",
+            "Bloomberg Terminal",
+            "Capital IQ"
+        ],
+        "محلل مخاطر": [
+            "Python",
+            "R",
+            "SQL",
+            "Excel",
+            "SAS"
+        ],
+        "محلل تمويل الشركات": [
+            "Excel",
+            "SAP",
+            "Oracle",
+            "PowerPoint",
+            "SQL"
+        ],
+        "ضابط امتثال": [
+            "AML/KYC",
+            "Risk Assessment",
+            "Regulatory Knowledge",
+            "Audit Tools",
+            "MS Office"
+        ],
+        "مدير منتج فينتك": [
+            "SQL",
+            "JIRA",
+            "API Integration",
+            "Figma",
+            "Google Analytics"
+        ],
+        "مدير مخاطر الائتمان": [
+            "Python",
+            "SAS",
+            "Excel",
+            "SQL",
+            "R"
+        ],
+        "مدير محفظة": [
+            "Bloomberg Terminal",
+            "Excel",
+            "Financial Modeling",
+            "Python",
+            "Risk Management Tools"
+        ]
+    },
+    "الهندسة": {
+        "مهندس تصميم": [
+            "AutoCAD",
+            "SolidWorks",
+            "CATIA",
+            "ANSYS",
+            "Creo"
+        ],
+        "مدير مشروع": [
+            "MS Project",
+            "Primavera P6",
+            "AutoCAD",
+            "Excel",
+            "SAP"
+        ],
+        "مهندس ميكانيكا": [
+            "AutoCAD",
+            "SolidWorks",
+            "Lean Manufacturing",
+            "SAP",
+            "CNC Programming"
+        ],
+        "مهندس موقع مدني": [
+            "AutoCAD",
+            "Civil 3D",
+            "Primavera",
+            "MS Project",
+            "Total Station"
+        ],
+        "مهندس تصميم كهربائي": [
+            "AutoCAD Electrical",
+            "ETAP",
+            "MATLAB",
+            "PLC Programming",
+            "EPLAN"
+        ],
+        "مهندس عمليات/عمليات المعالجة": [
+            "Aspen HYSYS",
+            "Aspen Plus",
+            "Six Sigma",
+            "AutoCAD",
+            "MATLAB"
+        ],
+        "مهندس أتمتة": [
+            "PLC Programming",
+            "SCADA",
+            "Siemens TIA Portal",
+            "Allen Bradley",
+            "HMI"
+        ],
+        "مهندس مراقبة جودة": [
+            "ISO 9001",
+            "Statistical Process Control",
+            "Minitab",
+            "Six Sigma",
+            "CMM"
+        ]
+    },
+    "علوم البيانات والتحليلات": {
+        "عالم بيانات": [
+            "Python",
+            "Machine Learning",
+            "Pandas",
+            "SQL",
+            "Scikit-learn"
+        ],
+        "مهندس تعلم آلي": [
+            "Python",
+            "TensorFlow",
+            "PyTorch",
+            "Docker",
+            "Kubernetes"
+        ],
+        "محلل بيانات": [
+            "SQL",
+            "Excel",
+            "Tableau",
+            "Power BI",
+            "Python"
+        ],
+        "مهندس بيانات": [
+            "SQL",
+            "Python",
+            "Apache Spark",
+            "Airflow",
+            "AWS"
+        ],
+        "محلل ذكاء أعمال": [
+            "Tableau",
+            "Power BI",
+            "SQL",
+            "Excel",
+            "DAX"
+        ],
+        "مهندس MLOps": [
+            "Docker",
+            "Kubernetes",
+            "MLflow",
+            "Python",
+            "Jenkins"
+        ],
+        "مهندس بيانات معماري": [
+            "SQL",
+            "MongoDB",
+            "Snowflake",
+            "AWS Redshift",
+            "ETL Tools"
+        ],
+        "مهندس معالجة اللغة الطبيعية": [
+            "Python",
+            "NLTK",
+            "spaCy",
+            "Transformers",
+            "PyTorch"
+        ]
+    },
+    "الاستشارات واستراتيجية الأعمال": {
+        "استشاري إدارة": [
+            "PowerPoint",
+            "Excel",
+            "Tableau",
+            "SQL",
+            "Market Research Tools"
+        ],
+        "استشاري استراتيجية": [
+            "Excel",
+            "PowerPoint",
+            "Financial Modeling",
+            "Tableau",
+            "SQL"
+        ],
+        "محلل استراتيجية الشركات": [
+            "Excel",
+            "PowerPoint",
+            "SQL",
+            "Tableau",
+            "Financial Modeling"
+        ],
+        "استشاري عمليات": [
+            "Lean Six Sigma",
+            "Excel",
+            "Process Mapping Tools",
+            "SQL",
+            "Tableau"
+        ],
+        "استشاري التحول الرقمي": [
+            "Cloud Platforms (AWS, Azure)",
+            "Agile Tools (JIRA)",
+            "PowerPoint",
+            "Tableau",
+            "SQL"
+        ],
+        "استشاري مالي": [
+            "Excel",
+            "Financial Planning Software",
+            "QuickBooks",
+            "SAP",
+            "PowerPoint"
+        ],
+        "استشاري استراتيجية الموارد البشرية": [
+            "HRIS Systems",
+            "Excel",
+            "PowerPoint",
+            "Tableau",
+            "Survey Tools"
+        ],
+        "الاستدامة": [
+            "ESG Reporting Tools",
+            "Excel",
+            "Tableau",
+            "PowerPoint",
+            "Carbon Accounting Software"
+        ]
+    },
+    "الطيران والفضاء": {
+        "طيار تجاري": [
+            "CPL License",
+            "ATPL License",
+            "Flight Simulators",
+            "Navigation Systems",
+            "Aviation Regulations"
+        ],
+        "مهندس صيانة الطائرات": [
+            "Aircraft Systems",
+            "AME License",
+            "Troubleshooting Tools",
+            "DGCA Regulations",
+            "Maintenance Software"
+        ],
+        "مهندس فضاء جوي": [
+            "CATIA",
+            "SolidWorks",
+            "ANSYS",
+            "MATLAB",
+            "Simulink"
+        ],
+        "مهندس إلكترونيات الطيران": [
+            "Embedded Systems",
+            "Circuit Design",
+            "MATLAB",
+            "DO-178C",
+            "Testing Tools"
+        ],
+        "مدير عمليات الطيران": [
+            "Flight Planning Software",
+            "Safety Management System",
+            "DGCA Regulations",
+            "Excel",
+            "Resource Management Tools"
+        ],
+        "مسؤول سلامة الطيران": [
+            "Safety Management System",
+            "DGCA Regulations",
+            "Risk Assessment Tools",
+            "Audit Software",
+            "Incident Reporting System"
+        ],
+        "مدير مشروع فضائي": [
+            "MS Project",
+            "Primavera",
+            "CATIA",
+            "Risk Management Tools",
+            "Excel"
+        ],
+        "مراقب حركة جوية": [
+            "Radar Systems",
+            "Communication Systems",
+            "Air Traffic Control Procedures",
+            "Flight Planning Software",
+            "Navigation Tools"
+        ]
+    },
+    "الشحن واللوجستيات وسلسلة الإمداد": {
+        "مدير سلسلة الإمداد": [
+            "SAP",
+            "Oracle SCM",
+            "Excel",
+            "Demand Planning Software",
+            "ERP Systems"
+        ],
+        "مدير لوجستي": [
+            "TMS",
+            "WMS",
+            "Excel",
+            "SAP",
+            "Route Optimization Software"
+        ],
+        "أخصائي مشتريات": [
+            "SAP",
+            "Oracle Procurement",
+            "Excel",
+            "Negotiation Tools",
+            "ERP Systems"
+        ],
+        "مدير مخزن": [
+            "WMS",
+            "SAP",
+            "Excel",
+            "Inventory Management Software",
+            "Barcode Scanner"
+        ],
+        "تنفيذي استيراد وتصدير": [
+            "Customs Software",
+            "Incoterms",
+            "Excel",
+            "Documentation Tools",
+            "Shipping Software"
+        ],
+        "محلل سلسلة الإمداد": [
+            "Excel",
+            "Tableau",
+            "SQL",
+            "SAP",
+            "Power BI"
+        ],
+        "مدير الشراء العالمي": [
+            "SAP",
+            "Oracle",
+            "Excel",
+            "Supplier Management Tools",
+            "ERP Systems"
+        ],
+        "مخطط النقل": [
+            "TMS",
+            "Route Optimization Software",
+            "Excel",
+            "GIS Software",
+            "SAP"
+        ]
+    },
+    "الطاقة المتجددة والطاقة الشمسية": {
+        "مهندس تصميم شمسي": [
+            "PVsyst",
+            "AutoCAD",
+            "Helioscope",
+            "SketchUp",
+            "MATLAB"
+        ],
+        "مدير مشروع": [
+            "MS Project",
+            "Primavera P6",
+            "AutoCAD",
+            "Excel",
+            "SAP"
+        ],
+        "مهندس عمليات وصيانة": [
+            "SCADA Systems",
+            "PVsyst",
+            "Monitoring Software",
+            "Troubleshooting Tools",
+            "Safety Equipment"
+        ],
+        "مهندس نظم البطاريات": [
+            "MATLAB",
+            "Simulink",
+            "Battery Management System",
+            "Power Electronics Design",
+            "Testing Equipment"
+        ],
+        "مستشار طاقة متجددة": [
+            "PVsyst",
+            "HOMER",
+            "Excel",
+            "Financial Modeling",
+            "RETScreen"
+        ],
+        "تطوير الأعمال": [
+            "CRM Software",
+            "Excel",
+            "PowerPoint",
+            "Market Research Tools",
+            "PVsyst"
+        ],
+        "محلل سياسات الطاقة": [
+            "Excel",
+            "Statistical Software",
+            "Policy Research Tools",
+            "Tableau",
+            "PowerPoint"
+        ],
+        "مهندس ميكروجرِيد": [
+            "HOMER",
+            "MATLAB",
+            "Simulink",
+            "ETAP",
+            "Power System Design Software"
+        ]
+    },
+    "التصنيع والإنتاج": {
+        "مهندس إنتاج": [
+            "AutoCAD",
+            "Lean Manufacturing",
+            "SAP",
+            "Six Sigma",
+            "CNC Programming"
+        ],
+        "مهندس عمليات": [
+            "Aspen HYSYS",
+            "Six Sigma",
+            "AutoCAD",
+            "MATLAB",
+            "Process Simulation Software"
+        ],
+        "مهندس ضمان الجودة": [
+            "ISO 9001",
+            "Minitab",
+            "Six Sigma",
+            "Statistical Process Control",
+            "Quality Management Software"
+        ],
+        "مهندس صيانة": [
+            "CMMS Software",
+            "AutoCAD",
+            "Troubleshooting Tools",
+            "SAP",
+            "Vibration Analysis Tools"
+        ],
+        "مهندس مشتريات": [
+            "SAP",
+            "Oracle",
+            "Excel",
+            "ERP Systems",
+            "Vendor Management Software"
+        ],
+        "مهندس بحث وتطوير": [
+            "CAD Software",
+            "SolidWorks",
+            "ANSYS",
+            "MATLAB",
+            "Prototyping Tools"
+        ],
+        "مسؤول الصحة والسلامة والبيئة": [
+            "Safety Management Software",
+            "Risk Assessment Tools",
+            "ISO 45001",
+            "Incident Management System",
+            "Audit Tools"
+        ],
+        "مدير المصنع": [
+            "SAP",
+            "Lean Six Sigma",
+            "Excel",
+            "ERP Systems",
+            "Production Planning Software"
+        ]
+    },
+    "الرعاية الصحية والصيدلة": {
+        "طبيب": [
+            "EMR/EHR Systems",
+            "Medical Diagnosis",
+            "Clinical Procedures",
+            "HIPAA Compliance",
+            "Medical Imaging Software"
+        ],
+        "ممرض": [
+            "EMR/EHR Systems",
+            "IV Administration",
+            "Patient Monitoring Systems",
+            "Medication Management",
+            "Clinical Procedures"
+        ],
+        "صيدلي": [
+            "Pharmacy Management Systems",
+            "Drug Database Software",
+            "Prescription Processing",
+            "Inventory Management",
+            "Clinical Knowledge"
+        ],
+        "مساعد أبحاث سريرية": [
+            "GCP Guidelines",
+            "Clinical Trial Management Systems",
+            "EDC Systems",
+            "Regulatory Documents",
+            "Site Monitoring"
+        ],
+        "مهندس طبي حيوي": [
+            "CAD Software",
+            "MATLAB",
+            "Medical Device Design",
+            "FDA Regulations",
+            "Testing Equipment"
+        ],
+        "مدير مستشفى": [
+            "Hospital Information Systems",
+            "Excel",
+            "SAP",
+            "Healthcare Compliance",
+            "Budget Management Software"
+        ],
+        "مندوب طبي": [
+            "CRM Software",
+            "PowerPoint",
+            "Product Knowledge",
+            "Excel",
+            "Territory Management Tools"
+        ],
+        "مسؤول الصحة العامة": [
+            "Epidemiological Software",
+            "Statistical Analysis Tools",
+            "Excel",
+            "SPSS",
+            "Health Surveillance Systems"
+        ]
+    }
+}

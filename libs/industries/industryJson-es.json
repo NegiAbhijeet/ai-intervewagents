@@ -1,0 +1,604 @@
+{
+    "Tecnología de la Información y Software": {
+        "Ingeniero de software / Desarrollador": [
+            "Java",
+            "Python",
+            "Data Structures and Algorithms",
+            "Git",
+            "SQL"
+        ],
+        "Desarrollador Full Stack": [
+            "React",
+            "Node.js",
+            "MongoDB",
+            "Express.js",
+            "JavaScript"
+        ],
+        "Científico de datos": [
+            "Python",
+            "Machine Learning",
+            "Pandas",
+            "Tableau",
+            "SQL"
+        ],
+        "Ingeniero de Machine Learning": [
+            "Python",
+            "TensorFlow",
+            "PyTorch",
+            "Kubernetes",
+            "Docker"
+        ],
+        "Ingeniero DevOps": [
+            "Docker",
+            "Kubernetes",
+            "Jenkins",
+            "Terraform",
+            "AWS"
+        ],
+        "Ingeniero de la nube": [
+            "AWS",
+            "Azure",
+            "Terraform",
+            "Kubernetes",
+            "Python"
+        ],
+        "Analista de ciberseguridad": [
+            "Network Security",
+            "Penetration Testing",
+            "SIEM",
+            "Python",
+            "Wireshark"
+        ],
+        "Product Manager": [
+            "JIRA",
+            "SQL",
+            "Figma",
+            "Google Analytics",
+            "Excel"
+        ]
+    },
+    "Preparación CAT": {
+        "Entrevista personal": [
+            "Self Introduction",
+            "Story Presentation",
+            "Career Clarity",
+            "Strength and Weakness Analysis",
+            "Body Language",
+            "Current Affairs Awareness",
+            "Mock Interview Practice",
+            "Communication Skills"
+        ],
+        "Discusión en grupo": [
+            "Idea Structuring",
+            "Logical Thinking",
+            "Active Listening",
+            "Clear Communication",
+            "Team Interaction",
+            "Time Management",
+            "Topic Analysis",
+            "Current Affairs Awareness"
+        ]
+    },
+    "Banca, Finanzas y Seguros": {
+        "Analista financiero": [
+            "Excel",
+            "Financial Modeling",
+            "SQL",
+            "Bloomberg Terminal",
+            "PowerPoint"
+        ],
+        "Banquero de inversión": [
+            "Excel",
+            "PowerPoint",
+            "Financial Modeling",
+            "Bloomberg Terminal",
+            "Capital IQ"
+        ],
+        "Analista de riesgos": [
+            "Python",
+            "R",
+            "SQL",
+            "Excel",
+            "SAS"
+        ],
+        "Analista de finanzas corporativas": [
+            "Excel",
+            "SAP",
+            "Oracle",
+            "PowerPoint",
+            "SQL"
+        ],
+        "Oficial de cumplimiento": [
+            "AML/KYC",
+            "Risk Assessment",
+            "Regulatory Knowledge",
+            "Audit Tools",
+            "MS Office"
+        ],
+        "Product Manager fintech": [
+            "SQL",
+            "JIRA",
+            "API Integration",
+            "Figma",
+            "Google Analytics"
+        ],
+        "Gerente de riesgo crediticio": [
+            "Python",
+            "SAS",
+            "Excel",
+            "SQL",
+            "R"
+        ],
+        "Gerente de portafolio": [
+            "Bloomberg Terminal",
+            "Excel",
+            "Financial Modeling",
+            "Python",
+            "Risk Management Tools"
+        ]
+    },
+    "Ingeniería": {
+        "Ingeniero de diseño": [
+            "AutoCAD",
+            "SolidWorks",
+            "CATIA",
+            "ANSYS",
+            "Creo"
+        ],
+        "Gerente de proyectos": [
+            "MS Project",
+            "Primavera P6",
+            "AutoCAD",
+            "Excel",
+            "SAP"
+        ],
+        "Ingeniero mecánico": [
+            "AutoCAD",
+            "SolidWorks",
+            "Lean Manufacturing",
+            "SAP",
+            "CNC Programming"
+        ],
+        "Ingeniero civil de obra": [
+            "AutoCAD",
+            "Civil 3D",
+            "Primavera",
+            "MS Project",
+            "Total Station"
+        ],
+        "Ingeniero de diseño eléctrico": [
+            "AutoCAD Electrical",
+            "ETAP",
+            "MATLAB",
+            "PLC Programming",
+            "EPLAN"
+        ],
+        "Ingeniero de procesos": [
+            "Aspen HYSYS",
+            "Aspen Plus",
+            "Six Sigma",
+            "AutoCAD",
+            "MATLAB"
+        ],
+        "Ingeniero de automatización": [
+            "PLC Programming",
+            "SCADA",
+            "Siemens TIA Portal",
+            "Allen Bradley",
+            "HMI"
+        ],
+        "Ingeniero de control de calidad": [
+            "ISO 9001",
+            "Statistical Process Control",
+            "Minitab",
+            "Six Sigma",
+            "CMM"
+        ]
+    },
+    "Ciencia de Datos y Analítica": {
+        "Científico de datos": [
+            "Python",
+            "Machine Learning",
+            "Pandas",
+            "SQL",
+            "Scikit-learn"
+        ],
+        "Ingeniero de Machine Learning": [
+            "Python",
+            "TensorFlow",
+            "PyTorch",
+            "Docker",
+            "Kubernetes"
+        ],
+        "Analista de datos": [
+            "SQL",
+            "Excel",
+            "Tableau",
+            "Power BI",
+            "Python"
+        ],
+        "Ingeniero de datos": [
+            "SQL",
+            "Python",
+            "Apache Spark",
+            "Airflow",
+            "AWS"
+        ],
+        "Analista de Business Intelligence": [
+            "Tableau",
+            "Power BI",
+            "SQL",
+            "Excel",
+            "DAX"
+        ],
+        "Ingeniero de MLOps": [
+            "Docker",
+            "Kubernetes",
+            "MLflow",
+            "Python",
+            "Jenkins"
+        ],
+        "Arquitecto de datos": [
+            "SQL",
+            "MongoDB",
+            "Snowflake",
+            "AWS Redshift",
+            "ETL Tools"
+        ],
+        "Ingeniero de NLP": [
+            "Python",
+            "NLTK",
+            "spaCy",
+            "Transformers",
+            "PyTorch"
+        ]
+    },
+    "Consultoría y Estrategia Empresarial": {
+        "Consultor de gestión": [
+            "PowerPoint",
+            "Excel",
+            "Tableau",
+            "SQL",
+            "Market Research Tools"
+        ],
+        "Consultor de estrategia": [
+            "Excel",
+            "PowerPoint",
+            "Financial Modeling",
+            "Tableau",
+            "SQL"
+        ],
+        "Analista de estrategia corporativa": [
+            "Excel",
+            "PowerPoint",
+            "SQL",
+            "Tableau",
+            "Financial Modeling"
+        ],
+        "Consultor de operaciones": [
+            "Lean Six Sigma",
+            "Excel",
+            "Process Mapping Tools",
+            "SQL",
+            "Tableau"
+        ],
+        "Consultor de transformación digital": [
+            "Cloud Platforms (AWS, Azure)",
+            "Agile Tools (JIRA)",
+            "PowerPoint",
+            "Tableau",
+            "SQL"
+        ],
+        "Consultor financiero": [
+            "Excel",
+            "Financial Planning Software",
+            "QuickBooks",
+            "SAP",
+            "PowerPoint"
+        ],
+        "Consultor de estrategia de RRHH": [
+            "HRIS Systems",
+            "Excel",
+            "PowerPoint",
+            "Tableau",
+            "Survey Tools"
+        ],
+        "Sostenibilidad": [
+            "ESG Reporting Tools",
+            "Excel",
+            "Tableau",
+            "PowerPoint",
+            "Carbon Accounting Software"
+        ]
+    },
+    "Aviación y Aeroespacial": {
+        "Piloto comercial": [
+            "CPL License",
+            "ATPL License",
+            "Flight Simulators",
+            "Navigation Systems",
+            "Aviation Regulations"
+        ],
+        "Ingeniero de mantenimiento de aeronaves": [
+            "Aircraft Systems",
+            "AME License",
+            "Troubleshooting Tools",
+            "DGCA Regulations",
+            "Maintenance Software"
+        ],
+        "Ingeniero aeroespacial": [
+            "CATIA",
+            "SolidWorks",
+            "ANSYS",
+            "MATLAB",
+            "Simulink"
+        ],
+        "Ingeniero de aviónica": [
+            "Embedded Systems",
+            "Circuit Design",
+            "MATLAB",
+            "DO-178C",
+            "Testing Tools"
+        ],
+        "Gerente de operaciones de vuelo": [
+            "Flight Planning Software",
+            "Safety Management System",
+            "DGCA Regulations",
+            "Excel",
+            "Resource Management Tools"
+        ],
+        "Oficial de seguridad aeronáutica": [
+            "Safety Management System",
+            "DGCA Regulations",
+            "Risk Assessment Tools",
+            "Audit Software",
+            "Incident Reporting System"
+        ],
+        "Gerente de proyectos aeroespaciales": [
+            "MS Project",
+            "Primavera",
+            "CATIA",
+            "Risk Management Tools",
+            "Excel"
+        ],
+        "Controlador de tráfico aéreo": [
+            "Radar Systems",
+            "Communication Systems",
+            "Air Traffic Control Procedures",
+            "Flight Planning Software",
+            "Navigation Tools"
+        ]
+    },
+    "Envíos, Logística y Cadena de Suministro": {
+        "Gerente de cadena de suministro": [
+            "SAP",
+            "Oracle SCM",
+            "Excel",
+            "Demand Planning Software",
+            "ERP Systems"
+        ],
+        "Gerente de logística": [
+            "TMS",
+            "WMS",
+            "Excel",
+            "SAP",
+            "Route Optimization Software"
+        ],
+        "Especialista en compras": [
+            "SAP",
+            "Oracle Procurement",
+            "Excel",
+            "Negotiation Tools",
+            "ERP Systems"
+        ],
+        "Gerente de almacén": [
+            "WMS",
+            "SAP",
+            "Excel",
+            "Inventory Management Software",
+            "Barcode Scanner"
+        ],
+        "Ejecutivo de exportación e importación": [
+            "Customs Software",
+            "Incoterms",
+            "Excel",
+            "Documentation Tools",
+            "Shipping Software"
+        ],
+        "Analista de cadena de suministro": [
+            "Excel",
+            "Tableau",
+            "SQL",
+            "SAP",
+            "Power BI"
+        ],
+        "Gerente de compras globales": [
+            "SAP",
+            "Oracle",
+            "Excel",
+            "Supplier Management Tools",
+            "ERP Systems"
+        ],
+        "Planificador de transporte": [
+            "TMS",
+            "Route Optimization Software",
+            "Excel",
+            "GIS Software",
+            "SAP"
+        ]
+    },
+    "Energía Renovable y Solar": {
+        "Ingeniero de diseño solar": [
+            "PVsyst",
+            "AutoCAD",
+            "Helioscope",
+            "SketchUp",
+            "MATLAB"
+        ],
+        "Gerente de proyectos": [
+            "MS Project",
+            "Primavera P6",
+            "AutoCAD",
+            "Excel",
+            "SAP"
+        ],
+        "Ingeniero de operaciones y mantenimiento": [
+            "SCADA Systems",
+            "PVsyst",
+            "Monitoring Software",
+            "Troubleshooting Tools",
+            "Safety Equipment"
+        ],
+        "Ingeniero de sistemas de baterías": [
+            "MATLAB",
+            "Simulink",
+            "Battery Management System",
+            "Power Electronics Design",
+            "Testing Equipment"
+        ],
+        "Consultor de energía renovable": [
+            "PVsyst",
+            "HOMER",
+            "Excel",
+            "Financial Modeling",
+            "RETScreen"
+        ],
+        "Desarrollo de negocios": [
+            "CRM Software",
+            "Excel",
+            "PowerPoint",
+            "Market Research Tools",
+            "PVsyst"
+        ],
+        "Analista de políticas energéticas": [
+            "Excel",
+            "Statistical Software",
+            "Policy Research Tools",
+            "Tableau",
+            "PowerPoint"
+        ],
+        "Ingeniero de microredes": [
+            "HOMER",
+            "MATLAB",
+            "Simulink",
+            "ETAP",
+            "Power System Design Software"
+        ]
+    },
+    "Manufactura y Producción": {
+        "Ingeniero de producción": [
+            "AutoCAD",
+            "Lean Manufacturing",
+            "SAP",
+            "Six Sigma",
+            "CNC Programming"
+        ],
+        "Ingeniero de procesos": [
+            "Aspen HYSYS",
+            "Six Sigma",
+            "AutoCAD",
+            "MATLAB",
+            "Process Simulation Software"
+        ],
+        "Ingeniero de aseguramiento de la calidad": [
+            "ISO 9001",
+            "Minitab",
+            "Six Sigma",
+            "Statistical Process Control",
+            "Quality Management Software"
+        ],
+        "Ingeniero de mantenimiento": [
+            "CMMS Software",
+            "AutoCAD",
+            "Troubleshooting Tools",
+            "SAP",
+            "Vibration Analysis Tools"
+        ],
+        "Ingeniero de compras": [
+            "SAP",
+            "Oracle",
+            "Excel",
+            "ERP Systems",
+            "Vendor Management Software"
+        ],
+        "Ingeniero de I+D": [
+            "CAD Software",
+            "SolidWorks",
+            "ANSYS",
+            "MATLAB",
+            "Prototyping Tools"
+        ],
+        "Responsable de EHS": [
+            "Safety Management Software",
+            "Risk Assessment Tools",
+            "ISO 45001",
+            "Incident Management System",
+            "Audit Tools"
+        ],
+        "Gerente de planta": [
+            "SAP",
+            "Lean Six Sigma",
+            "Excel",
+            "ERP Systems",
+            "Production Planning Software"
+        ]
+    },
+    "Salud y Farmacéutica": {
+        "Médico": [
+            "EMR/EHR Systems",
+            "Medical Diagnosis",
+            "Clinical Procedures",
+            "HIPAA Compliance",
+            "Medical Imaging Software"
+        ],
+        "Enfermero": [
+            "EMR/EHR Systems",
+            "IV Administration",
+            "Patient Monitoring Systems",
+            "Medication Management",
+            "Clinical Procedures"
+        ],
+        "Farmacéutico": [
+            "Pharmacy Management Systems",
+            "Drug Database Software",
+            "Prescription Processing",
+            "Inventory Management",
+            "Clinical Knowledge"
+        ],
+        "Asociado de investigación clínica": [
+            "GCP Guidelines",
+            "Clinical Trial Management Systems",
+            "EDC Systems",
+            "Regulatory Documents",
+            "Site Monitoring"
+        ],
+        "Ingeniero biomédico": [
+            "CAD Software",
+            "MATLAB",
+            "Medical Device Design",
+            "FDA Regulations",
+            "Testing Equipment"
+        ],
+        "Administrador hospitalario": [
+            "Hospital Information Systems",
+            "Excel",
+            "SAP",
+            "Healthcare Compliance",
+            "Budget Management Software"
+        ],
+        "Representante médico": [
+            "CRM Software",
+            "PowerPoint",
+            "Product Knowledge",
+            "Excel",
+            "Territory Management Tools"
+        ],
+        "Oficial de salud pública": [
+            "Epidemiological Software",
+            "Statistical Analysis Tools",
+            "Excel",
+            "SPSS",
+            "Health Surveillance Systems"
+        ]
+    }
+}

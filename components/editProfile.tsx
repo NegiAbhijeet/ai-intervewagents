@@ -17,16 +17,8 @@ import { JAVA_API_URL } from './config'
 import Toast from 'react-native-toast-message'
 import Ionicons from '@react-native-vector-icons/ionicons'
 import Layout from '../pages/Layout'
-// Safe JSON loading
-let industriesData = {};
-try {
-    industriesData = require('../libs/industryJson.json');
-} catch (e) {
-    console.warn("Industry JSON missing");
-}
-
-
-
+import getIndustryData from "../libs/getIndustryData"
+import getLevelData from "../libs/getLevelData"
 export default function EditProfileModal({
     visible,
     onClose,
@@ -36,7 +28,8 @@ export default function EditProfileModal({
     initialIndustry,
     initialLevel,
     canId,
-    onSuccess, language
+    onSuccess,
+    language
 }) {
     // Form State
     const [name, setName] = useState('')
@@ -44,16 +37,11 @@ export default function EditProfileModal({
     const [industry, setIndustry] = useState('')
     const [position, setPosition] = useState('')
     const [isLoading, setIsLoading] = useState(false)
-
-    // UI State (Controls which screen is visible: 'form' | 'industry' | 'role' | 'level')
     const [viewMode, setViewMode] = useState('form')
-    function getLevelData(lang) {
-        if (lang === 'hi') return require('../libs/levels-hi.json')
-        if (lang === 'en') return require('../libs/levels.json')
-        return require('../libs/levels.json')
-    }
 
+    const industriesData = useMemo(() => getIndustryData(language) || {}, [language])
     const LEVELS = useMemo(() => getLevelData(language) || {}, [language])
+
     // Initialize Data
     useEffect(() => {
         if (visible) {

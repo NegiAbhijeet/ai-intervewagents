@@ -1,0 +1,18 @@
+[
+    {
+        "label": "Débutant",
+        "value": 1
+    },
+    {
+        "label": "Intermédiaire",
+        "value": 8
+    },
+    {
+        "label": "Senior",
+        "value": 12
+    },
+    {
+        "label": "Direction",
+        "value": 20
+    }
+]

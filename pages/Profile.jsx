@@ -31,6 +31,8 @@ import BackgroundGradient2 from '../components/backgroundGradient2';
 import TopBar from '../components/TopBar';
 import EditProfileModal from '../components/editProfile';
 import { useTranslation } from 'react-i18next';
+import getLevelData from "../libs/getLevelData"
+
 export default function ProfileScreen() {
   const {
     userProfile,
@@ -87,11 +89,7 @@ export default function ProfileScreen() {
       console.error("Failed to fetch candidate:", error);
     }
   };
-  function getLevelData(lang) {
-    if (lang === 'hi') return require('../libs/levels-hi.json')
-    if (lang === 'en') return require('../libs/levels.json')
-    return require('../libs/levels.json')
-  }
+
 
   const LEVELS = useMemo(() => getLevelData(language) || {}, [language])
   useEffect(() => {

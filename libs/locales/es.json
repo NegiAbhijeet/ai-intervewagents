@@ -1,19 +1,20 @@
 {
   "nova": {
     "greeting": "Hola, soy Nova",
-    "beforeBegin": "Antes de empezar, cuéntame algunos datos básicos sobre ti"
+    "beforeBegin": "Antes de empezar, cuéntame algunos datos básicos sobre ti."
   },
   "splash": {
-    "brand": "Agentes de Entrevista IA",
-    "tagline": "Aprueba la entrevista de tu empresa ideal con confianza"
+    "brand": "AI Interview Agents",
+    "tagline": "Aprueba la entrevista de tu empresa ideal con confianza."
   },
   "types": {
-    "technical": "Técnica",
+    "technical": "Técnico",
     "behavioural": "Conductual",
-    "mock": "Simulación",
+    "mock": "Simulado",
     "trainer": "Entrenador",
-    "revise": "Revisar",
-    "unknown": "Desconocido"
+    "revise": "Revisión",
+    "unknown": "Desconocido",
+    "practice": "Práctica"
   },
   "status": {
     "total": "Total",
@@ -22,18 +23,18 @@
   },
   "minutes": "Minutos",
   "getStarted": {
-    "brand": "Agentes de Entrevista IA",
+    "brand": "AI Interview Agents",
     "subBrand": "Tu asistente de entrevistas con IA",
-    "tagline": "Te ayudo a aprobar la entrevista de tu empresa soñada",
-    "ctaStart": "Empezar",
-    "ctaLogin": "¿Ya tienes una cuenta? Iniciar sesión"
+    "tagline": "Te ayudo a prepararte para la entrevista de tu empresa soñada con confianza.",
+    "ctaStart": "Comenzar",
+    "ctaLogin": "¿Ya tienes cuenta? Inicia sesión"
   },
   "onboarding": {
     "slide1": {
-      "heading": "Practica entrevistas reales",
+      "heading": "Practica entrevistas realistas",
       "bullets": [
-        "Vive entrevistas con IA que se sienten naturales",
-        "Recibe retroalimentación estilo reclutador basada en análisis avanzados",
+        "Experimenta entrevistas con IA que parecen humanas",
+        "Recibe retroalimentación estilo reclutador con análisis avanzado",
         "Sigue tu progreso con rachas, insignias y certificados"
       ]
     },
@@ -42,10 +43,16 @@
       "bullets": [
         "Mejora rápido con retroalimentación personalizada",
         "Gana confianza con práctica constante",
-        "Aprende a estructurar y expresar mejores respuestas"
+        "Aprende a estructurar y entregar mejores respuestas"
       ]
     },
-    "next": "Siguiente"
+    "next": "Siguiente",
+    "chooseDomain": "Elige tu dominio",
+    "selectDomain": "Selecciona tu dominio para mejores coincidencias.",
+    "chooseRole": "Elige tu rol",
+    "pickRole": "Selecciona un rol para práctica personalizada.",
+    "selectLevel": "Selecciona tu nivel",
+    "pickExperience": "Elige tu nivel de experiencia."
   },
   "login": {
     "title": "Iniciar sesión",
@@ -59,7 +66,7 @@
     "noAccount": "¿No tienes cuenta? Regístrate"
   },
   "signup": {
-    "title": "Registro",
+    "title": "Registrarse",
     "emailLabel": "Correo electrónico",
     "emailPlaceholder": "hello@example.com",
     "passwordLabel": "Contraseña",
@@ -70,11 +77,11 @@
   },
   "forgot": {
     "title": "Olvidé mi contraseña",
-    "subtitle": "Ingresa tu correo para recibir un código de verificación",
+    "subtitle": "Ingresa tu correo para recibir un código de verificación.",
     "emailLabel": "Correo",
     "emailPlaceholder": "hello@example.com",
     "sendCode": "Enviar código",
-    "remember": "¿Recordaste tu contraseña? Inicia sesión"
+    "remember": "¿Recordaste la contraseña? Inicia sesión"
   },
   "legal": {
     "terms": "Términos de uso",
@@ -86,90 +93,94 @@
   "home": {
     "greeting": "Hola {{name}}",
     "userFallback": "Usuario",
-    "welcome": "Bienvenido a tu panel",
+    "welcome": "Bienvenido a tu inicio.",
     "noInterview": "No se encontró ninguna entrevista",
-    "scoreLabel": "Puntaje:",
+    "scoreLabel": "Puntuación:",
     "na": "N/A",
-    "youScored": "Tu puntaje es {{scoreText}}",
+    "youScored": "Tu puntuación es {{scoreText}}",
     "chooseMode": "Elige tu modo de entrevista",
     "interviews": {
       "common": {
-        "action": "Iniciar"
+        "action": "Comenzar"
       },
       "practice": {
-        "title": "Pruébate",
-        "description": "Simulación con retroalimentación instantánea para mejorar tu nivel",
+        "title": "Ponerte a prueba",
+        "description": "Entrevista simulada con retroalimentación inmediata para mejorar tus habilidades.",
         "bottomLine": "Probar ahora >>"
       },
       "train": {
         "title": "Entrénate",
-        "description": "El modo entrenador mejora tus respuestas y aumenta tu confianza",
+        "description": "El modo entrenador actúa como un coach que mejora tus respuestas y tu confianza.",
         "bottomLine": "Entrenar ahora >>"
       }
     },
     "score": {
-      "bad": "Bajo",
+      "bad": "Malo",
       "good": "Bueno",
       "excellent": "Excelente"
     }
   },
   "jobs": {
     "recommendedCount": "Trabajos recomendados ({{count}})",
-    "description": "Aquí tienes recomendaciones para el puesto de {{position}}",
-    "upcoming": "(Nueva actualización en 12 horas)",
+    "description": "Aquí tienes recomendaciones para el puesto de {{position}}.",
+    "upcoming": "(Actualización de empleos en 12 horas)",
     "loader": {
-      "finding": "Buscando trabajos",
-      "warming": "Preparando tu lista de empleos"
+      "finding": "Buscando empleos...",
+      "warming": "Preparando tu lista de empleos..."
     },
     "filters": {
       "savedJobs": "Guardados",
       "allJobs": "Todos",
-      "allTypes": "Todos los tipos",
-      "fullTime": "Tiempo completo",
+      "allTypes": "Tipos",
+      "fullTime": "Completo",
       "hybrid": "Híbrido",
       "remote": "Remoto",
-      "allLocations": "Todas las ubicaciones"
+      "allLocations": "Lugares"
     },
     "form": {
-      "headerTitle": "Datos profesionales",
-      "headerDescription": "Comparte un breve resumen de tu rol y experiencia",
-      "extraText": "(Nueva actualización en 12 horas)",
+      "headerTitle": "Detalles profesionales",
+      "headerDescription": "Comparte un breve resumen de tu rol y experiencia.",
+      "extraText": "(Actualización de empleos en 12 horas)",
       "positionLabel": "Puesto",
       "positionPlaceholder": "Ingeniero de software",
-      "positionExample": "Ej: Ingeniero de software",
+      "positionExample": "ej.: Ingeniero de software",
       "positionA11y": "Puesto",
-      "positionHelp": "Ayuda a encontrar trabajos que coincidan con tu perfil",
+      "positionHelp": "Ayuda a emparejar títulos de trabajo con tu perfil",
       "experienceLabel": "Años de experiencia",
       "experiencePlaceholder": "5",
       "experienceA11y": "Años de experiencia",
       "yearsSuffix": "años",
       "experienceHelp": "Ingresa solo años completos",
-      "pleaseWait": "Espera un momento",
+      "pleaseWait": "Por favor espera...",
       "continue": "Continuar"
     }
   },
   "reports": {
     "empty": {
-      "title": "No hay reportes disponibles",
-      "subtitle": "Completa entrevistas para ver tus reportes"
+      "title": "No se encontraron reportes",
+      "subtitle": "Completa algunas entrevistas para ver los reportes."
     },
     "filters": {
       "all": "Todos",
-      "mock": "Simulación",
+      "mock": "Simulado",
       "trainer": "Entrenador"
     },
-    "pending": "Pendiente",
+    "pending": "Pendiente...",
     "interview": "Entrevista",
     "viewReport": "Ver reporte",
-    "score": "Puntaje",
-    "viewSummary": "Ver resumen"
+    "score": "Puntuación",
+    "viewSummary": "Ver resumen",
+    "interviewSummary": "Resumen de la entrevista",
+    "seeFullReport": "Ver reporte completo",
+    "detailedReport": "Reporte detallado",
+    "skillOverview": "Vista de habilidades"
   },
   "profile": {
-    "planExpiryPrefix": "Vencimiento del plan",
+    "planExpiryPrefix": "Expira:",
     "editProfile": "Editar perfil",
     "subscription": {
       "title": "Suscripción",
-      "subtitle": "Tu plan actual e información de pago",
+      "subtitle": "Tu plan actual e información de pago.",
       "freePlan": "Gratis",
       "active": "Activo",
       "of": "de",
@@ -179,17 +190,17 @@
       "proActive": "Plan Pro activo"
     },
     "legal": {
-      "prefix": "Al usar esta aplicación aceptas",
-      "terms": "los Términos de servicio",
+      "prefix": "Al usar esta app aceptas",
+      "terms": "Términos del servicio",
       "and": "y",
-      "privacy": "la Política de privacidad"
+      "privacy": "Política de privacidad"
     },
     "danger": {
       "title": "Zona de riesgo",
-      "subtitle": "Acciones permanentes de la cuenta",
+      "subtitle": "Acciones irreversibles.",
       "logout": "Cerrar sesión",
       "deleteTitle": "Eliminar cuenta",
-      "deleteDesc": "Eliminará tu cuenta y todos tus datos. Esta acción es permanente",
+      "deleteDesc": "Elimina tu cuenta y todos los datos de forma permanente.",
       "deleteButton": "Eliminar cuenta"
     },
     "stats": {
@@ -203,28 +214,28 @@
   "avatar": {
     "step1Title": "¿Cómo debo llamarte?",
     "step2Title": "Elige tu avatar",
-    "fullNameLabel": "Nombre completo",
-    "namePlaceholder": "Ingresa tu nombre",
+    "fullNameLabel": "Tu nombre completo",
+    "namePlaceholder": "Ingresa el nombre",
     "nextButton": "Siguiente",
     "startButton": "Iniciar entrevista"
   },
   "interview": {
     "title": "Instrucciones de la entrevista",
-    "instr1": "Empieza la entrevista diciendo hola",
+    "instr1": "Comienza la entrevista diciendo Hola",
     "instr2": "Siéntate en un lugar tranquilo sin ruido",
-    "instr3": "Asegura una conexión estable",
-    "instr4": "Siéntate en un lugar tranquilo y bien iluminado",
+    "instr3": "Asegura una conexión estable a internet",
+    "instr4": "Siéntate en un lugar bien iluminado",
     "cameraOffTitle": "Cámara apagada",
-    "cameraOffMessage": "Activa tu cámara",
-    "btn_wait": "Espera un momento",
-    "btn_end": "Terminar entrevista",
+    "cameraOffMessage": "Activa tu cámara.",
+    "btn_wait": "Por favor espera...",
+    "btn_end": "Finalizar entrevista",
     "btn_start": "Iniciar entrevista"
   },
   "analysis": {
     "strengthsTitle": "Fortalezas",
     "weaknessesTitle": "Debilidades",
-    "tapToViewStrength": "Toca para ver la fortaleza analizada",
-    "tapToViewWeakness": "Toca para ver la debilidad analizada",
+    "tapToViewStrength": "Toca para ver la fortaleza.",
+    "tapToViewWeakness": "Toca para ver la debilidad.",
     "noItemsFound": "No se encontraron elementos",
     "strength": "Fortaleza",
     "weakness": "Debilidad",
@@ -232,34 +243,39 @@
     "tryAgain": "Intentar de nuevo"
   },
   "tabs": {
-    "reportAnalysis": "Análisis del reporte",
+    "reportAnalysis": "Análisis",
     "transcript": "Transcripción"
   },
   "carousel": {
     "notEnoughData": "Datos insuficientes",
-    "poor": "Bajo",
+    "poor": "Malo",
     "good": "Bueno",
     "excellent": "Excelente",
     "seeDetailedReport": "Ver reporte detallado"
   },
   "skills": {
-    "Technical_Expertise": "Pericia técnica",
+    "Technical_Expertise": "Experiencia técnica",
     "Problem_Solving": "Resolución de problemas",
-    "Decision_Judgment": "Juicio y decisión",
+    "Decision_Judgment": "Juicio",
     "Debugging_Mindset": "Mentalidad de depuración",
-    "Accountability_Mindset": "Sentido de responsabilidad",
-    "Team_Collaboration": "Colaboración en equipo",
+    "Accountability_Mindset": "Responsabilidad",
+    "Team_Collaboration": "Colaboración",
     "Growth_Mindset": "Mentalidad de crecimiento",
     "Conflict_Resolution": "Resolución de conflictos",
-    "Outcome_Focus": "Enfoque en resultados"
+    "Outcome_Focus": "Enfoque en resultados",
+    "notEnoughData": "Datos insuficientes",
+    "poor": "Malo",
+    "good": "Bueno",
+    "excellent": "Excelente",
+    "detailedAnalysis": "Análisis detallado"
   },
   "improvements": {
     "title": "Pasos de mejora",
     "openResource": "Abrir recurso",
-    "cannotOpenLinkTitle": "No se pudo abrir el enlace",
-    "cannotOpenLinkMsg": "El enlace no puede abrirse en este dispositivo",
+    "cannotOpenLinkTitle": "No se puede abrir el enlace",
+    "cannotOpenLinkMsg": "El enlace no puede abrirse en este dispositivo.",
     "errorTitle": "Error",
-    "errorMsg": "No fue posible abrir el enlace",
+    "errorMsg": "No se pudo abrir el enlace.",
     "empty": "No se encontraron elementos"
   },
   "leagues": {
@@ -275,13 +291,21 @@
     "crystal": "Cristal"
   },
   "leaderboard": {
-    "loading": "Cargando clasificación",
+    "loading": "Cargando ranking...",
     "you": "Tú",
-    "description": "Esta es la clasificación",
+    "description": "Este es el ranking",
     "league": "Liga"
   },
   "chat": {
     "user": "Usuario",
     "nova": "Nova"
+  },
+  "account": {
+    "deleteConfirmTitle": "Confirmar eliminación",
+    "deleteConfirmMessage": "¿Quieres eliminar tu cuenta de forma permanente?",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "errorTitle": "Error",
+    "errorMessage": "No se pudo eliminar la cuenta."
   }
 }

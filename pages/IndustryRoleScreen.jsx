@@ -12,6 +12,8 @@ import { AppStateContext } from '../components/AppContext'
 import BackgroundGradient2 from '../components/backgroundGradient2'
 import { useContext, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import getIndustryData from "../libs/getIndustryData"
+import getLevelData from "../libs/getLevelData"
 
 const IndustryRoleScreen = () => {
   const navigation = useNavigation()
@@ -23,18 +25,6 @@ const IndustryRoleScreen = () => {
   const [selectedRole, setSelectedRole] = useState(null)
   const [selectedSkills, setSelectedSkills] = useState([])
   const [selectedLevel, setSelectedLevel] = useState(null)
-
-  function getIndustryData(lang) {
-    if (lang === 'hi') return require('../libs/industryJson-hi.json')
-    if (lang === 'en') return require('../libs/industryJson.json')
-    return require('../libs/industryJson.json')
-  }
-
-  function getLevelData(lang) {
-    if (lang === 'hi') return require('../libs/levels-hi.json')
-    if (lang === 'en') return require('../libs/levels.json')
-    return require('../libs/levels.json')
-  }
 
   // return value directly from useMemo
   const industries = useMemo(() => getIndustryData(language) || {}, [language])

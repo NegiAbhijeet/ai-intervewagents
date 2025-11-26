@@ -1,0 +1,311 @@
+{
+    "nova": {
+        "greeting": "مرحباً، أنا نوفا",
+        "beforeBegin": "قبل أن نبدأ أخبرني ببعض المعلومات الأساسية عنك."
+    },
+    "splash": {
+        "brand": "AI Interview Agents",
+        "tagline": "اجتز مقابلة شركتك المفضلة بثقة."
+    },
+    "types": {
+        "technical": "تقني",
+        "behavioural": "سلوكي",
+        "mock": "وهمي",
+        "trainer": "مدرب",
+        "revise": "مراجعة",
+        "unknown": "غير معروف",
+        "practice": "تدريب"
+    },
+    "status": {
+        "total": "الإجمالي",
+        "completed": "مكتمل",
+        "pending": "قيد الانتظار"
+    },
+    "minutes": "دقائق",
+    "getStarted": {
+        "brand": "AI Interview Agents",
+        "subBrand": "مساعد المقابلات الذكي",
+        "tagline": "أساعدك على اجتياز مقابلة شركتك المفضلة بثقة.",
+        "ctaStart": "ابدأ",
+        "ctaLogin": "لديك حساب؟ تسجيل الدخول"
+    },
+    "onboarding": {
+        "slide1": {
+            "heading": "تدرّب على مقابلات واقعية",
+            "bullets": [
+                "اختبر مقابلات ذكية تشبه التفاعل البشري",
+                "احصل على ملاحظات دقيقة بأسلوب المجند",
+                "تابع تقدمك من خلال الشارات والشهادات"
+            ]
+        },
+        "slide2": {
+            "heading": "تخلص من توتر المقابلات",
+            "bullets": [
+                "تحسن أسرع عبر ملاحظات مخصصة",
+                "ابن ثقة قوية من خلال التدريب المنتظم",
+                "تعلم تنظيم إجابات واضحة"
+            ]
+        },
+        "next": "التالي",
+        "chooseDomain": "اختر المجال",
+        "selectDomain": "اختر مجالك للحصول على أفضل تطابق.",
+        "chooseRole": "اختر الدور",
+        "pickRole": "اختر دوراً للحصول على تدريب مخصص.",
+        "selectLevel": "اختر المستوى",
+        "pickExperience": "اختر مستوى خبرتك."
+    },
+    "login": {
+        "title": "تسجيل الدخول",
+        "emailLabel": "البريد الإلكتروني",
+        "emailPlaceholder": "hello@example.com",
+        "passwordLabel": "كلمة المرور",
+        "passwordPlaceholder": "********",
+        "forgotPassword": "نسيت كلمة المرور؟",
+        "button": "تسجيل الدخول",
+        "or": "أو",
+        "noAccount": "ليس لديك حساب؟ سجل الآن"
+    },
+    "signup": {
+        "title": "إنشاء حساب",
+        "emailLabel": "البريد الإلكتروني",
+        "emailPlaceholder": "hello@example.com",
+        "passwordLabel": "كلمة المرور",
+        "passwordPlaceholder": "********",
+        "button": "إنشاء حساب",
+        "or": "أو",
+        "haveAccount": "لديك حساب؟ تسجيل الدخول"
+    },
+    "forgot": {
+        "title": "نسيت كلمة المرور",
+        "subtitle": "أدخل بريدك للحصول على رمز التحقق.",
+        "emailLabel": "البريد الإلكتروني",
+        "emailPlaceholder": "hello@example.com",
+        "sendCode": "إرسال الرمز",
+        "remember": "تذكرت كلمة المرور؟ تسجيل الدخول"
+    },
+    "legal": {
+        "terms": "شروط الاستخدام",
+        "privacy": "سياسة الخصوصية"
+    },
+    "auth": {
+        "googleContinue": "المتابعة باستخدام جوجل"
+    },
+    "home": {
+        "greeting": "مرحباً {{name}}",
+        "userFallback": "مستخدم",
+        "welcome": "مرحباً بك في صفحتك الرئيسية.",
+        "noInterview": "لا توجد مقابلات",
+        "scoreLabel": "الدرجة:",
+        "na": "غير متوفر",
+        "youScored": "درجتك هي {{scoreText}}",
+        "chooseMode": "اختر وضع المقابلة",
+        "interviews": {
+            "common": {
+                "action": "ابدأ"
+            },
+            "practice": {
+                "title": "اختبر نفسك",
+                "description": "مقابلة تجريبية مع ملاحظات فورية تعزز مهاراتك.",
+                "bottomLine": "ابدأ الآن >>"
+            },
+            "train": {
+                "title": "درّب نفسك",
+                "description": "وضع المدرب يساعدك على تحسين إجاباتك وبناء الثقة.",
+                "bottomLine": "درّب الآن >>"
+            }
+        },
+        "score": {
+            "bad": "ضعيف",
+            "good": "جيد",
+            "excellent": "ممتاز"
+        }
+    },
+    "jobs": {
+        "recommendedCount": "وظائف مقترحة ({{count}})",
+        "description": "هنا ترشيحات وظائف لدور {{position}}.",
+        "upcoming": "(تحديث جديد خلال 12 ساعة)",
+        "loader": {
+            "finding": "جارٍ البحث عن الوظائف...",
+            "warming": "نجهز موجز الوظائف لك..."
+        },
+        "filters": {
+            "savedJobs": "محفوظة",
+            "allJobs": "الكل",
+            "allTypes": "الأنواع",
+            "fullTime": "دوام",
+            "hybrid": "هجين",
+            "remote": "عنبعد",
+            "allLocations": "المواقع"
+        },
+        "form": {
+            "headerTitle": "البيانات المهنية",
+            "headerDescription": "شارك ملخصاً قصيراً عن دورك وخبرتك.",
+            "extraText": "(تحديث جديد خلال 12 ساعة)",
+            "positionLabel": "المنصب",
+            "positionPlaceholder": "مهندس برمجيات",
+            "positionExample": "مثال: مهندس برمجيات",
+            "positionA11y": "المنصب",
+            "positionHelp": "يساعد هذا على مطابقة المسمى الوظيفي",
+            "experienceLabel": "سنوات الخبرة",
+            "experiencePlaceholder": "5",
+            "experienceA11y": "سنوات الخبرة",
+            "yearsSuffix": "سنوات",
+            "experienceHelp": "أدخل سنوات كاملة فقط",
+            "pleaseWait": "يرجى الانتظار...",
+            "continue": "متابعة"
+        }
+    },
+    "reports": {
+        "empty": {
+            "title": "لا توجد تقارير مقابلة",
+            "subtitle": "أكمل بعض المقابلات لعرض التقارير."
+        },
+        "filters": {
+            "all": "الكل",
+            "mock": "وهمي",
+            "trainer": "مدرب"
+        },
+        "pending": "قيد الانتظار...",
+        "interview": "مقابلة",
+        "viewReport": "عرض التقرير",
+        "score": "الدرجة",
+        "viewSummary": "عرض الملخص",
+        "interviewSummary": "ملخص المقابلة",
+        "seeFullReport": "عرض كامل التقرير",
+        "detailedReport": "تقرير مفصل",
+        "skillOverview": "نظرة عامة على المهارات"
+    },
+    "profile": {
+        "planExpiryPrefix": "انتهاء الخطة:",
+        "editProfile": "تعديل الملف",
+        "subscription": {
+            "title": "الاشتراك",
+            "subtitle": "خطة حسابك ومعلومات الدفع.",
+            "freePlan": "مجاني",
+            "active": "نشط",
+            "of": "من",
+            "minutesUsed": "دقائق مستخدمة",
+            "minutesLeft": "دقائق متبقية",
+            "upgrade": "ترقية",
+            "proActive": "خطة برو نشطة"
+        },
+        "legal": {
+            "prefix": "باستخدام التطبيق أنت توافق على",
+            "terms": "شروط الخدمة",
+            "and": "و",
+            "privacy": "سياسة الخصوصية"
+        },
+        "danger": {
+            "title": "منطقة الخطر",
+            "subtitle": "إجراءات لا يمكن التراجع عنها.",
+            "logout": "تسجيل الخروج",
+            "deleteTitle": "حذف الحساب",
+            "deleteDesc": "حذف حسابك وجميع بياناتك بشكل نهائي.",
+            "deleteButton": "حذف الحساب"
+        },
+        "stats": {
+            "role": "الدور",
+            "level": "المستوى",
+            "totalTime": "الوقت الكلي",
+            "rating": "التقييم",
+            "minutes": "دقائق"
+        }
+    },
+    "avatar": {
+        "step1Title": "بماذا أناديك؟",
+        "step2Title": "اختر صورتك",
+        "fullNameLabel": "الاسم الكامل",
+        "namePlaceholder": "أدخل الاسم",
+        "nextButton": "التالي",
+        "startButton": "ابدأ المقابلة"
+    },
+    "interview": {
+        "title": "إرشادات المقابلة",
+        "instr1": "ابدأ المقابلة بالتحية",
+        "instr2": "اجلس في مكان هادئ بلا ضوضاء",
+        "instr3": "تأكد من اتصال إنترنت ثابت",
+        "instr4": "اختر مكاناً هادئاً مضاء جيداً",
+        "cameraOffTitle": "الكاميرا مغلقة",
+        "cameraOffMessage": "شغّل الكاميرا من فضلك.",
+        "btn_wait": "يرجى الانتظار...",
+        "btn_end": "إنهاء المقابلة",
+        "btn_start": "بدء المقابلة"
+    },
+    "analysis": {
+        "strengthsTitle": "نقاط القوة",
+        "weaknessesTitle": "نقاط الضعف",
+        "tapToViewStrength": "اضغط لعرض نقطة القوة.",
+        "tapToViewWeakness": "اضغط لعرض نقطة الضعف.",
+        "noItemsFound": "لا يوجد عناصر",
+        "strength": "قوة",
+        "weakness": "ضعف",
+        "howToImprove": "طريقة التطوير",
+        "tryAgain": "أعد المحاولة"
+    },
+    "tabs": {
+        "reportAnalysis": "تحليل التقرير",
+        "transcript": "النص"
+    },
+    "carousel": {
+        "notEnoughData": "لا يوجد بيانات كافية",
+        "poor": "ضعيف",
+        "good": "جيد",
+        "excellent": "ممتاز",
+        "seeDetailedReport": "عرض تقرير مفصل"
+    },
+    "skills": {
+        "Technical_Expertise": "خبرة تقنية",
+        "Problem_Solving": "حل المشكلات",
+        "Decision_Judgment": "اتخاذ القرار",
+        "Debugging_Mindset": "تفكير في التصحيح",
+        "Accountability_Mindset": "روح المسؤولية",
+        "Team_Collaboration": "عمل جماعي",
+        "Growth_Mindset": "عقلية نمو",
+        "Conflict_Resolution": "حل النزاعات",
+        "Outcome_Focus": "تركيز على النتيجة",
+        "notEnoughData": "لا يوجد بيانات",
+        "poor": "ضعيف",
+        "good": "جيد",
+        "excellent": "ممتاز",
+        "detailedAnalysis": "تحليل مفصل للمهارات"
+    },
+    "improvements": {
+        "title": "خطوات التحسين",
+        "openResource": "فتح المورد",
+        "cannotOpenLinkTitle": "لا يمكن فتح الرابط",
+        "cannotOpenLinkMsg": "لا يمكن فتح الرابط على هذا الجهاز.",
+        "errorTitle": "خطأ",
+        "errorMsg": "فشل فتح الرابط.",
+        "empty": "لا يوجد عناصر"
+    },
+    "leagues": {
+        "bronze": "برونز",
+        "silver": "فضة",
+        "gold": "ذهب",
+        "platinum": "بلاتين",
+        "diamond": "ألماس",
+        "emerald": "زمرد",
+        "ruby": "ياقوت",
+        "sapphire": "ياقوت أزرق",
+        "obsidian": "أبسيديان",
+        "crystal": "كريستال"
+    },
+    "leaderboard": {
+        "loading": "يتم تحميل القائمة...",
+        "you": "أنت",
+        "description": "هذه قائمة المتصدرين",
+        "league": "الرتبة"
+    },
+    "chat": {
+        "user": "مستخدم",
+        "nova": "نوفا"
+    },
+    "account": {
+        "deleteConfirmTitle": "تأكيد الحذف",
+        "deleteConfirmMessage": "هل تريد حذف حسابك بشكل دائم؟",
+        "cancel": "إلغاء",
+        "delete": "حذف",
+        "errorTitle": "خطأ",
+        "errorMessage": "فشل حذف الحساب."
+    }
+}
