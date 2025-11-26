@@ -203,37 +203,38 @@ export default function ProfileScreen() {
 
   const handleDeleteAccount = async () => {
     Alert.alert(
-      'Confirm Deletion',
-      'Are you sure you want to permanently delete your account?',
+      t('account.deleteConfirmTitle'),
+      t('account.deleteConfirmMessage'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('account.cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('account.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
-              setLoading(true);
+              setLoading(true)
               const res = await fetchWithAuth(
                 `${API_URL}/profile/${userProfile.uid}/delete/`,
-                { method: 'DELETE' },
-              );
+                { method: 'DELETE' }
+              )
 
               if (res.ok) {
-                console.log('[Delete] Account deleted successfully');
-                await logout();
+                console.log('[Delete] Account deleted successfully')
+                await logout()
               } else {
-                throw new Error('Delete request failed');
+                throw new Error('Delete request failed')
               }
             } catch (err) {
-              console.error('[Delete Error]', err);
-              Alert.alert('Error', 'Failed to delete account.');
-              setLoading(false);
+              console.error('[Delete Error]', err)
+              Alert.alert(t('account.errorTitle'), t('account.errorMessage'))
+              setLoading(false)
             }
           },
         },
       ],
-    );
-  };
+    )
+  }
+
   const StatCard = ({ isRating = false, label, value, containerStyle }) => {
     const gradientProps = {
       colors: ['rgba(203,104,195,1)', 'rgba(140,66,236,1)'],

@@ -299,5 +299,13 @@
   "chat": {
     "user": "User",
     "nova": "Nova"
+  },
+  "account": {
+    "deleteConfirmTitle": "Confirm Deletion",
+    "deleteConfirmMessage": "Are you sure you want to permanently delete your account?",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "errorTitle": "Error",
+    "errorMessage": "Failed to delete account."
   }
 }

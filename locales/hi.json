@@ -299,5 +299,13 @@
   "chat": {
     "user": "उपयोगकर्ता",
     "nova": "नोवा"
+  },
+  "account": {
+    "deleteConfirmTitle": "हटाने की पुष्टि करें",
+    "deleteConfirmMessage": "क्या आप अपना खाता स्थायी रूप से हटाना चाहते हैं?",
+    "cancel": "रद्द करें",
+    "delete": "हटाएं",
+    "errorTitle": "त्रुटि",
+    "errorMessage": "खाता हटाने में विफल।"
   }
 }
