@@ -341,7 +341,7 @@ const HomePage = () => {
                                             {description}
                                         </Text>
                                     </View>
-                                    <Text style={{ position: 'absolute', bottom: 8, left: '50%', transform: [{ translateX: -50 }], color: 'white', fontSize: 12 }}>
+                                    <Text style={{ position: 'absolute', bottom: 8, left: '50%', transform: [{ translateX: "-50%" }], color: 'white', fontSize: 12 }}>
                                         {bottomLine}
                                     </Text>
                                 </ImageBackground>
