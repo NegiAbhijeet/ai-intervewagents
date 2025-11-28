@@ -1,5 +1,6 @@
 package com.app.aiinterviewagents;
-
+import android.content.Context;            
+import android.media.AudioAttributes;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
@@ -43,22 +44,56 @@ public class PCMPlayerModule extends ReactContextBaseJavaModule {
             return;
         }
 
+        // 1. Define AudioAttributes for Voice Communication (Enables AEC)
+        AudioAttributes attributes = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION) 
+                .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                .build();
+
+        AudioFormat format = new AudioFormat.Builder()
+                .setSampleRate(sampleRate)
+                .setChannelMask(channelConfig)
+                .setEncoding(AudioFormat.ENCODING_PCM_16BIT)
+                .build();
+
+        // 2. Create the AudioTrack
         audioTrack = new AudioTrack(
-                AudioManager.STREAM_MUSIC,
-                sampleRate,
-                channelConfig,
-                AudioFormat.ENCODING_PCM_16BIT,
+                attributes,
+                format,
                 bufferSize,
-                AudioTrack.MODE_STREAM
+                AudioTrack.MODE_STREAM,
+                AudioManager.AUDIO_SESSION_ID_GENERATE
         );
 
         if (audioTrack.getState() != AudioTrack.STATE_INITIALIZED) {
-            promise.reject("E_INIT", "Failed to init AudioTrack at " + sampleRate + "Hz");
+            promise.reject("E_INIT", "Failed to init AudioTrack");
             return;
         }
 
+        // 3. FORCE SPEAKERPHONE & MAX VOLUME
+        try {
+            AudioManager am = (AudioManager) getReactApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+            
+            // Switch to Communication Mode (Required for AEC)
+            am.setMode(AudioManager.MODE_IN_COMMUNICATION);
+            
+            // Force Audio to Loudspeaker
+            am.setSpeakerphoneOn(true);
+
+            // Max out the volume for the "Voice Call" stream (since we are in Communication mode)
+            int maxVol = am.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL);
+            int currentVol = am.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
+            
+            // Optional: Only set if it's too low, or just force it to max
+            am.setStreamVolume(AudioManager.STREAM_VOICE_CALL, maxVol, 0);
+            
+            Log.d("PCMPlayer", "Speakerphone ON. Volume set to: " + maxVol);
+            
+        } catch (Exception e) {
+            Log.e("PCMPlayer", "Failed to set speakerphone", e);
+        }
+
         audioTrack.play();
-        Log.d("PCMPlayer", "AudioTrack initialized with " + sampleRate + "Hz, buffer=" + bufferSize);
         promise.resolve(null);
     }
 
@@ -88,6 +123,9 @@ public class PCMPlayerModule extends ReactContextBaseJavaModule {
             audioTrack.release();
             audioTrack = null;
         }
+        
+        AudioManager am = (AudioManager) getReactApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+        am.setMode(AudioManager.MODE_NORMAL); 
         promise.resolve(null);
     }
 

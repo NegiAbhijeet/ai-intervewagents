@@ -43,7 +43,12 @@ public class PCMRecorderModule extends ReactContextBaseJavaModule {
         if (android.media.audiofx.AcousticEchoCanceler.isAvailable()) {
             android.media.audiofx.AcousticEchoCanceler aec = 
                 android.media.audiofx.AcousticEchoCanceler.create(audioRecord.getAudioSessionId());
-            aec.setEnabled(true);
+            if (aec != null) {
+                aec.setEnabled(true);
+                Log.d("PCMRecorder", "AEC Enabled: " + aec.getEnabled() + " Has Control: " + aec.hasControl());
+            } else {
+                Log.w("PCMRecorder", "AEC Failed to initialize");
+            }
         }
 
 
