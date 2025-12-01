@@ -24,7 +24,7 @@ import Toast from 'react-native-toast-message'
 import { useNavigation } from '@react-navigation/native'
 
 const { width: SCREEN_W } = Dimensions.get('window')
-const CIRCLESIZE = 100
+const CIRCLESIZE = 120
 
 
 export default function SharePage({ route }) {
@@ -229,7 +229,8 @@ export default function SharePage({ route }) {
                                 resizeMode="contain"
                                 style={{ position: 'absolute', top: 0, left: 0, width: CIRCLESIZE, height: CIRCLESIZE }}
                             />
-                            <Text style={styles.scoreNumber}>{score}</Text>
+                            <Text style={{ fontSize: 8, transform: "translateY(3px)" }}>Your Score</Text>
+                            <Text style={styles.scoreNumber}>{score}%</Text>
                         </View>
 
                         <TouchableOpacity style={styles.analysisButton} onPress={() => { navigation.navigate("reports", { report: meetingReport }) }}>
@@ -303,7 +304,8 @@ const styles = StyleSheet.create({
     },
     scoreNumber: {
         fontSize: 26,
-        fontWeight: '800'
+        fontWeight: '700',
+        color: "rgba(114, 28, 197, 1)"
     },
     analysisButton: {
         flexDirection: 'row',
