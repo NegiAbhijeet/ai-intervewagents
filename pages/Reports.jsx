@@ -21,7 +21,10 @@ import BackgroundGradient2 from '../components/backgroundGradient2';
 import StatusBoxes from '../components/ReportsStatusBoxes';
 import LinearGradient from 'react-native-linear-gradient';
 import { useTranslation } from 'react-i18next';
-const Reports = () => {
+import GuessScoreModal from './guessScore';
+import { useNavigation } from '@react-navigation/native';
+import AfterGuessModal from './afterGuess';
+const Reports = ({ route }) => {
   const { t } = useTranslation();
   const { userProfile } = useContext(AppStateContext);
   const [meetings, setMeetings] = useState([]);
@@ -33,9 +36,22 @@ const Reports = () => {
   const [rowTotalMeetings, setRowTotalMeetings] = useState(0)
   const [pendingReports, setPendindReports] = useState(0)
   const [activeFilter, setActiveFilter] = useState('all');
-
+  const [isGuessing, setIsGuessing] = useState(false)
+  const [isPending, setIsPending] = useState(false)
   // small animated rotation for the refresh icon when active
   const rotateAnim = useRef(new Animated.Value(0)).current;
+  const navigation = useNavigation()
+  const [meetingId, setMeetingId] = useState(route.params?.meetingId ?? '');
+  const [guessRange, setGuessRange] = useState(null)
+  useEffect(() => {
+    if (route.params?.meetingId) {
+      setMeetingId(route.params?.meetingId)
+      setIsGuessing(true)
+    } else if (route.params?.report) {
+      setCurrentReport(route.params?.report)
+    }
+  }, [route.params]);
+
 
   const startRotate = () => {
     Animated.loop(
@@ -155,7 +171,11 @@ const Reports = () => {
     if (!text || typeof text !== 'string') return '';
     return text.charAt(0).toUpperCase() + text.slice(1);
   };
-
+  const onSelectGuess = (guessRange) => {
+    setGuessRange(guessRange)
+    setIsPending(true)
+    setIsGuessing(false)
+  }
   return (
     <>
       <TopBar />
@@ -169,6 +189,19 @@ const Reports = () => {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
         >
+
+          <GuessScoreModal visible={isGuessing} onRequestClose={() => setIsGuessing(false)} onSelectGuess={onSelectGuess} />
+          <AfterGuessModal
+            visible={isPending}
+            onRequestClose={() => setIsPending(false)}
+            onNext={(finalScore) => {
+              setIsPending(false)
+              navigation.navigate('SharePage', { finalScore })
+            }}
+            guessedRange={guessRange}
+            interviewId={meetingId}
+          />
+
           <View style={{ width: "100%" }}>
             <StatusBoxes
               total={rowTotalMeetings}
@@ -449,7 +482,7 @@ const Reports = () => {
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                         <Ionicons name="calendar-outline" size={14} color="rgba(75, 85, 99, 1)" />
                         <Text style={{ color: 'rgba(75, 85, 99, 1)', fontSize: 14 }}>
-                           {t(`types.${report?.type?.toLowerCase() || 'unknown'}`)}
+                          {t(`types.${report?.type?.toLowerCase() || 'unknown'}`)}
                         </Text>
                       </View>
                     </View>

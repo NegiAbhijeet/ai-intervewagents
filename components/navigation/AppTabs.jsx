@@ -7,6 +7,7 @@ import JobsPage from '../../pages/jobs';
 import Leaderboard from '../../pages/leaderBoard';
 import HomePage from '../../pages/HomePage';
 import ProfileScreen from '../../pages/Profile';
+import SharePage from '../../pages/sharePage';
 
 const Tab = createBottomTabNavigator();
 
@@ -23,6 +24,7 @@ const AppTabs = () => {
       <Tab.Screen name="reports" component={Reports} />
       <Tab.Screen name="leaderBoard" component={Leaderboard} />
       <Tab.Screen name="profile" component={ProfileScreen} />
+      <Tab.Screen name="SharePage" component={SharePage} />
       {/* Profile removed from tab navigator */}
     </Tab.Navigator>
   );

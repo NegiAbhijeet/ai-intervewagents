@@ -71,20 +71,19 @@ const CallUI = ({
         console.error('Error updating meeting:', error);
       })
       .finally(() => {
-        sendInterviewCompleted();
-        setHasStarted(false);
-        setShowInterviewScreen(false);
-        setIsLoading(false);
+        setTimeout(() => {
+          sendInterviewCompleted();
+          setHasStarted(false);
+          setShowInterviewScreen(false);
+          setIsLoading(false);
+          setUserProfile(prev => ({
+            ...prev,
+            seconds_used: (prev?.seconds_used || 0) + elapsedSeconds,
+          }));
 
-        const isFreePlan = userProfile?.plan?.id === 1;
-
-        setUserProfile(prev => ({
-          ...prev,
-          seconds_used: (prev?.seconds_used || 0) + elapsedSeconds,
-        }));
-
-        navigation.navigate('reports');
-      });
+          navigation.navigate('reports', { meetingId });
+        }, 2000);
+      })
   }
 
   const { startSession, addUserAudio, sendInterviewCompleted } = useRealTime({
