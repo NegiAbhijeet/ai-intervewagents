@@ -8,7 +8,7 @@ export default function Tabs({ activeTab, setActiveTab }) {
   return (
     <View className="items-center justify-center w-[80%] relative mx-auto">
       <Image
-        source={require('../assets/images/penguine.png')}
+        source={require('../assets/images/penguin.png')}
         resizeMode="contain"
         style={{ height: 120 }}
       />
