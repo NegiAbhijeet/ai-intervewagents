@@ -306,5 +306,6 @@
         "delete": "삭제",
         "errorTitle": "오류",
         "errorMessage": "계정 삭제 실패"
-    }
+    },
+    "currentPlan": "현재 플랜"
 }

@@ -306,5 +306,6 @@
     "delete": "Eliminar",
     "errorTitle": "Error",
     "errorMessage": "No se pudo eliminar la cuenta."
-  }
+  },
+  "currentPlan": "Plan actual"
 }

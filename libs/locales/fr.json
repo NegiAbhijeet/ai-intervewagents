@@ -306,5 +306,6 @@
         "delete": "Supprimer",
         "errorTitle": "Erreur",
         "errorMessage": "Échec de la suppression du compte."
-    }
+    },
+    "currentPlan": "Forfait actuel"
 }

@@ -306,5 +306,6 @@
         "delete": "Excluir",
         "errorTitle": "Erro",
         "errorMessage": "Falha ao excluir a conta."
-    }
+    },
+    "currentPlan": "Plano atual"
 }

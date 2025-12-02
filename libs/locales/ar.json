@@ -306,5 +306,6 @@
         "delete": "حذف",
         "errorTitle": "خطأ",
         "errorMessage": "فشل حذف الحساب."
-    }
+    },
+    "currentPlan": "الخطة الحالية"
 }
