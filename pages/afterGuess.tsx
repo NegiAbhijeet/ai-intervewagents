@@ -184,65 +184,31 @@ const AfterGuessModal = ({
                             {status === 'ready' ? 'Here is your final score' : "We're calculating your real score..."}
                         </Text>
                     </View>
+                    {
+                        (status === "polling" || status === "ready") &&
+                        <View style={styles.progressWrap}>
+                            <Animated.Image
+                                source={require('../assets/images/Container.png')}
+                                style={[
+                                    styles.progressRing,
+                                    status !== 'ready' && { transform: [{ rotate }] }
+                                ]}
+                                resizeMode="contain"
+                            />
+                            <View style={styles.progressCenter}>
+                                {status === 'polling' && <>
+                                    <Text style={styles.progressLabel}>Analyzing</Text>
+                                </>}
 
-                    <View style={styles.progressWrap}>
-                        <Animated.Image
-                            source={require('../assets/images/Container.png')}
-                            style={[
-                                styles.progressRing,
-                                status !== 'ready' && { transform: [{ rotate }] }
-                            ]}
-                            resizeMode="contain"
-                        />
-                        <View style={styles.progressCenter}>
-                            {status === 'polling' && <>
-                                {/* <ActivityIndicator size="large" /> */}
-                                <Text style={styles.progressLabel}>Analyzing</Text>
-                                {/* <Text style={{ fontSize: 11, marginTop: 8 }}>{`Attempt ${attemptsRef.current} of ${maxTries}`}</Text> */}
-                            </>}
-
-                            {status === 'error' && <>
-                                <Text style={styles.progressLabel}>Network issue. Retrying</Text>
-                                {/* <Text style={{ fontSize: 11, marginTop: 8 }}>{`Attempt ${attemptsRef.current} of ${maxTries}`}</Text> */}
-                            </>}
-
-                            {status === 'timeout' && <>
-                                <Text style={styles.progressLabel}>Timed out while generating report</Text>
-                                {/* <Text style={{ fontSize: 11, marginTop: 8 }}>{`No response after ${attemptsRef.current} attempts`}</Text> */}
-                            </>}
-                            {status === 'ready' && <>
-                                <Text style={styles.progressValue}>{serverScore}%</Text>
-                            </>}
-
+                                {status === 'ready' && <>
+                                    <Text style={styles.progressValue}>{serverScore}%</Text>
+                                </>}
+                            </View>
                         </View>
-                    </View>
+                    }
 
                     <View style={styles.processingCard}>
-                        <Text style={styles.processingTitle}>Processing your interview data</Text>
-
-                        {/* <View style={styles.processRow}>
-                            <View style={styles.rowLeft}>
-                                <View style={[styles.dot, styles.dotGreen]} />
-                                <Text style={styles.rowText}>Response analysis</Text>
-                            </View>
-                            <Text style={styles.rowPercent}>100%</Text>
-                        </View>
-
-                        <View style={styles.processRow}>
-                            <View style={styles.rowLeft}>
-                                <View style={[styles.dot, styles.dotBlue]} />
-                                <Text style={styles.rowText}>Confidence scoring</Text>
-                            </View>
-                            <Text style={styles.rowPercent}>78%</Text>
-                        </View>
-
-                        <View style={styles.processRow}>
-                            <View style={styles.rowLeft}>
-                                <View style={[styles.dot, styles.dotGray]} />
-                                <Text style={styles.rowText}>Final calculation</Text>
-                            </View>
-                            <Text style={styles.rowPercent}>45%</Text>
-                        </View> */}
+                        {(status === "polling") && <Text style={styles.processingTitle}>Processing your interview data</Text>}
 
                         {status === 'ready' && (
                             <View style={{ marginTop: 12, alignItems: 'center' }}>
@@ -269,9 +235,10 @@ const AfterGuessModal = ({
                             </View>
                         )}
 
-                        {status === 'timeout' && (
+                        {(status === 'timeout' || status === 'error') && (
                             <View style={{ marginTop: 12, alignItems: 'center' }}>
-                                <Text style={{ marginBottom: 8 }}>We could not fetch the result within the time limit.</Text>
+                                <Text style={{ marginBottom: 12, color: "red" }}>Error while creating the report.</Text>
+
                                 <View style={{ flexDirection: 'row' }}>
                                     <TouchableOpacity onPress={retryPolling} style={styles.nextButton}>
                                         <Text style={{ color: '#fff', fontWeight: '700' }}>Retry</Text>
@@ -306,7 +273,7 @@ const styles = StyleSheet.create({
     title: { fontSize: 36, fontWeight: '700', marginTop: 6 },
     subtitle: { fontSize: 18, color: 'rgba(60, 60, 60, 1)', marginTop: 6, fontWeight: '500' },
     progressWrap: { width: '100%', alignItems: 'center', marginTop: 12, position: 'relative', height: 200, justifyContent: 'center' },
-    progressRing: { width: 180, height: 180, position: 'absolute' },
+    progressRing: { width: 160, height: 160, position: 'absolute' },
     progressCenter: { alignItems: 'center' },
     progressValue: { fontSize: 30, fontWeight: '700' },
     progressLabel: { fontSize: 12, fontWeight: '500', color: 'rgba(60, 60, 60, 1)' },

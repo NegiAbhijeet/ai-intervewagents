@@ -3,7 +3,7 @@ import { useRef } from "react";
 import { Buffer } from "buffer";
 import { Recorder } from "../components/audio/recorder"; // your JS wrapper around PCMRecorderModule
 
-const BUFFER_SIZE = 2400; // number of Int16 samples per chunk
+const BUFFER_SIZE = 4800; // number of Int16 samples per chunk
 
 type Parameters = {
   onAudioRecorded: (base64: string) => void;
