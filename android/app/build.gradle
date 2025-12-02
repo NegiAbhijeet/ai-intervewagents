@@ -31,6 +31,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 17
         versionName "2.4"
+        missingDimensionStrategy "store", "play"
     }
     signingConfigs {
         debug {

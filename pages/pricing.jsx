@@ -5,17 +5,19 @@ import {
   Text,
   FlatList,
   TouchableOpacity,
-  ActivityIndicator,
   StyleSheet,
-  Modal,
-  Pressable,
   Linking,
+  Modal,
+  ActivityIndicator,
 } from 'react-native';
 import { AppStateContext } from '../components/AppContext';
 import { useNavigation } from '@react-navigation/native';
 import { API_URL } from '../components/config';
-import PaymentPopup from '../components/PaymentPopup';
 import fetchWithAuth from '../libs/fetchWithAuth';
+import { useIAP, ErrorCode } from 'react-native-iap';
+import Toast from 'react-native-toast-message';
+import { useTranslation } from 'react-i18next';
+
 const formatPrice = p =>
   p === null || p === undefined ? 'Custom pricing' : `₹ ${p}`;
 
@@ -46,22 +48,78 @@ function PaymentButton({ priceValue, onPay, text = 'Buy Now', disabled }) {
       activeOpacity={0.8}
     >
       <Text style={styles.buttonText}>
-        {text} {priceValue ? `(${formatPrice(priceValue)})` : ''}
+        {text}
+        {/* {priceValue ? `(${formatPrice(priceValue)})` : ''} */}
       </Text>
     </TouchableOpacity>
   );
 }
 
 export default function PricingPage() {
-  const { userProfile, setUserProfile } = useContext(AppStateContext);
+  const { userProfile, setUserProfile, language } = useContext(AppStateContext);
   const navigation = useNavigation();
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [billingSelected, setBillingSelected] = useState({});
-  const [selectedPlan, setSelectedPlan] = useState(null);
-  const [paymentModalVisible, setPaymentModalVisible] = useState(false);
+  const [isFetching, setIsFetching] = useState(false)
+  const { t } = useTranslation();
+  const {
+    connected,
+    requestPurchase,
+    requestSubscription,
+    finishTransaction,
+  } = useIAP({
+    onPurchaseSuccess: async (purchase) => {
+      try {
+        await finishTransaction({ purchase, isConsumable: false });
+        console.log(purchase)
+        await completePurchase(purchase)
+      } catch (err) {
+        console.error('finishTransaction error', err);
+      }
+    },
+    onPurchaseError: (err) => {
+      if (err?.code !== ErrorCode.UserCancelled) {
+        console.error('onPurchaseError', err);
+      }
+    },
+  });
+  async function completePurchase(purchase) {
+    try {
+      setIsFetching(true);
+      const payload = {
+        "uid": userProfile?.uid,
+        "productId": purchase?.productId,
+        "purchaseToken": purchase?.purchaseToken,
+        "packageNameAndroid": purchase?.packageNameAndroid,
+        "transactionId": purchase?.id
+      }
 
+      const response = await fetchWithAuth(`${API_URL}/mobile-subscription-update/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        const message = errorData?.error || 'Failed to create interview.';
+        throw new Error(message);
+      }
+
+      const result = await response.json().catch(() => ({}));
+      if (result?.user) {
+        setUserProfile(result.user)
+        navigation.navigate('AppTabs', { screen: 'profile' });
+      }
+    } catch (err) {
+      console.error('Setup failed:', err);
+    } finally {
+      setIsFetching(false);
+    }
+  };
   useEffect(() => {
     const controller = new AbortController();
 
@@ -69,7 +127,7 @@ export default function PricingPage() {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetchWithAuth(`${API_URL}/api/plans`, {
+        const res = await fetchWithAuth(`${API_URL}/api/plans/?language_code=${language}`, {
           signal: controller.signal,
         });
 
@@ -98,8 +156,8 @@ export default function PricingPage() {
             p.prices == null
               ? []
               : Array.isArray(p.prices)
-              ? p.prices
-              : [p.prices];
+                ? p.prices
+                : [p.prices];
 
           const prices = rawPrices.map(pr => ({
             id: pr.id,
@@ -112,20 +170,17 @@ export default function PricingPage() {
             max_sub_users: pr.max_sub_users ?? 0,
             plan: pr.plan ?? null,
           }));
-
+          const myPrice = Array.isArray(p.prices)
+            ? p.prices[0]
+            : p.prices;
           return {
             id: p.id,
-            name: p.name,
-            description: p.description ?? p.name,
+            name: myPrice.plan_name,
+            description: myPrice.plan_name ?? p.plan_name,
             icon:
               typeof defaultIcon === 'function' ? defaultIcon(p.name) : null,
             prices,
-            buttonText:
-              p.id === 1
-                ? 'Start Free'
-                : p.id === 5
-                ? 'Book a Demo'
-                : 'Buy Now',
+            buttonText: myPrice?.button_text,
             max_sub_users: p.max_sub_users ?? 0,
           };
         });
@@ -143,24 +198,7 @@ export default function PricingPage() {
     return () => controller.abort();
   }, []);
 
-  const handlePerPlanToggle = planId => {
-    setBillingSelected(prev => {
-      const current = prev[planId] === 'yearly' ? 'monthly' : 'yearly';
-      return { ...prev, [planId]: current };
-    });
-  };
-
-  const effectiveBillingFor = plan => {
-    const selected = billingSelected[plan.id];
-    if (selected && plan.prices.some(pr => pr.interval === selected))
-      return selected;
-    if (plan.prices.some(pr => pr.interval === 'monthly')) return 'monthly';
-    if (plan.prices.some(pr => pr.interval === 'yearly')) return 'yearly';
-    return plan.prices[0]?.interval || 'monthly';
-  };
-
-  const onBuyPress = (plan, priceObj, billing) => {
-    // if plan id 1 and user exists, go to dashboard
+  const onBuyPress = async (plan) => {
     if (plan.id === 1 && userProfile?.uid) {
       navigation.navigate('Dashboard');
       return;
@@ -170,41 +208,41 @@ export default function PricingPage() {
       Linking.openURL('https://calendly.com/saurabhdocsightai-com/30min');
       return;
     }
-    // if not logged in send to login
     if (!userProfile?.uid) {
       navigation.navigate('Login');
       return;
     }
-    // otherwise open payment modal
-    setSelectedPlan({
-      ...plan,
-      selectedPrice: priceObj,
-      selectedBilling: billing,
-    });
-    setPaymentModalVisible(true);
+    if (!connected) {
+      Toast.show({ type: 'error', text1: 'Failed to process.' })
+      return;
+    }
+    let productId = "starter_plan"
+    try {
+      if (typeof requestSubscription === 'function') {
+        if (Platform.OS === 'android') {
+          await requestSubscription({ request: { android: { skus: [productId] }, ios: { sku: productId } } });
+        } else {
+          await requestSubscription({ request: { ios: { sku: productId } } });
+        }
+      } else {
+        await requestPurchase({ request: { android: { skus: [productId] }, ios: { sku: productId } } });
+      }
+    } catch (e) {
+      console.error('request purchase/subscription error', e);
+    }
   };
 
   const renderPlan = ({ item: plan }) => {
-    const effectiveBilling = effectiveBillingFor(plan);
-    const priceObj =
-      plan.prices.find(pr => pr.interval === effectiveBilling) ||
-      plan.prices.find(pr => pr.interval === 'monthly') ||
-      plan.prices[0] ||
-      null;
+    const priceObj = plan.prices[0] || null;
     const displayPrice = formatPrice(priceObj?.price);
-    const displayPeriodLabel ="/month"
-      // effectiveBilling === 'monthly' ? '/month' : '/year';
+    const displayPeriodLabel = "/month"
     const features =
       typeof priceObj?.features === 'string'
         ? priceObj.features
-            .split(',')
-            .map(f => f.trim())
-            .filter(Boolean)
+          .split(',')
+          .map(f => f.trim())
+          .filter(Boolean)
         : [];
-
-    const hasMonthly = plan.prices.some(pr => pr.interval === 'monthly');
-    const hasYearly = plan.prices.some(pr => pr.interval === 'yearly');
-    const showToggle = hasMonthly && hasYearly;
 
     const isCurrentPlan = userProfile?.plan?.id === plan?.id;
 
@@ -227,20 +265,6 @@ export default function PricingPage() {
           <Text style={styles.pricePeriod}>{displayPeriodLabel}</Text>
         </View>
 
-        {showToggle && (
-          <View style={styles.toggleRow}>
-            <TouchableOpacity
-              onPress={() => handlePerPlanToggle(plan.id)}
-              style={styles.toggleButton}
-            >
-              <Text style={styles.toggleText}>
-                Billing:{' '}
-                {billingSelected[plan.id] === 'yearly' ? 'Yearly' : 'Monthly'}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        )}
-
         <View style={styles.features}>
           {features.length === 0 ? (
             <Text style={styles.noFeaturesText}>No features listed</Text>
@@ -257,7 +281,7 @@ export default function PricingPage() {
         <View style={styles.cardFooter}>
           {isCurrentPlan ? (
             <View style={[styles.button, styles.disabledPrimary]}>
-              <Text style={styles.buttonText}>Current Plan</Text>
+              <Text style={styles.buttonText}>{t("currentPlan")}</Text>
             </View>
           ) : plan.id === 5 ? (
             <TouchableOpacity
@@ -283,7 +307,7 @@ export default function PricingPage() {
             <PaymentButton
               priceValue={priceObj?.price}
               text={plan.buttonText}
-              onPay={() => onBuyPress(plan, priceObj, effectiveBilling)}
+              onPay={() => onBuyPress(plan)}
             />
           )}
         </View>
@@ -310,6 +334,15 @@ export default function PricingPage() {
 
   return (
     <View style={styles.container}>
+      {isFetching && (
+        <Modal transparent visible animationType="fade">
+          <View style={styles.modalOverlay}>
+            <View style={styles.spinnerContainer}>
+              <ActivityIndicator size="large" style={styles.spinner} />
+            </View>
+          </View>
+        </Modal>
+      )}
       <FlatList
         data={plans}
         keyExtractor={item => item.id.toString()}
@@ -321,18 +354,6 @@ export default function PricingPage() {
           </View>
         }
       />
-      {userProfile?.uid && (
-        <PaymentPopup
-          visible={paymentModalVisible}
-          selectedPlan={selectedPlan}
-          onClose={() => {
-            setPaymentModalVisible(false);
-            setSelectedPlan(null);
-          }}
-          uid={userProfile?.uid}
-          setUserProfile={setUserProfile}
-        />
-      )}
     </View>
   );
 }
@@ -480,4 +501,26 @@ const styles = StyleSheet.create({
   modalButtonPrimary: { backgroundColor: '#0f172a' },
   modalButtonText: { color: '#0f172a', fontWeight: '700' },
   modalButtonTextPrimary: { color: '#fff' },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.25)',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  spinnerContainer: {
+    width: 96,
+    height: 96,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255,255,255,0.95)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    elevation: 10
+  },
+  spinner: {
+    transform: [{ scale: 1 }]
+  }
 });

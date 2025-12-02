@@ -240,9 +240,9 @@ const AfterGuessModal = ({
                                 <Text style={{ marginBottom: 12, color: "red" }}>Error while creating the report.</Text>
 
                                 <View style={{ flexDirection: 'row' }}>
-                                    <TouchableOpacity onPress={retryPolling} style={styles.nextButton}>
+                                    {/* <TouchableOpacity onPress={retryPolling} style={styles.nextButton}>
                                         <Text style={{ color: '#fff', fontWeight: '700' }}>Retry</Text>
-                                    </TouchableOpacity>
+                                    </TouchableOpacity> */}
                                     <TouchableOpacity onPress={() => {
                                         stopPolling()
                                         onRequestClose()

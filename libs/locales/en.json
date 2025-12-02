@@ -306,5 +306,6 @@
     "delete": "Delete",
     "errorTitle": "Error",
     "errorMessage": "Failed to delete account."
-  }
+  },
+  "currentPlan":"Current Plan"
 }

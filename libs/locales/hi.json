@@ -306,5 +306,6 @@
     "delete": "हटाएं",
     "errorTitle": "त्रुटि",
     "errorMessage": "खाता हटाने में विफल।"
-  }
+  },
+  "currentPlan": "वर्तमान प्लान"
 }
