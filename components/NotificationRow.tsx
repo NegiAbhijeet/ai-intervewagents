@@ -1,6 +1,6 @@
 // NotificationRow.tsx
 import Ionicons from '@react-native-vector-icons/ionicons';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import {
   View,
   Text,
@@ -9,7 +9,9 @@ import {
   LayoutAnimation,
   Platform,
   UIManager,
+  Image,
 } from 'react-native';
+import { AppStateContext } from './AppContext';
 
 export type NotificationItem = {
   id: number | string;
@@ -47,22 +49,14 @@ function typeColor(type?: NotificationItem['type']) {
   }
 }
 
-function NotificationRow({ item, timeLabel, expanded, onToggle }: Props) {
-  // animate open/close for a smoother feel
-  console.log(item);
+function NotificationRow({ item, timeLabel, expanded, onToggle, type = "normal" }: Props) {
+  const { userProfile } = useContext(AppStateContext)
+
   React.useEffect(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
   }, [expanded]);
 
   const accent = typeColor(item.type);
-  const iconName =
-    item.type === 'success'
-      ? 'checkmark-circle'
-      : item.type === 'warning'
-        ? 'alert-circle'
-        : item.type === 'error'
-          ? 'alert' 
-          : 'notifications';
 
   return (
     <TouchableOpacity
@@ -70,22 +64,19 @@ function NotificationRow({ item, timeLabel, expanded, onToggle }: Props) {
       onPress={() => onToggle(item?.id || null)}
       style={[
         styles.item,
-        item.read ? styles.itemRead : styles.itemUnread,
-        expanded
-          ? {
-            borderColor: fade('#93C5FD', 0.55),
-            backgroundColor: fade('#60A5FA', 0.08),
-          }
-          : null,
       ]}
     >
-      <View
-        style={[
-          styles.iconWrap,
-          expanded ? { backgroundColor: fade(accent, 0.12) } : null,
-        ]}
-      >
-        <Ionicons name={iconName} size={22} color={accent} />
+      <View style={styles.iconWrap}>
+        <Image
+          source={
+            type === 'friend' && userProfile?.avatar ? { uri: userProfile.avatar }
+              : (type === 'report'
+                ? require('../assets/images/notiReportImage.png')
+                : require('../assets/images/notiBellImage.png'))
+          }
+          resizeMode="cover"
+          style={{ width: 30, height: 30 }}
+        />
       </View>
 
       <View style={styles.content}>
@@ -94,7 +85,6 @@ function NotificationRow({ item, timeLabel, expanded, onToggle }: Props) {
             style={[
               styles.title,
               { color: item.read ? '#111827' : '#0F172A' },
-              { borderLeftWidth: 4, borderLeftColor: accent, paddingLeft: 8 },
             ]}
             numberOfLines={expanded ? undefined : 1}
           >
@@ -126,28 +116,17 @@ function areEqual(prev: Props, next: Props) {
 
 export default React.memo(NotificationRow, areEqual);
 
-// small helper to return rgba-ish background from hex and opacity
-function fade(hex: string, alpha: number) {
-  const h = hex.replace('#', '');
-  const r = parseInt(h.substring(0, 2), 16);
-  const g = parseInt(h.substring(2, 4), 16);
-  const b = parseInt(h.substring(4, 6), 16);
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
-
 const styles = StyleSheet.create({
   item: {
     flexDirection: 'row',
     padding: 14,
     borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderWidth: 0.63,
+    borderColor: 'rgba(120, 20, 196, 0.6)',
     alignItems: 'flex-start',
     marginBottom: 6,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'rgba(120, 20, 196, 0.1)',
   },
-  itemRead: { backgroundColor: '#FFFFFF' },
-  itemUnread: { backgroundColor: '#FEFEFF' },
 
   iconWrap: {
     width: 48,
@@ -155,7 +134,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#F3F4F6',
     marginRight: 12,
   },
   content: { flex: 1 },
@@ -164,8 +142,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'flex-start',
   },
-  title: { fontSize: 15, fontWeight: '600', flex: 1, marginRight: 8 },
+  title: { fontSize: 14, fontWeight: '600', flex: 1, marginRight: 8 },
   time: { fontSize: 11, color: '#6B7280' },
-  message: { marginTop: 6, fontSize: 13, color: '#374151' },
+  message: { marginTop: 6, fontSize: 13, color: 'rgba(75, 85, 99, 1)' },
   messageExpanded: { color: '#111827' },
 });

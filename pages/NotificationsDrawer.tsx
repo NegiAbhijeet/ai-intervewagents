@@ -13,7 +13,10 @@ import {
   Animated,
   Easing,
   Dimensions,
-  FlatList,
+  SectionList,
+  TouchableOpacity,
+  Modal,
+  ActivityIndicator,
 } from 'react-native';
 
 import NotificationRow, {
@@ -22,8 +25,10 @@ import NotificationRow, {
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { AppStateContext } from '../components/AppContext';
 import fetchWithAuth from '../libs/fetchWithAuth';
-import { API_URL } from '../components/config';
+import { API_URL, JAVA_API_URL } from '../components/config';
 import Layout from './Layout';
+import { useNavigation } from '@react-navigation/native';
+import { Shadow } from 'react-native-shadow-2';
 
 const ITEM_HEIGHT = 84;
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -49,46 +54,66 @@ export default function NotificationsPage() {
     notifications,
     setNotifications,
   } = useContext(AppStateContext);
+
+  const navigation = useNavigation<any>();
+
   const shimmer = useRef(new Animated.Value(0)).current;
   const [expandedId, setExpandedId] = useState<string | number | null>(null);
   const [loading, setLoading] = useState(false);
-  // This is the function you asked for
+  const [selectedTab, setSelectedTab] = useState<'All' | 'Friend Requests' | 'Reports'>('All');
+  const [isLoading, setIsLoading] = useState(false)
+  // toggle expanded row
   const toggleExpnaded = (id: string | number) => {
-    console.log(id);
     setExpandedId(prev => (prev === id ? null : id));
   };
+
   const showList = notifications !== null;
 
-  function fetchReadAll() {
-    fetchWithAuth(`${API_URL}/notifications/${userProfile?.uid}/read_all/`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(res => {
-        if (!res.ok) {
-          throw new Error(`HTTP error! Status: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then(data => {
-        setUnreadNotification(0);
-      })
-      .catch(err => {
-        console.error('Failed to fetch notifications:', err);
+  async function fetchReadAll() {
+    if (!userProfile?.uid) return;
+
+    try {
+      const res = await fetchWithAuth(`${API_URL}/notifications/${userProfile.uid}/read_all/`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+
+      // update local state immediately so UI reflects the change
+      if (Array.isArray(notifications)) {
+        const updated = notifications.map(n => ({ ...n, read: true }));
+        setNotifications(updated);
+      }
+
+      setUnreadNotification(0);
+    } catch (err) {
+      console.error('Failed to mark all read:', err);
+    }
   }
 
   useEffect(() => {
     if (userProfile?.uid) {
-      fetchReadAll();
+      // do initial fetch of notifications list
+      fetchNotifications();
+    } else {
+      // clear if no user
+      setNotifications([]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userProfile?.uid]);
+
   function fetchNotifications() {
-    fetchWithAuth(
-      `${API_URL}/notifications/${userProfile.uid}/?notification_from=app`,
-    )
+    if (!userProfile?.uid) {
+      setNotifications([]);
+      return;
+    }
+
+    fetchWithAuth(`${API_URL}/notifications/${userProfile.uid}/?notification_from=app`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
@@ -102,9 +127,13 @@ export default function NotificationsPage() {
         setNotifications([]);
       });
   }
+
   const onRefresh = () => {
+    setLoading(true);
     fetchNotifications();
+    setTimeout(() => setLoading(false), 600);
   };
+
   useEffect(() => {
     if (!showList) {
       const anim = Animated.loop(
@@ -121,29 +150,96 @@ export default function NotificationsPage() {
     }
   }, [showList, shimmer]);
 
-  const keyExtractor = useCallback(
-    (item: NotificationItem) => `${item.id}`,
-    [],
-  );
+  // Helper to normalize keys from backend
+  const getMeetingId = (n: any) => n.meeting_id ?? null;
+  const getCreatedAt = (n: any) => n.created_at ?? n.createdAt ?? new Date().toISOString();
+
+  // filter notifications for the three tabs and group unread first
+  const allNotifications = Array.isArray(notifications) ? notifications : [];
+
+  const tabFiltered = allNotifications.filter(n => {
+    if (selectedTab === 'All') return true;
+    if (selectedTab === 'Reports') return !!getMeetingId(n);
+    if (selectedTab === 'Friend Requests') {
+      const title = (n.title ?? '').toString().toLowerCase();
+      const message = (n.message ?? n.body ?? '').toString().toLowerCase();
+      return title.includes('friend') || message.includes('friend');
+    }
+    return true;
+  });
+
+  const unreadItems = tabFiltered.filter(n => !n.read);
+  const readItems = tabFiltered.filter(n => !!n.read);
+
+  // If user wants unread at top, keep their relative order by created_at desc
+  const sortByDateDesc = (a: any, b: any) => {
+    const da = new Date(getCreatedAt(a)).getTime();
+    const db = new Date(getCreatedAt(b)).getTime();
+    return db - da;
+  };
+
+  unreadItems.sort(sortByDateDesc);
+  readItems.sort(sortByDateDesc);
+
+  // Section data for SectionList
+  const sections = [];
+  if (unreadItems.length > 0) {
+    sections.push({ title: 'Unread', data: unreadItems });
+  }
+  if (readItems.length > 0) {
+    sections.push({ title: 'Earlier', data: readItems });
+  }
+
+  const handlePressItem = async (item: any) => {
+    const meetingId = getMeetingId(item)
+    if (!meetingId) {
+      toggleExpnaded(item.id) // corrected function name
+      return
+    }
+
+    setIsLoading(true)
+    let report: any = {}
+
+    try {
+      const url = `${JAVA_API_URL}/api/meetings/${meetingId}`
+      const res = await fetch(url)
+      if (!res.ok) throw new Error(`Request failed with status ${res.status}`)
+      const result = await res.json()
+      report = result.data ?? {}
+    } catch (err) {
+      console.error('failed to fetch meeting', err)
+    } finally {
+      setIsLoading(false)
+    }
+
+    navigation.navigate('AppTabs', {
+      screen: 'reports',
+      params: { report },
+    })
+    setSelectedTab('Reports')
+  }
+
 
   const renderItem = ({ item }: { item: NotificationItem }) => {
-    const timeLabel = formatTimeAgo(item.created_at);
+    const timeLabel = formatTimeAgo(getCreatedAt(item));
     return (
       <NotificationRow
         item={item}
         timeLabel={timeLabel}
-        expanded={expandedId === item.id} // <-- boolean, not the id
-        onToggle={toggleExpnaded}
+        expanded={expandedId === item.id}
+        onToggle={() => { handlePressItem(item) }}
+        type={item?.meeting_id ? "report" : (item?.friend ? "friend" : "normal")}
       />
     );
   };
 
-  const getItemLayout = useCallback(
-    (_data: NotificationItem[] | null, index: number) => {
-      return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
-    },
-    [],
-  );
+  const renderSectionHeader = ({ section }: any) => {
+    return (
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionHeaderText}>{section.title}</Text>
+      </View>
+    );
+  };
 
   const ListEmpty = useCallback(() => {
     return (
@@ -185,79 +281,181 @@ export default function NotificationsPage() {
     );
   };
 
+  const unreadCount = unreadItems.length;
+
   return (
     <Layout>
-      {/* <View style={styles.header}>
-        <View style={{ flexDirection: 'column' }}>
-          <Text style={styles.title}>Notifications</Text>
-          <Text style={styles.subtitle}>Recent activity and alerts</Text>
+      <View style={{ paddingTop: 30 }}>
+        {isLoading && (
+          <Modal transparent visible animationType="fade">
+            <View style={styles.modalOverlay}>
+              <View style={styles.spinnerContainer}>
+                <ActivityIndicator size="large" style={styles.spinner} />
+              </View>
+            </View>
+          </Modal>
+        )}
+        <View style={styles.tabRow}>
+
+          {selectedTab === 'All' ? (
+            <TouchableOpacity
+              onPress={() => setSelectedTab('All')}
+              style={[styles.tabItemActive]}
+            >
+              <Text style={[styles.tabTextActive]}>All</Text>
+            </TouchableOpacity>
+          ) : (
+            <Shadow
+              distance={4}
+              startColor="rgba(0,0,0,0.1)"
+              offset={[0, 2]}
+              containerStyle={styles.shadowWrap}
+            >
+              <TouchableOpacity
+                onPress={() => setSelectedTab('All')}
+                style={styles.tabItemInactive}
+              >
+                <Text style={styles.tabText}>All</Text>
+              </TouchableOpacity>
+            </Shadow>
+          )}
+
+          {selectedTab === 'Friend Requests' ? (
+            <TouchableOpacity
+              onPress={() => setSelectedTab('Friend Requests')}
+              style={[styles.tabItemActive]}
+            >
+              <Text style={styles.tabTextActive}>Friend Requests</Text>
+            </TouchableOpacity>
+          ) : (
+            <Shadow
+              distance={4}
+              startColor="rgba(0,0,0,0.1)"
+              offset={[0, 2]}
+              containerStyle={styles.shadowWrap}
+            >
+              <TouchableOpacity
+                onPress={() => setSelectedTab('Friend Requests')}
+                style={styles.tabItemInactive}
+              >
+                <Text style={styles.tabText}>Friend Requests</Text>
+              </TouchableOpacity>
+            </Shadow>
+          )}
+
+          {selectedTab === 'Reports' ? (
+            <TouchableOpacity
+              onPress={() => setSelectedTab('Reports')}
+              style={[styles.tabItemActive]}
+            >
+              <Text style={styles.tabTextActive}>Reports</Text>
+            </TouchableOpacity>
+          ) : (
+            <Shadow
+              distance={4}
+              startColor="rgba(0,0,0,0.1)"
+              offset={[0, 2]}
+              containerStyle={styles.shadowWrap}
+            >
+              <TouchableOpacity
+                onPress={() => setSelectedTab('Reports')}
+                style={styles.tabItemInactive}
+              >
+                <Text style={styles.tabText}>Reports</Text>
+              </TouchableOpacity>
+            </Shadow>
+          )}
         </View>
-      </View> */}
 
-      {!showList && <SkeletonLoader />}
+        {unreadCount > 0 && (
+          <View style={styles.header}>
+            <View style={{ alignItems: "center", flexDirection: "row", gap: 4 }}>
+              <View style={{ backgroundColor: "rgba(120, 20, 196, 1)", borderRadius: 9999, width: 8, height: 8 }}></View>
+              <Text>
+                {unreadCount} unread notifications
+              </Text>
+            </View>
 
-      {showList && Array.isArray(notifications) && (
-        <FlatList
-          data={notifications}
-          renderItem={renderItem}
-          keyExtractor={keyExtractor}
-          getItemLayout={getItemLayout}
-          contentContainerStyle={{
-            paddingBottom: Platform.OS === 'ios' ? 36 : 24,
-            paddingTop: 16,
-          }}
-          ListEmptyComponent={ListEmpty}
-          showsVerticalScrollIndicator={false}
-          initialNumToRender={8}
-          maxToRenderPerBatch={10}
-          windowSize={5}
-          removeClippedSubviews
-          refreshing={loading}
-          onRefresh={onRefresh}
-        />
-      )}
+            <TouchableOpacity onPress={fetchReadAll}>
+              <Text style={styles.unreadMsg}>Mark all as read</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {!showList && <SkeletonLoader />}
+
+        {showList && (
+          <>
+            {sections.length === 0 ? (
+              <ListEmpty />
+            ) : (
+              <SectionList
+                sections={sections}
+                keyExtractor={(item: any) => `${item.id}`}
+                renderItem={renderItem}
+                renderSectionHeader={renderSectionHeader}
+                contentContainerStyle={{
+                  paddingBottom: Platform.OS === 'ios' ? 36 : 24,
+                  paddingTop: 16,
+                }}
+                stickySectionHeadersEnabled={false}
+                refreshing={loading}
+                onRefresh={onRefresh}
+                initialNumToRender={8}
+                maxToRenderPerBatch={10}
+                windowSize={5}
+                removeClippedSubviews
+              />
+            )}
+          </>
+        )}
+      </View>
     </Layout>
   );
 }
 
 const styles = StyleSheet.create({
   header: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#EDF2F7',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    // paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#EDF2F7',
+    marginTop: 20
   },
-  title: {
+  headerTitle: {
     fontSize: 18,
     fontWeight: '600',
   },
-  subtitle: {
-    fontSize: 12,
-    color: '#6B7280',
-    marginTop: 2,
+  unreadMsg: {
+    fontSize: 13,
+    color: 'rgba(0, 0, 0, 1)',
+    fontWeight: 500
   },
-  unreadBadge: {
-    backgroundColor: '#4F46E5',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 20,
-    marginRight: 8,
+  tabRow: {
+    flexDirection: 'row',
+    gap: 10
   },
-  unreadText: {
-    color: 'white',
-    fontSize: 12,
+  shadowWrap: {
+    borderRadius: 24
   },
-  clearButton: {
-    paddingHorizontal: 2,
-    paddingVertical: 6,
-    borderRadius: 6,
+  tabItemInactive: {
+    backgroundColor: 'rgba(248, 246, 246, 1)',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 24
   },
-  clearButtonText: {
-    fontSize: 14,
-    color: '#374151',
+  tabItemActive: {
+    backgroundColor: 'black',
+    paddingVertical: 9,
+    paddingHorizontal: 16,
+    borderRadius: 24
+  },
+  tabText: {
+    color: '#6B6B6B'
+  },
+  tabTextActive: {
+    color: 'white'
   },
   skeletonRow: {
     flexDirection: 'row',
@@ -305,4 +503,35 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     marginTop: 8,
   },
+  sectionHeader: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    backgroundColor: 'transparent',
+  },
+  sectionHeaderText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#374151',
+  }, modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.25)',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  spinnerContainer: {
+    width: 96,
+    height: 96,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255,255,255,0.95)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    elevation: 10
+  },
+  spinner: {
+    transform: [{ scale: 1 }]
+  }
 });
