@@ -24,6 +24,8 @@ import { useNavigation } from '@react-navigation/native';
 import { AppStateContext } from './AppContext';
 import { JAVA_API_URL } from './config';
 import { useTranslation } from 'react-i18next';
+import ExitInterviewModal from './quitPopup';
+import ExitReasonsModal from './quitFeedback';
 
 const CallUI = ({
   agentId,
@@ -48,7 +50,7 @@ const CallUI = ({
   const navigation = useNavigation();
   const [hasCameraPermission, setHasCameraPermission] = useState(false);
   const [hasMicPermission, setHasMicPermission] = useState(false);
-
+  const [quitStep, setQuitStep] = useState(null)
   const [interviewEnded, setInterviewEnded] = useState(false);
   const interviewDurationSeconds = Number(interviewTime);
 
@@ -85,7 +87,23 @@ const CallUI = ({
         }, 2000);
       })
   }
+  function halfHandleInterviewCompletion() {
+    setIsLoading(true);
+    setInterviewEnded(true);
+    stopAudioRecording();
+    stopAudioPlayer();
 
+    fetch(`${JAVA_API_URL}/api/meetings/update/${meetingId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ interviewDuration: elapsedSeconds }),
+    })
+      .catch(error => {
+        console.error('Error updating meeting:', error);
+      })
+  }
   const { startSession, addUserAudio, sendInterviewCompleted } = useRealTime({
     agentId,
     canId,
@@ -352,6 +370,25 @@ const CallUI = ({
             <AIAgent isAgentSpeaking={true} />
           </>
         )}
+        {
+          quitStep === 1 ?
+            <ExitInterviewModal onContinue={() => setQuitStep(null)} onQuit={async () => { await halfHandleInterviewCompletion(); setQuitStep(2) }} />
+            : (quitStep === 2 ?
+              <ExitReasonsModal onContinue={async () => {
+                sendInterviewCompleted();
+                setHasStarted(false);
+                setShowInterviewScreen(false);
+                setIsLoading(false);
+                setUserProfile(prev => ({
+                  ...prev,
+                  seconds_used: (prev?.seconds_used || 0) + elapsedSeconds,
+                }));
+
+                navigation.navigate('reports', { meetingId });
+              }} />
+              : <></>
+            )
+        }
 
         <View style={{ flex: 1, padding: hasStarted && cameraOn ? 0 : 20 }}>
           <View
@@ -504,7 +541,7 @@ const CallUI = ({
 
             <TouchableOpacity
               disabled={isLoading || isFetching}
-              onPress={hasStarted ? handleInterviewCompletion : handleManualStart}
+              onPress={hasStarted ? () => setQuitStep(1) : handleManualStart}
               style={{
                 paddingVertical: 10,
                 paddingHorizontal: 20,

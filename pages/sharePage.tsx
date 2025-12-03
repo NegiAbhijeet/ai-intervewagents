@@ -171,7 +171,7 @@ export default function SharePage({ route }) {
             const shareText = `I completed a mock interview for ${position} on AI Interview Agents.\nScore: ${score}\nCheck my certificate: ${certificateUrl}`
 
             // LinkedIn web share URL
-            const webShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(certificateUrl)}`
+            const webShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(certificateUrl)}&summary=${encodeURIComponent(shareText)}`
 
             // Attempt app deep link. Include summary param; some LinkedIn app versions pick up url only.
             // Note: iOS requires adding "linkedin" to LSApplicationQueriesSchemes for canOpenURL to return true.
