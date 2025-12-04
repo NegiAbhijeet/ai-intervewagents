@@ -1,7 +1,16 @@
 import Ionicons from '@react-native-vector-icons/ionicons';
-import { translate } from 'pdf-lib';
 import React, { useState, useEffect } from 'react';
-import { View, Text, Modal, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import {
+    View,
+    Text,
+    TouchableOpacity,
+    StyleSheet,
+    FlatList,
+    Alert,
+    Modal,
+    ActivityIndicator,
+} from 'react-native';
+import { JAVA_API_URL } from './config';
 
 const REASONS = [
     { id: 'time', label: 'Not enough time right now', icon: 'time-outline' },
@@ -11,16 +20,55 @@ const REASONS = [
     { id: 'other', label: 'Not Mentioned', icon: 'help-outline' },
 ];
 
-export default function ExitReasonsModal({ initialSelected = "time", onContinue }) {
+export default function ExitReasonsModal({ uid, name, initialSelected = 'time', onContinue }) {
     const [selected, setSelected] = useState(initialSelected || null);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         setSelected(initialSelected || null);
     }, [initialSelected]);
 
+    const postFeedback = async (reason) => {
+        const payload = {
+            uid: uid,
+            fullName: name,
+            message: reason?.label,
+        };
+        setLoading(true);
+        try {
+            const res = await fetch(`${JAVA_API_URL}/api/feedback/save`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!res.ok) {
+                // try to read error body for more context
+                let text = '';
+                try {
+                    text = await res.text();
+                } catch (e) {
+                    text = '';
+                }
+                throw new Error(`Server returned ${res.status}${text ? `: ${text}` : ''}`);
+            }
+
+            if (onContinue) onContinue();
+        } catch (error) {
+            console.error('Failed to send feedback', error);
+            if (onContinue) onContinue();
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleSelect = (id) => {
+        if (loading) return;
         setSelected(id);
-        if (onContinue) onContinue();
+        const reason = REASONS.find((r) => r.id === id) || { id, label: id };
+        postFeedback(reason);
     };
 
     const renderItem = ({ item }) => {
@@ -32,9 +80,10 @@ export default function ExitReasonsModal({ initialSelected = "time", onContinue 
                 style={[styles.option, active && styles.optionActive]}
                 accessibilityRole="button"
                 accessibilityState={{ selected: active }}
+                disabled={loading}
             >
                 <View style={styles.iconWrapper}>
-                    <Ionicons name={item.icon} size={18} color={"white"} />
+                    <Ionicons name={item.icon} size={18} color="white" />
                 </View>
 
                 <Text style={[styles.optionText, active && styles.optionTextActive]} numberOfLines={2}>
@@ -46,6 +95,15 @@ export default function ExitReasonsModal({ initialSelected = "time", onContinue 
 
     return (
         <View style={styles.overlay}>
+            {loading && (
+                <Modal transparent visible animationType="fade">
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.spinnerContainer}>
+                            <ActivityIndicator size="large" style={styles.spinner} />
+                        </View>
+                    </View>
+                </Modal>
+            )}
             <View style={styles.container}>
                 <View style={styles.topBar} />
 
@@ -74,7 +132,7 @@ const styles = StyleSheet.create({
         left: '50%',
         transform: [{ translateX: '-50%' }],
         zIndex: 1111,
-        width:"100%"
+        width: "100%"
     },
     topBar: {
         height: 3,
@@ -155,4 +213,26 @@ const styles = StyleSheet.create({
         color: '#cfcfcf',
         fontSize: 15,
     },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.25)',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    spinnerContainer: {
+        width: 96,
+        height: 96,
+        borderRadius: 12,
+        backgroundColor: 'rgba(255,255,255,0.95)',
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.12,
+        shadowRadius: 12,
+        elevation: 10
+    },
+    spinner: {
+        transform: [{ scale: 1 }]
+    }
 });

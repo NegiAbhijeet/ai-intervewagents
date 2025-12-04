@@ -35,19 +35,7 @@ if (
 ) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
-
-function typeColor(type?: NotificationItem['type']) {
-  switch (type) {
-    case 'success':
-      return '#16A34A'; // green
-    case 'warning':
-      return '#D97706'; // amber
-    case 'error':
-      return '#DC2626'; // red
-    default:
-      return '#2563EB'; // blue for info / default
-  }
-}
+const iconSize = 30
 
 function NotificationRow({ item, timeLabel, expanded, onToggle, type = "normal" }: Props) {
   const { userProfile } = useContext(AppStateContext)
@@ -56,7 +44,7 @@ function NotificationRow({ item, timeLabel, expanded, onToggle, type = "normal" 
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
   }, [expanded]);
 
-  const accent = typeColor(item.type);
+
 
   return (
     <TouchableOpacity
@@ -75,7 +63,7 @@ function NotificationRow({ item, timeLabel, expanded, onToggle, type = "normal" 
                 : require('../assets/images/notiBellImage.png'))
           }
           resizeMode="cover"
-          style={{ width: 30, height: 30 }}
+          style={{ width: iconSize, height: iconSize }}
         />
       </View>
 
@@ -119,7 +107,7 @@ export default React.memo(NotificationRow, areEqual);
 const styles = StyleSheet.create({
   item: {
     flexDirection: 'row',
-    padding: 14,
+    padding: 10,
     borderRadius: 12,
     borderWidth: 0.63,
     borderColor: 'rgba(120, 20, 196, 0.6)',
@@ -129,12 +117,13 @@ const styles = StyleSheet.create({
   },
 
   iconWrap: {
-    width: 48,
-    height: 48,
+    width: iconSize,
+    height: iconSize,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
+    paddingTop: 4
   },
   content: { flex: 1 },
   headerRow: {

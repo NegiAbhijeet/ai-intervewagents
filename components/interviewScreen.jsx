@@ -374,18 +374,21 @@ const CallUI = ({
           quitStep === 1 ?
             <ExitInterviewModal onContinue={() => setQuitStep(null)} onQuit={async () => { await halfHandleInterviewCompletion(); setQuitStep(2) }} />
             : (quitStep === 2 ?
-              <ExitReasonsModal onContinue={async () => {
-                sendInterviewCompleted();
-                setHasStarted(false);
-                setShowInterviewScreen(false);
-                setIsLoading(false);
-                setUserProfile(prev => ({
-                  ...prev,
-                  seconds_used: (prev?.seconds_used || 0) + elapsedSeconds,
-                }));
+              <ExitReasonsModal
+                uid={userProfile?.uid}
+                name={candidateName}
+                onContinue={async () => {
+                  sendInterviewCompleted();
+                  setHasStarted(false);
+                  setShowInterviewScreen(false);
+                  setIsLoading(false);
+                  setUserProfile(prev => ({
+                    ...prev,
+                    seconds_used: (prev?.seconds_used || 0) + elapsedSeconds,
+                  }));
 
-                navigation.navigate('reports', { meetingId });
-              }} />
+                  navigation.navigate('reports', { meetingId });
+                }} />
               : <></>
             )
         }
