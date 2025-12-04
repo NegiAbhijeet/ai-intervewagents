@@ -253,6 +253,7 @@ const HomePage = () => {
                     </View>
                 </Modal>
             )}
+            {/* <StreakProgress visible={true} currentDay={5} /> */}
 
             <TopBar />
 
