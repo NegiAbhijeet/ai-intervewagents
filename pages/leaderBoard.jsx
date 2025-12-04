@@ -97,7 +97,7 @@ export default function Leaderboard() {
   const onRefresh = () => {
     getRatings(true);
   };
-  const rating = userRankDetails?.rating ?? 0;
+  const rating = userRankDetails?.rank ?? 0;
 
   const currentLeague =
     LEAGUES.find(l => rating >= l.min && rating <= l.max) || LEAGUES[0];
