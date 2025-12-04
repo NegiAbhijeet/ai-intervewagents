@@ -28,13 +28,12 @@ const CIRCLESIZE = 120
 
 
 export default function SharePage({ route }) {
-    const { setFirstInterviewObject, userProfile, language, myCandidate } = useContext(AppStateContext)
+    const { setFirstInterviewObject, userProfile, language, myCandidate, setLeaderboardRank } = useContext(AppStateContext)
     const navigation = useNavigation()
     const { t } = useTranslation()
     const [score, setScore] = useState(route.params?.score || 0)
     const [meetingId, setMeetingId] = useState(route.params?.meetingId || 0)
     const [meetingReport, setMeetingReport] = useState(null)
-    const attemptsRef = useRef(0)
     const [isInterviewStart, setIsInterviewStart] = useState(false)
     useEffect(() => {
         if (route.params?.meetingId) {
@@ -53,11 +52,13 @@ export default function SharePage({ route }) {
                 const res = await fetch(url)
                 const result = await res.json()
 
-                attemptsRef.current = attemptsRef.current + 1
                 const report = result.data || {}
+                if (report?.streak) {
+                    setLeaderboardRank(report?.streak)
+                }
+
                 setMeetingReport(report)
             } catch (err) {
-                attemptsRef.current = attemptsRef.current + 1
                 console.error('failed to fetch meeting', err)
             }
         }
@@ -264,6 +265,12 @@ export default function SharePage({ route }) {
                             />
                             <Text style={styles.takeAgainText}>Take Another Interview</Text>
                         </TouchableOpacity>
+                        <TouchableOpacity
+                            style={{ backgroundColor: "black", marginHorizontal: "auto", paddingHorizontal: 24, paddingVertical: 12, borderRadius: 24, marginTop:10 }}
+                            onPress={() => navigation.navigate("index")}
+                        >
+                            <Text style={{ color: "white" }}>Go to Home</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </ScrollView>
@@ -373,7 +380,7 @@ const styles = StyleSheet.create({
         marginRight: 8
     },
     takeAgainText: {
-        color: 'rgba(60, 60, 60, 1)',
+        color: 'rgba(14, 12, 12, 1)',
         fontSize: 14
     },
     modalOverlay: {
