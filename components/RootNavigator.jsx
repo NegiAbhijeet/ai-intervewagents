@@ -124,7 +124,15 @@ const RootNavigator = () => {
     userProfile.industry
   ) {
     return (
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Navigator screenOptions={{
+        headerShown: false,
+        headerShadowVisible: false,
+        headerStyle: {
+          elevation: 0,
+          shadowOpacity: 0,
+          borderBottomWidth: 0
+        }
+      }}>
         <Stack.Screen name="AppTabs" component={AppTabs} />
         <Stack.Screen
           name="notifications"
