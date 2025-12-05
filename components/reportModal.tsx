@@ -143,7 +143,7 @@ const ReportModal = ({
                 title={report?.position || 'Report'}
                 duration={report?.interviewDuration || 0}
                 total={report?.duration || 0}
-                interviewType={report?.interviewType || ''}
+                interviewType={report?.type || ''}
               />
               <View
                 style={{
