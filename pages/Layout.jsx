@@ -13,7 +13,7 @@ const Layout = ({ children, gradient = true, gradientType = '2' }) => {
   };
 
   return (
-    <View className="flex-1 px-[8%] bg-white">
+    <View className="flex-1 px-[8%] bg-white pb-8">
       {renderGradient()}
       {children}
     </View>

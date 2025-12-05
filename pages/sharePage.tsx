@@ -33,7 +33,7 @@ export default function SharePage({ visible = false, onRequestClose = () => { },
     const { t } = useTranslation()
     const [meetingReport, setMeetingReport] = useState(null)
     const [isInterviewStart, setIsInterviewStart] = useState(false)
-
+    const [certificateUrl, setCertificateUrl] = useState("")
     useEffect(() => {
         if (!meetingId) return
 
@@ -46,6 +46,7 @@ export default function SharePage({ visible = false, onRequestClose = () => { },
                 const report = result.data || {}
                 if (report?.streak) {
                     setLeaderboardRank(report?.streak)
+                    setCertificateUrl(report?.certificateUrl || null)
                 }
 
                 setMeetingReport(report)
@@ -244,7 +245,7 @@ export default function SharePage({ visible = false, onRequestClose = () => { },
                             <Text style={styles.issued}>Issued Certificate</Text>
 
                             <View style={styles.certificateBox}>
-                                <Certificate meetingReport={meetingReport} />
+                                <Certificate imageUrl={certificateUrl} />
                                 <TouchableOpacity style={styles.linkedin} onPress={shareOnLinkedIn}>
                                     <Image
                                         source={require('../assets/images/linkedin.png')}

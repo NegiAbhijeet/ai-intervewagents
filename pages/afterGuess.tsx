@@ -57,7 +57,7 @@ const AfterGuessModal = ({
             const report = result.data || {}
 
             // Case 1: Feedback available (final score ready)
-            if (report?.feedback && typeof report.feedback.averagePercentage === 'number') {
+            if (report?.feedback && typeof report.feedback.averagePercentage === 'number' && report?.streak !== null) {
                 stopPolling()
                 setServerScore(report.feedback.averagePercentage)
                 setStatus('ready')
