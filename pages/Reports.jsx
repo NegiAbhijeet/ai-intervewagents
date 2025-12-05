@@ -22,12 +22,10 @@ import StatusBoxes from '../components/ReportsStatusBoxes';
 import LinearGradient from 'react-native-linear-gradient';
 import { useTranslation } from 'react-i18next';
 import GuessScoreModal from './guessScore';
-import { useNavigation } from '@react-navigation/native';
 import AfterGuessModal from './afterGuess';
 import SharePage from './sharePage';
 const Reports = ({ route }) => {
   const { t } = useTranslation();
-  const navigation = useNavigation()
   const { userProfile } = useContext(AppStateContext);
   const [meetings, setMeetings] = useState([]);
   const [loading, setLoading] = useState(true);
