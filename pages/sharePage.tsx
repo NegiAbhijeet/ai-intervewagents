@@ -27,22 +27,13 @@ const { width: SCREEN_W } = Dimensions.get('window')
 const CIRCLESIZE = 120
 
 
-export default function SharePage({ route }) {
+export default function SharePage({ visible = false, onRequestClose = () => { }, meetingId, score }) {
     const { setFirstInterviewObject, userProfile, language, myCandidate, setLeaderboardRank } = useContext(AppStateContext)
     const navigation = useNavigation()
     const { t } = useTranslation()
-    const [score, setScore] = useState(route.params?.score || 0)
-    const [meetingId, setMeetingId] = useState(route.params?.meetingId || 0)
     const [meetingReport, setMeetingReport] = useState(null)
     const [isInterviewStart, setIsInterviewStart] = useState(false)
-    useEffect(() => {
-        if (route.params?.meetingId) {
-            setScore(route.params.score)
-            setMeetingId(route.params.meetingId)
-        }
-    }, [route.params?.score, route.params?.meetingId])
 
-    // fetch meeting report when meetingId is present
     useEffect(() => {
         if (!meetingId) return
 
@@ -203,78 +194,86 @@ export default function SharePage({ route }) {
         }
     }
 
-    // ----- UI -----
     return (
-        <Layout>
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: 120 }}
-            >
-                {isInterviewStart && (
-                    <Modal transparent visible animationType="fade">
-                        <View style={styles.modalOverlay}>
-                            <View style={styles.spinnerContainer}>
-                                <ActivityIndicator size="large" style={styles.spinner} />
+        <Modal
+            visible={visible}
+            transparent={true}
+            animationType="fade"
+            onRequestClose={() => {
+                onRequestClose()
+            }}
+        >
+            <Layout gradientType="3">
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{ paddingBottom: 120 }}
+                >
+                    {isInterviewStart && (
+                        <Modal transparent visible animationType="fade">
+                            <View style={styles.modalOverlay}>
+                                <View style={styles.spinnerContainer}>
+                                    <ActivityIndicator size="large" style={styles.spinner} />
+                                </View>
                             </View>
-                        </View>
-                    </Modal>
-                )}
-                <View style={styles.container}>
-                    <Text style={styles.title}>Congratulations!</Text>
-                    <Text style={styles.subtitle}>Great job on your score.</Text>
+                        </Modal>
+                    )}
+                    <View style={styles.container}>
+                        <Text style={styles.title}>Congratulations!</Text>
+                        <Text style={styles.subtitle}>Great job on your score.</Text>
 
-                    <View style={styles.scoreWrap}>
-                        <View style={styles.scoreCircle}>
-                            <Image
-                                source={require('../assets/images/element.png')}
-                                resizeMode="contain"
-                                style={{ position: 'absolute', top: 0, left: 0, width: CIRCLESIZE, height: CIRCLESIZE }}
-                            />
-                            <Text style={{ fontSize: 8, transform: "translateY(3px)" }}>Your Score</Text>
-                            <Text style={styles.scoreNumber}>{score}%</Text>
-                        </View>
-
-                        <TouchableOpacity style={styles.analysisButton} onPress={() => { navigation.navigate("reports", { report: meetingReport }) }}>
-                            <Image
-                                source={require('../assets/images/growth.png')}
-                                resizeMode="contain"
-                                style={styles.analysisIcon}
-                            />
-                            <Text style={styles.analysisText}>View detailed analysis</Text>
-                        </TouchableOpacity>
-
-                        <Text style={styles.issued}>Issued Certificate</Text>
-
-                        <View style={styles.certificateBox}>
-                            <Certificate meetingReport={meetingReport} />
-                            <TouchableOpacity style={styles.linkedin} onPress={shareOnLinkedIn}>
+                        <View style={styles.scoreWrap}>
+                            <View style={styles.scoreCircle}>
                                 <Image
-                                    source={require('../assets/images/linkedin.png')}
+                                    source={require('../assets/images/element.png')}
                                     resizeMode="contain"
-                                    style={styles.linkedinIcon}
+                                    style={{ position: 'absolute', top: 0, left: 0, width: CIRCLESIZE, height: CIRCLESIZE }}
                                 />
-                                <Text style={styles.linkedinText}>Share on Linkedin</Text>
+                                <Text style={{ fontSize: 8, transform: "translateY(3px)" }}>Your Score</Text>
+                                <Text style={styles.scoreNumber}>{score}%</Text>
+                            </View>
+
+                            <TouchableOpacity style={styles.analysisButton} onPress={() => { navigation.navigate("reports", { report: meetingReport }) }}>
+                                <Image
+                                    source={require('../assets/images/growth.png')}
+                                    resizeMode="contain"
+                                    style={styles.analysisIcon}
+                                />
+                                <Text style={styles.analysisText}>View detailed analysis</Text>
+                            </TouchableOpacity>
+
+                            <Text style={styles.issued}>Issued Certificate</Text>
+
+                            <View style={styles.certificateBox}>
+                                <Certificate meetingReport={meetingReport} />
+                                <TouchableOpacity style={styles.linkedin} onPress={shareOnLinkedIn}>
+                                    <Image
+                                        source={require('../assets/images/linkedin.png')}
+                                        resizeMode="contain"
+                                        style={styles.linkedinIcon}
+                                    />
+                                    <Text style={styles.linkedinText}>Share on Linkedin</Text>
+                                </TouchableOpacity>
+                            </View>
+
+                            <TouchableOpacity style={styles.takeAgain} onPress={onPress}>
+                                <Image
+                                    source={require('../assets/images/retry.png')}
+                                    resizeMode="contain"
+                                    style={styles.retryIcon}
+                                />
+                                <Text style={styles.takeAgainText}>Take Another Interview</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={{ backgroundColor: "black", marginHorizontal: "auto", paddingHorizontal: 24, paddingVertical: 12, borderRadius: 24, marginTop: 10 }}
+                                onPress={() => { onRequestClose(); navigation.navigate("index") }}
+                            >
+                                <Text style={{ color: "white" }}>Go to Home</Text>
                             </TouchableOpacity>
                         </View>
-
-                        <TouchableOpacity style={styles.takeAgain} onPress={onPress}>
-                            <Image
-                                source={require('../assets/images/retry.png')}
-                                resizeMode="contain"
-                                style={styles.retryIcon}
-                            />
-                            <Text style={styles.takeAgainText}>Take Another Interview</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={{ backgroundColor: "black", marginHorizontal: "auto", paddingHorizontal: 24, paddingVertical: 12, borderRadius: 24, marginTop:10 }}
-                            onPress={() => navigation.navigate("index")}
-                        >
-                            <Text style={{ color: "white" }}>Go to Home</Text>
-                        </TouchableOpacity>
                     </View>
-                </View>
-            </ScrollView>
-        </Layout>
+                </ScrollView>
+            </Layout>
+        </Modal>
     )
 }
 

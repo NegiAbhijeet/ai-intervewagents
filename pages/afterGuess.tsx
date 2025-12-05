@@ -22,6 +22,8 @@ const AfterGuessModal = ({
     onNext = () => { },
     guessedRange = '',
     interviewId = '',
+    serverScore = null,
+    setServerScore,
     maxTries = 20, // default 20 attempts -> 20 * 3s = 60s
     intervalMs = 3000
 }) => {
@@ -29,7 +31,6 @@ const AfterGuessModal = ({
     const rotateAnim = useRef(new Animated.Value(0)).current
     const guessed = parseRange(guessedRange)
 
-    const [serverScore, setServerScore] = useState(null)
     const [status, setStatus] = useState('polling') // polling | ready | error | timeout
     const pollingRef = useRef(null)
     const isActiveRef = useRef(false)
@@ -219,8 +220,7 @@ const AfterGuessModal = ({
                                 <View style={{ flexDirection: 'row' }}>
                                     <TouchableOpacity onPress={() => {
                                         stopPolling()
-                                        onRequestClose()
-                                        navigation.navigate("SharePage", { score: serverScore, meetingId: interviewId })
+                                        onNext()
                                     }} style={styles.nextButton}>
                                         <Text style={{ color: '#fff', fontWeight: '700' }}>Next</Text>
                                     </TouchableOpacity>

@@ -24,8 +24,10 @@ import { useTranslation } from 'react-i18next';
 import GuessScoreModal from './guessScore';
 import { useNavigation } from '@react-navigation/native';
 import AfterGuessModal from './afterGuess';
+import SharePage from './sharePage';
 const Reports = ({ route }) => {
   const { t } = useTranslation();
+  const navigation = useNavigation()
   const { userProfile } = useContext(AppStateContext);
   const [meetings, setMeetings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -36,17 +38,17 @@ const Reports = ({ route }) => {
   const [rowTotalMeetings, setRowTotalMeetings] = useState(0)
   const [pendingReports, setPendindReports] = useState(0)
   const [activeFilter, setActiveFilter] = useState('all');
-  const [isGuessing, setIsGuessing] = useState(false)
-  const [isPending, setIsPending] = useState(false)
+  const [guessStage, setGuessStage] = useState(null)
   // small animated rotation for the refresh icon when active
   const rotateAnim = useRef(new Animated.Value(0)).current;
-  const navigation = useNavigation()
   const [meetingId, setMeetingId] = useState(route.params?.meetingId ?? '');
   const [guessRange, setGuessRange] = useState(null)
+  const [serverScore, setServerScore] = useState(null)
+
   useEffect(() => {
     if (route.params?.meetingId) {
       setMeetingId(route.params?.meetingId)
-      setIsGuessing(true)
+      setGuessStage(1)
     } else if (route.params?.report) {
       setCurrentReport(route.params?.report)
     }
@@ -167,14 +169,10 @@ const Reports = ({ route }) => {
     if (activeFilter === 'trainer') return t === 'revise';
     return true;
   });
-  const capitalizeFirst = text => {
-    if (!text || typeof text !== 'string') return '';
-    return text.charAt(0).toUpperCase() + text.slice(1);
-  };
+
   const onSelectGuess = (guessRange) => {
     setGuessRange(guessRange)
-    setIsPending(true)
-    setIsGuessing(false)
+    setGuessStage(2)
   }
   return (
     <>
@@ -189,18 +187,29 @@ const Reports = ({ route }) => {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
         >
-
-          <GuessScoreModal visible={isGuessing} onRequestClose={() => setIsGuessing(false)} onSelectGuess={onSelectGuess} />
-          <AfterGuessModal
-            visible={isPending}
-            onRequestClose={() => setIsPending(false)}
-            onNext={(finalScore) => {
-              setIsPending(false)
-              navigation.navigate('SharePage', { finalScore })
-            }}
-            guessedRange={guessRange}
-            interviewId={meetingId}
-          />
+          {
+            guessStage === 1 ?
+              <GuessScoreModal visible={true} onRequestClose={() => setGuessStage(null)} onSelectGuess={onSelectGuess} />
+              : (
+                guessStage === 2 ? <AfterGuessModal
+                  visible={true}
+                  onRequestClose={() => setGuessStage(null)}
+                  onNext={() => {
+                    setGuessStage(3)
+                  }}
+                  serverScore={serverScore}
+                  setServerScore={setServerScore}
+                  guessedRange={guessRange}
+                  interviewId={meetingId}
+                /> :
+                  (guessStage === 3 ? <SharePage
+                    visible={true}
+                    onRequestClose={() => setGuessStage(null)}
+                    meetingId={meetingId}
+                    score={serverScore}
+                  />
+                    : <></>))
+          }
 
           <View style={{ width: "100%" }}>
             <StatusBoxes
