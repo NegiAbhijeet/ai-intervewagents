@@ -1,147 +1,154 @@
-import React from 'react'
-import { View, StyleSheet, Dimensions, ActivityIndicator } from 'react-native'
-import { Gesture, GestureDetector } from 'react-native-gesture-handler'
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  withDecay,
-} from 'react-native-reanimated'
+import React, { useState } from 'react'
+import {
+  View,
+  Image,
+  StyleSheet,
+  Dimensions,
+  Modal,
+  TouchableOpacity,
+  ActivityIndicator,
+  Text,
+  StatusBar,
+} from 'react-native'
+import ImageZoom from 'react-native-image-pan-zoom'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window')
 
-export default function Certificate({ imageUrl, minScale = 1, maxScale = 4 }) {
-  const scale = useSharedValue(1)
-  const translateX = useSharedValue(0)
-  const translateY = useSharedValue(0)
+export default function Certificate({
+  imageUrl,
+  minScale = 1,
+  maxScale = 4,
+  thumbHeight = SCREEN_W * 0.5,
+}) {
+  const [modalVisible, setModalVisible] = useState(false)
+  const [loaded, setLoaded] = useState(false)
+  const [loadedThumb, setLoadedThumb] = useState(false)
 
-  // start values used during gestures
-  const startScale = useSharedValue(1)
-  const startX = useSharedValue(0)
-  const startY = useSharedValue(0)
-
-  const loaded = useSharedValue(0) 
-
-  const clamp = (value, min, max) => Math.max(min, Math.min(value, max))
-
-  // PAN
-  const panGesture = Gesture.Pan()
-    .onStart(() => {
-      startX.value = translateX.value
-      startY.value = translateY.value
-    })
-    .onUpdate(e => {
-      translateX.value = startX.value + e.translationX
-      translateY.value = startY.value + e.translationY
-    })
-    .onEnd(e => {
-      translateX.value = withDecay({ velocity: e.velocityX })
-      translateY.value = withDecay({ velocity: e.velocityY })
-    })
-
-  // PINCH
-  const pinchGesture = Gesture.Pinch()
-    .onStart(() => {
-      startScale.value = scale.value
-      startX.value = translateX.value
-      startY.value = translateY.value
-    })
-    .onUpdate(e => {
-      const focalX = e.focalX ?? SCREEN_W / 2
-      const focalY = e.focalY ?? SCREEN_H / 2
-
-      const newScale = clamp(startScale.value * e.scale, minScale, maxScale)
-
-      const scaleFactor = newScale / startScale.value
-      translateX.value = startX.value + (1 - scaleFactor) * (focalX - SCREEN_W / 2)
-      translateY.value = startY.value + (1 - scaleFactor) * (focalY - SCREEN_H / 2)
-
-      scale.value = newScale
-    })
-    .onEnd(() => {
-      scale.value = withTiming(clamp(scale.value, minScale, maxScale), { duration: 150 })
-    })
-
-  // DOUBLE TAP
-  const doubleTapGesture = Gesture.Tap()
-    .numberOfTaps(2)
-    .onStart(e => {
-      const tapX = e.x ?? e.absoluteX ?? SCREEN_W / 2
-      const tapY = e.y ?? e.absoluteY ?? SCREEN_H / 2
-
-      if (scale.value > 1.05) {
-        scale.value = withTiming(1, { duration: 200 })
-        translateX.value = withTiming(0, { duration: 200 })
-        translateY.value = withTiming(0, { duration: 200 })
-      } else {
-        const targetScale = clamp(2, minScale, maxScale)
-        const dx = (SCREEN_W / 2 - tapX) * (targetScale - 1)
-        const dy = (SCREEN_H / 2 - tapY) * (targetScale - 1)
-
-        scale.value = withTiming(targetScale, { duration: 200 })
-        translateX.value = withTiming(dx, { duration: 200 })
-        translateY.value = withTiming(dy, { duration: 200 })
-      }
-    })
-
-  const composedGesture = Gesture.Simultaneous(panGesture, pinchGesture, doubleTapGesture)
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      { translateX: translateX.value },
-      { translateY: translateY.value },
-      { scale: scale.value },
-    ],
-  }))
-
-  const fadeStyle = useAnimatedStyle(() => ({
-    opacity: withTiming(loaded.value, { duration: 200 }),
-  }))
+  if (!imageUrl) return <View style={[styles.thumb, { height: thumbHeight }]} />
 
   return (
-    <GestureDetector gesture={composedGesture}>
-      <Animated.View style={styles.container}>
-        {/* placeholder layer visible while loading */}
-        <View style={styles.placeholder} pointerEvents="none">
-          <ActivityIndicator size="small" />
-        </View>
+    <>
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onPress={() => {
+          setLoaded(false)
+          setModalVisible(true)
+        }}
+        style={[styles.thumb, { height: thumbHeight }]}
+      >
+        <Image
+          source={{ uri: imageUrl }}
+          style={[styles.thumbImage, { opacity: loadedThumb ? 1 : 0 }]}
+          resizeMode="contain"
+          onLoadStart={() => setLoadedThumb(false)}
+          onLoadEnd={() => setLoadedThumb(true)}
+        />
 
-        {imageUrl && (
-          <Animated.Image
-            source={{ uri: imageUrl }}
-            resizeMode="contain"
-            onLoadStart={() => {
-              loaded.value = 0
-            }}
-            onLoadEnd={() => {
-              loaded.value = 1
-            }}
-            style={[styles.image, animatedStyle, fadeStyle]}
-          />
+        {!loadedThumb && (
+          <View style={styles.thumbLoading}>
+            <ActivityIndicator size="small" />
+          </View>
         )}
-      </Animated.View>
-    </GestureDetector>
+      </TouchableOpacity>
+
+      <Modal
+        visible={modalVisible}
+        animationType="fade"
+        onRequestClose={() => setModalVisible(false)}
+        presentationStyle="fullScreen"
+      >
+        <StatusBar hidden />
+        <SafeAreaView style={styles.modalContainer}>
+          <TouchableOpacity
+            onPress={() => setModalVisible(false)}
+            style={styles.closeButton}
+            accessibilityLabel="Close"
+          >
+            <Text style={styles.closeText}>Close</Text>
+          </TouchableOpacity>
+
+          <View style={styles.zoomWrapper}>
+            <ImageZoom
+              cropWidth={SCREEN_W}
+              cropHeight={SCREEN_H}
+              imageWidth={SCREEN_W}
+              imageHeight={SCREEN_H}
+              minScale={minScale}
+              maxScale={maxScale}
+            >
+              <Image
+                source={{ uri: imageUrl }}
+                style={[styles.fullImage, { opacity: loaded ? 1 : 0 }]}
+                resizeMode="contain"
+                onLoadStart={() => setLoaded(false)}
+                onLoadEnd={() => setLoaded(true)}
+              />
+            </ImageZoom>
+
+            {!loaded && (
+              <View style={styles.loading}>
+                <ActivityIndicator size="large" color="#fff" />
+              </View>
+            )}
+          </View>
+        </SafeAreaView>
+      </Modal>
+    </>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
+  thumb: {
     width: '100%',
-    aspectRatio: 16 / 10,
+    // backgroundColor: '#e6e9ee',
+    borderRadius: 12,
+    overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
-    overflow: 'hidden',
-    backgroundColor: '#f2f2f2', // neutral background instead of white
-    borderRadius: 12,
   },
-  placeholder: {
+  thumbImage: {
+    width: '100%',
+    height: '100%',
+  },
+  thumbLoading: {
     ...StyleSheet.absoluteFillObject,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  image: {
+  modalContainer: {
+    flex: 1,
+    backgroundColor: '#000',
+  },
+  closeButton: {
     position: 'absolute',
-    width: '100%',
-    height: '100%',
+    top: 18,
+    right: 18,
+    zIndex: 10,
+    backgroundColor: 'rgba(255,255,255,0.12)',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  closeText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  zoomWrapper: {
+    flex: 1,
+    width: SCREEN_W,
+    height: SCREEN_H,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#000',
+  },
+  fullImage: {
+    width: SCREEN_W,
+    height: SCREEN_H,
+  },
+  loading: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 })
