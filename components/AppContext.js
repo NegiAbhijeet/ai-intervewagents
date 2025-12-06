@@ -16,6 +16,7 @@ const AppStateProvider = ({ children }) => {
   const [myCandidate, setMyCandidate] = useState(null);
   const [langSelected, setLangSelected] = useState(true)
   const [language, setLanguage] = useState(null);
+  const [showDailyStreak, setShowDailyStreak] = useState(false)
   // Determine if the user is on a free plan
   const isFreePlan = userProfile?.plan?.id === 1;
 
@@ -89,7 +90,9 @@ const AppStateProvider = ({ children }) => {
       langSelected,
       setLangSelected,
       language,
-      setLanguage
+      setLanguage,
+      showDailyStreak,
+      setShowDailyStreak
     }),
     [
       userProfile,
@@ -109,7 +112,8 @@ const AppStateProvider = ({ children }) => {
       firstInterviewObject,
       myCandidate,
       langSelected,
-      language
+      language,
+      showDailyStreak
     ],
   );
 

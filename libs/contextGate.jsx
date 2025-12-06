@@ -9,9 +9,10 @@ import messaging from '@react-native-firebase/messaging';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PlayInstallReferrer } from 'react-native-play-install-referrer';
-import { JAVA_API_URL } from '../components/config';
+import { JAVA_API_URL, STREAK_KEY } from '../components/config';
 import fetchWithAuth from './fetchWithAuth';
 import { loadSavedLanguage } from "../libs/i18n"
+import getISTDateString from './getStreakDate';
 
 const ContextGate = ({ children }) => {
   const {
@@ -20,7 +21,8 @@ const ContextGate = ({ children }) => {
     userProfile,
     setUnreadNotification,
     setLanguage,
-    setLangSelected
+    setLangSelected,
+    setShowDailyStreak
   } = useContext(AppStateContext);
   const [authLoading, setAuthLoading] = useState(true);
   useEffect(() => {
@@ -229,6 +231,35 @@ const ContextGate = ({ children }) => {
     };
     // empty deps: attach listener once on mount
   }, [setFirebaseUser, setUserProfile]);
+
+
+  useEffect(() => {
+    const checkAndShowDailyStreak = async () => {
+      if (!userProfile?.uid) {
+        setShowDailyStreak(false)
+        return
+      }
+
+      const key = STREAK_KEY
+      try {
+        const last = await AsyncStorage.getItem(key)
+        const today = getISTDateString()
+        if (last === today) {
+          setShowDailyStreak(false)
+          return
+        }
+
+        setShowDailyStreak(true)
+        await AsyncStorage.setItem(key, today)
+      } catch (err) {
+        console.error('Error checking daily streak shown', err)
+        setShowDailyStreak(true)
+      }
+    }
+
+    checkAndShowDailyStreak()
+  }, [userProfile?.uid])
+
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>

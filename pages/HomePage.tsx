@@ -12,18 +12,22 @@ import InterviewScreen from '../components/interviewScreen';
 import HomeTopPenguin from "../assets/images/homeTopPeng.svg"
 import { useTranslation } from 'react-i18next';
 import LANGUAGES from '../libs/languages';
+import StreakProgress from '../components/streakProgress';
 
 const HomePage = () => {
     const {
         userProfile,
         fcmTokenUpdated,
         setFcmTokenUpdated,
+        leaderboardRank,
         setLeaderboardRank,
         firstInterviewObject,
         setFirstInterviewObject,
         myCandidate,
         setMyCandidate,
-        language
+        language,
+        showDailyStreak,
+        setShowDailyStreak
     } = useContext(AppStateContext);
     const [lastMeeting, setLastMeeting] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -266,6 +270,9 @@ const HomePage = () => {
             )}
 
             <Layout>
+                {
+                    showDailyStreak && leaderboardRank > 0 && <StreakProgress currentDay={leaderboardRank} setShowDailyStreak={setShowDailyStreak} />
+                }
                 <ScrollView
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{ paddingBottom: 120 }}

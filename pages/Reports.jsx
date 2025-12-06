@@ -24,9 +24,10 @@ import { useTranslation } from 'react-i18next';
 import GuessScoreModal from './guessScore';
 import AfterGuessModal from './afterGuess';
 import SharePage from './sharePage';
+import StreakProgress from '../components/streakProgress';
 const Reports = ({ route }) => {
   const { t } = useTranslation();
-  const { userProfile } = useContext(AppStateContext);
+  const { userProfile, showDailyStreak, setShowDailyStreak, leaderboardRank } = useContext(AppStateContext);
   const [meetings, setMeetings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -176,6 +177,9 @@ const Reports = ({ route }) => {
     <>
       <TopBar />
       <Layout>
+        {
+          showDailyStreak && leaderboardRank > 0 && <StreakProgress currentDay={leaderboardRank} setShowDailyStreak={setShowDailyStreak} />
+        }
         <BackgroundGradient2 />
         <ScrollView
           showsVerticalScrollIndicator={false}

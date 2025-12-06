@@ -1,6 +1,9 @@
 import React from 'react'
 import { View, Text, Pressable, StyleSheet, Modal, Dimensions, ScrollView, Image } from 'react-native'
 import Animated, { scrollTo, useAnimatedRef, useDerivedValue, useSharedValue } from 'react-native-reanimated';
+import { STREAK_KEY } from './config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import getISTDateString from '../libs/getStreakDate';
 
 const { width } = Dimensions.get('window');
 
@@ -9,7 +12,16 @@ const INACTIVE_BG = 'rgba(156, 163, 175, 1)'
 const MUTED_TEXT = '#8A8A8A'
 const itemWidth = 70
 
-export default function StreakProgress({ visible = true, daysCount = 100, currentDay = 1, onStart = () => { } }) {
+export default function StreakProgress({ visible = true, daysCount = 100, currentDay = 1, onStart = () => { }, setShowDailyStreak }) {
+    async function markDailyStreakShown() {
+        const key = STREAK_KEY
+        try {
+            await AsyncStorage.setItem(key, getISTDateString())
+            setShowDailyStreak(false)
+        } catch (e) {
+            console.error('Failed to mark daily streak shown', e)
+        }
+    }
     const days = Array.from({ length: daysCount }, (_, i) => i + 1)
     const animatedRef = useAnimatedRef();
     useDerivedValue(() => {
@@ -21,7 +33,7 @@ export default function StreakProgress({ visible = true, daysCount = 100, curren
         <Modal visible={visible} transparent animationType="fade">
             <View style={styles.backdrop}>
                 <View style={styles.card}>
-                    <Pressable onPress={() => { }} style={styles.closeButton}>
+                    <Pressable onPress={() => { markDailyStreakShown() }} style={styles.closeButton}>
                         <Text style={styles.closeText}>×</Text>
                     </Pressable>
 
