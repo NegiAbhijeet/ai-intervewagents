@@ -12,12 +12,13 @@ import {
   TouchableOpacity
 } from 'react-native'
 import Layout from './Layout'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const { width: SCREEN_W } = Dimensions.get('window')
 const PENG_WIDTH = Math.min(320, Math.round(SCREEN_W * 0.30))
 const CLOUD_WIDTH = Math.min(320, Math.round(SCREEN_W * 0.70 * 0.85))
 
-const GuessScoreModal = ({ visible = false, onRequestClose = () => {}, onSelectGuess = () => {}, interviewId = '' }) => {
+const GuessScoreModal = ({ visible = false, onRequestClose = () => { }, onSelectGuess = () => { }, interviewId = '' }) => {
   const { t } = useTranslation()
 
   const options = [
@@ -39,67 +40,73 @@ const GuessScoreModal = ({ visible = false, onRequestClose = () => {}, onSelectG
       animationType="fade"
       onRequestClose={onRequestClose}
     >
-      <Layout gradientType="3">
-        <View style={styles.bg}>
-          <View style={styles.wrapper}>
-            <View style={styles.cloudWrap} pointerEvents="none">
-              <ImageBackground
-                source={require('../assets/images/av-cloud.png')}
-                style={styles.cloud}
-                imageStyle={styles.cloudImage}
-              >
-                <Text numberOfLines={2} style={styles.cloudText}>
-                  Analyzing your Result till then try guessing your score
+      <SafeAreaView
+        style={{
+          flex: 1,
+        }}
+      >
+        <Layout gradientType="3">
+          <View style={styles.bg}>
+            <View style={styles.wrapper}>
+              <View style={styles.cloudWrap} pointerEvents="none">
+                <ImageBackground
+                  source={require('../assets/images/av-cloud.png')}
+                  style={styles.cloud}
+                  imageStyle={styles.cloudImage}
+                >
+                  <Text numberOfLines={2} style={styles.cloudText}>
+                    Analyzing your Result till then try guessing your score
+                  </Text>
+                </ImageBackground>
+              </View>
+
+              <Image
+                source={require('../assets/images/guessPeng.png')}
+                style={styles.penguin}
+                resizeMode="contain"
+              />
+            </View>
+
+            <View style={styles.scoreBox}>
+              <Image
+                source={require('../assets/images/guessEllipse.png')}
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: 0,
+                  transform: [{ translateY: '-50%' }],
+                  width: 180,
+                  height: '100%'
+                }}
+                resizeMode="contain"
+              />
+              <Text style={styles.scoreTitle}>Guess Your Interview Score?</Text>
+
+              <View style={styles.options}>
+                {options.map((opt) => (
+                  <TouchableOpacity key={opt} onPress={() => handlePress(opt)}>
+                    <Text style={styles.option}>{opt}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+            <View style={styles.tipBox}>
+              <Image
+                source={require('../assets/images/tipImage.png')}
+                style={{}}
+                resizeMode="contain"
+              />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.tipTitle}>Pro Tip</Text>
+                <Text style={styles.tipText}>
+                  Practice makes perfect! Users who complete 3+ interviews see an average improvement of 23 points. Keep going!
                 </Text>
-              </ImageBackground>
-            </View>
-
-            <Image
-              source={require('../assets/images/guessPeng.png')}
-              style={styles.penguin}
-              resizeMode="contain"
-            />
-          </View>
-
-          <View style={styles.scoreBox}>
-            <Image
-              source={require('../assets/images/guessEllipse.png')}
-              style={{
-                position: 'absolute',
-                top: '50%',
-                left: 0,
-                transform: [{ translateY: '-50%' }],
-                width: 180,
-                height: '100%'
-              }}
-              resizeMode="contain"
-            />
-            <Text style={styles.scoreTitle}>Guess Your Interview Score?</Text>
-
-            <View style={styles.options}>
-              {options.map((opt) => (
-                <TouchableOpacity key={opt} onPress={() => handlePress(opt)}>
-                  <Text style={styles.option}>{opt}</Text>
-                </TouchableOpacity>
-              ))}
+              </View>
             </View>
           </View>
-
-          <View style={styles.tipBox}>
-            <Image
-              source={require('../assets/images/tipImage.png')}
-              style={{}}
-              resizeMode="contain"
-            />
-            <View style={{ flex: 1 }}>
-              <Text style={styles.tipTitle}>Pro Tip</Text>
-              <Text style={styles.tipText}>
-                Practice makes perfect! Users who complete 3+ interviews see an average improvement of 23 points. Keep going!
-              </Text>
-            </View>
-          </View>
-        </View>
-      </Layout>
+        </Layout>
+      </SafeAreaView>
     </Modal>
   )
 }

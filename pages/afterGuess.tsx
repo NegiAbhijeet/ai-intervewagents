@@ -4,6 +4,7 @@ import { Modal, Dimensions, Image, Animated, StyleSheet, Text, View, TouchableOp
 import Layout from './Layout'
 import { JAVA_API_URL } from '../components/config'
 import { useNavigation } from '@react-navigation/native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const { width: SCREEN_W } = Dimensions.get('window')
 const PENG_WIDTH = Math.min(320, Math.round(SCREEN_W * 0.30))
@@ -160,102 +161,108 @@ const AfterGuessModal = ({
                 onRequestClose()
             }}
         >
-            <Layout gradientType="3">
-                <View style={styles.container}>
-                    <View style={styles.guessChipWrapper}>
-                        <View style={styles.guessChip}>
-                            <Text style={styles.guessChipText}>
-                                Your Guess: <Text style={styles.guessValue}>{guessedRange || '—'}</Text>
+            <SafeAreaView
+                style={{
+                    flex: 1,
+                }}
+            >
+                <Layout gradientType="3">
+                    <View style={styles.container}>
+                        <View style={styles.guessChipWrapper}>
+                            <View style={styles.guessChip}>
+                                <Text style={styles.guessChipText}>
+                                    Your Guess: <Text style={styles.guessValue}>{guessedRange || '—'}</Text>
+                                </Text>
+                            </View>
+                        </View>
+
+                        <View style={styles.headerWrap}>
+                            <Image source={require('../assets/images/afterGuessPeng.png')} style={styles.penguin} resizeMode="contain" />
+                            <Text style={styles.title}>
+                                {status !== 'ready'
+                                    ? 'Keep going'
+                                    : isGuessCorrect()
+                                        ? 'Great guess'
+                                        : 'Wrong guess'}
+                            </Text>
+
+
+                            <Text style={styles.subtitle}>
+                                {status === 'ready' ? 'Here is your final score' : "We're calculating your real score..."}
                             </Text>
                         </View>
-                    </View>
+                        {
+                            (status === "polling" || status === "ready") &&
+                            <View style={styles.progressWrap}>
+                                <Animated.Image
+                                    source={require('../assets/images/Container.png')}
+                                    style={[
+                                        styles.progressRing,
+                                        status !== 'ready' && { transform: [{ rotate }] }
+                                    ]}
+                                    resizeMode="contain"
+                                />
+                                <View style={styles.progressCenter}>
+                                    {status === 'polling' && <>
+                                        <Text style={styles.progressLabel}>Analyzing</Text>
+                                    </>}
 
-                    <View style={styles.headerWrap}>
-                        <Image source={require('../assets/images/afterGuessPeng.png')} style={styles.penguin} resizeMode="contain" />
-                        <Text style={styles.title}>
-                            {status !== 'ready'
-                                ? 'Keep going'
-                                : isGuessCorrect()
-                                    ? 'Great guess'
-                                    : 'Wrong guess'}
-                        </Text>
-
-
-                        <Text style={styles.subtitle}>
-                            {status === 'ready' ? 'Here is your final score' : "We're calculating your real score..."}
-                        </Text>
-                    </View>
-                    {
-                        (status === "polling" || status === "ready") &&
-                        <View style={styles.progressWrap}>
-                            <Animated.Image
-                                source={require('../assets/images/Container.png')}
-                                style={[
-                                    styles.progressRing,
-                                    status !== 'ready' && { transform: [{ rotate }] }
-                                ]}
-                                resizeMode="contain"
-                            />
-                            <View style={styles.progressCenter}>
-                                {status === 'polling' && <>
-                                    <Text style={styles.progressLabel}>Analyzing</Text>
-                                </>}
-
-                                {status === 'ready' && <>
-                                    <Text style={styles.progressValue}>{serverScore}%</Text>
-                                </>}
+                                    {status === 'ready' && <>
+                                        <Text style={styles.progressValue}>{serverScore}%</Text>
+                                    </>}
+                                </View>
                             </View>
-                        </View>
-                    }
+                        }
 
-                    <View style={styles.processingCard}>
-                        {(status === "polling") && <Text style={styles.processingTitle}>Processing your interview data</Text>}
+                        <View style={styles.processingCard}>
+                            {(status === "polling") && <Text style={styles.processingTitle}>Processing your interview data</Text>}
 
-                        {status === 'ready' && (
-                            <View style={{ marginTop: 12, alignItems: 'center' }}>
-                                <Text style={{ fontWeight: '700', marginBottom: 8 }}>
-                                    {isGuessCorrect() ? 'Nice job. Your guess was correct.' : `Your guess was not correct. Final score ${serverScore}%`}
-                                </Text>
+                            {status === 'ready' && (
+                                <View style={{ marginTop: 12, alignItems: 'center' }}>
+                                    <Text style={{ fontWeight: '700', marginBottom: 8 }}>
+                                        {isGuessCorrect() ? 'Nice job. Your guess was correct.' : `Your guess was not correct. Final score ${serverScore}%`}
+                                    </Text>
 
-                                <View style={{ flexDirection: 'row' }}>
-                                    <TouchableOpacity onPress={() => {
-                                        stopPolling()
-                                        onNext()
-                                    }} style={styles.nextButton}>
-                                        <Text style={{ color: '#fff', fontWeight: '700' }}>Next</Text>
-                                    </TouchableOpacity>
+                                    <View style={{ flexDirection: 'row' }}>
+                                        <TouchableOpacity onPress={() => {
+                                            stopPolling()
+                                            onNext()
+                                        }} style={styles.nextButton}>
+                                            <Text style={{ color: '#fff', fontWeight: '700' }}>Next</Text>
+                                        </TouchableOpacity>
 
-                                    <TouchableOpacity onPress={() => {
+                                        {/* <TouchableOpacity onPress={() => {
                                         stopPolling()
                                         onRequestClose()
                                     }} style={styles.secondaryButton}>
                                         <Text style={{ color: '#6B21A8', fontWeight: '700' }}>Close</Text>
-                                    </TouchableOpacity>
+                                    </TouchableOpacity> */}
+                                    </View>
                                 </View>
-                            </View>
-                        )}
+                            )}
 
-                        {(status === 'timeout' || status === 'error') && (
-                            <View style={{ marginTop: 12, alignItems: 'center' }}>
-                                <Text style={{ marginBottom: 12, color: "red" }}>Error while creating the report.</Text>
+                            {(status === 'timeout' || status === 'error') && (
+                                <View style={{ marginTop: 12, alignItems: 'center' }}>
+                                    <Text style={{ marginBottom: 12, color: "red" }}>Error while creating the report.</Text>
 
-                                <View style={{ flexDirection: 'row' }}>
-                                    {/* <TouchableOpacity onPress={retryPolling} style={styles.nextButton}>
+                                    <View style={{ flexDirection: 'row' }}>
+                                        {/* <TouchableOpacity onPress={retryPolling} style={styles.nextButton}>
                                         <Text style={{ color: '#fff', fontWeight: '700' }}>Retry</Text>
                                     </TouchableOpacity> */}
-                                    <TouchableOpacity onPress={() => {
-                                        stopPolling()
-                                        onRequestClose()
-                                    }} style={styles.secondaryButton}>
-                                        <Text style={{ color: '#6B21A8', fontWeight: '700' }}>Close</Text>
-                                    </TouchableOpacity>
+                                        <TouchableOpacity onPress={() => {
+                                            stopPolling()
+                                            onRequestClose()
+                                        }} style={styles.secondaryButton}>
+                                            <Text style={{ color: '#6B21A8', fontWeight: '700' }}>Close</Text>
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
-                            </View>
-                        )}
+                            )}
 
+                        </View>
                     </View>
-                </View>
-            </Layout>
+                </Layout>
+            </SafeAreaView>
         </Modal>
     )
 }
