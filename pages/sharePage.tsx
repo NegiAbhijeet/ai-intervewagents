@@ -34,9 +34,31 @@ export default function SharePage({ visible = false, onRequestClose = () => { },
     const [meetingReport, setMeetingReport] = useState(null)
     const [isInterviewStart, setIsInterviewStart] = useState(false)
     const [certificateUrl, setCertificateUrl] = useState("")
+    const [certificateData, setCertificateData] = useState(null)
     useEffect(() => {
         if (!meetingId) return
+        async function fetchMeetingDetails(meetingId) {
+            try {
+                const res = await fetch(`${API_URL}/congratulations/${meetingId}/`)
+                const json = await res.json()
+                const data = json?.meetingData ?? {}
+                setCertificateData((s) => ({
+                    ...s,
+                    loading: false,
+                    positionTitle: data.position || "",
+                    candidateName: `${data?.candidateDetails?.firstName ?? ""} ${data?.candidateDetails?.lastName ?? ""}`.trim(),
+                    averageScore: data?.feedback?.averagePercentage ?? null,
+                    totalCandidates: json?.candidateCount ?? 0,
+                    rank: data?.rank ?? null,
+                    score: data?.score ?? null,
+                    maxScore: data?.maxScore ?? 100,
+                    percentile: data?.percentile ?? null,
+                }))
+            } catch (err) {
+                console.error("Error fetching meeting details:", err)
 
+            }
+        }
         async function fetchMeeting(id) {
             try {
                 const url = `${JAVA_API_URL}/api/meetings/${id}`
@@ -56,6 +78,7 @@ export default function SharePage({ visible = false, onRequestClose = () => { },
         }
 
         fetchMeeting(meetingId)
+        fetchMeetingDetails(meetingId)
     }, [meetingId])
 
     const extractMeetingDateTimeParts = dateTime => {
@@ -154,46 +177,57 @@ export default function SharePage({ visible = false, onRequestClose = () => { },
     // ----- LinkedIn share logic -----
     const shareOnLinkedIn = async () => {
         try {
-            if (!meetingId) {
-                Toast.show({ type: 'error', text1: 'Share failed', text2: 'No certificate available' })
+            const missing = []
+            if (!meetingId) missing.push('meetingId')
+            if (!certificateData?.totalCandidates) missing.push('total candidates')
+            if (!meetingReport?.position) missing.push('position')
+            if (missing.length > 0) {
+                Toast.show({
+                    type: 'error',
+                    text1: 'Share failed',
+                    text2: `Missing details: ${missing.join(', ')}`
+                })
                 return
             }
 
             const certificateUrl = `https://aiinterviewagents.com/certificate/${meetingId}`
-            const position = meetingReport?.position || 'the role'
-            const shareText = `I completed a mock interview for ${position} on AI Interview Agents.\nScore: ${score}\nCheck my certificate: ${certificateUrl}`
+            const position = meetingReport.position
+            const rank = certificateData.rank || 0
+            const total = certificateData.totalCandidates
 
-            // LinkedIn web share URL
-            const webShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(certificateUrl)}&summary=${encodeURIComponent(shareText)}`
+            const text =
+                `Just finished a ${position} mock interview on AI Interview Agents.
 
-            // Attempt app deep link. Include summary param; some LinkedIn app versions pick up url only.
-            // Note: iOS requires adding "linkedin" to LSApplicationQueriesSchemes for canOpenURL to return true.
-            const appDeepLink = `linkedin://shareArticle?mini=true&url=${encodeURIComponent(certificateUrl)}&summary=${encodeURIComponent(shareText)}`
+                    Score: ${score || 0}%
+                    Rank: #${rank} out of ${total} candidates
 
-            // Try opening LinkedIn app first
-            const canOpen = await Linking.canOpenURL(appDeepLink)
-            if (canOpen) {
-                await Linking.openURL(appDeepLink)
-                return
-            }
+                    The AI interviewer gave real-time feedback that helped.
 
-            // If the app link cannot be opened, fall back to the web share page
-            // This opens in the device browser and shows the LinkedIn post composer with the URL prefilled.
+                    Certificate:
+                    ${certificateUrl}
+                `
+
+            const webShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(text)}`
             await Linking.openURL(webShareUrl)
+
         } catch (err) {
-            // As a last resort, open native share sheet with the certificate URL and text
             try {
                 await Share.share({
-                    message: `${shareText}`,
+                    message: text,
                     url: `https://aiinterviewagents.com/certificate/${meetingId}`,
                     title: 'My interview certificate'
                 })
             } catch (err2) {
                 console.error('sharing failed', err, err2)
-                Toast.show({ type: 'error', text1: 'Share failed', text2: 'Unable to share certificate' })
+                Toast.show({
+                    type: 'error',
+                    text1: 'Share failed',
+                    text2: 'Unable to share certificate'
+                })
             }
         }
     }
+
 
     return (
         <Modal
