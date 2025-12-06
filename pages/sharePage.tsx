@@ -189,7 +189,6 @@ export default function SharePage({ visible = false, onRequestClose = () => { },
                 })
                 return
             }
-
             const certificateUrl = `https://aiinterviewagents.com/certificate/${meetingId}`
             const position = meetingReport.position
             const rank = certificateData.rank || 0
@@ -198,35 +197,39 @@ export default function SharePage({ visible = false, onRequestClose = () => { },
             const text =
                 `Just finished a ${position} mock interview on AI Interview Agents.
 
-                    Score: ${score || 0}%
-                    Rank: #${rank} out of ${total} candidates
+Score: ${score || 0}%
+Rank: #${rank} out of ${total} candidates
 
-                    The AI interviewer gave real-time feedback that helped.
+The AI interviewer gave real-time feedback that helped.
 
-                    Certificate:
-                    ${certificateUrl}
-                `
+Certificate:
+${certificateUrl}
+`
 
-            const webShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(text)}`
-            await Linking.openURL(webShareUrl)
+            // Full LinkedIn feed share URL in the same pattern as your example
+            const shareUrl =
+                `https://www.linkedin.com/feed/?linkOrigin=LI_BADGE&shareActive=true&shareUrl=${encodeURIComponent(certificateUrl)}&text=${encodeURIComponent(text)}`
+
+            await Linking.openURL(shareUrl)
+
+            // Optional popup so the user can copy text manually
+            Toast.show({
+                type: 'info',
+                text1: 'Text copied',
+                text2: 'Paste the text in your LinkedIn post'
+            })
+
 
         } catch (err) {
-            try {
-                await Share.share({
-                    message: text,
-                    url: `https://aiinterviewagents.com/certificate/${meetingId}`,
-                    title: 'My interview certificate'
-                })
-            } catch (err2) {
-                console.error('sharing failed', err, err2)
-                Toast.show({
-                    type: 'error',
-                    text1: 'Share failed',
-                    text2: 'Unable to share certificate'
-                })
-            }
+            console.error('share failed', err)
+            Toast.show({
+                type: 'error',
+                text1: 'Share failed',
+                text2: 'Unable to open LinkedIn'
+            })
         }
     }
+
 
 
     return (
