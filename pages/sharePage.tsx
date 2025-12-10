@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
     Dimensions,
@@ -22,6 +22,7 @@ import LANGUAGES from '../libs/languages'
 import fetchWithAuth from '../libs/fetchWithAuth'
 import Toast from 'react-native-toast-message'
 import { useNavigation } from '@react-navigation/native'
+import getLevelData from '../libs/getLevelData'
 
 const { width: SCREEN_W } = Dimensions.get('window')
 const CIRCLESIZE = 120
@@ -35,6 +36,8 @@ export default function SharePage({ visible = false, onRequestClose = () => { },
     const [isInterviewStart, setIsInterviewStart] = useState(false)
     const [certificateUrl, setCertificateUrl] = useState("")
     const [certificateData, setCertificateData] = useState(null)
+
+    const LEVELS = useMemo(() => getLevelData(language) || {}, [language])
     useEffect(() => {
         if (!meetingId) return
         async function fetchMeetingDetails(meetingId) {
@@ -181,35 +184,40 @@ export default function SharePage({ visible = false, onRequestClose = () => { },
             if (!meetingId) missing.push('meetingId')
             if (!certificateData?.totalCandidates) missing.push('total candidates')
             if (!meetingReport?.position) missing.push('position')
+            if (!Array.isArray(meetingReport?.candidateRequiredSkills) || meetingReport.candidateRequiredSkills.length === 0) {
+                missing.push('skills')
+            }
+
             if (missing.length > 0) {
                 Toast.show({
                     type: 'error',
-                    text1: 'Share failed',
-                    text2: `Missing details: ${missing.join(', ')}`
+                    text1: 'Share failed.',
                 })
                 return
             }
+
             const certificateUrl = `https://aiinterviewagents.com/certificate/${meetingId}`
-            const position = meetingReport.position
-            const rank = certificateData.rank || 0
-            const total = certificateData.totalCandidates
+            const userLevel = meetingReport.requiredExperience
+            const finalLevel = LEVELS.find(item => Number(item.value) === Number(userLevel))
+
+            // array skills → cleaned string with one space after each comma
+            const normalizedSkills = meetingReport.candidateRequiredSkills
+                .map(s => String(s).trim())
+                .filter(Boolean)
+                .join(', ') + '.'
 
             const text =
-                `Just finished a ${position} mock interview on AI Interview Agents.
-
-Score: ${score || 0}%
-Rank: #${rank} out of ${total} candidates
-
-The AI interviewer gave real-time feedback that helped.
-
+                `Just finished a full Technical interview for a ${meetingReport.position} role on AI Interview Agents.
+I scored ${score}% at the ${finalLevel?.label} and covered key skills including ${normalizedSkills}
+Sharing this to connect with professionals and recruiters working in ${meetingReport.position} roles.
+You can view my certificate and profile through the link below on AI Interview Agents.
+Always open to learning, feedback, and new opportunities.
 Certificate:
-${certificateUrl}
-`
-
-            // Full LinkedIn feed share URL in the same pattern as your example
+${certificateUrl}`
+console.log(text)
             const shareUrl =
                 `https://www.linkedin.com/feed/?linkOrigin=LI_BADGE&shareActive=true&shareUrl=${encodeURIComponent(certificateUrl)}&text=${encodeURIComponent(text)}`
-
+            console.log(shareUrl)
             await Linking.openURL(shareUrl)
 
             // Optional popup so the user can copy text manually

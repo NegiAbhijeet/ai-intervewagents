@@ -5,7 +5,7 @@ import { STREAK_KEY } from './config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import getISTDateString from '../libs/getStreakDate';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 const PRIMARY = 'rgba(197, 131, 40, 1)'
 const INACTIVE_BG = 'rgba(156, 163, 175, 1)'
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     },
     card: {
         width: "100%",
-        minHeight: '50%',
+        minHeight: Math.max(440, height > 800 ? height / 2 : (height / 2) + 80),
         backgroundColor: '#000',
         borderTopLeftRadius: 36,
         borderTopRightRadius: 36,
