@@ -68,6 +68,7 @@ const GoogleLoginButton = ({ isGoogleLoading, setIsGoogleLoading, setFirebaseUse
           plan: 1,
           image_url: user.photoURL || '',
           role: '',
+          platform: "app"
         }),
       });
 

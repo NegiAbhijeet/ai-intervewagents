@@ -97,7 +97,8 @@ export default function LoginScreen() {
           email: user.email,
           plan: 1,
           image_url: user.photoURL || '',
-          role: ''
+          role: '',
+          platform: "app"
         })
       })
 
