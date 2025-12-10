@@ -163,7 +163,7 @@ export default function PricingPage({ skus = ['starter_plan', "test_plan"] }) {
       try {
         // wait briefly for connection if not yet connected
         let attempts = 0
-        while (!connected && attempts < 10) {
+        while (!connected && attempts < 20) {
           // eslint-disable-next-line no-await-in-loop
           await new Promise(resolve => setTimeout(resolve, 300))
           attempts += 1
@@ -181,14 +181,6 @@ export default function PricingPage({ skus = ['starter_plan', "test_plan"] }) {
         const uniqueSkus = Array.from(new Set((skus || []).filter(Boolean)))
         if (uniqueSkus.length === 0) {
           throw new Error('No SKUs provided')
-        }
-
-        // attempt both in-app and subs fetches so we get whichever type the store has
-        try {
-          await fetchProducts({ skus: uniqueSkus, type: 'in-app' })
-        } catch (e) {
-          // ignore individual failure, try subs next
-          // console.warn('fetchProducts in-app failed', e)
         }
 
         try {
