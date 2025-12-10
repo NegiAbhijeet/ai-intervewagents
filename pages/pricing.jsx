@@ -104,12 +104,12 @@ export default function PricingPage({ skus = ['starter_plan', "test_plan"] }) {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+        const errorData = await response.json()
         const message = errorData?.error || 'Failed to create interview.';
         throw new Error(message);
       }
 
-      const result = await response.json().catch(() => ({}));
+      const result = await response.json()
       if (result?.user) {
         setUserProfile(result.user)
         navigation.navigate('AppTabs', { screen: 'profile' })
