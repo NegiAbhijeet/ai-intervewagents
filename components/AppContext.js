@@ -12,7 +12,7 @@ const AppStateProvider = ({ children }) => {
   const [fcmTokenUpdated, setFcmTokenUpdated] = useState(false);
   const [jobsFetched, setJobsFetched] = useState(false);
   const [firstInterviewObject, setFirstInterviewObject] = useState(null)
-  const [leaderboardRank, setLeaderboardRank] = useState(0);
+  const [leaderboardRank, setLeaderboardRank] = useState(1);
   const [myCandidate, setMyCandidate] = useState(null);
   const [langSelected, setLangSelected] = useState(true)
   const [language, setLanguage] = useState(null);
@@ -48,7 +48,7 @@ const AppStateProvider = ({ children }) => {
     setUnreadNotification(0);
     setFcmTokenUpdated(false);
     setJobsFetched(false);
-    setLeaderboardRank(0);
+    setLeaderboardRank(1);
     setOnboardingComplete(false);
     setFirstInterviewObject(null)
     setMyCandidate(null)

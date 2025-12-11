@@ -178,7 +178,7 @@ const Reports = ({ route }) => {
       <TopBar />
       <Layout>
         {
-          showDailyStreak && leaderboardRank > 0 && <StreakProgress currentDay={leaderboardRank} setShowDailyStreak={setShowDailyStreak} />
+          showDailyStreak && <StreakProgress currentDay={Math.max(1, leaderboardRank)} setShowDailyStreak={setShowDailyStreak} />
         }
         <BackgroundGradient2 />
         <ScrollView

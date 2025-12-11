@@ -147,7 +147,7 @@ const HomePage = ({ route }) => {
         }
     }
     function fetchUserRank() {
-        setLeaderboardRank(userProfile?.current_streak || 0);
+        setLeaderboardRank(userProfile?.current_streak || 1);
     }
     useNotification(userProfile?.uid, fcmTokenUpdated, setFcmTokenUpdated);
 
@@ -279,7 +279,7 @@ const HomePage = ({ route }) => {
 
             <Layout>
                 {
-                    showDailyStreak && leaderboardRank > 0 && <StreakProgress currentDay={leaderboardRank} setShowDailyStreak={setShowDailyStreak} isHome={true} handleSubmit={handleSubmit} />
+                    showDailyStreak && firstInterviewObject === null && <StreakProgress currentDay={Math.max(1, leaderboardRank)} setShowDailyStreak={setShowDailyStreak} isHome={true} handleSubmit={handleSubmit} />
                 }
                 <ScrollView
                     showsVerticalScrollIndicator={false}

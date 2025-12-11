@@ -70,7 +70,7 @@ export default function SharePage({ visible = false, onRequestClose = () => { },
 
                 const report = result.data || {}
                 if (report?.streak) {
-                    setLeaderboardRank(report?.streak)
+                    setLeaderboardRank(report?.streak || 1)
                     setCertificateUrl(report?.certificateUrl || null)
                 }
 
