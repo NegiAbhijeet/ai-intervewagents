@@ -9,10 +9,11 @@ import {
   View,
   Image,
   Modal,
-  TouchableOpacity
+  TouchableOpacity,
+  Platform
 } from 'react-native'
 import Layout from './Layout'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const { width: SCREEN_W } = Dimensions.get('window')
 const PENG_WIDTH = Math.min(320, Math.round(SCREEN_W * 0.30))
@@ -20,13 +21,10 @@ const CLOUD_WIDTH = Math.min(320, Math.round(SCREEN_W * 0.70 * 0.85))
 
 const GuessScoreModal = ({ visible = false, onRequestClose = () => { }, onSelectGuess = () => { }, interviewId = '' }) => {
   const { t } = useTranslation()
+  const insets = useSafeAreaInsets()
 
-  const options = [
-    '32%–33%',
-    '40%–47%',
-    '53%–59%',
-    '20%–30%'
-  ]
+  // options etc...
+  const options = ['32%–33%', '40%–47%', '53%–59%', '20%–30%']
 
   const handlePress = (option) => {
     // pass the option string and interviewId to caller
@@ -39,14 +37,12 @@ const GuessScoreModal = ({ visible = false, onRequestClose = () => { }, onSelect
       transparent={true}
       animationType="fade"
       onRequestClose={onRequestClose}
+      statusBarTranslucent={true} // Android: allow modal to draw under status bar and then we add padding
+      presentationStyle="overFullScreen" // iOS: consistent overlay behavior
     >
-      <SafeAreaView
-        style={{
-          flex: 1,
-        }}
-      >
+      <SafeAreaView style={{ flex: 1 }} edges={['bottom', 'left', 'right']}>
         <Layout gradientType="3">
-          <View style={styles.bg}>
+          <View style={[styles.bg, { paddingTop: insets.top || (Platform.OS === 'android' ? 0 : 0) }]}>
             <View style={styles.wrapper}>
               <View style={styles.cloudWrap} pointerEvents="none">
                 <ImageBackground

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   View,
   Image,
@@ -19,13 +19,67 @@ export default function Certificate({
   imageUrl,
   minScale = 1,
   maxScale = 4,
-  thumbHeight = SCREEN_W * 0.5,
+  thumbHeight = 400, // maximum fallback for thumb if no natural size yet
 }) {
   const [modalVisible, setModalVisible] = useState(false)
   const [loaded, setLoaded] = useState(false)
   const [loadedThumb, setLoadedThumb] = useState(false)
+  const [naturalWidth, setNaturalWidth] = useState(null)
+  const [naturalHeight, setNaturalHeight] = useState(null)
 
-  if (!imageUrl) return <View style={[styles.thumb, { height: thumbHeight }]} />
+  // Run hooks unconditionally. Guard inside effect.
+  useEffect(() => {
+    if (!imageUrl) {
+      setNaturalWidth(null)
+      setNaturalHeight(null)
+      return
+    }
+
+    let mounted = true
+    Image.getSize(
+      imageUrl,
+      (w, h) => {
+        if (!mounted) return
+        setNaturalWidth(w)
+        setNaturalHeight(h)
+      },
+      err => {
+        if (!mounted) return
+        console.warn('Image.getSize failed', err)
+      }
+    )
+
+    return () => {
+      mounted = false
+    }
+  }, [imageUrl])
+
+  // assume container uses full screen width. adjust if your parent is narrower.
+  const containerWidth = SCREEN_W
+
+  // compute scaled height for that width while keeping aspect ratio
+  const scaledNaturalHeight =
+    naturalWidth && naturalHeight
+      ? (naturalHeight / naturalWidth) * containerWidth
+      : null
+
+  // clamp the thumbnail height to a sensible maximum
+  // here we use: min(scaled height, 60% of screen height, thumbHeight prop)
+  const displayThumbHeight =
+    scaledNaturalHeight != null
+      ? Math.min(scaledNaturalHeight, SCREEN_H * 0.6, thumbHeight)
+      : thumbHeight
+
+  // for modal view clamp to screen height so it fits. keep aspect ratio.
+  const modalImageHeight =
+    scaledNaturalHeight != null
+      ? Math.min(scaledNaturalHeight, SCREEN_H)
+      : SCREEN_H
+
+  if (!imageUrl) {
+    // still render predictable view; hooks already ran
+    return <View style={[styles.thumb, { height: displayThumbHeight }]} />
+  }
 
   return (
     <>
@@ -35,7 +89,7 @@ export default function Certificate({
           setLoaded(false)
           setModalVisible(true)
         }}
-        style={[styles.thumb, { height: thumbHeight }]}
+        style={[styles.thumb, { height: displayThumbHeight }]}
       >
         <Image
           source={{ uri: imageUrl }}
@@ -73,13 +127,13 @@ export default function Certificate({
               cropWidth={SCREEN_W}
               cropHeight={SCREEN_H}
               imageWidth={SCREEN_W}
-              imageHeight={SCREEN_H}
+              imageHeight={modalImageHeight}
               minScale={minScale}
               maxScale={maxScale}
             >
               <Image
                 source={{ uri: imageUrl }}
-                style={[styles.fullImage, { opacity: loaded ? 1 : 0 }]}
+                style={[styles.fullImage, { width: SCREEN_W, height: modalImageHeight, opacity: loaded ? 1 : 0 }]}
                 resizeMode="contain"
                 onLoadStart={() => setLoaded(false)}
                 onLoadEnd={() => setLoaded(true)}
@@ -101,11 +155,8 @@ export default function Certificate({
 const styles = StyleSheet.create({
   thumb: {
     width: '100%',
-    // backgroundColor: '#e6e9ee',
-    borderRadius: 12,
-    overflow: 'hidden',
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
   },
   thumbImage: {
     width: '100%',

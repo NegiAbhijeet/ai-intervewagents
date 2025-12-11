@@ -14,7 +14,6 @@ import {
 import Certificate from '../components/certificate'
 import { ScrollView } from 'react-native-gesture-handler'
 import { API_URL, JAVA_API_URL } from '../components/config'
-import Layout from './Layout'
 import { AppStateContext } from '../components/AppContext'
 import LANGUAGES from '../libs/languages'
 import fetchWithAuth from '../libs/fetchWithAuth'
@@ -23,6 +22,8 @@ import { useNavigation } from '@react-navigation/native'
 import getLevelData from '../libs/getLevelData'
 import { InModalBanner } from '../components/InModalBanner'
 import Clipboard from '@react-native-clipboard/clipboard'
+import BackgroundGradient3 from '../components/backgroundGradient3';
+
 const { width: SCREEN_W } = Dimensions.get('window')
 const CIRCLESIZE = 120
 
@@ -246,7 +247,9 @@ Always open to learning, feedback, and new opportunities.`
                 onRequestClose()
             }}
         >
-            <Layout gradientType="3">
+            <View className="flex-1 bg-white pb-8">
+                <BackgroundGradient3 />
+
                 <InModalBanner
                     visible={showMessage}
                     text="Post copied. Paste the text in your LinkedIn post."
@@ -320,7 +323,7 @@ Always open to learning, feedback, and new opportunities.`
                         </View>
                     </View>
                 </ScrollView>
-            </Layout>
+            </View>
         </Modal>
     )
 }
@@ -394,7 +397,7 @@ const styles = StyleSheet.create({
     linkedin: {
         marginTop: 18,
         backgroundColor: 'rgba(29, 78, 216, 1)',
-        width: '90%',
+        width: '100%',
         alignSelf: 'stretch',
         paddingVertical: 16,
         paddingHorizontal: 16,
