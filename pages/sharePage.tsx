@@ -10,8 +10,6 @@ import {
     Modal,
     ActivityIndicator,
     Linking,
-    Share,
-    Platform,
 } from 'react-native'
 import Certificate from '../components/certificate'
 import { ScrollView } from 'react-native-gesture-handler'
@@ -24,7 +22,7 @@ import Toast from 'react-native-toast-message'
 import { useNavigation } from '@react-navigation/native'
 import getLevelData from '../libs/getLevelData'
 import { InModalBanner } from '../components/InModalBanner'
-
+import Clipboard from '@react-native-clipboard/clipboard'
 const { width: SCREEN_W } = Dimensions.get('window')
 const CIRCLESIZE = 120
 
@@ -215,7 +213,9 @@ I scored ${score}% at the ${finalLevel?.label} and covered key skills including 
 Sharing this to connect with professionals and recruiters working in ${meetingReport.position} roles.
 You can view my certificate and profile through the link below on AI Interview Agents.
 Always open to learning, feedback, and new opportunities.`
-            console.log(text)
+
+            Clipboard.setString(text)
+
             const shareUrl =
                 `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(certificateUrl)}`
 
