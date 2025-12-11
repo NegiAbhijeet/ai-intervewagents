@@ -83,7 +83,7 @@ export default function ExitReasonsModal({ uid, name, initialSelected = 'time', 
                 disabled={loading}
             >
                 <View style={styles.iconWrapper}>
-                    <Ionicons name={item.icon} size={18} color="white" />
+                    <Ionicons name={item.icon} size={18} color={active ? "black" : "white"} />
                 </View>
 
                 <Text style={[styles.optionText, active && styles.optionTextActive]} numberOfLines={2}>
@@ -128,11 +128,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 20,
         position: 'absolute',
-        bottom: 8,
+        bottom: 0,
         left: '50%',
         transform: [{ translateX: '-50%' }],
         zIndex: 1111,
-        width: "100%"
+        width: "110%"
     },
     topBar: {
         height: 3,
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
         alignItems: 'stretch', // allow children to use full width
 
         // New styling from Figma
-        backgroundColor: 'rgba(0, 0, 0, 0.93)',
+        backgroundColor: 'rgba(0, 0, 0, 1)',
         borderWidth: 1,
         borderColor: 'rgba(60, 60, 60, 1)',
         shadowColor: 'rgba(0, 0, 0, 1)',
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
         marginBottom: 12,
     },
     optionActive: {
-        backgroundColor: '#fff',
+        backgroundColor: 'rgba(156, 163, 175, 1)',
     },
     iconWrapper: {
         width: 28,
@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
     },
     optionTextActive: {
         color: '#0b0b0d',
-        fontWeight: '600',
+        fontWeight: '500',
     },
     closeButton: {
         marginTop: 6,

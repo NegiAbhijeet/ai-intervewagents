@@ -42,11 +42,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 20,
         position: 'absolute',
-        bottom: 8,
+        bottom: 0,
         left: '50%',
         transform: [{ translateX: '-50%' }],
         zIndex: 1111,
-        width: "100%"
+        width: "110%"
     },
     container: {
         width: '100%',
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
         alignItems: 'stretch', // allow children to use full width
 
         // New styling from Figma
-        backgroundColor: 'rgba(0, 0, 0, 0.93)',
+        backgroundColor: 'rgba(0, 0, 0, 1)',
         borderWidth: 1,
         borderColor: 'rgba(60, 60, 60, 1)',
         shadowColor: 'rgba(0, 0, 0, 1)',
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
 
     primaryButton: {
         width: '100%',
-        backgroundColor: 'rgba(0, 0, 0, 1)',
+        backgroundColor: 'rgba(156, 163, 175, 1)',
         borderRadius: 12,
         paddingVertical: 14,
         alignItems: 'center'
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
         paddingVertical: 14,
         alignItems: 'center',
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.12)'
+        borderColor: 'rgba(156, 163, 175, 1)'
     },
     ghostText: {
         color: '#fff',
