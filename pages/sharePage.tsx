@@ -23,6 +23,7 @@ import fetchWithAuth from '../libs/fetchWithAuth'
 import Toast from 'react-native-toast-message'
 import { useNavigation } from '@react-navigation/native'
 import getLevelData from '../libs/getLevelData'
+import { InModalBanner } from '../components/InModalBanner'
 
 const { width: SCREEN_W } = Dimensions.get('window')
 const CIRCLESIZE = 120
@@ -36,6 +37,7 @@ export default function SharePage({ visible = false, onRequestClose = () => { },
     const [isInterviewStart, setIsInterviewStart] = useState(false)
     const [certificateUrl, setCertificateUrl] = useState("")
     const [certificateData, setCertificateData] = useState(null)
+    const [showMessage, setShowMessage] = useState(false)
 
     const LEVELS = useMemo(() => getLevelData(language) || {}, [language])
     useEffect(() => {
@@ -191,10 +193,11 @@ export default function SharePage({ visible = false, onRequestClose = () => { },
             if (missing.length > 0) {
                 Toast.show({
                     type: 'error',
-                    text1: 'Share failed.',
+                    text1: 'Share failed.'
                 })
                 return
             }
+            setShowMessage(true)
 
             const certificateUrl = `https://aiinterviewagents.com/certificate/${meetingId}`
             const userLevel = meetingReport.requiredExperience
@@ -211,22 +214,16 @@ export default function SharePage({ visible = false, onRequestClose = () => { },
 I scored ${score}% at the ${finalLevel?.label} and covered key skills including ${normalizedSkills}
 Sharing this to connect with professionals and recruiters working in ${meetingReport.position} roles.
 You can view my certificate and profile through the link below on AI Interview Agents.
-Always open to learning, feedback, and new opportunities.
-Certificate:
-${certificateUrl}`
-console.log(text)
+Always open to learning, feedback, and new opportunities.`
+            console.log(text)
             const shareUrl =
-                `https://www.linkedin.com/feed/?linkOrigin=LI_BADGE&shareActive=true&shareUrl=${encodeURIComponent(certificateUrl)}&text=${encodeURIComponent(text)}`
-            console.log(shareUrl)
-            await Linking.openURL(shareUrl)
+                `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(certificateUrl)}`
 
-            // Optional popup so the user can copy text manually
-            Toast.show({
-                type: 'info',
-                text1: 'Text copied',
-                text2: 'Paste the text in your LinkedIn post'
-            })
-
+            // Wait 1.5 seconds before opening
+            setTimeout(() => {
+                setShowMessage(false)
+                Linking.openURL(shareUrl)
+            }, 2000)
 
         } catch (err) {
             console.error('share failed', err)
@@ -250,6 +247,11 @@ console.log(text)
             }}
         >
             <Layout gradientType="3">
+                <InModalBanner
+                    visible={showMessage}
+                    text="Post copied. Paste the text in your LinkedIn post."
+                    onHidden={() => { }}
+                />
                 <ScrollView
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{ paddingBottom: 120 }}
