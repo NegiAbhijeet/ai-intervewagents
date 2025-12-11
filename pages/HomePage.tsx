@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 import LANGUAGES from '../libs/languages';
 import StreakProgress from '../components/streakProgress';
 
-const HomePage = () => {
+const HomePage = ({ route }) => {
     const {
         userProfile,
         fcmTokenUpdated,
@@ -33,6 +33,14 @@ const HomePage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isInterviewStart, setIsInterviewStart] = useState(false)
     const [isRefreshing, setIsRefreshing] = useState(false);
+
+    useEffect(() => {
+        if (route.params?.startInterview) {
+            handleSubmit("practice")
+        }
+    }, [route.params?.startInterview]);
+
+
 
     const spin = useRef(new Animated.Value(0)).current
     const { t } = useTranslation();
@@ -271,7 +279,7 @@ const HomePage = () => {
 
             <Layout>
                 {
-                    showDailyStreak && leaderboardRank > 0 && <StreakProgress currentDay={leaderboardRank} setShowDailyStreak={setShowDailyStreak} />
+                    showDailyStreak && leaderboardRank > 0 && <StreakProgress currentDay={leaderboardRank} setShowDailyStreak={setShowDailyStreak} isHome={true} handleSubmit={handleSubmit} />
                 }
                 <ScrollView
                     showsVerticalScrollIndicator={false}

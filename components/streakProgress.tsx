@@ -4,6 +4,7 @@ import Animated, { scrollTo, useAnimatedRef, useDerivedValue, useSharedValue } f
 import { STREAK_KEY } from './config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import getISTDateString from '../libs/getStreakDate';
+import { useNavigation } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -12,7 +13,8 @@ const INACTIVE_BG = 'rgba(156, 163, 175, 1)'
 const MUTED_TEXT = '#8A8A8A'
 const itemWidth = 70
 
-export default function StreakProgress({ visible = true, daysCount = 100, currentDay = 1, onStart = () => { }, setShowDailyStreak }) {
+export default function StreakProgress({ visible = true, daysCount = 100, currentDay = 1, isHome = false, handleSubmit = () => { }, setShowDailyStreak }) {
+    const navigation = useNavigation()
     async function markDailyStreakShown() {
         const key = STREAK_KEY
         try {
@@ -28,6 +30,13 @@ export default function StreakProgress({ visible = true, daysCount = 100, curren
         const offset = (currentDay - 1) * itemWidth - width / 2 + itemWidth / 2;
         scrollTo(animatedRef, 0, offset + (width / 2), true);
     });
+    function onStart() {
+        if (isHome) {
+            handleSubmit()
+        } else {
+            navigation.navigate('index', { startInterview: true })
+        }
+    }
 
     return (
         <Modal visible={visible} transparent animationType="fade">
