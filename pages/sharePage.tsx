@@ -216,9 +216,9 @@ You can view my certificate and profile through the link below on AI Interview A
 Always open to learning, feedback, and new opportunities.`
 
             Clipboard.setString(text)
-
+            const postText = `Just finished a full Technical interview for a ${meetingReport.position} role on AI Interview Agents.`
             const shareUrl =
-                `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(certificateUrl)}`
+                `https://www.linkedin.com/feed/?linkOrigin=LI_BADGE&shareActive=true&shareUrl=${encodeURIComponent(certificateUrl)}&text=${postText}`
 
             // Wait 1.5 seconds before opening
             setTimeout(() => {
