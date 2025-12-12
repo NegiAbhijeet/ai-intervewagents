@@ -1,33 +1,31 @@
 // CandidatePricing.js
-import React, { useEffect, useState, useContext, useRef } from 'react'
+import React, { useEffect, useState, useContext } from 'react';
 import {
   View,
   Text,
   FlatList,
   TouchableOpacity,
-  StyleSheet,
-  Linking,
-  Modal,
   ActivityIndicator,
-  Alert,
-} from 'react-native'
-import { AppStateContext } from '../components/AppContext'
-import { useNavigation } from '@react-navigation/native'
-import { API_URL } from '../components/config'
-import fetchWithAuth from '../libs/fetchWithAuth'
-import { useIAP, ErrorCode } from 'react-native-iap'
-import Toast from 'react-native-toast-message'
-import { useTranslation } from 'react-i18next'
-import CustomHeader from '../components/customHeader'
+  StyleSheet,
+  Modal,
+  Pressable,
+  Linking,
+} from 'react-native';
+import { AppStateContext } from '../components/AppContext';
+import { useNavigation } from '@react-navigation/native';
+import { API_URL } from '../components/config';
+import PaymentPopup from '../components/PaymentPopup';
+import fetchWithAuth from '../libs/fetchWithAuth';
+import CustomHeader from '../components/customHeader';
+const formatPrice = p =>
+  p === null || p === undefined ? 'Custom pricing' : `₹ ${p}`;
 
 const defaultIconLetter = (name = '') => {
-  const n = name.toString().trim().toUpperCase().slice(0, 1)
-  return n || 'P'
-}
+  const n = name.toString().trim().toUpperCase().slice(0, 1);
+  return n || 'P';
+};
 
-const formatFallbackPrice = p =>
-  p === null || p === undefined ? 'Custom pricing' : `₹ ${p}`
-
+// Simple skeleton row
 function SkeletonCard() {
   return (
     <View style={[styles.card, styles.skeletonCard]}>
@@ -37,248 +35,191 @@ function SkeletonCard() {
       <View style={styles.skeletonFeatures} />
       <View style={styles.skeletonButton} />
     </View>
-  )
+  );
 }
 
-function PaymentButton({ onPay, text = 'Buy Now', disabled }) {
+// Minimal PaymentButton that calls the onPay function
+function PaymentButton({ priceValue, onPay, text = 'Buy Now', disabled }) {
   return (
     <TouchableOpacity
       onPress={() => !disabled && onPay()}
       style={[styles.button, disabled && styles.buttonDisabled]}
       activeOpacity={0.8}
     >
-      <Text style={styles.buttonText}>{text}</Text>
+      <Text style={styles.buttonText}>
+        {text} {priceValue ? `(${formatPrice(priceValue)})` : ''}
+      </Text>
     </TouchableOpacity>
-  )
+  );
 }
 
-export default function PricingPage({ skus = ['starter_plan', "test_plan"] }) {
-  const { userProfile, setUserProfile, language } = useContext(AppStateContext)
-  const navigation = useNavigation()
-  const [plans, setPlans] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [isFetching, setIsFetching] = useState(false)
-  const { t } = useTranslation()
-  const fetchedRef = useRef(false)
-  const {
-    connected,
-    subscriptions,
-    fetchProducts,
-    requestPurchase,
-    requestSubscription,
-    finishTransaction,
-  } = useIAP({
-    onPurchaseSuccess: async purchase => {
-      try {
-        await finishTransaction({ purchase, isConsumable: false })
-        await completePurchase(purchase)
-      } catch (err) {
-        console.error('finishTransaction error', err)
-      }
-    },
-    onPurchaseError: err => {
-      if (err?.code !== ErrorCode.UserCancelled) {
-        console.error('onPurchaseError', err)
-        Toast.show({ type: 'error', text1: 'Purchase failed' })
-      }
-    },
-  })
-
-  async function completePurchase(purchase) {
-    try {
-      setIsFetching(true)
-      const payload = {
-        "uid": userProfile?.uid,
-        "productId": purchase?.productId,
-        "purchaseToken": purchase?.purchaseToken,
-        "packageNameAndroid": purchase?.packageNameAndroid,
-        "transactionId": purchase?.id
-      }
-
-      const response = await fetchWithAuth(`${API_URL}/mobile-subscription-update/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        const message = errorData?.error || 'Failed to create interview.';
-        throw new Error(message);
-      }
-
-      const result = await response.json()
-      if (result?.user) {
-        setUserProfile(result.user)
-        navigation.navigate('AppTabs', { screen: 'profile' })
-        Toast.show({ type: 'success', text1: 'Purchase successful' })
-      }
-    } catch (err) {
-      console.error('completePurchase error:', err)
-      Alert.alert('Purchase error', err.message || 'Unable to complete purchase')
-    } finally {
-      setIsFetching(false)
-    }
-  }
+export default function PricingPage() {
+  const { userProfile, setUserProfile } = useContext(AppStateContext);
+  const navigation = useNavigation();
+  const [plans, setPlans] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [billingSelected, setBillingSelected] = useState({});
+  const [selectedPlan, setSelectedPlan] = useState(null);
+  const [paymentModalVisible, setPaymentModalVisible] = useState(false);
 
   useEffect(() => {
-    let mounted = true
-    const loadApiPlans = async () => {
-      setLoading(true)
-      setError(null)
+    const controller = new AbortController();
+
+    const fetchPlans = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        const res = await fetchWithAuth(`${API_URL}/mobile-plans/?language_code=${language}`)
+        const res = await fetchWithAuth(`${API_URL}/api/plans`, {
+          signal: controller.signal,
+        });
+
         if (!res.ok) {
-          const text = await res.text().catch(() => '')
-          throw new Error(`Failed to load plans: ${res.status} ${text}`)
+          const text = await res.text().catch(() => '');
+          throw new Error(`Failed to load plans: ${res.status} ${text}`);
         }
-        const data = await res.json()
-        const apiPlans = Array.isArray(data) ? data : []
-        if (!mounted) return
-        setPlans(apiPlans)         // UI uses `plans`
+
+        const data = await res.json();
+        console.log('raw plans response:', data);
+
+        // support array responses and wrapped responses like { plans: [...] } or { data: [...] }
+        const plansArray = Array.isArray(data)
+          ? data
+          : data.plans ?? data.data ?? [];
+        if (!Array.isArray(plansArray))
+          throw new Error('Unexpected response shape: expected array of plans');
+
+        const filtered = plansArray
+          .filter(p => p && typeof p.id === 'number')
+          .filter(p => p.id !== 6 && p.id !== 7)
+          .filter(p => p.id === 1 || p.id === 2);
+
+        const transformed = filtered.map(p => {
+          const rawPrices =
+            p.prices == null
+              ? []
+              : Array.isArray(p.prices)
+                ? p.prices
+                : [p.prices];
+
+          const prices = rawPrices.map(pr => ({
+            id: pr.id,
+            interval: pr.interval,
+            price: pr.price,
+            features: pr.features ?? null,
+            is_active: pr.is_active,
+            total_seconds: pr.total_seconds ?? 0,
+            free_seconds: pr.free_seconds ?? 0,
+            max_sub_users: pr.max_sub_users ?? 0,
+            plan: pr.plan ?? null,
+          }));
+
+          return {
+            id: p.id,
+            name: p.name,
+            description: p.description ?? p.name,
+            icon:
+              typeof defaultIcon === 'function' ? defaultIcon(p.name) : null,
+            prices,
+            buttonText:
+              p.id === 1
+                ? 'Start Free'
+                : p.id === 5
+                  ? 'Book a Demo'
+                  : 'Buy Now',
+            max_sub_users: p.max_sub_users ?? 0,
+          };
+        });
+
+        setPlans(transformed);
       } catch (err) {
-        console.error('fetchPlans error:', err)
-        if (mounted) setError(err.message ?? 'Unable to load plans')
+        console.error('fetchPlans error:', err);
+        setError(err.message ?? 'Unable to load plans.');
       } finally {
-        if (mounted) setLoading(false)
+        setLoading(false);
       }
+    };
+
+    fetchPlans();
+    return () => controller.abort();
+  }, []);
+
+  const handlePerPlanToggle = planId => {
+    setBillingSelected(prev => {
+      const current = prev[planId] === 'yearly' ? 'monthly' : 'yearly';
+      return { ...prev, [planId]: current };
+    });
+  };
+
+  const effectiveBillingFor = plan => {
+    const selected = billingSelected[plan.id];
+    if (selected && plan.prices.some(pr => pr.interval === selected))
+      return selected;
+    if (plan.prices.some(pr => pr.interval === 'monthly')) return 'monthly';
+    if (plan.prices.some(pr => pr.interval === 'yearly')) return 'yearly';
+    return plan.prices[0]?.interval || 'monthly';
+  };
+
+  const onBuyPress = (plan, priceObj, billing) => {
+    // if plan id 1 and user exists, go to dashboard
+    if (plan.id === 1 && userProfile?.uid) {
+      navigation.navigate('Login');
+      return;
     }
-    if (language) {
-      loadApiPlans()
+    // if plan is demo id 5 open calendly link
+    if (plan.id === 5) {
+      Linking.openURL('https://calendly.com/saurabhdocsightai-com/30min');
+      return;
     }
-
-    return () => { mounted = false }
-  }, [language])
-
-
-
-  useEffect(() => {
-    let mounted = true
-    const load = async () => {
-      setLoading(true)
-      setError(null)
-
-      try {
-        // wait briefly for connection if not yet connected
-        let attempts = 0
-        while (!connected && attempts < 20) {
-          // eslint-disable-next-line no-await-in-loop
-          await new Promise(resolve => setTimeout(resolve, 300))
-          attempts += 1
-        }
-
-        if (!connected) {
-          throw new Error('In-app billing not connected')
-        }
-
-        // avoid duplicate fetch
-        if (fetchedRef.current) {
-          return
-        }
-
-        const uniqueSkus = Array.from(new Set((skus || []).filter(Boolean)))
-        if (uniqueSkus.length === 0) {
-          throw new Error('No SKUs provided')
-        }
-
-        try {
-          await fetchProducts({ skus: uniqueSkus, type: 'subs' })
-        } catch (e) {
-          // ignore
-          // console.warn('fetchProducts subs failed', e)
-        }
-
-        // mark fetched so we do not re-run
-        fetchedRef.current = true
-
-        // give the hook a moment to populate products
-        // eslint-disable-next-line no-await-in-loop
-        await new Promise(resolve => setTimeout(resolve, 600))
-      } catch (err) {
-        if (!mounted) return
-        setError(err.message || String(err))
-      } finally {
-        if (mounted) setLoading(false)
-      }
-    }
-
-    load()
-    return () => {
-      mounted = false
-    }
-  }, [connected, skus])
-
-  const onBuyPress = async plan => {
+    // if not logged in send to login
     if (!userProfile?.uid) {
-      navigation.navigate('Login')
-      return
+      navigation.navigate('Login');
+      return;
     }
-    if (!connected) {
-      Toast.show({ type: 'error', text1: 'Failed to process' })
-      return
-    }
-    const productId = plan?.play_store_product_id
-    if (!productId) {
-      Alert.alert('Product error', 'Product not configured for this plan')
-      return
-    }
-
-    try {
-      if (typeof requestSubscription === 'function') {
-        if (Platform.OS === 'android') {
-          await requestSubscription({ request: { android: { skus: [productId] }, ios: { sku: productId } } });
-        } else {
-          await requestSubscription({ request: { ios: { sku: productId } } });
-        }
-      } else {
-        await requestPurchase({ request: { android: { skus: [productId] }, ios: { sku: productId } } });
-      }
-    } catch (e) {
-      console.error('request purchase/subscription error', e)
-      if (e?.code !== ErrorCode.UserCancelled) {
-        Toast.show({ type: 'error', text1: 'Purchase request failed' })
-      }
-    }
-  }
-
-  const finalList = Array.isArray(subscriptions) && subscriptions.length > 0 ? subscriptions : []
+    // otherwise open payment modal
+    setSelectedPlan({
+      ...plan,
+      selectedPrice: priceObj,
+      selectedBilling: billing,
+    });
+    setPaymentModalVisible(true);
+  };
 
   const renderPlan = ({ item: plan }) => {
-    if (finalList.length === 0) return <></>
-    const findPlan = finalList.find((i) => i.id === plan.play_store_product_id)
-    const priceObj = plan.prices || null
-    const displayPrice =
-      plan.play_store_product_id === 'free'
-        ? 0
-        : findPlan?.displayPrice ??
-        (findPlan?.price !== undefined
-          ? formatFallbackPrice(priceObj.price)
-          : 'Contact us')
-    const displayName = plan?.prices?.plan_name
-    const displayButtonText = plan?.prices?.button_text
-    const displayPeriodLabel = '/month'
+    const effectiveBilling = effectiveBillingFor(plan);
+    const priceObj =
+      plan.prices.find(pr => pr.interval === effectiveBilling) ||
+      plan.prices.find(pr => pr.interval === 'monthly') ||
+      plan.prices[0] ||
+      null;
+    const displayPrice = formatPrice(priceObj?.price);
+    const displayPeriodLabel = "/month"
+    // effectiveBilling === 'monthly' ? '/month' : '/year';
     const features =
       typeof priceObj?.features === 'string'
         ? priceObj.features
           .split(',')
           .map(f => f.trim())
           .filter(Boolean)
-        : []
+        : [];
 
-    const isCurrentPlan = userProfile?.plan?.id === plan?.id
+    const hasMonthly = plan.prices.some(pr => pr.interval === 'monthly');
+    const hasYearly = plan.prices.some(pr => pr.interval === 'yearly');
+    const showToggle = hasMonthly && hasYearly;
+
+    const isCurrentPlan = userProfile?.plan?.id === plan?.id;
 
     return (
       <TouchableOpacity activeOpacity={0.95} style={styles.card}>
         <View style={styles.cardHeader}>
           <View style={styles.iconCircle}>
-            <Text style={styles.iconLetter}>{defaultIconLetter(displayName)}</Text>
+            <Text style={styles.iconLetter}>
+              {defaultIconLetter(plan.name)}
+            </Text>
           </View>
           <View style={styles.headerText}>
-            <Text style={styles.planName}>{displayName}</Text>
-            <Text style={styles.planDesc}>{displayName}</Text>
+            <Text style={styles.planName}>{plan.name}</Text>
+            <Text style={styles.planDesc}>{plan.description}</Text>
           </View>
         </View>
 
@@ -286,6 +227,20 @@ export default function PricingPage({ skus = ['starter_plan', "test_plan"] }) {
           <Text style={styles.priceLarge}>{displayPrice}</Text>
           <Text style={styles.pricePeriod}>{displayPeriodLabel}</Text>
         </View>
+
+        {showToggle && (
+          <View style={styles.toggleRow}>
+            <TouchableOpacity
+              onPress={() => handlePerPlanToggle(plan.id)}
+              style={styles.toggleButton}
+            >
+              <Text style={styles.toggleText}>
+                Billing:{' '}
+                {billingSelected[plan.id] === 'yearly' ? 'Yearly' : 'Monthly'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
         <View style={styles.features}>
           {features.length === 0 ? (
@@ -303,12 +258,23 @@ export default function PricingPage({ skus = ['starter_plan', "test_plan"] }) {
         <View style={styles.cardFooter}>
           {isCurrentPlan ? (
             <View style={[styles.button, styles.disabledPrimary]}>
-              <Text style={styles.buttonText}>{t('currentPlan') ?? 'Current plan'}</Text>
+              <Text style={styles.buttonText}>Current Plan</Text>
             </View>
+          ) : plan.id === 5 ? (
+            <TouchableOpacity
+              onPress={() =>
+                Linking.openURL(
+                  'https://calendly.com/saurabhdocsightai-com/30min',
+                )
+              }
+              style={styles.button}
+            >
+              <Text style={styles.buttonText}>{plan.buttonText}</Text>
+            </TouchableOpacity>
           ) : plan.id === 1 ? (
             <TouchableOpacity
               onPress={() => {
-                if (!userProfile?.uid) navigation.navigate('Login')
+                if (!userProfile?.uid) navigation.navigate('Login');
               }}
               style={[styles.button, styles.buttonDisabled]}
             >
@@ -317,14 +283,14 @@ export default function PricingPage({ skus = ['starter_plan', "test_plan"] }) {
           ) : (
             <PaymentButton
               priceValue={priceObj?.price}
-              text={displayButtonText}
-              onPay={() => onBuyPress(plan)}
+              text={plan.buttonText}
+              onPay={() => onBuyPress(plan, priceObj, effectiveBilling)}
             />
           )}
         </View>
       </TouchableOpacity>
-    )
-  }
+    );
+  };
 
   if (loading) {
     return (
@@ -332,7 +298,7 @@ export default function PricingPage({ skus = ['starter_plan', "test_plan"] }) {
         <SkeletonCard />
         <SkeletonCard />
       </View>
-    )
+    );
   }
 
   if (error) {
@@ -340,7 +306,7 @@ export default function PricingPage({ skus = ['starter_plan', "test_plan"] }) {
       <View style={styles.containerCentered}>
         <Text style={styles.errorText}>{error}</Text>
       </View>
-    )
+    );
   }
 
   return (
@@ -348,19 +314,9 @@ export default function PricingPage({ skus = ['starter_plan', "test_plan"] }) {
       <CustomHeader
         title="Pricing"
       />
-      {isFetching && (
-        <Modal transparent visible animationType="fade">
-          <View style={styles.modalOverlay}>
-            <View style={styles.spinnerContainer}>
-              <ActivityIndicator size="large" style={styles.spinner} />
-            </View>
-          </View>
-        </Modal>
-      )}
-
       <FlatList
         data={plans}
-        keyExtractor={item => String(item.id)}
+        keyExtractor={item => item.id.toString()}
         renderItem={renderPlan}
         contentContainerStyle={styles.listContainer}
         ListEmptyComponent={
@@ -369,8 +325,20 @@ export default function PricingPage({ skus = ['starter_plan', "test_plan"] }) {
           </View>
         }
       />
+      {userProfile?.uid && (
+        <PaymentPopup
+          visible={paymentModalVisible}
+          selectedPlan={selectedPlan}
+          onClose={() => {
+            setPaymentModalVisible(false);
+            setSelectedPlan(null);
+          }}
+          uid={userProfile?.uid}
+          setUserProfile={setUserProfile}
+        />
+      )}
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -516,26 +484,4 @@ const styles = StyleSheet.create({
   modalButtonPrimary: { backgroundColor: '#0f172a' },
   modalButtonText: { color: '#0f172a', fontWeight: '700' },
   modalButtonTextPrimary: { color: '#fff' },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.25)',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  spinnerContainer: {
-    width: 96,
-    height: 96,
-    borderRadius: 12,
-    backgroundColor: 'rgba(255,255,255,0.95)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    elevation: 10
-  },
-  spinner: {
-    transform: [{ scale: 1 }]
-  }
 });

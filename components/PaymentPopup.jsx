@@ -47,8 +47,8 @@ export default function PaymentPopup({
         p.interval === 'yearly' || p.interval === '12' || p.interval === 12
           ? '1Y'
           : p.interval === 'monthly' || p.interval === '1' || p.interval === 1
-          ? '1M'
-          : `${String(p.interval)}M`;
+            ? '1M'
+            : `${String(p.interval)}M`;
       return {
         id: p.id,
         interval: String(p.interval),
@@ -269,7 +269,9 @@ export default function PaymentPopup({
               Toast.show({ type: 'success', text1: 'Payment successful' });
               onClose && onClose();
               await refreshUserProfile();
-              navigation.navigate('profile');
+              navigation.navigate('AppTabs', {
+                screen: 'profile',
+              })
             } else {
               console.error(
                 'verify-payment failed',

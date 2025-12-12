@@ -209,8 +209,7 @@ export default function SharePage({ visible = false, onRequestClose = () => { },
                 .join(', ') + '.'
 
             const text =
-                `Just finished a full Technical interview for a ${meetingReport.position} role on AI Interview Agents.
-I scored ${score}% at the ${finalLevel?.label} and covered key skills including ${normalizedSkills}
+                `I scored ${score}% at the ${finalLevel?.label} and covered key skills including ${normalizedSkills}
 Sharing this to connect with professionals and recruiters working in ${meetingReport.position} roles.
 You can view my certificate and profile through the link below on AI Interview Agents.
 Always open to learning, feedback, and new opportunities.`
