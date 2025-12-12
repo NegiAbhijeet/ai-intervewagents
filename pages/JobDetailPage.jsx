@@ -15,6 +15,7 @@ import { API_URL, JAVA_API_URL } from '../components/config';
 import LearningMaterials from '../components/learning-materials';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { AppStateContext } from '../components/AppContext';
+import CustomHeader from '../components/customHeader';
 
 export default function JobDetailPage() {
   const { setJobs } = useContext(AppStateContext);
@@ -175,9 +176,12 @@ export default function JobDetailPage() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-gray-50 px-4 py-6">
+    <ScrollView className="flex-1 bg-gray-50 px-4">
+      <CustomHeader
+        title="Job Details"
+      />
       {/* Header */}
-      <View className="mb-6">
+      <View className="mb-6 py-6">
         <View className="rounded-lg shadow-lg bg-white overflow-hidden">
           <View className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50">
             <View className="flex-row items-start justify-between">

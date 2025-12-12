@@ -18,6 +18,7 @@ import fetchWithAuth from '../libs/fetchWithAuth'
 import { useIAP, ErrorCode } from 'react-native-iap'
 import Toast from 'react-native-toast-message'
 import { useTranslation } from 'react-i18next'
+import CustomHeader from '../components/customHeader'
 
 const defaultIconLetter = (name = '') => {
   const n = name.toString().trim().toUpperCase().slice(0, 1)
@@ -344,6 +345,9 @@ export default function PricingPage({ skus = ['starter_plan', "test_plan"] }) {
 
   return (
     <View style={styles.container}>
+      <CustomHeader
+        title="Pricing"
+      />
       {isFetching && (
         <Modal transparent visible animationType="fade">
           <View style={styles.modalOverlay}>
@@ -372,7 +376,7 @@ export default function PricingPage({ skus = ['starter_plan', "test_plan"] }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 16,
     backgroundColor: '#F7F7FA',
   },
   containerCentered: {
@@ -395,7 +399,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.06,
     shadowOffset: { width: 0, height: 4 },
     shadowRadius: 8,
-    marginBottom: 12,
+    marginVertical: 12,
   },
   skeletonCard: {
     width: '100%',

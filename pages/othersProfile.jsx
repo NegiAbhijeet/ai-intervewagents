@@ -3,6 +3,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { View, Text, Image, ScrollView } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import CustomHeader from '../components/customHeader';
 
 export default function OthersProfile({ route }) {
   const { avatar, name, trophies, interviewCompleted, minutes, lastRole } =
@@ -11,9 +12,12 @@ export default function OthersProfile({ route }) {
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: '#F9FAFB' }}
-      contentContainerStyle={{ padding: 20, paddingBottom: 40 }}
+      contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}
       showsVerticalScrollIndicator={false}
     >
+      <CustomHeader
+        title="Profile"
+      />
       {/* Top Section with Gradient */}
       <LinearGradient
         colors={['#E0EAFC', '#CFDEF3']}

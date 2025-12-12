@@ -137,27 +137,27 @@ const RootNavigator = () => {
         <Stack.Screen
           name="notifications"
           component={NotificationsPage}
-          options={{ headerShown: true, title: 'Notifications' }}
+          // options={{ headerShown: true, title: 'Notifications' }}
         />
         <Stack.Screen
           name="jobDetails"
           component={JobDetailPage}
-          options={{ headerShown: true, title: 'Job Details' }}
+          // options={{ headerShown: true, title: 'Job Details' }}
         />
         <Stack.Screen
           name="ReportDetail"
           component={ReportDetailScreen}
-          options={{ headerShown: true, title: 'Report Details' }}
+          // options={{ headerShown: true, title: 'Report Details' }}
         />
         <Stack.Screen
           name="pricing"
           component={PricingPage}
-          options={{ headerShown: true, title: 'Pricing' }}
+          // options={{ headerShown: true, title: 'Pricing' }}
         />
         <Stack.Screen
           name="othersProfile"
           component={OthersProfile}
-          options={{ headerShown: true, title: 'Profile' }}
+          // options={{ headerShown: true, title: 'Profile' }}
         />
       </Stack.Navigator>
     );

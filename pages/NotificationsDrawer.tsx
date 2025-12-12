@@ -29,6 +29,7 @@ import { API_URL, JAVA_API_URL } from '../components/config';
 import Layout from './Layout';
 import { useNavigation } from '@react-navigation/native';
 import { Shadow } from 'react-native-shadow-2';
+import CustomHeader from '../components/customHeader';
 
 const ITEM_HEIGHT = 84;
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -301,6 +302,10 @@ export default function NotificationsPage() {
 
   return (
     <Layout>
+      <CustomHeader
+        title="Notifications"
+      />
+
       <View style={{ paddingTop: 16 }}>
         {isLoading && (
           <Modal transparent visible animationType="fade">

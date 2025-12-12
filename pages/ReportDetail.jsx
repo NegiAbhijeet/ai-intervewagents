@@ -27,6 +27,7 @@ import fetchWithAuth from '../libs/fetchWithAuth';
 import { JAVA_API_URL } from '../components/config';
 import { Ionicons } from '@react-native-vector-icons/ionicons';
 import { useTranslation } from 'react-i18next';
+import CustomHeader from '../components/customHeader';
 
 const ReportDetailScreen = ({ route }) => {
   const { meetingId } = route.params;
@@ -105,6 +106,9 @@ const ReportDetailScreen = ({ route }) => {
 
   return (
     <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingTop: 8 }}>
+      <CustomHeader
+        title="Report Details"
+      />
       <Card>
         <CardHeader>
           <View
