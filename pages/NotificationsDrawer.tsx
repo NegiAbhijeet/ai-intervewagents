@@ -222,8 +222,10 @@ export default function NotificationsPage() {
 
   const renderItem = ({ item }: { item: NotificationItem }) => {
     const timeLabel = formatTimeAgo(getCreatedAt(item));
+    const isRead = item?.read;
     return (
       <NotificationRow
+        isRead={isRead}
         item={item}
         timeLabel={timeLabel}
         expanded={expandedId === item.id}
@@ -234,6 +236,20 @@ export default function NotificationsPage() {
   };
 
   const renderSectionHeader = ({ section }: any) => {
+    if (section.title === "Unread") {
+      return <View style={styles.header}>
+        <View style={{ alignItems: "center", flexDirection: "row", gap: 4 }}>
+          <View style={{ backgroundColor: "rgba(120, 20, 196, 1)", borderRadius: 9999, width: 8, height: 8 }}></View>
+          <Text style={styles.sectionHeaderText}>
+            {unreadCount} unread notifications
+          </Text>
+        </View>
+
+        <TouchableOpacity onPress={fetchReadAll}>
+          <Text style={styles.unreadMsg}>Mark all as read</Text>
+        </TouchableOpacity>
+      </View>
+    }
     return (
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionHeaderText}>{section.title}</Text>
@@ -367,7 +383,7 @@ export default function NotificationsPage() {
           )}
         </View>
 
-        {unreadCount > 0 && (
+        {/* {unreadCount > 0 && (
           <View style={styles.header}>
             <View style={{ alignItems: "center", flexDirection: "row", gap: 4 }}>
               <View style={{ backgroundColor: "rgba(120, 20, 196, 1)", borderRadius: 9999, width: 8, height: 8 }}></View>
@@ -380,7 +396,7 @@ export default function NotificationsPage() {
               <Text style={styles.unreadMsg}>Mark all as read</Text>
             </TouchableOpacity>
           </View>
-        )}
+        )} */}
 
         {!showList && <SkeletonLoader />}
 
@@ -395,8 +411,7 @@ export default function NotificationsPage() {
                 renderItem={renderItem}
                 renderSectionHeader={renderSectionHeader}
                 contentContainerStyle={{
-                  paddingBottom: Platform.OS === 'ios' ? 36 : 24,
-                  paddingTop: 16,
+                  paddingBottom: 48,
                 }}
                 stickySectionHeadersEnabled={false}
                 refreshing={loading}
@@ -405,6 +420,7 @@ export default function NotificationsPage() {
                 maxToRenderPerBatch={10}
                 windowSize={5}
                 removeClippedSubviews
+                showsVerticalScrollIndicator={false}
               />
             )}
           </>
@@ -421,7 +437,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 20
+    paddingBottom: 10,
   },
   headerTitle: {
     fontSize: 18,
@@ -434,7 +450,8 @@ const styles = StyleSheet.create({
   },
   tabRow: {
     flexDirection: 'row',
-    gap: 10
+    gap: 10,
+    paddingBottom: 20
   },
   shadowWrap: {
     borderRadius: 24
@@ -504,7 +521,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   sectionHeader: {
-    paddingHorizontal: 16,
+    // paddingHorizontal: 16,
     paddingVertical: 10,
     backgroundColor: 'transparent',
   },

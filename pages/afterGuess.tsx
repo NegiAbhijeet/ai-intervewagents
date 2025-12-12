@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
     guessValue: { color: '#6B21A8', fontWeight: '800' },
     headerWrap: { width: '85%', alignItems: 'center', marginTop: 6, marginBottom: 8 },
     penguin: { width: 170, height: 176, zIndex: 1, marginTop: 6 },
-    title: { fontSize: 36, fontWeight: '700', marginTop: 6 },
+    title: { fontSize: 36, fontWeight: '700', marginTop: 6, color: "rgba(60, 60, 60, 1)" },
     subtitle: { fontSize: 18, color: 'rgba(60, 60, 60, 1)', marginTop: 6, fontWeight: '500' },
     progressWrap: { width: '100%', alignItems: 'center', marginTop: 12, position: 'relative', height: 200, justifyContent: 'center' },
     progressRing: { width: 160, height: 160, position: 'absolute' },

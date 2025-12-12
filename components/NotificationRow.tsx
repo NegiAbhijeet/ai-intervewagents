@@ -35,9 +35,9 @@ if (
 ) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
-const iconSize = 30
+const iconSize = 32
 
-function NotificationRow({ item, timeLabel, expanded, onToggle, type = "normal" }: Props) {
+function NotificationRow({ item, timeLabel, expanded, onToggle, type = "normal", isRead = false }: Props) {
   const { userProfile } = useContext(AppStateContext)
 
   React.useEffect(() => {
@@ -52,6 +52,9 @@ function NotificationRow({ item, timeLabel, expanded, onToggle, type = "normal" 
       onPress={() => onToggle(item?.id || null)}
       style={[
         styles.item,
+        isRead
+          ? { backgroundColor: 'rgba(255, 255, 255, 0.7)' }
+          : {}
       ]}
     >
       <View style={styles.iconWrap}>
