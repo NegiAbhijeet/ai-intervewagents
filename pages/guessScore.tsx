@@ -112,11 +112,11 @@ export default GuessScoreModal
 const styles = StyleSheet.create({
   bg: { flex: 1, width: '100%', justifyContent: 'center' },
   wrapper: { width: '85%', position: 'relative', height: 160, marginBottom: 22 },
-  cloudWrap: { position: 'absolute', top: -20, left: PENG_WIDTH - PENG_WIDTH * 0.15, zIndex: 2, alignItems: 'center' },
+  cloudWrap: { position: 'absolute', top: 0, left: PENG_WIDTH - PENG_WIDTH * 0.15, zIndex: 2, alignItems: 'center' },
   cloud: { width: CLOUD_WIDTH, alignItems: 'center', justifyContent: 'center', paddingTop: 12, paddingRight: 12, paddingLeft: 16, paddingBottom: 16 },
   cloudImage: { resizeMode: 'contain' },
   cloudText: { fontSize: 12, fontWeight: '600', textAlign: 'center', marginBottom: 12 },
-  penguin: { width: PENG_WIDTH, height: 142, zIndex: 1 },
+  penguin: { width: PENG_WIDTH, height: 142, zIndex: 1, marginTop: 20 },
   scoreBox: {
     width: '100%',
     backgroundColor: 'rgba(217, 217, 217, 0.3)',
