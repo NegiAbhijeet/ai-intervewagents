@@ -252,7 +252,7 @@ Always open to learning, feedback, and new opportunities.`
 
                 <InModalBanner
                     visible={showMessage}
-                    text="Post copied. Paste the text in your LinkedIn post."
+                    text="LinkedIn post copied. You can paste it there."
                     onHidden={() => { }}
                 />
                 <ScrollView

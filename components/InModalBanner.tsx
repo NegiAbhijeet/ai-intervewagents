@@ -3,29 +3,49 @@ import { Animated, Text, StyleSheet, View, Dimensions } from 'react-native'
 
 const { width } = Dimensions.get('window')
 
-export function InModalBanner({ visible, text = '', duration = 2000, onHidden }) {
+export function InModalBanner({
+    visible,
+    text = '',
+    duration = 2000,
+    onHidden
+}) {
     const opacity = useRef(new Animated.Value(0)).current
+    const translateY = useRef(new Animated.Value(-20)).current
 
     useEffect(() => {
         let hideTimeout
+
         if (visible) {
-            Animated.timing(opacity, {
-                toValue: 1,
-                duration: 200,
-                useNativeDriver: true
-            }).start(() => {
+            Animated.parallel([
+                Animated.timing(opacity, {
+                    toValue: 1,
+                    duration: 200,
+                    useNativeDriver: true
+                }),
+                Animated.timing(translateY, {
+                    toValue: 0,
+                    duration: 200,
+                    useNativeDriver: true
+                })
+            ]).start(() => {
                 hideTimeout = setTimeout(() => {
-                    Animated.timing(opacity, {
-                        toValue: 0,
-                        duration: 200,
-                        useNativeDriver: true
-                    }).start(() => {
+                    Animated.parallel([
+                        Animated.timing(opacity, {
+                            toValue: 0,
+                            duration: 200,
+                            useNativeDriver: true
+                        }),
+                        Animated.timing(translateY, {
+                            toValue: -20,
+                            duration: 200,
+                            useNativeDriver: true
+                        })
+                    ]).start(() => {
                         if (onHidden) onHidden()
                     })
                 }, duration)
             })
         } else {
-            // hide immediately if visible toggled off
             Animated.timing(opacity, {
                 toValue: 0,
                 duration: 120,
@@ -34,12 +54,20 @@ export function InModalBanner({ visible, text = '', duration = 2000, onHidden })
         }
 
         return () => clearTimeout(hideTimeout)
-    }, [visible, duration, opacity, onHidden])
+    }, [visible, duration, onHidden, opacity, translateY])
 
     if (!visible) return null
 
     return (
-        <Animated.View style={[styles.container, { opacity }]}>
+        <Animated.View
+            style={[
+                styles.container,
+                {
+                    opacity,
+                    transform: [{ translateY }]
+                }
+            ]}
+        >
             <View style={styles.box}>
                 <Text style={styles.text}>{text}</Text>
             </View>
@@ -50,7 +78,7 @@ export function InModalBanner({ visible, text = '', duration = 2000, onHidden })
 const styles = StyleSheet.create({
     container: {
         position: 'absolute',
-        bottom: 24,
+        top: 48,
         left: 0,
         right: 0,
         alignItems: 'center',
@@ -58,14 +86,15 @@ const styles = StyleSheet.create({
         width
     },
     box: {
-        backgroundColor: 'rgba(0,0,0,0.85)',
-        paddingHorizontal: 14,
+        backgroundColor: 'rgba(0,0,0,0.9)',
+        paddingHorizontal: 16,
         paddingVertical: 10,
-        borderRadius: 8,
-        maxWidth: width - 60
+        borderRadius: 10,
+        maxWidth: width - 40
     },
     text: {
         color: '#fff',
-        textAlign: 'center'
+        textAlign: 'center',
+        fontSize: 14
     }
 })

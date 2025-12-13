@@ -91,7 +91,7 @@ const TopBar = () => {
             />
             {/* <Ionicons name="trophy" size={14} color="#FBBF24" /> */}
             <Text className="text-base font-semibold">
-              {leaderboardRank || 0}
+              {Math.max(1, leaderboardRank)}
             </Text>
           </View>
         </TouchableOpacity>
