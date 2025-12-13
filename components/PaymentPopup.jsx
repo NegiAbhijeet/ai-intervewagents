@@ -394,6 +394,7 @@ export default function PaymentPopup({
               value={couponCode}
               onChangeText={t => setCouponCode(t)}
               placeholder="Enter code (eg SAVE20)"
+              placeholderTextColor={"gray"}
               style={styles.input}
               editable={!appliedCoupon}
               returnKeyType="done"
