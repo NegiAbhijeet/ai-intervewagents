@@ -306,7 +306,7 @@ export default function NotificationsPage() {
         title="Notifications"
       />
 
-      <View style={{ paddingTop: 16 }}>
+      <View style={{ paddingTop: 16, paddingBottom: 48 }}>
         {isLoading && (
           <Modal transparent visible animationType="fade">
             <View style={styles.modalOverlay}>
