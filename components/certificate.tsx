@@ -14,7 +14,7 @@ import ImageZoom from 'react-native-image-pan-zoom'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window')
-
+const NotLoadedWidth = 280
 export default function Certificate({
   imageUrl,
   minScale = 1,
@@ -78,7 +78,7 @@ export default function Certificate({
 
   if (!imageUrl) {
     // still render predictable view; hooks already ran
-    return <View style={[styles.thumb, { height: displayThumbHeight }]} />
+    return <View style={[styles.thumb, { height: NotLoadedWidth }]} />
   }
 
   return (
@@ -89,7 +89,7 @@ export default function Certificate({
           setLoaded(false)
           setModalVisible(true)
         }}
-        style={[styles.thumb, { height: displayThumbHeight }]}
+        style={[styles.thumb, { height: loadedThumb ? displayThumbHeight : NotLoadedWidth }]}
       >
         <Image
           source={{ uri: imageUrl }}
@@ -100,7 +100,7 @@ export default function Certificate({
         />
 
         {!loadedThumb && (
-          <View style={styles.thumbLoading}>
+          <View style={[styles.thumbLoading, { height: NotLoadedWidth }]}>
             <ActivityIndicator size="small" />
           </View>
         )}
