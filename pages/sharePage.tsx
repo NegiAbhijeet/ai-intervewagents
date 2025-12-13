@@ -25,6 +25,7 @@ import Clipboard from '@react-native-clipboard/clipboard'
 import BackgroundGradient3 from '../components/backgroundGradient3';
 
 const { width: SCREEN_W } = Dimensions.get('window')
+const parentWidth = SCREEN_W * 0.9
 const CIRCLESIZE = 120
 
 
@@ -294,7 +295,7 @@ Always open to learning, feedback, and new opportunities.`
                             <Text style={styles.issued}>Issued Certificate</Text>
 
                             <View style={styles.certificateBox}>
-                                <Certificate imageUrl={certificateUrl} />
+                                <Certificate imageUrl={certificateUrl} parentWidth={parentWidth} />
                                 <TouchableOpacity style={styles.linkedin} onPress={shareOnLinkedIn}>
                                     <Image
                                         source={require('../assets/images/linkedin.png')}
@@ -349,7 +350,7 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     scoreWrap: {
-        width: Math.min(360, SCREEN_W - 40),
+        width: parentWidth,
         alignItems: 'center'
     },
     scoreCircle: {

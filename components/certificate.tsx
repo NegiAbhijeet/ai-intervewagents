@@ -6,26 +6,51 @@ import {
   Dimensions,
   Modal,
   TouchableOpacity,
-  ActivityIndicator,
   Text,
   StatusBar,
 } from 'react-native'
 import ImageZoom from 'react-native-image-pan-zoom'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder'
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window')
-const NotLoadedWidth = 280
+const NotLoadedHeight = 250
+
 export default function Certificate({
   imageUrl,
   minScale = 1,
   maxScale = 4,
-  thumbHeight = 400, // maximum fallback for thumb if no natural size yet
+  thumbHeight = 400,
+  parentWidth
 }) {
   const [modalVisible, setModalVisible] = useState(false)
   const [loaded, setLoaded] = useState(false)
   const [loadedThumb, setLoadedThumb] = useState(false)
   const [naturalWidth, setNaturalWidth] = useState(null)
   const [naturalHeight, setNaturalHeight] = useState(null)
+  const SkeleonComp = () => {
+    return <View style={{ width: parentWidth }}>
+      <Image
+        source={require("../assets/images/skeletonbg.png")}
+        style={{
+          position: "absolute",
+          width: "100%",
+          height: NotLoadedHeight,
+          borderRadius: 6
+        }}
+        resizeMode="cover"
+      />
+
+      <SkeletonPlaceholder>
+        <SkeletonPlaceholder.Item
+          width={parentWidth}
+          height={NotLoadedHeight}
+          borderRadius={6}
+        />
+      </SkeletonPlaceholder>
+    </View>
+
+  }
 
   // Run hooks unconditionally. Guard inside effect.
   useEffect(() => {
@@ -77,8 +102,7 @@ export default function Certificate({
       : SCREEN_H
 
   if (!imageUrl) {
-    // still render predictable view; hooks already ran
-    return <View style={[styles.thumb, { height: NotLoadedWidth }]} />
+    return <View style={[styles.thumb, { height: NotLoadedHeight }]} />
   }
 
   return (
@@ -89,20 +113,31 @@ export default function Certificate({
           setLoaded(false)
           setModalVisible(true)
         }}
-        style={[styles.thumb, { height: loadedThumb ? displayThumbHeight : NotLoadedWidth }]}
+        style={[
+          styles.thumb,
+          { height: loadedThumb ? displayThumbHeight : NotLoadedHeight }
+        ]}
       >
         <Image
           source={{ uri: imageUrl }}
-          style={[styles.thumbImage, { opacity: loadedThumb ? 1 : 0 }]}
+          style={[
+            styles.thumbImage,
+            {
+              opacity: loadedThumb ? 1 : 0,
+              height: loadedThumb ? "100%" : 0
+            }
+          ]}
           resizeMode="contain"
           onLoadStart={() => setLoadedThumb(false)}
-          onLoadEnd={() => setLoadedThumb(true)}
+          onLoadEnd={() => {
+            setTimeout(() => {
+              setLoadedThumb(true);
+            }, 1000);
+          }}
         />
 
         {!loadedThumb && (
-          <View style={[styles.thumbLoading, { height: NotLoadedWidth }]}>
-            <ActivityIndicator size="small" />
-          </View>
+          <SkeleonComp />
         )}
       </TouchableOpacity>
 
@@ -133,7 +168,14 @@ export default function Certificate({
             >
               <Image
                 source={{ uri: imageUrl }}
-                style={[styles.fullImage, { width: SCREEN_W, height: modalImageHeight, opacity: loaded ? 1 : 0 }]}
+                style={[
+                  styles.fullImage,
+                  {
+                    width: SCREEN_W,
+                    height: modalImageHeight,
+                    opacity: loaded ? 1 : 0,
+                  },
+                ]}
                 resizeMode="contain"
                 onLoadStart={() => setLoaded(false)}
                 onLoadEnd={() => setLoaded(true)}
@@ -141,9 +183,7 @@ export default function Certificate({
             </ImageZoom>
 
             {!loaded && (
-              <View style={styles.loading}>
-                <ActivityIndicator size="large" color="#fff" />
-              </View>
+              <SkeleonComp />
             )}
           </View>
         </SafeAreaView>
