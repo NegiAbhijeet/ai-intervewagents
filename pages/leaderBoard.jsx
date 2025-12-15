@@ -18,6 +18,7 @@ import { AppStateContext } from '../components/AppContext';
 import { API_URL } from '../components/config';
 import TopBar from '../components/TopBar';
 import Layout from './Layout';
+import LinearGradient from 'react-native-linear-gradient';
 
 function getInitials(name = '') {
   const words = name.trim().split(' ');
@@ -48,6 +49,7 @@ export default function Leaderboard() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [loadMoreError, setLoadMoreError] = useState(false);
+  const [activeTab, setActiveTab] = useState('global');
 
   const [refreshing, setRefreshing] = useState(false);
   const [userRankDetails, setUserRankDetails] = useState(null);
@@ -56,36 +58,43 @@ export default function Leaderboard() {
 
     refresh ? setLoading(true) : setLoadingMore(true);
     setLoadMoreError(false);
-    const industry = userProfile?.industry
-      ?.trim()
-      .replace(/\s+/g, '_');
+
+    const industry = userProfile?.industry?.trim().replace(/\s+/g, '_');
+
+    const url =
+      activeTab === 'friends'
+        ? `${API_URL}/connections/?uid=${userProfile?.uid}&page=${pageNumber}`
+        : `${API_URL}/get-users-rating/?uid=${userProfile?.uid}&industry=${industry}&page=${pageNumber}`;
+
     try {
-      const res = await fetchWithAuth(
-        `${API_URL}/get-users-rating/?uid=${userProfile?.uid}&industry=${industry}&page=${pageNumber}`
-      );
+      const res = await fetchWithAuth(url);
       const json = await res.json();
 
-      const data = Array.isArray(json?.profiles) ? json.profiles : [];
+      const rawData =
+        activeTab === 'friends'
+          ? Array.isArray(json?.connections) ? json.connections : []
+          : Array.isArray(json?.profiles) ? json.profiles : [];
 
-      const sorted = data
-        .filter(u => Number(u?.rating) > 0)
-        .map((u, i) => ({
-          ...u,
-          rank: i + 1,
-          rating: Number(u.rating) || 0,
-          user_name:
-            u.user_name || u.name || u.user_email || 'Unknown',
-          avatar: u.avatar || u.user_photo_url || '',
-        }));
+      setUsers(prev => {
+        const offset = pageNumber === 1 ? 0 : prev.length;
 
+        const formatted = rawData
+          .filter(u => Number(u?.rating) > 0)
+          .map((u, i) => ({
+            ...u,
+            rank: offset + i + 1,
+            rating: Number(u.rating) || 0,
+            user_name: u.user_name || u.name || u.user_email || 'Unknown',
+            avatar: u.avatar || u.user_photo_url || '',
+          }));
 
-      setUsers(prev =>
-        pageNumber === 1 ? sorted : [...prev, ...sorted]
-      );
+        return pageNumber === 1 ? formatted : [...prev, ...formatted];
+      });
 
       setPage(pageNumber);
-      setHasMore(data.length > 0);
-      const me = data.find(
+      setHasMore(rawData.length > 0);
+
+      const me = rawData.find(
         u => u.user_email === userProfile?.user_email,
       );
       setUserRankDetails(me || null);
@@ -98,6 +107,15 @@ export default function Leaderboard() {
       setRefreshing(false);
     }
   };
+
+  useEffect(() => {
+    if (userProfile?.uid) {
+      setUsers([]);
+      setPage(1);
+      setHasMore(true);
+      getRatings(1, true);
+    }
+  }, [activeTab]);
 
   useEffect(() => {
     if (userProfile?.uid) getRatings(1, true);
@@ -270,6 +288,90 @@ export default function Leaderboard() {
         // }
         // contentContainerStyle={{ paddingBottom: 140 }}
         >
+          <View
+            className="mt-4 mb-2 px-2 py-2 flex-row mx-1"
+            style={{
+              backgroundColor: 'rgba(255, 255, 255, 1)',
+              borderRadius: 22,
+              shadowColor: 'rgba(0,0,0,0.8)',
+              shadowOffset: { width: 0, height: 1 },
+              shadowOpacity: 0.3,
+              shadowRadius: 4,
+              elevation: 4,
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => setActiveTab('global')}
+              className="flex-1"
+              activeOpacity={0.8}
+            >
+              {activeTab === 'global' ? (
+                <LinearGradient
+                  colors={['rgba(120, 20, 196, 1)', 'rgba(12, 78, 190, 1)']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={{
+                    borderRadius: 16,
+                    paddingVertical: 12,
+                    alignItems: 'center',
+                  }}
+                >
+                  <Text className="font-semibold text-white">
+                    Global
+                  </Text>
+                </LinearGradient>
+              ) : (
+                <View
+                  style={{
+                    borderRadius: 16,
+                    paddingVertical: 12,
+                    alignItems: 'center',
+                  }}
+                >
+                  <Text className="font-semibold text-gray-600">
+                    Global
+                  </Text>
+                </View>
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => setActiveTab('friends')}
+              className="flex-1"
+              activeOpacity={0.8}
+            >
+              {activeTab === 'friends' ? (
+                <LinearGradient
+                  colors={['rgba(120, 20, 196, 1)', 'rgba(12, 78, 190, 1)']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={{
+                    borderRadius: 16,
+                    paddingVertical: 12,
+                    alignItems: 'center',
+                  }}
+                >
+                  <Text className="font-semibold text-white">
+                    Friends Circle
+                  </Text>
+                </LinearGradient>
+              ) : (
+                <View
+                  style={{
+                    borderRadius: 16,
+                    paddingVertical: 12,
+                    alignItems: 'center',
+                  }}
+                >
+                  <Text className="font-semibold text-gray-600">
+                    Friends Circle
+                  </Text>
+                </View>
+              )}
+            </TouchableOpacity>
+          </View>
+
+
           {loading && users.length === 0 ? (
             <View className="py-10 items-center">
               <ActivityIndicator size="large" />
