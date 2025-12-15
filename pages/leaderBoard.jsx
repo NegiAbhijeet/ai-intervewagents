@@ -9,244 +9,294 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
+import { ScrollView, RefreshControl } from 'react-native-gesture-handler';
+import Ionicons from '@react-native-vector-icons/ionicons';
+import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import { AppStateContext } from '../components/AppContext';
 import { API_URL } from '../components/config';
-import Ionicons from '@react-native-vector-icons/ionicons';
 import TopBar from '../components/TopBar';
-import LeagueCarousel from '../components/LeagueCarousel';
-import { LEAGUES } from '../libs/leagueData';
-import { RefreshControl, ScrollView } from 'react-native-gesture-handler';
-import { useNavigation } from '@react-navigation/native';
-import { useTranslation } from 'react-i18next';
+import Layout from './Layout';
 
-function getInitials(name) {
+function getInitials(name = '') {
   const words = name.trim().split(' ');
-  if (words.length >= 2) {
-    return (words[0][0] + words[1][0]).toUpperCase();
-  }
-  return words[0].slice(0, 2).toUpperCase();
+  if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
+  return name.slice(0, 2).toUpperCase();
 }
+function getFirstName(name = '') {
+  return name.split(' ')[0];
+}
+
+const getBgColor = rank => {
+  if (rank === 1) return 'rgba(244, 197, 66, 1)';
+  if (rank === 2) return 'rgba(191, 199, 213, 1)';
+  if (rank === 3) return 'rgba(211, 154, 85, 1)';
+  return 'transparent';
+};
+
 
 export default function Leaderboard() {
   const { t } = useTranslation();
-  const { userProfile } = useContext(AppStateContext);
   const navigation = useNavigation();
+  const { userProfile } = useContext(AppStateContext);
+
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [userRankDetails, setUserRankDetails] = useState(null);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-
-  // Fetch, filter, sort and add rank index
-  function getRatings(isRefreshingCall = false) {
+  const getRatings = async (refresh = false) => {
     setLoading(true);
-    if (isRefreshingCall) {
-      setIsRefreshing(true);
+    const industry = userProfile?.industry
+      ?.trim()
+      .replace(/\s+/g, '_');
+
+    if (refresh) setRefreshing(true);
+    console.log(`${API_URL}/get-users-rating/?uid=${userProfile?.uid}&industry=${industry}&page=1`, "===")
+    try {
+      const res = await fetchWithAuth(
+        `${API_URL}/get-users-rating/?uid=${userProfile?.uid}&industry=${userProfile?.industry}&page=1`,
+      );
+      const json = await res.json();
+
+      const data = Array.isArray(json?.profiles) ? json.profiles : [];
+
+      const sorted = data
+        .filter(u => Number(u?.rating) > 0)
+        .sort((a, b) => Number(b.rating) - Number(a.rating))
+        .map((u, i) => ({
+          ...u,
+          rank: i + 1,
+          rating: Number(u.rating) || 0,
+          user_name:
+            u.user_name || u.name || u.user_email || 'Unknown',
+          avatar: u.avatar || u.user_photo_url || '',
+        }));
+
+      setUsers(sorted);
+
+      const me = sorted.find(
+        u => u.user_email === userProfile?.user_email,
+      );
+      setUserRankDetails(me || null);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
     }
-    fetchWithAuth(`${API_URL}/get-users-rating/?uid=${userProfile?.uid}`)
-      .then(res => res.json())
-      .then(res => {
-        const data = Array.isArray(res?.profiles) ? res.profiles : [];
-        const filteredData = data.filter(u => Number(u?.rating) > 0);
-        const sortedUsers = filteredData
-          .slice()
-          .sort((a, b) => Number(b.rating) - Number(a.rating))
-          .map((user, index) => ({
-            ...user,
-            rank: index + 1,
-            image: user.user_photo_url || user.image || '',
-            user_name:
-              user.user_name || user.name || user.user_email || 'Unknown',
-            user_email: user.user_email || '',
-            rating: Number(user.rating) || 0,
-            avatar: user?.avatar
-          }));
-
-        if (userProfile?.user_email) {
-          const found = sortedUsers.find(
-            u => u.user_email === userProfile.user_email,
-          );
-          if (found) {
-            setUserRankDetails(found);
-          } else {
-            setUserRankDetails(null);
-          }
-        } else {
-          setUserRankDetails(null);
-        }
-
-        setUsers(sortedUsers);
-      })
-      .catch(err => {
-        console.error('Failed to fetch leaderboard:', err);
-      })
-      .finally(() => {
-        setLoading(false);
-        if (isRefreshingCall) {
-          setIsRefreshing(false);
-        }
-      });
-  }
+  };
 
   useEffect(() => {
-    if (userProfile?.uid) {
-      getRatings();
-    }
+    if (userProfile?.uid) getRatings();
   }, [userProfile]);
 
-  const onRefresh = () => {
-    getRatings(true);
-  };
-  const rating = userRankDetails?.rank ?? 0;
+  const topThree = users.slice(0, 3);
+  const restUsers = users.slice(3);
 
-  const currentLeague =
-    LEAGUES.find(l => rating >= l.min && rating <= l.max) || LEAGUES[0];
 
-  const renderUserItem = ({ item: user }) => {
-    const isCurrentUser = user.user_email === userProfile?.user_email;
-
-    const trophyIcon =
-      user.rank === 1 ? (
-        <Ionicons name="trophy" size={20} color="#D4AF37" />
-      ) : user.rank === 2 ? (
-        <Ionicons name="trophy" size={18} color="#A0AEC0" />
-      ) : user.rank === 3 ? (
-        <Ionicons name="trophy" size={18} color="#D97706" />
-      ) : null;
-
+  const TopUser = ({ user, size }) => {
     return (
-      <>
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() => {
-            if (!isCurrentUser) {
-              const minutesUsed = user?.seconds_used
-                ? Math.floor(user.seconds_used / 60)
-                : 0;
-              navigation.navigate('othersProfile', {
-                avatar: user?.user_photo_url || null,
-                name: user?.user_name || 'Unknown User',
-                trophies: user?.rating ?? 0,
-                interviewCompleted: user?.total_interviews ?? 0,
-                minutes: minutesUsed,
-                lastRole: user?.last_interview_role || 'No recent role',
-              });
-            }
+      <View style={{ width: '30%' }}>
+        <View
+          style={{
+            width: '100%',
+            borderRadius: 20,
+            shadowColor: '#000000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.3,
+            shadowRadius: 4,
+            elevation: 10,
           }}
-          className={`flex-row justify-between items-center py-3 px-4 border-b border-gray-200 ${isCurrentUser ? 'bg-blue-200' : ''
-            }`}
+          className="items-center bg-white pt-3 pb-4"
         >
-          <Text className="w-10 text-base font-bold">
-            {trophyIcon ? null : `#${user.rank}`}
-            {trophyIcon}
-          </Text>
 
-          <View className="flex-row items-center gap-3 flex-1 px-2">
-            <View className="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-300">
-              {user?.avatar ? (
-                <Image
-                  source={{ uri: user?.avatar }}
-                  className="w-full h-full rounded-full"
-                />
-              ) : (
-                <View className="flex-1 justify-center items-center bg-gray-300">
-                  <Text className="font-bold">
-                    {getInitials(user.user_name)}
-                  </Text>
-                </View>
-              )}
-            </View>
+          <View
+            style={{
+              width: size === 90 ? '70%' : '60%',
+              aspectRatio: 1,
+              borderColor: user.rank === 1 ? "transparent" : getBgColor(user.rank)
+            }}
+            className="rounded-full border-2 border-yellow-400 items-center justify-center bg-white"
+          >
+            {user.rank === 1 && <Image
+              source={require("../assets/images/crown.png")}
+              style={{ width: 22, height: 22, position: "absolute", zIndex: 999, top: -11 }}
+            />}
+            {user.avatar ? (
+              <Image
+                source={{ uri: user.avatar }}
+                className="w-full h-full rounded-full"
+              />
+            ) : (
+              <Text className="font-bold">
+                {getInitials(user.user_name)}
+              </Text>
+            )}
 
-            <View className="flex-1">
-              <Text className="text-base font-semibold" numberOfLines={1}>
-                {isCurrentUser ? t('leaderboard.you') : user.user_name}
+            <View
+              className={`absolute ${user.rank === 1 ? "bottom-2" : "-top-2"} -right-2 w-6 h-6 rounded-full items-center justify-center`}
+              style={{
+                borderWidth: 2,
+                borderColor: "rgba(255, 255, 255, 0.5)",
+                backgroundColor: getBgColor(user.rank)
+              }}
+            >
+              <Text className="text-xs font-bold text-white">
+                {user.rank}
               </Text>
             </View>
           </View>
 
-          <View className="flex-row items-center">
-            <Text className="ml-2 text-base font-extrabold">
-              {user.rating.toLocaleString()}{' '}
+          <Text
+            className="mt-2 font-semibold text-center w-full"
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {getFirstName(user.user_name)}
+          </Text>
+
+          <View className="flex-row items-center mt-1">
+            <Ionicons name="trophy" size={14} color="#FBBF24" />
+            <Text className="ml-1 font-bold">
+              {user.rating.toLocaleString()}
             </Text>
-            <Ionicons name="trophy" size={16} color="#FBBF24" />
           </View>
-        </TouchableOpacity>
-      </>
+        </View>
+
+      </View>
+
+
     );
   };
 
-  const ListHeader = () => (
-    <>
-      {loading && users.length === 0 ? (
-        <View className="w-full justify-center items-center py-8">
-          <ActivityIndicator size="large" />
-          <Text className="mt-4">{t('leaderboard.loading')}</Text>
+
+  const renderItem = ({ item }) => {
+    const isMe = item.user_email === userProfile?.user_email;
+
+    return (
+      <TouchableOpacity
+        activeOpacity={0.7}
+        onPress={() => {
+          if (!isMe) {
+            navigation.navigate('othersProfile', {
+              avatar: item.avatar,
+              name: item.user_name,
+              role: item.last_interview_role || 'No recent role',
+              level: item?.experience || 1,
+              trophies: item.rating,
+              totalInterviews: item.total_interviews ?? 0,
+              bestScore: item?.best_avg_percentage || 0,
+              streak: item?.streak || 1,
+              minutes: Math.floor((item.seconds_used || 0) / 60),
+            });
+          }
+        }}
+        className={`flex-row items-center px-4 py-3 border-b border-gray-200 ${isMe ? 'bg-blue-100' : ''
+          }`}
+      >
+        <Text className="w-8 font-bold text-gray-600">
+          {item.rank}
+        </Text>
+
+        <View className="flex-row items-center flex-1">
+          <View className="w-10 h-10 rounded-full overflow-hidden bg-gray-300 items-center justify-center">
+            {item.avatar ? (
+              <Image
+                source={{ uri: item.avatar }}
+                className="w-full h-full"
+              />
+            ) : (
+              <Text className="font-bold">
+                {getInitials(item.user_name)}
+              </Text>
+            )}
+          </View>
+
+          <Text
+            className="ml-3 font-semibold flex-1"
+            numberOfLines={1}
+          >
+            {isMe ? t('leaderboard.you') : item.user_name}
+          </Text>
         </View>
-      ) : (
-        <></>
-      )}
-    </>
-  );
+
+        <View className="flex-row items-center">
+          <Text className="font-bold mr-1">
+            {item.rating.toLocaleString()}
+          </Text>
+          <Ionicons name="trophy" size={14} color="#FBBF24" />
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <>
       <TopBar />
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: 120, }}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
-        }
-      >
-        <View style={{ backgroundColor: 'white' }}>
-          <LeagueCarousel data={LEAGUES} userTrophies={rating} />
-
-          <View style={{ marginTop: 16, paddingHorizontal: 20 }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            >
-              <Text style={{ fontWeight: '700', fontSize: 20 }}>
-                {t(currentLeague.name, { defaultValue: currentLeague.name })} {t('leaderboard.league')}
-              </Text>
-
-              <View className="flex-row items-center gap-2 bg-gray-800 rounded-full py-1 px-3">
-                <Text style={{ fontSize: 16, color: 'white' }}>{rating}</Text>
-                <Ionicons name="trophy" size={16} color="#FBBF24" />
-              </View>
-            </View>
-
-            <Text style={{ fontSize: 14, color: '#4B5563', marginTop: 6 }}>
-              {t('leaderboard.description')}
-            </Text>
-          </View>
-
-          <View
-            style={{
-              backgroundColor: '#000',
-              width: '100%',
-              marginTop: 16,
-              marginBottom: 4,
-              height: 1,
-            }}
-          />
-
-          <View style={{ paddingHorizontal: 20 }}>
-            <FlatList
-              data={users}
-              keyExtractor={item => `${item.user_email}-${item.rank}`}
-              showsVerticalScrollIndicator={false}
-              ListHeaderComponent={<ListHeader />}
-              renderItem={renderUserItem}
-              scrollEnabled={false}
+      <Layout>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => getRatings(true)}
             />
+          }
+          contentContainerStyle={{ paddingBottom: 140 }}
+        >
+          {loading && users.length === 0 ? (
+            <View className="py-10 items-center">
+              <ActivityIndicator size="large" />
+            </View>
+          ) : (
+            <>
+              {topThree.length === 3 && (
+                <View className="flex-row justify-between items-end px-2 mt-6">
+                  <TopUser user={topThree[1]} size={70} />
+                  <TopUser user={topThree[0]} size={90} />
+                  <TopUser user={topThree[2]} size={70} />
+                </View>
+              )}
+
+              <View style={{
+                backgroundColor: "rgba(255, 255, 255, 0.5)",
+                borderRadius: 22,
+                marginTop: 24,
+              }}>
+                <View className="px-4 pt-4">
+                  <FlatList
+                    data={restUsers}
+                    keyExtractor={i => `${i.user_email}-${i.rank}`}
+                    renderItem={renderItem}
+                    scrollEnabled={false}
+                  />
+                </View>
+              </View>
+            </>
+          )}
+        </ScrollView>
+
+        {/* {userRankDetails && (
+          <View className="absolute bottom-0 left-0 right-0 bg-black flex-row items-center px-4 py-3">
+            <Text className="text-white font-bold w-10">
+              {userRankDetails.rank}
+            </Text>
+
+            <Text className="text-white font-semibold flex-1">
+              {userRankDetails.user_name}
+            </Text>
+
+            <View className="flex-row items-center">
+              <Text className="text-white font-bold mr-1">
+                {userRankDetails.rating}
+              </Text>
+              <Ionicons name="trophy" size={16} color="#FBBF24" />
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        )} */}
+      </Layout>
     </>
+
   );
 }
