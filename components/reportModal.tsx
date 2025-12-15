@@ -111,7 +111,7 @@ const ReportModal = ({
             </Text>
           ) : (
             <Text
-              style={{ fontSize: 24, fontWeight: '700', color: 'black' }}
+              style={{ fontSize: 24, fontWeight: '700', color: 'black', marginLeft: 10 }}
               className="line-clamp-1"
             >
               {report?.position || 'Report'}
