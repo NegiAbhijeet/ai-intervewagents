@@ -43,19 +43,25 @@ export default function Leaderboard() {
 
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const [page, setPage] = useState(1);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadMoreError, setLoadMoreError] = useState(false);
+
   const [refreshing, setRefreshing] = useState(false);
   const [userRankDetails, setUserRankDetails] = useState(null);
-  const getRatings = async (refresh = false) => {
-    setLoading(true);
+  const getRatings = async (pageNumber = 1, refresh = false) => {
+    if (loading || loadingMore) return;
+
+    refresh ? setLoading(true) : setLoadingMore(true);
+    setLoadMoreError(false);
     const industry = userProfile?.industry
       ?.trim()
       .replace(/\s+/g, '_');
-
-    if (refresh) setRefreshing(true);
-    console.log(`${API_URL}/get-users-rating/?uid=${userProfile?.uid}&industry=${industry}&page=1`, "===")
     try {
       const res = await fetchWithAuth(
-        `${API_URL}/get-users-rating/?uid=${userProfile?.uid}&industry=${userProfile?.industry}&page=1`,
+        `${API_URL}/get-users-rating/?uid=${userProfile?.uid}&industry=${industry}&page=${pageNumber}`
       );
       const json = await res.json();
 
@@ -63,7 +69,6 @@ export default function Leaderboard() {
 
       const sorted = data
         .filter(u => Number(u?.rating) > 0)
-        .sort((a, b) => Number(b.rating) - Number(a.rating))
         .map((u, i) => ({
           ...u,
           rank: i + 1,
@@ -73,23 +78,43 @@ export default function Leaderboard() {
           avatar: u.avatar || u.user_photo_url || '',
         }));
 
-      setUsers(sorted);
 
-      const me = sorted.find(
+      setUsers(prev =>
+        pageNumber === 1 ? sorted : [...prev, ...sorted]
+      );
+
+      setPage(pageNumber);
+      setHasMore(data.length > 0);
+      const me = data.find(
         u => u.user_email === userProfile?.user_email,
       );
       setUserRankDetails(me || null);
     } catch (e) {
       console.error(e);
+      setLoadMoreError(true);
     } finally {
       setLoading(false);
+      setLoadingMore(false);
       setRefreshing(false);
     }
   };
 
   useEffect(() => {
-    if (userProfile?.uid) getRatings();
+    if (userProfile?.uid) getRatings(1, true);
   }, [userProfile]);
+
+  const onRefresh = () => {
+    setHasMore(true);
+    getRatings(1, true);
+  };
+  const loadMore = () => {
+    if (!hasMore) return;
+    if (loadingMore) return;
+
+    getRatings(page + 1);
+  };
+
+
 
   const topThree = users.slice(0, 3);
   const restUsers = users.slice(3);
@@ -237,13 +262,13 @@ export default function Leaderboard() {
       <Layout>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={() => getRatings(true)}
-            />
-          }
-          contentContainerStyle={{ paddingBottom: 140 }}
+        // refreshControl={
+        //   <RefreshControl
+        //     refreshing={refreshing}
+        //     onRefresh={() => getRatings(true)}
+        //   />
+        // }
+        // contentContainerStyle={{ paddingBottom: 140 }}
         >
           {loading && users.length === 0 ? (
             <View className="py-10 items-center">
@@ -259,19 +284,38 @@ export default function Leaderboard() {
                 </View>
               )}
 
-              <View style={{
-                backgroundColor: "rgba(255, 255, 255, 0.5)",
-                borderRadius: 22,
-                marginTop: 24,
-              }}>
-                <View className="px-4 pt-4">
-                  <FlatList
-                    data={restUsers}
-                    keyExtractor={i => `${i.user_email}-${i.rank}`}
-                    renderItem={renderItem}
-                    scrollEnabled={false}
-                  />
-                </View>
+              <View
+                style={{
+                  backgroundColor: "rgba(255, 255, 255, 0.5)",
+                  borderRadius: 22,
+                  marginTop: 24,
+                }}
+                className="px-4 pt-4"
+              >
+                <FlatList
+                  data={users}
+                  keyExtractor={i => `${i.user_email}-${i.rank}`}
+                  renderItem={renderItem}
+                  onEndReached={loadMore}
+                  onEndReachedThreshold={0.3}
+                  contentContainerStyle={{ paddingBottom: 100 }}
+                  refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                  }
+                  ListFooterComponent={
+                    loadingMore ? (
+                      <ActivityIndicator style={{ paddingVertical: 20 }} />
+                    ) : loadMoreError ? (
+                      <TouchableOpacity
+                        style={{ paddingVertical: 20, alignItems: 'center' }}
+                        onPress={() => getRatings(page + 1)}
+                      >
+                        <Text>Tap to retry</Text>
+                      </TouchableOpacity>
+                    ) : null
+                  }
+
+                />
               </View>
             </>
           )}
