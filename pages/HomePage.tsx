@@ -13,6 +13,7 @@ import HomeTopPenguin from "../assets/images/homeTopPeng.svg"
 import { useTranslation } from 'react-i18next';
 import LANGUAGES from '../libs/languages';
 import StreakProgress from '../components/streakProgress';
+import Toast from 'react-native-toast-message';
 
 const HomePage = ({ route }) => {
     const {
@@ -181,6 +182,14 @@ const HomePage = ({ route }) => {
     };
     const handleSubmit = async (practiceOrRevise) => {
         try {
+            if (!myCandidate?.position) {
+                Toast.show({
+                    type: 'error',
+                    text1: 'Please update your role in your profile.'
+                });
+
+                return
+            }
             setIsInterviewStart(true);
 
             const now = new Date();
