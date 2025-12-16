@@ -3,6 +3,7 @@ import { PermissionsAndroid, Platform } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
 import axios from 'axios';
 import { API_URL } from '../components/config';
+import fetchWithAuth from '../libs/fetchWithAuth';
 
 export const useNotification = (
   userId,
@@ -35,7 +36,18 @@ export const useNotification = (
     const sendTokenToServer = async token => {
       if (!userId || !token || fcmTokenUpdated) return;
       try {
-        await axios.put(`${API_URL}/profile/${userId}/fcm-token/`, { token });
+        await fetchWithAuth(
+          `${API_URL}/profile/${userId}/fcm-token/`,
+          {
+            method: 'PUT',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ token }),
+          }
+        );
+
         console.log('Token sent to server');
         setFcmTokenUpdated(true);
       } catch (err) {

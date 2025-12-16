@@ -1,7 +1,7 @@
 import { auth } from './firebase';
 
 async function getAuthToken() {
-  const user = auth?.currentUser;
+  const user = auth()?.currentUser;
   if (user) {
     return { token: await user.getIdToken(), uid: user.uid };
   }
