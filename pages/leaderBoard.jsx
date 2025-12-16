@@ -18,6 +18,16 @@ import Layout from './Layout';
 import LinearGradient from 'react-native-linear-gradient';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 const USERSIZEPERPAGE = 50
+const EmptyState = ({ message }) => {
+  return (
+    <View style={{ paddingVertical: 60, alignItems: 'center' }}>
+      <Text style={{ fontSize: 16, color: '#6B7280', textAlign: 'center' }}>
+        {message}
+      </Text>
+    </View>
+  );
+};
+
 const LeaderboardSkeleton = () => {
   return (
     <SkeletonPlaceholder borderRadius={16}>
@@ -400,7 +410,7 @@ export default function Leaderboard() {
           </View>
 
           {/* Top 3 users */}
-          {topThree.length === 3 && (
+          {users.length > 0 && topThree.length === 3 && (
             <View className="flex-row justify-between items-end px-2 mt-6">
               <TopUser user={topThree[1]} size={70} />
               <TopUser user={topThree[0]} size={90} />
@@ -476,8 +486,20 @@ export default function Leaderboard() {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{
                   paddingBottom: 120,
-                  paddingTop: 16
+                  paddingTop: 16,
+                  flexGrow: 1
                 }}
+                ListEmptyComponent={
+                  !loading && (
+                    <EmptyState
+                      message={
+                        activeTab === 'friends'
+                          ? 'No friends.'
+                          : 'No users found yet.'
+                      }
+                    />
+                  )
+                }
                 ListFooterComponent={
                   loadingMore ? (
                     <ActivityIndicator style={{ paddingVertical: 20 }} />
