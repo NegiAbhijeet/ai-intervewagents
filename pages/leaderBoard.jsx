@@ -17,6 +17,52 @@ import { API_URL } from '../components/config';
 import TopBar from '../components/TopBar';
 import Layout from './Layout';
 import LinearGradient from 'react-native-linear-gradient';
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+const LeaderboardSkeleton = () => {
+  return (
+    <SkeletonPlaceholder borderRadius={16}>
+      <SkeletonPlaceholder.Item
+        flexDirection="row"
+        justifyContent="space-between"
+        marginTop={24}
+        marginHorizontal={20}
+      >
+        <SkeletonPlaceholder.Item width={70} height={70} borderRadius={35} />
+        <SkeletonPlaceholder.Item width={90} height={90} borderRadius={45} />
+        <SkeletonPlaceholder.Item width={70} height={70} borderRadius={35} />
+      </SkeletonPlaceholder.Item>
+
+      {/* List container */}
+      <SkeletonPlaceholder.Item
+        marginTop={24}
+        marginHorizontal={8}
+        padding={16}
+        borderRadius={22}
+      >
+        {[...Array(6)].map((_, index) => (
+          <SkeletonPlaceholder.Item
+            key={index}
+            flexDirection="row"
+            alignItems="center"
+            marginBottom={16}
+          >
+            <SkeletonPlaceholder.Item width={24} height={16} />
+            <SkeletonPlaceholder.Item
+              width={40}
+              height={40}
+              borderRadius={20}
+              marginLeft={12}
+            />
+            <SkeletonPlaceholder.Item flex={1} marginLeft={12}>
+              <SkeletonPlaceholder.Item height={14} width="60%" />
+            </SkeletonPlaceholder.Item>
+            <SkeletonPlaceholder.Item height={14} width={50} />
+          </SkeletonPlaceholder.Item>
+        ))}
+      </SkeletonPlaceholder.Item>
+    </SkeletonPlaceholder>
+  );
+};
 
 function getInitials(name = '') {
   const words = name.trim().split(' ');
@@ -73,29 +119,30 @@ export default function Leaderboard() {
           ? Array.isArray(json?.connections) ? json.connections : []
           : Array.isArray(json?.profiles) ? json.profiles : [];
 
-      setUsers(prev => {
-        const offset = pageNumber === 1 ? 0 : prev.length;
+      const offset = pageNumber === 1 ? 0 : users.length;
 
-        const formatted = rawData
-          .filter(u => Number(u?.rating) > 0)
-          .map((u, i) => ({
-            ...u,
-            rank: offset + i + 1,
-            rating: Number(u.rating) || 0,
-            user_name: u.user_name || u.name || u.user_email || 'Unknown',
-            avatar: u.avatar || u.user_photo_url || '',
-          }));
+      const formattedUsers = rawData
+        .filter(u => Number(u?.rating) > 0)
+        .map((u, i) => ({
+          ...u,
+          rank: offset + i + 1,
+          rating: Number(u.rating) || 0,
+          user_name: u.user_name || u.name || u.user_email || 'Unknown',
+          avatar: u.avatar || u.user_photo_url || ''
+        }));
 
-        return pageNumber === 1 ? formatted : [...prev, ...formatted];
-      });
+      setUsers(prev =>
+        pageNumber === 1 ? formattedUsers : [...prev, ...formattedUsers]
+      );
 
       setPage(pageNumber);
-      setHasMore(rawData.length > 0);
-
-      const me = rawData.find(
-        u => u.user_email === userProfile?.user_email,
-      );
-      setUserRankDetails(me || null);
+      setHasMore(formattedUsers.length > 0);
+      if (!userRankDetails) {
+        const me = formattedUsers.find(
+          u => u.user_email === userProfile?.user_email,
+        );
+        setUserRankDetails(me || null);
+      }
     } catch (e) {
       console.error(e);
       setLoadMoreError(true);
@@ -278,16 +325,8 @@ export default function Leaderboard() {
     <>
       <TopBar />
       <Layout>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-        // refreshControl={
-        //   <RefreshControl
-        //     refreshing={refreshing}
-        //     onRefresh={() => getRatings(true)}
-        //   />
-        // }
-        // contentContainerStyle={{ paddingBottom: 140 }}
-        >
+        <View style={{ flex: 1 }}>
+          {/* Tabs */}
           <View
             className="mt-4 mb-2 px-2 py-2 flex-row mx-1"
             style={{
@@ -297,7 +336,7 @@ export default function Leaderboard() {
               shadowOffset: { width: 0, height: 1 },
               shadowOpacity: 0.3,
               shadowRadius: 4,
-              elevation: 4,
+              elevation: 4
             }}
           >
             <TouchableOpacity
@@ -308,29 +347,23 @@ export default function Leaderboard() {
               {activeTab === 'global' ? (
                 <LinearGradient
                   colors={['rgba(120, 20, 196, 1)', 'rgba(12, 78, 190, 1)']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
                   style={{
                     borderRadius: 16,
                     paddingVertical: 12,
-                    alignItems: 'center',
+                    alignItems: 'center'
                   }}
                 >
-                  <Text className="font-semibold text-white">
-                    Global
-                  </Text>
+                  <Text className="font-semibold text-white">Global</Text>
                 </LinearGradient>
               ) : (
                 <View
                   style={{
                     borderRadius: 16,
                     paddingVertical: 12,
-                    alignItems: 'center',
+                    alignItems: 'center'
                   }}
                 >
-                  <Text className="font-semibold text-gray-600">
-                    Global
-                  </Text>
+                  <Text className="font-semibold text-gray-600">Global</Text>
                 </View>
               )}
             </TouchableOpacity>
@@ -343,12 +376,10 @@ export default function Leaderboard() {
               {activeTab === 'friends' ? (
                 <LinearGradient
                   colors={['rgba(120, 20, 196, 1)', 'rgba(12, 78, 190, 1)']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
                   style={{
                     borderRadius: 16,
                     paddingVertical: 12,
-                    alignItems: 'center',
+                    alignItems: 'center'
                   }}
                 >
                   <Text className="font-semibold text-white">
@@ -360,7 +391,7 @@ export default function Leaderboard() {
                   style={{
                     borderRadius: 16,
                     paddingVertical: 12,
-                    alignItems: 'center',
+                    alignItems: 'center'
                   }}
                 >
                   <Text className="font-semibold text-gray-600">
@@ -371,78 +402,103 @@ export default function Leaderboard() {
             </TouchableOpacity>
           </View>
 
-
-          {loading && users.length === 0 ? (
-            <View className="py-10 items-center">
-              <ActivityIndicator size="large" />
+          {/* Top 3 users */}
+          {topThree.length === 3 && (
+            <View className="flex-row justify-between items-end px-2 mt-6">
+              <TopUser user={topThree[1]} size={70} />
+              <TopUser user={topThree[0]} size={90} />
+              <TopUser user={topThree[2]} size={70} />
             </View>
-          ) : (
-            <>
-              {topThree.length === 3 && (
-                <View className="flex-row justify-between items-end px-2 mt-6">
-                  <TopUser user={topThree[1]} size={70} />
-                  <TopUser user={topThree[0]} size={90} />
-                  <TopUser user={topThree[2]} size={70} />
-                </View>
-              )}
-
-              <View
-                style={{
-                  backgroundColor: "rgba(255, 255, 255, 0.5)",
-                  borderRadius: 22,
-                  marginTop: 24,
-                }}
-                className="px-4 pt-4"
-              >
-                <FlatList
-                  data={users}
-                  keyExtractor={i => `${i.user_email}-${i.rank}`}
-                  renderItem={renderItem}
-                  onEndReached={loadMore}
-                  onEndReachedThreshold={0.3}
-                  contentContainerStyle={{ paddingBottom: 100 }}
-                  refreshControl={
-                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                  }
-                  ListFooterComponent={
-                    loadingMore ? (
-                      <ActivityIndicator style={{ paddingVertical: 20 }} />
-                    ) : loadMoreError ? (
-                      <TouchableOpacity
-                        style={{ paddingVertical: 20, alignItems: 'center' }}
-                        onPress={() => getRatings(page + 1)}
-                      >
-                        <Text>Tap to retry</Text>
-                      </TouchableOpacity>
-                    ) : null
-                  }
-
-                />
-              </View>
-            </>
           )}
-        </ScrollView>
 
-        {/* {userRankDetails && (
-          <View className="absolute bottom-0 left-0 right-0 bg-black flex-row items-center px-4 py-3">
-            <Text className="text-white font-bold w-10">
-              {userRankDetails.rank}
-            </Text>
+          {/* Scrollable list container */}
+          <View
+            style={{
+              flex: 1,
+              marginTop: 24,
+              marginBottom: 72,
+              backgroundColor: 'rgba(255, 255, 255, 0.5)',
+              borderRadius: 22,
+              overflow: "hidden"
+            }}
+          >
+            {userRankDetails && (
+              <TouchableOpacity
+                disabled
+                // activeOpacity={0.7}
+                onPress={() => {
+                }}
+                className={`flex-row items-center px-4 py-3 border-b border-gray-200 bg-black absolute bottom-0 left-0 right-0`}
+                style={{ zIndex: 111, borderBottomLeftRadius: 22, borderBottomRightRadius: 22 }}
+              >
+                <Text className="w-8 font-bold text-white">
+                  {userRankDetails.rank}
+                </Text>
 
-            <Text className="text-white font-semibold flex-1">
-              {userRankDetails.user_name}
-            </Text>
+                <View className="flex-row items-center flex-1">
+                  <View className="w-10 h-10 rounded-full overflow-hidden bg-gray-300 items-center justify-center">
+                    {userRankDetails?.avatar ? (
+                      <Image
+                        source={{ uri: userRankDetails.avatar }}
+                        className="w-full h-full"
+                      />
+                    ) : (
+                      <Text className="font-bold">
+                        {getInitials(userRankDetails.user_name)}
+                      </Text>
+                    )}
+                  </View>
 
-            <View className="flex-row items-center">
-              <Text className="text-white font-bold mr-1">
-                {userRankDetails.rating}
-              </Text>
-              <Ionicons name="trophy" size={16} color="#FBBF24" />
-            </View>
+                  <Text
+                    className="ml-3 font-semibold flex-1 text-white"
+                    numberOfLines={1}
+                  >
+                    {t('leaderboard.you')}
+                  </Text>
+                </View>
+
+                <View className="flex-row items-center">
+                  <Text className="font-bold mr-1 text-white">
+                    {userRankDetails.rating.toLocaleString()}
+                  </Text>
+                  <Ionicons name="trophy" size={14} color="#FBBF24" />
+                </View>
+              </TouchableOpacity>
+            )}
+            {loading && users.length === 0 ? (
+              <LeaderboardSkeleton />
+            ) : (
+              <FlatList
+                data={restUsers}
+                keyExtractor={i => `${i.user_email}-${i.rank}`}
+                renderItem={renderItem}
+                onEndReached={loadMore}
+                onEndReachedThreshold={0.3}
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{
+                  paddingBottom: 80,
+                  paddingTop: 16
+                }}
+                ListFooterComponent={
+                  loadingMore ? (
+                    <ActivityIndicator style={{ paddingVertical: 20 }} />
+                  ) : loadMoreError ? (
+                    <TouchableOpacity
+                      style={{ paddingVertical: 20, alignItems: 'center' }}
+                      onPress={() => getRatings(page + 1)}
+                    >
+                      <Text>Tap to retry</Text>
+                    </TouchableOpacity>
+                  ) : null
+                }
+              />
+            )}
           </View>
-        )} */}
+        </View>
       </Layout>
     </>
-
   );
+
 }
