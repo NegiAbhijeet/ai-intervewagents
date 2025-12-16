@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
-import { ScrollView, RefreshControl } from 'react-native-gesture-handler';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
@@ -18,6 +17,7 @@ import TopBar from '../components/TopBar';
 import Layout from './Layout';
 import LinearGradient from 'react-native-linear-gradient';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+const USERSIZEPERPAGE = 50
 const LeaderboardSkeleton = () => {
   return (
     <SkeletonPlaceholder borderRadius={16}>
@@ -97,7 +97,7 @@ export default function Leaderboard() {
 
   const [refreshing, setRefreshing] = useState(false);
   const [userRankDetails, setUserRankDetails] = useState(null);
-  const getRatings = async (pageNumber = 1, refresh = false) => {
+  const getRatings = async (pageNumber = 1, refresh = false, pageSwitch = false) => {
     if (loading || loadingMore) return;
 
     refresh ? setLoading(true) : setLoadingMore(true);
@@ -114,11 +114,7 @@ export default function Leaderboard() {
       const res = await fetchWithAuth(url);
       const json = await res.json();
 
-      const rawData =
-        activeTab === 'friends'
-          ? Array.isArray(json?.connections) ? json.connections : []
-          : Array.isArray(json?.profiles) ? json.profiles : [];
-
+      const rawData = Array.isArray(json?.profiles) ? json.profiles : [];
       const offset = pageNumber === 1 ? 0 : users.length;
 
       const formattedUsers = rawData
@@ -137,7 +133,7 @@ export default function Leaderboard() {
 
       setPage(pageNumber);
       setHasMore(formattedUsers.length > 0);
-      if (!userRankDetails) {
+      if (!userRankDetails || pageSwitch) {
         const me = formattedUsers.find(
           u => u.user_email === userProfile?.user_email,
         );
@@ -158,7 +154,7 @@ export default function Leaderboard() {
       setUsers([]);
       setPage(1);
       setHasMore(true);
-      getRatings(1, true);
+      getRatings(1, true, true);
     }
   }, [activeTab]);
 
@@ -171,6 +167,7 @@ export default function Leaderboard() {
     getRatings(1, true);
   };
   const loadMore = () => {
+    if (users.length < USERSIZEPERPAGE) return;
     if (!hasMore) return;
     if (loadingMore) return;
 
@@ -180,7 +177,7 @@ export default function Leaderboard() {
 
 
   const topThree = users.slice(0, 3);
-  const restUsers = users.slice(3);
+  const restUsers = activeTab === "friends" ? users : users.slice(3);
 
 
   const TopUser = ({ user, size }) => {
@@ -422,7 +419,7 @@ export default function Leaderboard() {
               overflow: "hidden"
             }}
           >
-            {userRankDetails && (
+            {userRankDetails && !loading && (
               <TouchableOpacity
                 disabled
                 // activeOpacity={0.7}
@@ -478,7 +475,7 @@ export default function Leaderboard() {
                 onRefresh={onRefresh}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{
-                  paddingBottom: 80,
+                  paddingBottom: 120,
                   paddingTop: 16
                 }}
                 ListFooterComponent={
