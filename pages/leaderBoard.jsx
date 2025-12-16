@@ -232,6 +232,8 @@ export default function Leaderboard() {
               bestScore: item?.best_avg_percentage || 0,
               streak: item?.streak || 1,
               minutes: Math.floor((item.seconds_used || 0) / 60),
+              myUid: userProfile?.uid,
+              userUid: item?.uid
             });
           }
         }}

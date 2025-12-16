@@ -12,6 +12,9 @@ import CustomHeader from '../components/customHeader';
 import Layout from './Layout';
 import getLevelData from '../libs/getLevelData';
 import { AppStateContext } from '../components/AppContext';
+import { API_URL } from '../components/config';
+import fetchWithAuth from '../libs/fetchWithAuth';
+import Toast from 'react-native-toast-message';
 function getInitials(name = '') {
   const words = name.trim().split(' ');
   if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
@@ -21,7 +24,7 @@ function getInitials(name = '') {
 export default function OthersProfile({ route }) {
   const { language } = useContext(AppStateContext)
   const [routeData, setRouteData] = useState(null)
-
+  const [loading, setLoading] = useState(false)
   useEffect(() => {
     if (route?.params?.name) {
       setRouteData(route.params)
@@ -34,6 +37,57 @@ export default function OthersProfile({ route }) {
     )
     return x?.label || "Entry"
   }
+  async function sendRequest() {
+    setLoading(true);
+
+    try {
+      if (!routeData?.myUid || !routeData?.userUid) {
+        Toast.show({
+          type: 'error',
+          text1: 'Something went wrong',
+          text2: 'Please try again later',
+        });
+        return;
+      }
+
+      const body = {
+        uid: routeData.myUid,
+        receiver_id: routeData.userUid,
+      };
+
+      const response = await fetchWithAuth(
+        `${API_URL}/connections/send/`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(body),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        const errorText = errorData?.error;
+        throw new Error(errorText || 'Request failed');
+      }
+
+      Toast.show({
+        type: 'success',
+        text1: 'Request sent',
+        text2: 'Connection request sent successfully',
+      });
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: error?.message || 'Unable to send request. Please try again.',
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <Layout>
       <CustomHeader title="Profile" />
@@ -168,13 +222,15 @@ export default function OthersProfile({ route }) {
           <TouchableOpacity
             style={{
               marginTop: 20,
-              backgroundColor: '#000',
+              backgroundColor: loading ? "rgba(0,0,0,0.8)" : '#000',
               paddingHorizontal: 30,
               paddingVertical: 12,
               borderRadius: 24,
               flexDirection: 'row',
               alignItems: 'center',
             }}
+            disabled={loading}
+            onPress={sendRequest}
           >
             <Ionicons name="person-add" size={18} color="#fff" />
             <Text
