@@ -308,7 +308,7 @@ export default function ProfileScreen() {
             <BackgroundGradient2 />
 
             {/* Profile Card */}
-            <View className="items-center" style={{ transform: "translateY(-48px)", width: "85%", marginHorizontal: "auto" }}>
+            <View className="items-center px-[5%]" style={{ transform: "translateY(-48px)", width: "100%", marginHorizontal: "auto" }}>
               <View style={{ borderRadius: 999, borderColor: "rgba(239, 239, 239, 1)", borderWidth: 14, backgroundColor: "rgba(239, 239, 239, 1)" }}>
                 <GradientBorderView
                   gradientProps={{
