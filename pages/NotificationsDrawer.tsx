@@ -193,7 +193,7 @@ export default function NotificationsPage() {
 
   const handlePressItem = async (item: any) => {
     const meetingId = getMeetingId(item)
-    if (!meetingId) {
+    if (!meetingId || item.type === "request") {
       toggleExpnaded(item.id) // corrected function name
       return
     }
@@ -230,8 +230,12 @@ export default function NotificationsPage() {
         item={item}
         timeLabel={timeLabel}
         expanded={expandedId === item.id}
-        onToggle={() => { handlePressItem(item) }}
-        type={item?.meeting_id ? "report" : (item?.friend ? "friend" : "normal")}
+        onToggle={() => handlePressItem(item)}
+        type={item?.type === 'request' ? 'request' : item?.meeting_id ? 'report' : 'normal'}
+        setIsLoading={setIsLoading}
+        uid={userProfile?.uid}
+        avatar={userProfile?.avatar}
+        onRequestStatusChange={updateRequestStatus}
       />
     );
   };
@@ -266,6 +270,15 @@ export default function NotificationsPage() {
       </View>
     );
   }, []);
+  const updateRequestStatus = (id: string | number, status: 'accepted' | 'declined') => {
+    setNotifications(prev =>
+      Array.isArray(prev)
+        ? prev.map(n =>
+          n.id === id ? { ...n, request_status: status } : n
+        )
+        : prev
+    )
+  }
 
   const translateX = shimmer.interpolate({
     inputRange: [0, 1],

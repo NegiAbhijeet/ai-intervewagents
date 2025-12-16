@@ -1,6 +1,5 @@
 // NotificationRow.tsx
-import Ionicons from '@react-native-vector-icons/ionicons';
-import React, { useCallback, useContext, useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -11,7 +10,8 @@ import {
   UIManager,
   Image,
 } from 'react-native';
-import { AppStateContext } from './AppContext';
+import { API_URL } from './config';
+import Toast from 'react-native-toast-message';
 
 export type NotificationItem = {
   id: number | string;
@@ -37,36 +37,64 @@ if (
 }
 const iconSize = 32
 
-function NotificationRow({ item, timeLabel, expanded, onToggle, type = "normal", isRead = false }: Props) {
-  const { userProfile } = useContext(AppStateContext)
-
+function NotificationRow({ item, timeLabel, expanded, onToggle, type = "normal", isRead = false, setIsLoading, uid, avatar, onRequestStatusChange }: Props) {
   React.useEffect(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
   }, [expanded]);
 
+  async function respondToRequest(status: 'accepted' | 'declined') {
+    if (!uid || !item?.meeting_id) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Something went wrong',
+      })
+      return
+    }
 
+    try {
+      setIsLoading(true)
+
+      await fetch(`${API_URL}/connections/respond/`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          uid,
+          request_id: item.meeting_id,
+          status,
+        }),
+      })
+
+      onRequestStatusChange(item.id, status)
+    } catch (error) {
+      console.log('Request response failed', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
+
     <TouchableOpacity
-      activeOpacity={0.9}
-      onPress={() => onToggle(item?.id || null)}
       style={[
         styles.item,
         isRead
           ? { backgroundColor: 'rgba(255, 255, 255, 0.7)' }
           : {}
       ]}
+      activeOpacity={0.9}
+      onPress={() => onToggle(item?.id || null)}
     >
       <View style={styles.iconWrap}>
         <Image
           source={
-            type === 'friend' && userProfile?.avatar ? { uri: userProfile.avatar }
+            type === "request" && avatar ? { uri: avatar }
               : (type === 'report'
                 ? require('../assets/images/notiReportImage.png')
                 : require('../assets/images/notiBellImage.png'))
           }
           resizeMode="cover"
-          style={{ width: iconSize, height: iconSize }}
+          style={{ width: iconSize, height: iconSize, borderRadius: 9999 }}
         />
       </View>
 
@@ -90,20 +118,57 @@ function NotificationRow({ item, timeLabel, expanded, onToggle, type = "normal",
         >
           {item.message}
         </Text>
+        {type === 'request' && (
+          <View style={styles.actionsRow}>
+            {!item?.request_status && (
+              <>
+                <TouchableOpacity
+                  style={[styles.actionButton, styles.acceptButton]}
+                  onPress={() => respondToRequest('accepted')}
+                >
+                  <Text style={styles.actionText}>Accept</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.actionButton, styles.declineButton]}
+                  onPress={() => respondToRequest('declined')}
+                >
+                  <Text style={styles.actionText}>Decline</Text>
+                </TouchableOpacity>
+              </>
+            )}
+
+            {item?.request_status && (
+              <View
+                style={[
+                  styles.actionButton,
+                  { backgroundColor: 'rgba(0,0,0,0.3)' },
+                ]}
+              >
+                <Text style={styles.actionText}>
+                  {item.request_status === 'accepted' ? 'Accepted' : 'Declined'}
+                </Text>
+              </View>
+            )}
+          </View>
+        )}
+
       </View>
+
     </TouchableOpacity>
   );
 }
 
-// shallow compare id, read, expanded and timeLabel
 function areEqual(prev: Props, next: Props) {
   return (
     prev.item.id === next.item.id &&
     prev.item.read === next.item.read &&
+    prev.item.request_status === next.item.request_status &&
     prev.expanded === next.expanded &&
     prev.timeLabel === next.timeLabel
-  );
+  )
 }
+
 
 export default React.memo(NotificationRow, areEqual);
 
@@ -126,7 +191,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
-    paddingTop: 4
+    paddingTop: 4,
   },
   content: { flex: 1 },
   headerRow: {
@@ -138,4 +203,35 @@ const styles = StyleSheet.create({
   time: { fontSize: 11, color: '#6B7280' },
   message: { marginTop: 6, fontSize: 13, color: 'rgba(75, 85, 99, 1)' },
   messageExpanded: { color: '#111827' },
+  actionsRow: {
+    flexDirection: 'row',
+    marginTop: 10,
+  },
+
+  actionButton: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: 9999,
+    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    maxWidth: 120
+  },
+
+  acceptButton: {
+    backgroundColor: 'rgba(0, 0, 0, 1)',
+    marginRight: 8,
+  },
+
+  declineButton: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+
+  actionText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: '600',
+    transform: "translateY(-1px)"
+  },
+
 });
