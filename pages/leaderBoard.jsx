@@ -128,7 +128,6 @@ export default function Leaderboard() {
       const offset = pageNumber === 1 ? 0 : users.length;
 
       const formattedUsers = rawData
-        .filter(u => Number(u?.rating) > 0)
         .map((u, i) => ({
           ...u,
           rank: offset + i + 1,
@@ -144,10 +143,12 @@ export default function Leaderboard() {
       setPage(pageNumber);
       setHasMore(formattedUsers.length > 0);
       if (!userRankDetails || pageSwitch) {
-        const me = formattedUsers.find(
-          u => u.user_email === userProfile?.user_email,
-        );
-        setUserRankDetails(me || null);
+        const me = json?.current_user
+        const formattedUser = {
+          ...me?.details,
+          rank: me?.position || 0,
+        }
+        setUserRankDetails(formattedUser || null);
       }
     } catch (e) {
       console.error(e);
@@ -314,7 +315,7 @@ export default function Leaderboard() {
             className="ml-3 font-semibold flex-1"
             numberOfLines={1}
           >
-            {isMe ? t('leaderboard.you') : item.user_name}
+            {item.user_name}
           </Text>
         </View>
 
