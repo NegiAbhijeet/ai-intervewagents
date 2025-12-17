@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ImageBackground,
+  ActivityIndicator,
 } from 'react-native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import CustomHeader from '../components/customHeader';
@@ -15,6 +16,7 @@ import { AppStateContext } from '../components/AppContext';
 import { API_URL } from '../components/config';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import Toast from 'react-native-toast-message';
+import { RefreshControl } from 'react-native-gesture-handler';
 function getInitials(name = '') {
   const words = name.trim().split(' ');
   if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
@@ -25,11 +27,41 @@ export default function OthersProfile({ route }) {
   const { language } = useContext(AppStateContext)
   const [routeData, setRouteData] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [connection, setConnection] = useState(null);
+  const [connectionLoading, setConnectionLoading] = useState(false);
+
   useEffect(() => {
     if (route?.params?.name) {
       setRouteData(route.params)
     }
   }, [route.params.name])
+
+  async function fetchConnectionDetails() {
+    setConnectionLoading(true);
+    try {
+      const res = await fetchWithAuth(
+        `${API_URL}/connection-details/?uid=${routeData.myUid}&profile_uid=${routeData.userUid}`,
+        { method: 'GET' }
+      );
+
+      if (!res.ok) return;
+
+      const data = await res.json();
+      console.log('Connection details', data);
+      setConnection(data);
+    } catch (e) {
+      console.log('Connection details error', e);
+    } finally {
+      setConnectionLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (!routeData?.myUid || !routeData?.userUid) return;
+
+    fetchConnectionDetails();
+  }, [routeData?.myUid, routeData?.userUid]);
+
   const LEVELS = useMemo(() => getLevelData(language) || {}, [language])
   const findLevel = (level) => {
     const x = LEVELS.find(
@@ -38,8 +70,6 @@ export default function OthersProfile({ route }) {
     return x?.label || "Entry"
   }
   async function sendRequest() {
-    setLoading(true);
-
     try {
       if (!routeData?.myUid || !routeData?.userUid) {
         Toast.show({
@@ -49,7 +79,7 @@ export default function OthersProfile({ route }) {
         });
         return;
       }
-
+      setLoading(true);
       const body = {
         uid: routeData.myUid,
         receiver_id: routeData.userUid,
@@ -72,6 +102,7 @@ export default function OthersProfile({ route }) {
         throw new Error(errorText || 'Request failed');
       }
 
+      setConnection((prev) => ({ ...prev, status: 'pending', option: 'request' }));
       Toast.show({
         type: 'success',
         text1: 'Request sent',
@@ -88,6 +119,42 @@ export default function OthersProfile({ route }) {
     }
   }
 
+
+
+  async function respondToRequest(status) {
+    if (!routeData?.myUid || !connection?.request_id || !status) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Something went wrong',
+      })
+      return
+    }
+
+    try {
+      setLoading(true)
+
+      await fetch(`${API_URL}/connections/respond/`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          uid: routeData?.myUid,
+          request_id: connection?.request_id,
+          status,
+        }),
+      })
+      if (status === 'accepted') {
+        setConnection((prev) => ({ ...prev, status: 'accepted' }));
+      } else {
+        setConnection(null);
+      }
+    } catch (error) {
+      console.log('Request response failed', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <Layout>
       <CustomHeader title="Profile" />
@@ -95,6 +162,9 @@ export default function OthersProfile({ route }) {
         style={{ flex: 1 }}
         contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={connectionLoading} onRefresh={fetchConnectionDetails} />
+        }
       >
         <View
           style={{
@@ -219,31 +289,104 @@ export default function OthersProfile({ route }) {
           </View>
 
           {/* Add Friend */}
-          <TouchableOpacity
-            style={{
-              marginTop: 20,
-              backgroundColor: loading ? "rgba(0,0,0,0.8)" : '#000',
-              paddingHorizontal: 30,
-              paddingVertical: 12,
-              borderRadius: 24,
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}
-            disabled={loading}
-            onPress={sendRequest}
-          >
-            <Ionicons name="person-add" size={18} color="#fff" />
-            <Text
+          {connection?.status === 'accepted' ? (
+            <TouchableOpacity
               style={{
-                marginLeft: 8,
-                color: '#fff',
-                fontWeight: '600',
-                fontSize: 14,
+                marginTop: 20,
+                backgroundColor: '#16A34A',
+                paddingHorizontal: 30,
+                paddingVertical: 12,
+                borderRadius: 24,
+                flexDirection: 'row',
+                alignItems: 'center',
+                opacity: 0.8,
               }}
+              disabled
             >
-              Add Friend
-            </Text>
-          </TouchableOpacity>
+              <Ionicons name="people" size={18} color="#fff" />
+              <Text
+                style={{
+                  marginLeft: 8,
+                  color: '#fff',
+                  fontWeight: '600',
+                  fontSize: 14,
+                }}
+              >
+                Friends
+              </Text>
+            </TouchableOpacity>
+          ) : connection?.status === 'pending' && connection?.option === 'respond' ? (
+            <View style={{ flexDirection: 'row', marginTop: 20 }}>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: '#000',
+                  paddingHorizontal: 24,
+                  paddingVertical: 12,
+                  borderRadius: 24,
+                  marginRight: 10,
+                }}
+                onPress={() => respondToRequest('accepted')}
+              >
+                <Text style={{ color: '#fff', fontWeight: '600' }}>Accept</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={{
+                  backgroundColor: 'red',
+                  paddingHorizontal: 24,
+                  paddingVertical: 12,
+                  borderRadius: 24,
+                }}
+                onPress={() => respondToRequest('declined')}
+              >
+                <Text style={{ color: 'white', fontWeight: '600' }}>Reject</Text>
+              </TouchableOpacity>
+            </View>
+          ) : connection?.status === 'pending' && connection?.option === 'request' ? (
+            <TouchableOpacity
+              style={{
+                marginTop: 20,
+                backgroundColor: '#9CA3AF',
+                paddingHorizontal: 30,
+                paddingVertical: 12,
+                borderRadius: 24,
+              }}
+              disabled
+            >
+              <Text style={{ color: '#fff', fontWeight: '600' }}>
+                Pending
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={{
+                marginTop: 20,
+                backgroundColor: loading ? 'rgba(0,0,0,0.8)' : '#000',
+                paddingHorizontal: 30,
+                paddingVertical: 12,
+                borderRadius: 24,
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}
+              disabled={loading || connectionLoading}
+              onPress={sendRequest}
+            >
+              <Ionicons name="person-add" size={18} color="#fff" />
+              <Text
+                style={{
+                  marginLeft: 8,
+                  color: '#fff',
+                  fontWeight: '600',
+                  fontSize: 14,
+                }}
+              >
+                {
+                  (connectionLoading || loading) ? <ActivityIndicator size="small" color="#000" /> : "Add Friend"
+                }
+              </Text>
+            </TouchableOpacity>
+          )}
+
         </View>
 
         {/* Stats */}
@@ -261,6 +404,7 @@ export default function OthersProfile({ route }) {
               backgroundColor: 'rgba(255, 255, 255, 0.4)',
               borderRadius: 16,
               paddingVertical: 18,
+              paddingHorizontal: 10,
               alignItems: 'center',
               justifyContent: "center",
               borderWidth: 1,

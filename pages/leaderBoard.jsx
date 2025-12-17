@@ -142,14 +142,14 @@ export default function Leaderboard() {
 
       setPage(pageNumber);
       setHasMore(formattedUsers.length > 0);
-      if (!userRankDetails || pageSwitch) {
-        const me = json?.current_user
-        const formattedUser = {
-          ...me?.details,
-          rank: me?.position || 0,
-        }
-        setUserRankDetails(formattedUser || null);
+      // if (!userRankDetails || pageSwitch) {
+      const me = json?.current_user
+      const formattedUser = {
+        ...me?.details,
+        rank: me?.position || 0,
       }
+      setUserRankDetails(formattedUser || null);
+      // }
     } catch (e) {
       console.error(e);
       setLoadMoreError(true);
@@ -478,7 +478,7 @@ export default function Leaderboard() {
             ) : (
               <FlatList
                 data={restUsers}
-                keyExtractor={i => `${i.user_email}-${i.rank}`}
+                keyExtractor={i => `${i.uid}-${i.rank}`}
                 renderItem={renderItem}
                 onEndReached={loadMore}
                 onEndReachedThreshold={0.3}
@@ -487,7 +487,7 @@ export default function Leaderboard() {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{
                   paddingBottom: 120,
-                  paddingTop: 16,
+                  // paddingTop: 16,
                   flexGrow: 1
                 }}
                 ListEmptyComponent={

@@ -60,49 +60,66 @@ export default function EditProfileModal({
 
     // --- SAVE LOGIC ---
     async function handleSave() {
-        if (!name.trim()) return Toast.show({ type: 'error', text1: 'Name is required' });
+        if (!name.trim()) {
+            Toast.show({ type: 'error', text1: 'Name is required' })
+            return
+        }
+
+        const nameArray = name.trim().split(' ')
+        const firstName = nameArray[0]
+        const lastName = nameArray.slice(1).join(' ') || ''
+
+        let skills = []
+        if (industry && position && industriesData[industry]) {
+            skills = industriesData[industry][position] || []
+        }
+
+        const payload = {
+            uid,
+            canId,
+            firstName,
+            lastName,
+            industry,
+            position,
+            skills: skills.length > 0 ? skills : undefined,
+            level: level > 0 ? level : undefined
+        }
+
+        const requiredFields = ['uid', 'canId', 'firstName', 'industry', 'position']
+
+        const hasMissingField = requiredFields.some(
+            key => payload[key] === undefined || payload[key] === ''
+        )
+
+        if (hasMissingField) {
+            return
+        }
 
         setIsLoading(true)
+
         try {
-            const nameArray = name.trim().split(' ')
-            const firstName = nameArray[0]
-            const lastName = nameArray.slice(1).join(' ') || ''
-
-            let skills = []
-            if (industry && position && industriesData[industry]) {
-                skills = industriesData[industry][position] || []
-            }
-
-            const payload = {
-                uid: uid,
-                canId: canId,
-                firstName,
-                lastName,
-                industry,
-                position,
-                skills: skills.length > 0 ? skills : undefined,
-                level: level > 0 ? level : undefined
-            }
-
             const url = `${API_URL}/candidate/update/`
             const response = await fetchWithAuth(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
+                body: JSON.stringify(payload)
             })
 
-            if (!response.ok) throw new Error('Update failed');
+            if (!response.ok) {
+                throw new Error('Update failed')
+            }
 
             Toast.show({ type: 'success', text1: 'Profile updated!' })
-            if (onSuccess) onSuccess();
-            onClose();
+            if (onSuccess) onSuccess()
+            onClose()
         } catch (error) {
-            console.error(error);
+            console.error(error)
             Toast.show({ type: 'error', text1: 'Failed to update profile' })
         } finally {
             setIsLoading(false)
         }
     }
+
 
     // --- RENDER HELPERS ---
 
