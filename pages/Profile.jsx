@@ -485,7 +485,7 @@ export default function ProfileScreen() {
           avatarUrl={profileData?.avatar}
           initialEmail={profileData?.email}
           canId={profileData?.canId}
-          onSuccess={fetchCandidates}
+          onSuccess={onRefresh}
           initialPosition={profileData?.role}
           initialIndustry={profileData?.industry}
           initialLevel={profileData?.level}

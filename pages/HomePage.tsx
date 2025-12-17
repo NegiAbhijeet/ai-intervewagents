@@ -18,6 +18,7 @@ import Toast from 'react-native-toast-message';
 const HomePage = ({ route }) => {
     const {
         userProfile,
+        setUserProfile,
         fcmTokenUpdated,
         setFcmTokenUpdated,
         leaderboardRank,
@@ -101,7 +102,15 @@ const HomePage = ({ route }) => {
             );
             const data = await response.json();
             if (data?.data && data?.data.length > 0) {
-                setMyCandidate(data.data[0]);
+                const candidate = data.data[0];
+                if (!candidate?.position || !candidate?.industry || !candidate?.experienceYears) {
+                    setUserProfile((user) => ({
+                        ...user,
+                        position: "",
+                        industry: "",
+                    }));
+                }
+                setMyCandidate(candidate);
             }
         } catch (error) {
             console.error('Failed to fetch candidate:', error);
