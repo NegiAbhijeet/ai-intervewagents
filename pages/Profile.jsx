@@ -484,6 +484,7 @@ export default function ProfileScreen() {
           currentName={profileData?.name}
           avatarUrl={profileData?.avatar}
           initialEmail={profileData?.email}
+          uid={userProfile?.uid}
           canId={profileData?.canId}
           onSuccess={onRefresh}
           initialPosition={profileData?.role}

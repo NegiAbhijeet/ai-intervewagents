@@ -13,7 +13,7 @@ import {
 
 } from 'react-native'
 import fetchWithAuth from '../libs/fetchWithAuth'
-import { JAVA_API_URL } from './config'
+import { API_URL } from './config'
 import Toast from 'react-native-toast-message'
 import Ionicons from '@react-native-vector-icons/ionicons'
 import Layout from '../pages/Layout'
@@ -28,6 +28,7 @@ export default function EditProfileModal({
     initialIndustry,
     initialLevel,
     canId,
+    uid,
     onSuccess,
     language
 }) {
@@ -73,17 +74,19 @@ export default function EditProfileModal({
             }
 
             const payload = {
+                uid: uid,
+                canId: canId,
                 firstName,
                 lastName,
                 industry,
                 position,
-                requiredSkills: skills.length > 0 ? skills : undefined,
-                experienceYears: level > 0 ? level : undefined
+                skills: skills.length > 0 ? skills : undefined,
+                level: level > 0 ? level : undefined
             }
 
-            const url = `${JAVA_API_URL}/api/candidates/update/${canId}`
+            const url = `${API_URL}/candidate/update/`
             const response = await fetchWithAuth(url, {
-                method: 'PUT',
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
             })
