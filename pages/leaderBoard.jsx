@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   FlatList,
+  Pressable,
 } from 'react-native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { useNavigation } from '@react-navigation/native';
@@ -192,8 +193,28 @@ export default function Leaderboard() {
 
 
   const TopUser = ({ user, size }) => {
+    const isMe = user.user_email === userProfile?.user_email;
     return (
-      <View style={{ width: '30%' }}>
+      <Pressable
+        style={{ width: '30%' }}
+        onPress={() => {
+          if (!isMe) {
+            navigation.navigate('othersProfile', {
+              avatar: user.avatar,
+              name: user.user_name,
+              role: user.last_interview_role || 'No recent role',
+              level: user?.experience || 1,
+              trophies: user.rating,
+              totalInterviews: user.total_interviews ?? 0,
+              bestScore: user?.best_avg_percentage || 0,
+              streak: user?.streak || 1,
+              minutes: Math.floor((user.seconds_used || 0) / 60),
+              myUid: userProfile?.uid,
+              userUid: user?.uid
+            });
+          }
+        }}
+      >
         <View
           style={{
             width: '100%',
@@ -259,10 +280,7 @@ export default function Leaderboard() {
             </Text>
           </View>
         </View>
-
-      </View>
-
-
+      </Pressable>
     );
   };
 
