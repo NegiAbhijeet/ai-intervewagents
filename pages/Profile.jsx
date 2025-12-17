@@ -100,16 +100,11 @@ export default function ProfileScreen() {
   async function fetchDetails() {
     try {
       if (userProfile?.uid) {
-        await fetchUserDetails(userProfile?.uid);
+        const profile = await fetchUserDetails(userProfile?.uid);
+        setUserProfile(profile);
       }
     } catch (err) {
       console.log('Error fetching user details:', err);
-    }
-
-    if (profile) {
-      setUserProfile(profile);
-    } else {
-      setUserProfile(null);
     }
   }
   const onRefresh = () => {
