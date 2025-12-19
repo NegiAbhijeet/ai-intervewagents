@@ -4,7 +4,7 @@ import BackgroundGradient1 from '../components/backgroundGradient1';
 import BackgroundGradient2 from '../components/backgroundGradient2';
 import BackgroundGradient3 from '../components/backgroundGradient3';
 
-const Layout = ({ children, gradient = true, gradientType = '2' }) => {
+const Layout = ({ children, gradient = true, gradientType = '2', removePadding }) => {
   const renderGradient = () => {
     if (!gradient) return null;
     if (gradientType === '1') return <BackgroundGradient1 />;
@@ -13,7 +13,7 @@ const Layout = ({ children, gradient = true, gradientType = '2' }) => {
   };
 
   return (
-    <View className="flex-1 px-[5%] bg-white pb-8">
+    <View className={`flex-1 ${removePadding ? 'px-0' : 'px-[5%]'} bg-white`}>
       {renderGradient()}
       {children}
     </View>

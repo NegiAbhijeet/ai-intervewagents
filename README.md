@@ -20,3 +20,6 @@ MYAPP_UPLOAD_KEY_PASSWORD=auring
 ### Fix FIS_AUTH_ERROR
 
 If you get `FIS_AUTH_ERROR`, open `google-services.json`. If multiple `current_key` entries exist in `api_keys`, keep only one and remove the others.
+
+### boxShadow
+boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",

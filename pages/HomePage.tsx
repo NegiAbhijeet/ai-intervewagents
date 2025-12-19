@@ -292,6 +292,9 @@ const HomePage = ({ route }) => {
                     {...firstInterviewObject}
                     showInterviewScreen={true}
                     setShowInterviewScreen={() => setFirstInterviewObject(null)}
+
+                    position={myCandidate?.position || ""}
+                    skills={myCandidate?.requiredSkills || []}
                 />
             )}
 
