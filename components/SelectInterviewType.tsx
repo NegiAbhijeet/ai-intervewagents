@@ -11,7 +11,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SelectInterviewType({ onClose, setSelectedInterviewType }) {
-    const [selectedValue, setSelectedValue] = useState(null);
+    const [selectedValue, setSelectedValue] = useState("technical");
     const Card = ({
         id,
         title,
@@ -95,17 +95,6 @@ export default function SelectInterviewType({ onClose, setSelectedInterviewType 
                 showsVerticalScrollIndicator={false}
             >
                 <Card
-                    id="behavioral"
-                    title="Behavioral"
-                    duration="10–15 mins"
-                    description="Practice answering questions about your past experiences, teamwork, leadership, and problem-solving abilities."
-                    tags={["Leadership", "Teamwork", "Communication"]}
-                    badge="Popular Choice"
-                    badgeIcon="🔥"
-                    icon="people"
-                />
-
-                <Card
                     id="technical"
                     title="Technical"
                     duration="10–15 mins"
@@ -114,6 +103,16 @@ export default function SelectInterviewType({ onClose, setSelectedInterviewType 
                     badge="Most Challenging"
                     badgeIcon="⚡"
                     icon="code"
+                />
+                <Card
+                    id="behavioral"
+                    title="Behavioral"
+                    duration="10–15 mins"
+                    description="Practice answering questions about your past experiences, teamwork, leadership, and problem-solving abilities."
+                    tags={["Leadership", "Teamwork", "Communication"]}
+                    badge="Popular Choice"
+                    badgeIcon="🔥"
+                    icon="people"
                 />
             </ScrollView>
 

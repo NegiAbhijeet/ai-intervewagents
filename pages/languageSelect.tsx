@@ -17,7 +17,7 @@ const STORAGE_KEY = 'user-language';
 
 const LanguageSelectionScreen = () => {
     const { setLangSelected, setLanguage } = useContext(AppStateContext) || {};
-    const [selected, setSelected] = useState(null);
+    const [selected, setSelected] = useState("en");
 
     useEffect(() => {
         let mounted = true;
