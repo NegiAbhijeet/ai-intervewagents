@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Pressable,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Tabs from './Tabs';
@@ -23,6 +24,10 @@ import { useNavigation } from '@react-navigation/native';
 import RewindImage from '../assets/images/Rewind.svg';
 import RetryIamge from '../assets/images/Repeat.svg';
 import { useTranslation } from 'react-i18next';
+import LANGUAGES from '../libs/languages';
+import fetchWithAuth from '../libs/fetchWithAuth';
+import { API_URL } from './config';
+import Toast from 'react-native-toast-message';
 const ReportModal = ({
   visible,
   onClose,
@@ -31,6 +36,10 @@ const ReportModal = ({
   setIsViewDetails,
   isViewSkills,
   setIsViewSkills,
+  setFirstInterviewObject,
+  userProfile,
+  myCandidate,
+  language
 }) => {
   const { t } = useTranslation();
   const feedback = report?.feedback || null;
@@ -38,10 +47,104 @@ const ReportModal = ({
   const [showSummary, setShowSummary] = useState(false);
   const [showImprovementPoints, setShowImprovementPoints] = useState(false);
   const [activeTab, setActiveTab] = useState('details'); //details or transcript
+  const [isInterviewStart, setIsInterviewStart] = useState(false)
+
   function getScoreText(score) {
     if (score <= 25) return t('home.score.bad');
     if (score <= 75) return t('home.score.good');
     return t('home.score.excellent');
+  }
+  const extractMeetingDateTimeParts = dateTime => {
+    const date = new Date(dateTime)
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    const hour = String(date.getHours()).padStart(2, '0')
+    const minute = String(date.getMinutes()).padStart(2, '0')
+
+    return {
+      date: `${year}-${month}-${day}`,
+      hour,
+      minute,
+    }
+  }
+  const onPress = async (report = null) => {
+    try {
+      if (!report) return
+      const now = new Date()
+      const { date, hour, minute } = extractMeetingDateTimeParts(now)
+      const myLanguage = LANGUAGES.find((item) => item?.code === language)
+      const parsedDuration = parseInt(10)
+
+      const payload = {
+        uid: userProfile?.uid,
+        hour,
+        minute,
+        date,
+        duration: parsedDuration * 60,
+        position: myCandidate?.position,
+        role: 'candidate',
+        candidateId: myCandidate?.canId || '',
+        canEmail: userProfile?.email || userProfile?.user_email || '',
+        interviewType: "Technical",
+        type: report?.interviewType || 'practice',
+        requiredSkills: myCandidate?.requiredSkills,
+        experience: myCandidate?.experienceYears || 0,
+        language: myLanguage?.label_en || "English"
+      }
+
+      setIsInterviewStart(true)
+
+      const response = await fetchWithAuth(`${API_URL}/interview-agent/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        const message = errorData?.error || 'Failed to create interview.'
+        throw new Error(message)
+      }
+
+      const result = await response.json().catch(() => ({}))
+      const meetingUrl = result?.meeting_url
+
+      if (meetingUrl) {
+        const urlParams = new URLSearchParams(meetingUrl.split('?')[1] || '')
+        const meetingId = urlParams.get('meetingId')
+        const canId = urlParams.get('canId')
+        const interviewType = urlParams.get('interviewType')
+        const candidateName = urlParams.get('candidateName') || 'User'
+        const interviewTime = urlParams.get('interviewTime')
+
+        const firstPayload = {
+          canId,
+          meetingId,
+          interviewType,
+          interviewTime,
+          candidateName,
+          adminId: userProfile?.uid
+        }
+        setFirstInterviewObject(firstPayload)
+        onClose();
+        navigation.navigate("index")
+
+      } else {
+        throw new Error('No meeting URL returned from server.')
+      }
+    } catch (error) {
+      console.log('handleContinue error:', error)
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: error?.message || 'Something went wrong',
+      })
+    } finally {
+      setIsInterviewStart(false)
+    }
   }
   return (
     <Modal
@@ -263,13 +366,9 @@ const ReportModal = ({
                       <RewindImage />
                     </Pressable>
                     <Pressable
+                      disabled={isInterviewStart}
                       onPress={() => {
-                        navigation.navigate('interview', {
-                          type: report?.interviewType || '',
-                          skills: report?.candidateRequiredSkills || [],
-                          position: report?.position || '',
-                        });
-                        onClose();
+                        onPress(report);
                       }}
                       className="flex-row items-center justify-center gap-4"
                       style={{
@@ -280,16 +379,20 @@ const ReportModal = ({
                         paddingVertical: 10,
                       }}
                     >
-                      <RetryIamge />
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          fontWeight: 700,
-                          color: 'rgba(60, 60, 60, 1)',
-                        }}
-                      >
-                        {t('analysis.tryAgain')}
-                      </Text>
+                      {
+                        isInterviewStart ? <ActivityIndicator size="small" color="#fff" /> :
+                          <> <RetryIamge />
+                            <Text
+                              style={{
+                                fontSize: 16,
+                                fontWeight: 700,
+                                color: 'rgba(60, 60, 60, 1)',
+                              }}
+                            >
+                              {t('analysis.tryAgain')}
+                            </Text></>
+                      }
+
                     </Pressable>
                   </View>
                 </>

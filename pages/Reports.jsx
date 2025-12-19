@@ -27,7 +27,7 @@ import SharePage from './sharePage';
 import StreakProgress from '../components/streakProgress';
 const Reports = ({ route }) => {
   const { t } = useTranslation();
-  const { userProfile, showDailyStreak, setShowDailyStreak, leaderboardRank } = useContext(AppStateContext);
+  const { userProfile, showDailyStreak, setShowDailyStreak, leaderboardRank, setFirstInterviewObject, language, myCandidate } = useContext(AppStateContext);
   const [meetings, setMeetings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -534,6 +534,10 @@ const Reports = ({ route }) => {
             setIsViewDetails={setIsViewDetails}
             isViewSkills={isViewSkills}
             setIsViewSkills={setIsViewSkills}
+            setFirstInterviewObject={setFirstInterviewObject}
+            userProfile={userProfile}
+            language={language}
+            myCandidate={myCandidate}
           />
         </ScrollView>
       </Layout>

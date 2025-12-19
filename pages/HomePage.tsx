@@ -35,7 +35,7 @@ const HomePage = ({ route }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [isInterviewStart, setIsInterviewStart] = useState(false)
     const [isRefreshing, setIsRefreshing] = useState(false);
-
+    const [selectedInterviewType, setSelectedInterviewType] = useState("")
     useEffect(() => {
         if (route.params?.startInterview) {
             handleSubmit("practice")
@@ -215,7 +215,7 @@ const HomePage = ({ route }) => {
                 role: 'candidate',
                 candidateId: myCandidate?.canId || '',
                 canEmail: userProfile?.email || userProfile?.user_email || '',
-                interviewType: "Technical",
+                interviewType: selectedInterviewType || "Technical",
                 type: practiceOrRevise,
                 requiredSkills: myCandidate?.requiredSkills,
                 experience: myCandidate?.experienceYears || 0,
@@ -291,10 +291,12 @@ const HomePage = ({ route }) => {
                 <InterviewScreen
                     {...firstInterviewObject}
                     showInterviewScreen={true}
-                    setShowInterviewScreen={() => setFirstInterviewObject(null)}
+                    setShowInterviewScreen={() => { setFirstInterviewObject(null); setSelectedInterviewType("") }}
 
                     position={myCandidate?.position || ""}
                     skills={myCandidate?.requiredSkills || []}
+                    selectedInterviewType={selectedInterviewType}
+                    setSelectedInterviewType={setSelectedInterviewType}
                 />
             )}
 
