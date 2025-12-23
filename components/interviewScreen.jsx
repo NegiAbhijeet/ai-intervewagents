@@ -611,12 +611,12 @@ const CallUI = ({
                 </TouchableOpacity>
                 :
                 <TouchableOpacity
-                  disabled={!micOn}
+                  disabled={!micOn || isFetching}
                   onPress={handleManualStart}
                   style={{
                     paddingVertical: 18,
                     paddingHorizontal: 28,
-                    backgroundColor: (!micOn) ? 'rgba(255, 255, 255, 0.25)' : "rgba(0,0,0)",
+                    backgroundColor: (!micOn || isFetching) ? 'rgba(255, 255, 255, 0.25)' : "rgba(0,0,0)",
                     borderRadius: 16,
                   }}
                 >

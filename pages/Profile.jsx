@@ -483,18 +483,33 @@ export default function ProfileScreen() {
                 </View>
               </View>
 
-              <View>
-                <View style={{ flexDirection: "row", justifyContent: "flex-start", alignItems: "center" }}>
-                  <Text style={{ fontSize: 16, fontWeight: 600, marginBottom: 16, color: "rgba(60, 60, 60, 1)", textAlign: "left" }}>
+              <View style={{ width: "100%" }}>
+                <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
+                  <Text style={{ width: "100%", fontSize: 16, fontWeight: 600, marginBottom: 16, color: "rgba(60, 60, 60, 1)", textAlign: "center" }}>
                     Certificates Issued
                   </Text>
                 </View>
+
                 {certificateLoading ? (
-                  <Text>Loading certificates...</Text>
+                  <Text style={{ width: "100%", fontSize: 16, fontWeight: 600, marginBottom: 16, textAlign: "center" }}>Loading certificates...</Text>
                 ) : certificatesList.length > 0 ? (
                   <CertificateCarousel certificates={certificatesList} LEVELS={LEVELS} />
                 ) : (
-                  <Text>No certificates available.</Text>
+                  <View style={{ borderRadius: 10, justifyContent: "center", alignItems: "center", width: "90%", marginHorizontal: "auto", height: 200, backgroundColor: "rgba(217, 217, 217, 0.4)", borderWidth: 1, borderColor: "rgba(217, 217, 217, 1)" }}>
+                    <Text style={{ fontSize: 12, fontWeight: 600, color: "rgba(0, 0, 0, 0.5)" }}>No certificates issued.</Text>
+                    <Pressable onPress={() => navigation.navigate('index', { startInterview: true })}>
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          color: 'rgba(121, 18, 195, 1)',
+                          textDecorationLine: 'underline',
+                          textDecorationColor: 'rgba(121, 18, 195, 1)',
+                        }}
+                      >
+                        Start Interview
+                      </Text>
+                    </Pressable>
+                  </View>
                 )}
               </View>
 
