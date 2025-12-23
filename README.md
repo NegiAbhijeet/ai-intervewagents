@@ -23,3 +23,13 @@ If you get `FIS_AUTH_ERROR`, open `google-services.json`. If multiple `current_k
 
 ### boxShadow
 boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+
+
+
+### type
+train => revise
+test => practice
+
+### interviewType
+Technical 
+Behavioural

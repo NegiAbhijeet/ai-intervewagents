@@ -32,7 +32,9 @@ import TopBar from '../components/TopBar';
 import EditProfileModal from '../components/editProfile';
 import { useTranslation } from 'react-i18next';
 import getLevelData from "../libs/getLevelData"
-
+import CertificateCarousel from '../components/CertificateCarousel';
+import EditProfileSkills from '../components/editProfileSkills';
+import getIndustryData from '../libs/getIndustryData';
 export default function ProfileScreen() {
   const {
     userProfile,
@@ -41,7 +43,9 @@ export default function ProfileScreen() {
     firebaseUser,
     setUserProfile,
     resetAppState,
-    setMyCandidate, language
+    setMyCandidate,
+    language,
+    myCandidate
   } = useContext(AppStateContext);
   const { t } = useTranslation();
   const navigation = useNavigation();
@@ -52,7 +56,14 @@ export default function ProfileScreen() {
   const [loading, setLoading] = useState(false);
   const [isEditProfile, setIsEditProfile] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [editSkillVisible, seteditSkillVisible] = useState(false);
+  const [certificateLoading, setCertificateLoading] = useState(false);
+  const [certificatesList, setCertificatesList] = useState([])
+  const closeModal = () => {
+    seteditSkillVisible(false);
+  };
 
+  const [search, setSearch] = useState("");
   const [profileData, setProfileData] = useState({
     canId: "",
     avatar: userProfile?.avatar,
@@ -64,6 +75,28 @@ export default function ProfileScreen() {
     role: "",
     industry: ""
   });
+
+  const industries = useMemo(() => getIndustryData(language) || {}, [language])
+  const allSkills = useMemo(() => {
+    try {
+      if (!myCandidate?.position) return [];
+
+      const skillsSet = new Set();
+
+      Object.values(industries).forEach(industry => {
+        Object.entries(industry).forEach(([role, skills]) => {
+          if (role === myCandidate.position && Array.isArray(skills)) {
+            skills.forEach(skill => skillsSet.add(skill));
+          }
+        });
+      });
+
+      return Array.from(skillsSet);
+    } catch (error) {
+      return [];
+    }
+  }, [industries, myCandidate?.position]);
+
   const fetchCandidates = async () => {
     try {
       const response = await fetchWithAuth(`${JAVA_API_URL}/api/candidates/uid/${userProfile.uid}`);
@@ -89,12 +122,28 @@ export default function ProfileScreen() {
       console.error("Failed to fetch candidate:", error);
     }
   };
-
+  async function fetchCertificates() {
+    try {
+      setCertificateLoading(true)
+      console.log(`${API_URL}/get-certificate/?uid=${userProfile.uid}`)
+      const response = await fetchWithAuth(`${API_URL}/get-certificate/?uid=${userProfile.uid}`);
+      const result = await response.json();
+      if (Array.isArray(result?.certificates)) {
+        console.log("Certificates fetched:", result.certificates);
+        setCertificatesList(result?.certificates)
+      }
+    } catch (error) {
+      console.error("Failed to fetch certificates:", error);
+    } finally {
+      setCertificateLoading(false);
+    }
+  }
 
   const LEVELS = useMemo(() => getLevelData(language) || {}, [language])
   useEffect(() => {
     if (userProfile?.uid) {
       fetchCandidates();
+      fetchCertificates();
     }
   }, [userProfile?.uid]);
   async function fetchDetails() {
@@ -291,6 +340,16 @@ export default function ProfileScreen() {
   return (
     <>
       <TopBar />
+      <EditProfileSkills
+        visible={editSkillVisible}
+        onClose={closeModal}
+        allSkills={allSkills}
+        searchValue={search}
+        onSearchChange={setSearch}
+        myCandidate={myCandidate}
+        setMyCandidate={setMyCandidate}
+      />
+
       <ScrollView
         contentContainerStyle={{ paddingBottom: 60 }}
         showsVerticalScrollIndicator={false}
@@ -377,6 +436,66 @@ export default function ProfileScreen() {
                     value={s.value}
                   />
                 ))}
+              </View>
+
+
+              <View style={{
+                backgroundColor: "rgba(255, 255, 255, 0.25)", borderRadius: 14, marginBottom: 24, paddingBottom: 26, paddingHorizontal: 20,
+                boxShadow: "0px 3.63px 14.5px 0px rgba(251, 207, 232, 0.2), 0px 7.25px 29px 0px rgba(147, 197, 253, 0.3)"
+              }}>
+                <View style={{ width: "100%", flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 16, }}>
+                  <Text style={{ fontSize: 12, fontWeight: 600, color: "rgba(60, 60, 60, 1)" }}>Top Skills</Text>
+                  <Pressable onPress={() => seteditSkillVisible(true)}>
+                    <Text style={{ fontSize: 12, fontWeight: 600, color: "rgba(149, 29, 202, 1)" }}>
+                      Edit
+                    </Text>
+                  </Pressable>
+
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    gap: 8,
+                  }}
+                >
+                  {(myCandidate?.requiredSkills || []).map((tag, i) => (
+                    <View
+                      key={i}
+                      style={{
+                        borderRadius: 6,
+                        paddingHorizontal: 10,
+                        paddingVertical: 4,
+                        backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          color: 'rgba(60, 60, 60, 1)',
+                          fontWeight: 500,
+                        }}
+                      >
+                        {tag}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+
+              <View>
+                <View style={{ flexDirection: "row", justifyContent: "flex-start", alignItems: "center" }}>
+                  <Text style={{ fontSize: 16, fontWeight: 600, marginBottom: 16, color: "rgba(60, 60, 60, 1)", textAlign: "left" }}>
+                    Certificates Issued
+                  </Text>
+                </View>
+                {certificateLoading ? (
+                  <Text>Loading certificates...</Text>
+                ) : certificatesList.length > 0 ? (
+                  <CertificateCarousel certificates={certificatesList} LEVELS={LEVELS} />
+                ) : (
+                  <Text>No certificates available.</Text>
+                )}
               </View>
 
               <View style={{ width: '100%', backgroundColor: "rgba(255, 255, 255, 0.4)", padding: 16, borderRadius: 18, marginTop: 24, gap: 12 }}>

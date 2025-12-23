@@ -13,12 +13,13 @@ import {
   ImageBackground,
 } from 'react-native';
 import { AppStateContext } from './AppContext';
-import { API_URL } from './config';
+import { API_URL, JAVA_API_URL } from './config';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import Toast from 'react-native-toast-message';
 import BackgroundGradient2 from './backgroundGradient2';
 import { useTranslation } from 'react-i18next';
 import LANGUAGES from '../libs/languages';
+import fetchUserDetails from '../libs/fetchUser';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const CONTAINER_HORIZONTAL_PADDING = 0; // total horizontal padding inside screenWrap
 const COLUMNS = 3;
@@ -41,7 +42,7 @@ export default function AvatarSelectionScreen({ route }) {
   } = route?.params || {};
   const [step, setStep] = useState(1);
 
-  const { userProfile, setUserProfile, setFirstInterviewObject, language } = useContext(AppStateContext);
+  const { userProfile, setUserProfile, setFirstInterviewObject, language, myCandidate, setMyCandidate } = useContext(AppStateContext);
   const { t } = useTranslation();
   const [userName, setUserName] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(null);
@@ -68,6 +69,60 @@ export default function AvatarSelectionScreen({ route }) {
       minute,
     };
   };
+
+  handleCandidateUpdate = async () => {
+    try {
+      const parts = (userName || '').trim().split(/\s+/);
+      const firstName = parts[0] || '';
+      const lastName = parts.length > 1 ? parts.slice(1).join(' ') : '';
+      const skillsPayload = (
+        Array.isArray(selectedSkills)
+          ? selectedSkills
+          : selectedSkills
+            ? [selectedSkills]
+            : []
+      ).slice(0, 5);
+
+      const payload = {
+        firstName: firstName,
+        lastName: lastName,
+        industry: selectedIndustry,
+        position: selectedRole,
+        requiredSkills: skillsPayload,
+        experienceYears: selectedLevel,
+      };
+      setIsLoading(true);
+      const response = await fetchWithAuth(`${JAVA_API_URL}/api/candidates/update/${myCandidate?.canId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        const message = errorData?.error || 'Failed to update candidate.';
+        throw new Error(message);
+      }
+      const updatedProfile = await response.json().catch(() => ({}));
+      const newUserProfile = updatedProfile?.data || {}
+      if (newUserProfile?.canId) {
+        console.log('Updated candidate profile:', newUserProfile);
+        setMyCandidate(newUserProfile);
+        const profile = fetchUserDetails(newUserProfile?.uid)
+        setUserProfile(profile)
+      }
+    } catch (error) {
+      console.log('handleCandidateUpdate error:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: error?.message || 'Something went wrong',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
   const handleContinue = async () => {
     try {
       if (step === 1 && userName) {
@@ -78,6 +133,11 @@ export default function AvatarSelectionScreen({ route }) {
         return;
       }
 
+      if (myCandidate?.canId) {
+        await handleCandidateUpdate();
+        return
+      }
+
       const now = new Date();
       const { date, hour, minute } = extractMeetingDateTimeParts(now);
 
@@ -86,11 +146,14 @@ export default function AvatarSelectionScreen({ route }) {
       const lastName = parts.length > 1 ? parts.slice(1).join(' ') : '';
 
       // Ensure skills is an array
-      const skillsPayload = Array.isArray(selectedSkills)
-        ? selectedSkills
-        : selectedSkills
-          ? [selectedSkills]
-          : [];
+      const skillsPayload = (
+        Array.isArray(selectedSkills)
+          ? selectedSkills
+          : selectedSkills
+            ? [selectedSkills]
+            : []
+      ).slice(0, 5);
+
       const myLanguage = LANGUAGES.find((item) => item?.code === language)
       const payload = {
         uid: userProfile?.uid,

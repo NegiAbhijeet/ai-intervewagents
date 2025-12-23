@@ -86,11 +86,12 @@ const ReportModal = ({
         role: 'candidate',
         candidateId: myCandidate?.canId || '',
         canEmail: userProfile?.email || userProfile?.user_email || '',
-        interviewType: "Technical",
-        type: report?.interviewType || 'practice',
+        interviewType: report?.interviewType || "Technical",
+        type: report?.type || 'practice',
         requiredSkills: myCandidate?.requiredSkills,
         experience: myCandidate?.experienceYears || 0,
-        language: myLanguage?.label_en || "English"
+        language: myLanguage?.label_en || "English",
+        difficultyLevel: report?.difficultyLevel
       }
 
       setIsInterviewStart(true)

@@ -5,58 +5,99 @@
             "Python",
             "Data Structures & Algorithms",
             "Git",
-            "SQL"
+            "SQL",
+            "REST APIs",
+            "System Design",
+            "Unit Testing",
+            "Agile Methodologies",
+            "Design Patterns"
         ],
         "Full Stack Developer": [
             "React",
             "Node.js",
             "MongoDB",
             "Express.js",
-            "JavaScript"
+            "JavaScript",
+            "TypeScript",
+            "REST APIs",
+            "GraphQL",
+            "HTML/CSS",
+            "Authentication & Authorization"
         ],
         "Data Scientist": [
             "Python",
             "Machine Learning",
             "Pandas",
             "Tableau",
-            "SQL"
+            "SQL",
+            "Statistics",
+            "Data Cleaning",
+            "Feature Engineering",
+            "Model Evaluation",
+            "Data Visualization"
         ],
         "Machine Learning Engineer": [
             "Python",
             "TensorFlow",
             "PyTorch",
             "Kubernetes",
-            "Docker"
+            "Docker",
+            "Model Deployment",
+            "ML Pipelines",
+            "Feature Stores",
+            "Distributed Training",
+            "Model Monitoring"
         ],
         "DevOps Engineer": [
             "Docker",
             "Kubernetes",
             "Jenkins",
             "Terraform",
-            "AWS"
+            "AWS",
+            "CI/CD Pipelines",
+            "Linux Administration",
+            "Infrastructure as Code",
+            "Monitoring Tools",
+            "Shell Scripting"
         ],
         "Cloud Engineer": [
             "AWS",
             "Azure",
             "Terraform",
             "Kubernetes",
-            "Python"
+            "Python",
+            "Cloud Networking",
+            "Cost Optimization",
+            "Cloud Security",
+            "Serverless Architecture",
+            "Monitoring Tools"
         ],
         "Cybersecurity Analyst": [
             "Network Security",
             "Penetration Testing",
             "SIEM",
             "Python",
-            "Wireshark"
+            "Wireshark",
+            "Incident Response",
+            "Threat Intelligence",
+            "Vulnerability Assessment",
+            "Firewall Management",
+            "Risk Analysis"
         ],
         "Product Manager": [
             "JIRA",
             "SQL",
             "Figma",
             "Google Analytics",
-            "Excel"
+            "Excel",
+            "Roadmap Planning",
+            "User Research",
+            "Stakeholder Management",
+            "PRD Writing",
+            "A/B Testing"
         ]
     },
+
     "CAT Preparation": {
         "Personal Interview": [
             "Self Introduction",
@@ -66,7 +107,12 @@
             "Body Language",
             "Current Affairs Awareness",
             "Mock Interview Practice",
-            "Communication Skills"
+            "Communication Skills",
+            "Confidence Building",
+            "Ethical Reasoning",
+            "Structured Thinking",
+            "Stress Handling",
+            "Answer Framing"
         ],
         "Group Discussion": [
             "Idea Structuring",
@@ -76,529 +122,903 @@
             "Team Interaction",
             "Time Management",
             "Topic Analysis",
-            "Current Affairs Awareness"
+            "Current Affairs Awareness",
+            "Leadership Skills",
+            "Conflict Resolution",
+            "Consensus Building",
+            "Fact-based Argumentation",
+            "Summarization Skills"
         ]
     },
+
     "Banking, Finance and Insurance": {
         "Financial Analyst": [
             "Excel",
             "Financial Modeling",
             "SQL",
             "Bloomberg Terminal",
-            "PowerPoint"
+            "PowerPoint",
+            "Valuation Techniques",
+            "Forecasting",
+            "Variance Analysis",
+            "Financial Reporting",
+            "Business Analysis"
         ],
         "Investment Banker": [
             "Excel",
             "PowerPoint",
             "Financial Modeling",
             "Bloomberg Terminal",
-            "Capital IQ"
+            "Capital IQ",
+            "Mergers & Acquisitions",
+            "Valuation",
+            "Pitch Deck Creation",
+            "Deal Structuring",
+            "Due Diligence"
         ],
         "Risk Analyst": [
             "Python",
             "R",
             "SQL",
             "Excel",
-            "SAS"
+            "SAS",
+            "Market Risk Analysis",
+            "Credit Risk Modeling",
+            "Stress Testing",
+            "Scenario Analysis",
+            "Risk Reporting"
         ],
         "Corporate Finance Analyst": [
             "Excel",
             "SAP",
             "Oracle",
             "PowerPoint",
-            "SQL"
+            "SQL",
+            "Budgeting",
+            "Forecasting",
+            "Capital Budgeting",
+            "Cost Analysis",
+            "Financial Planning"
         ],
         "Compliance Officer": [
             "AML/KYC",
             "Risk Assessment",
             "Regulatory Knowledge",
             "Audit Tools",
-            "MS Office"
+            "MS Office",
+            "Compliance Monitoring",
+            "Internal Audits",
+            "Regulatory Reporting",
+            "Policy Drafting",
+            "Fraud Detection"
         ],
         "Fintech Product Manager": [
             "SQL",
             "JIRA",
             "API Integration",
             "Figma",
-            "Google Analytics"
+            "Google Analytics",
+            "Payment Systems",
+            "User Journey Mapping",
+            "Regulatory Awareness",
+            "Agile Practices",
+            "Product Roadmapping"
         ],
         "Credit Risk Manager": [
             "Python",
             "SAS",
             "Excel",
             "SQL",
-            "R"
+            "R",
+            "Credit Scoring Models",
+            "Portfolio Analysis",
+            "Stress Testing",
+            "Risk Mitigation",
+            "Regulatory Compliance"
         ],
         "Portfolio Manager": [
             "Bloomberg Terminal",
             "Excel",
             "Financial Modeling",
             "Python",
-            "Risk Management Tools"
+            "Risk Management Tools",
+            "Asset Allocation",
+            "Performance Attribution",
+            "Investment Strategy",
+            "Market Research",
+            "Client Reporting"
         ]
     },
+
     "Engineering": {
         "Design Engineer": [
             "AutoCAD",
             "SolidWorks",
             "CATIA",
             "ANSYS",
-            "Creo"
+            "Creo",
+            "GD&T",
+            "DFMEA",
+            "Material Selection",
+            "Tolerance Analysis",
+            "Prototype Testing"
         ],
         "Project Manager": [
             "MS Project",
             "Primavera P6",
             "AutoCAD",
             "Excel",
-            "SAP"
+            "SAP",
+            "Risk Management",
+            "Stakeholder Coordination",
+            "Budget Control",
+            "Scheduling",
+            "Contract Management"
         ],
         "Mechanical Engineer": [
             "AutoCAD",
             "SolidWorks",
             "Lean Manufacturing",
             "SAP",
-            "CNC Programming"
+            "CNC Programming",
+            "Thermal Analysis",
+            "Quality Control",
+            "Root Cause Analysis",
+            "Maintenance Planning",
+            "Material Science"
         ],
         "Civil Site Engineer": [
             "AutoCAD",
             "Civil 3D",
             "Primavera",
             "MS Project",
-            "Total Station"
+            "Total Station",
+            "Site Supervision",
+            "Quantity Surveying",
+            "Safety Management",
+            "Concrete Technology",
+            "Vendor Coordination"
         ],
         "Electrical Design Engineer": [
             "AutoCAD Electrical",
             "ETAP",
             "MATLAB",
             "PLC Programming",
-            "EPLAN"
+            "EPLAN",
+            "Load Calculations",
+            "Power System Analysis",
+            "Panel Design",
+            "Short Circuit Analysis",
+            "Standards Compliance"
         ],
         "Process Engineer": [
             "Aspen HYSYS",
             "Aspen Plus",
             "Six Sigma",
             "AutoCAD",
-            "MATLAB"
+            "MATLAB",
+            "Process Optimization",
+            "Root Cause Analysis",
+            "P&ID Development",
+            "Equipment Sizing",
+            "Cost Reduction"
         ],
         "Automation Engineer": [
             "PLC Programming",
             "SCADA",
             "Siemens TIA Portal",
             "Allen Bradley",
-            "HMI"
+            "HMI",
+            "Industrial Networking",
+            "System Integration",
+            "Control Logic Design",
+            "Commissioning",
+            "Troubleshooting"
         ],
         "Quality Control Engineer": [
             "ISO 9001",
             "Statistical Process Control",
             "Minitab",
             "Six Sigma",
-            "CMM"
+            "CMM",
+            "Inspection Planning",
+            "Root Cause Analysis",
+            "Quality Audits",
+            "Documentation",
+            "Continuous Improvement"
         ]
     },
+
     "Data Science and Analytics": {
         "Data Scientist": [
             "Python",
             "Machine Learning",
             "Pandas",
             "SQL",
-            "Scikit-learn"
+            "Scikit-learn",
+            "Statistics",
+            "Feature Engineering",
+            "Model Evaluation",
+            "Data Visualization",
+            "Business Insights"
         ],
         "Machine Learning Engineer": [
             "Python",
             "TensorFlow",
             "PyTorch",
             "Docker",
-            "Kubernetes"
+            "Kubernetes",
+            "Model Deployment",
+            "ML Pipelines",
+            "Monitoring Models",
+            "Distributed Systems",
+            "Feature Stores"
         ],
         "Data Analyst": [
             "SQL",
             "Excel",
             "Tableau",
             "Power BI",
-            "Python"
+            "Python",
+            "Data Cleaning",
+            "Dashboard Design",
+            "Business Reporting",
+            "Statistical Analysis",
+            "Data Validation"
         ],
         "Data Engineer": [
             "SQL",
             "Python",
             "Apache Spark",
             "Airflow",
-            "AWS"
+            "AWS",
+            "ETL Pipelines",
+            "Data Warehousing",
+            "Streaming Data",
+            "Performance Optimization",
+            "Data Modeling"
         ],
         "Business Intelligence Analyst": [
             "Tableau",
             "Power BI",
             "SQL",
             "Excel",
-            "DAX"
+            "DAX",
+            "KPI Development",
+            "Dashboard Optimization",
+            "Business Analysis",
+            "Data Storytelling",
+            "Stakeholder Reporting"
         ],
         "MLOps Engineer": [
             "Docker",
             "Kubernetes",
             "MLflow",
             "Python",
-            "Jenkins"
+            "Jenkins",
+            "CI/CD for ML",
+            "Model Versioning",
+            "Monitoring Pipelines",
+            "Infrastructure Automation",
+            "Cloud Deployment"
         ],
         "Data Architect": [
             "SQL",
             "MongoDB",
             "Snowflake",
             "AWS Redshift",
-            "ETL Tools"
+            "ETL Tools",
+            "Data Governance",
+            "Schema Design",
+            "Cloud Architecture",
+            "Security Controls",
+            "Scalability Planning"
         ],
         "NLP Engineer": [
             "Python",
             "NLTK",
             "spaCy",
             "Transformers",
-            "PyTorch"
+            "PyTorch",
+            "Text Preprocessing",
+            "Language Models",
+            "Fine-tuning Models",
+            "Information Retrieval",
+            "Evaluation Metrics"
         ]
     },
+
     "Consulting and Business Strategy": {
         "Management Consultant": [
             "PowerPoint",
             "Excel",
             "Tableau",
             "SQL",
-            "Market Research Tools"
+            "Market Research Tools",
+            "Problem Structuring",
+            "Client Communication",
+            "Hypothesis Testing",
+            "Storyboarding",
+            "Executive Presentations"
         ],
         "Strategy Consultant": [
             "Excel",
             "PowerPoint",
             "Financial Modeling",
             "Tableau",
-            "SQL"
+            "SQL",
+            "Market Entry Analysis",
+            "Competitive Analysis",
+            "Business Case Development",
+            "Growth Strategy",
+            "Scenario Planning"
         ],
         "Corporate Strategy Analyst": [
             "Excel",
             "PowerPoint",
             "SQL",
             "Tableau",
-            "Financial Modeling"
+            "Financial Modeling",
+            "Strategic Planning",
+            "Market Analysis",
+            "Performance Tracking",
+            "Investment Analysis",
+            "Executive Reporting"
         ],
         "Operations Consultant": [
             "Lean Six Sigma",
             "Excel",
             "Process Mapping Tools",
             "SQL",
-            "Tableau"
+            "Tableau",
+            "Operational Excellence",
+            "Change Management",
+            "Cost Reduction",
+            "Workflow Optimization",
+            "KPI Tracking"
         ],
         "Digital Transformation Consultant": [
             "Cloud Platforms (AWS, Azure)",
             "Agile Tools (JIRA)",
             "PowerPoint",
             "Tableau",
-            "SQL"
+            "SQL",
+            "Technology Roadmaps",
+            "Process Automation",
+            "Change Management",
+            "Digital Strategy",
+            "Stakeholder Alignment"
         ],
         "Financial Consultant": [
             "Excel",
             "Financial Planning Software",
             "QuickBooks",
             "SAP",
-            "PowerPoint"
+            "PowerPoint",
+            "Wealth Management",
+            "Tax Planning",
+            "Investment Advisory",
+            "Client Relationship Management",
+            "Risk Profiling"
         ],
         "HR Strategy Consultant": [
             "HRIS Systems",
             "Excel",
             "PowerPoint",
             "Tableau",
-            "Survey Tools"
+            "Survey Tools",
+            "Workforce Planning",
+            "Talent Analytics",
+            "Compensation Strategy",
+            "Change Management",
+            "Employee Engagement"
         ],
         "Sustainability": [
             "ESG Reporting Tools",
             "Excel",
             "Tableau",
             "PowerPoint",
-            "Carbon Accounting Software"
+            "Carbon Accounting Software",
+            "Sustainability Strategy",
+            "Regulatory Compliance",
+            "Impact Assessment",
+            "Stakeholder Reporting",
+            "Climate Risk Analysis"
         ]
     },
+
     "Aviation and Aerospace": {
         "Commercial Pilot": [
             "CPL License",
             "ATPL License",
             "Flight Simulators",
             "Navigation Systems",
-            "Aviation Regulations"
+            "Aviation Regulations",
+            "Crew Resource Management",
+            "Flight Planning",
+            "Weather Interpretation",
+            "Emergency Procedures",
+            "Aircraft Systems Knowledge"
         ],
         "Aircraft Maintenance Engineer": [
             "Aircraft Systems",
             "AME License",
             "Troubleshooting Tools",
             "DGCA Regulations",
-            "Maintenance Software"
+            "Maintenance Software",
+            "Scheduled Maintenance",
+            "Fault Diagnosis",
+            "Technical Documentation",
+            "Quality Checks",
+            "Safety Compliance"
         ],
         "Aerospace Engineer": [
             "CATIA",
             "SolidWorks",
             "ANSYS",
             "MATLAB",
-            "Simulink"
+            "Simulink",
+            "Aerodynamics",
+            "Structural Analysis",
+            "Flight Mechanics",
+            "Materials Engineering",
+            "System Integration"
         ],
         "Avionics Engineer": [
             "Embedded Systems",
             "Circuit Design",
             "MATLAB",
             "DO-178C",
-            "Testing Tools"
+            "Testing Tools",
+            "Signal Processing",
+            "Flight Control Systems",
+            "Hardware Integration",
+            "Software Validation",
+            "Fault Analysis"
         ],
         "Flight Operations Manager": [
             "Flight Planning Software",
             "Safety Management Systems",
             "DGCA Regulations",
             "Excel",
-            "Resource Management Tools"
+            "Resource Management Tools",
+            "Crew Scheduling",
+            "Operational Planning",
+            "Risk Management",
+            "Performance Monitoring",
+            "Compliance Reporting"
         ],
         "Aviation Safety Officer": [
             "Safety Management Systems (SMS)",
             "DGCA Regulations",
             "Risk Assessment Tools",
             "Audit Software",
-            "Incident Reporting Systems"
+            "Incident Reporting Systems",
+            "Safety Audits",
+            "Root Cause Analysis",
+            "Compliance Monitoring",
+            "Training Programs",
+            "Emergency Response Planning"
         ],
         "Aerospace Project Manager": [
             "MS Project",
             "Primavera",
             "CATIA",
             "Risk Management Tools",
-            "Excel"
+            "Excel",
+            "Program Scheduling",
+            "Cost Control",
+            "Stakeholder Coordination",
+            "Quality Assurance",
+            "Contract Management"
         ],
         "Air Traffic Controller": [
             "Radar Systems",
             "Communication Systems",
             "Air Traffic Control Procedures",
             "Flight Planning Software",
-            "Navigation Tools"
+            "Navigation Tools",
+            "Situational Awareness",
+            "Decision Making",
+            "Stress Management",
+            "Emergency Handling",
+            "Coordination Skills"
         ]
     },
+
     "Shipping, Logistics and Supply Chain": {
         "Supply Chain Manager": [
             "SAP",
             "Oracle SCM",
             "Excel",
             "Demand Planning Software",
-            "ERP Systems"
+            "ERP Systems",
+            "Inventory Optimization",
+            "Supplier Coordination",
+            "Logistics Planning",
+            "Cost Management",
+            "Performance Metrics"
         ],
         "Logistics Manager": [
             "Transportation Management Systems (TMS)",
             "Warehouse Management Systems (WMS)",
             "Excel",
             "SAP",
-            "Route Optimization Software"
+            "Route Optimization Software",
+            "Fleet Management",
+            "Vendor Coordination",
+            "Cost Control",
+            "Delivery Planning",
+            "Compliance Management"
         ],
         "Procurement Specialist": [
             "SAP",
             "Oracle Procurement",
             "Excel",
             "Negotiation Tools",
-            "ERP Systems"
+            "ERP Systems",
+            "Vendor Evaluation",
+            "Contract Management",
+            "Cost Analysis",
+            "Supplier Audits",
+            "Purchase Planning"
         ],
         "Warehouse Manager": [
             "Warehouse Management Systems (WMS)",
             "SAP",
             "Excel",
             "Inventory Management Software",
-            "Barcode Scanners"
+            "Barcode Scanners",
+            "Space Optimization",
+            "Inventory Audits",
+            "Labor Management",
+            "Safety Compliance",
+            "Process Improvement"
         ],
         "Export-Import Executive": [
             "Customs Software",
             "Incoterms",
             "Excel",
             "Documentation Tools",
-            "Shipping Software"
+            "Shipping Software",
+            "Trade Compliance",
+            "Freight Coordination",
+            "Duty Calculation",
+            "Regulatory Documentation",
+            "Vendor Coordination"
         ],
         "Supply Chain Analyst": [
             "Excel",
             "Tableau",
             "SQL",
             "SAP",
-            "Power BI"
+            "Power BI",
+            "Demand Forecasting",
+            "Data Analysis",
+            "KPI Tracking",
+            "Process Optimization",
+            "Cost Analysis"
         ],
         "Global Sourcing Manager": [
             "SAP",
             "Oracle",
             "Excel",
             "Supplier Management Tools",
-            "ERP Systems"
+            "ERP Systems",
+            "Strategic Sourcing",
+            "Contract Negotiation",
+            "Risk Management",
+            "Cost Optimization",
+            "Vendor Development"
         ],
         "Transportation Planner": [
             "Transportation Management Systems (TMS)",
             "Route Optimization Software",
             "Excel",
             "GIS Software",
-            "SAP"
+            "SAP",
+            "Capacity Planning",
+            "Cost Analysis",
+            "Carrier Management",
+            "Scheduling",
+            "Performance Monitoring"
         ]
     },
+
     "Renewable Energy and Solar": {
         "Solar Design Engineer": [
             "PVsyst",
             "AutoCAD",
             "Helioscope",
             "SketchUp",
-            "MATLAB"
+            "MATLAB",
+            "System Sizing",
+            "Shading Analysis",
+            "Layout Optimization",
+            "Electrical Design",
+            "Performance Modeling"
         ],
         "Project Manager": [
             "MS Project",
             "Primavera P6",
             "AutoCAD",
             "Excel",
-            "SAP"
+            "SAP",
+            "Budget Control",
+            "Vendor Management",
+            "Risk Planning",
+            "Timeline Management",
+            "Stakeholder Coordination"
         ],
         "Operations & Maintenance Engineer": [
             "SCADA Systems",
             "PVsyst",
             "Monitoring Software",
             "Troubleshooting Tools",
-            "Safety Equipment"
+            "Safety Equipment",
+            "Preventive Maintenance",
+            "Fault Diagnosis",
+            "Performance Analysis",
+            "Reporting",
+            "Compliance Checks"
         ],
         "Battery Systems Engineer": [
             "MATLAB",
             "Simulink",
             "Battery Management Systems (BMS)",
             "Power Electronics Design",
-            "Testing Equipment"
+            "Testing Equipment",
+            "Cell Chemistry Knowledge",
+            "Thermal Management",
+            "System Integration",
+            "Safety Analysis",
+            "Lifecycle Testing"
         ],
         "Renewable Energy Consultant": [
             "PVsyst",
             "HOMER",
             "Excel",
             "Financial Modeling",
-            "RETScreen"
+            "RETScreen",
+            "Energy Audits",
+            "Project Feasibility",
+            "Cost-Benefit Analysis",
+            "Policy Knowledge",
+            "Client Advisory"
         ],
         "Business Development": [
             "CRM Software",
             "Excel",
             "PowerPoint",
             "Market Research Tools",
-            "PVsyst"
+            "PVsyst",
+            "Lead Generation",
+            "Client Relationship Management",
+            "Proposal Development",
+            "Market Analysis",
+            "Negotiation Skills"
         ],
         "Energy Policy Analyst": [
             "Excel",
             "Statistical Software",
             "Policy Research Tools",
             "Tableau",
-            "PowerPoint"
+            "PowerPoint",
+            "Regulatory Analysis",
+            "Impact Assessment",
+            "Policy Drafting",
+            "Stakeholder Engagement",
+            "Reporting"
         ],
         "Microgrid Engineer": [
             "HOMER",
             "MATLAB",
             "Simulink",
             "ETAP",
-            "Power System Design Software"
+            "Power System Design Software",
+            "Load Flow Analysis",
+            "Grid Integration",
+            "Energy Storage Systems",
+            "Protection Systems",
+            "Control Strategies"
         ]
     },
+
     "Manufacturing and Production": {
         "Production Engineer": [
             "AutoCAD",
             "Lean Manufacturing",
             "SAP",
             "Six Sigma",
-            "CNC Programming"
+            "CNC Programming",
+            "Production Planning",
+            "Process Optimization",
+            "Quality Control",
+            "Cost Reduction",
+            "Safety Management"
         ],
         "Process Engineer": [
             "Aspen HYSYS",
             "Six Sigma",
             "AutoCAD",
             "MATLAB",
-            "Process Simulation Software"
+            "Process Simulation Software",
+            "Process Optimization",
+            "Root Cause Analysis",
+            "P&ID Development",
+            "Equipment Sizing",
+            "Cost Reduction"
         ],
         "Quality Assurance Engineer": [
             "ISO 9001",
             "Minitab",
             "Six Sigma",
             "Statistical Process Control",
-            "Quality Management Software"
+            "Quality Management Software",
+            "Audit Planning",
+            "Root Cause Analysis",
+            "Documentation",
+            "Continuous Improvement",
+            "Supplier Quality"
         ],
         "Maintenance Engineer": [
             "CMMS Software",
             "AutoCAD",
             "Troubleshooting Tools",
             "SAP",
-            "Vibration Analysis Tools"
+            "Vibration Analysis Tools",
+            "Preventive Maintenance",
+            "Breakdown Analysis",
+            "Spare Parts Management",
+            "Equipment Reliability",
+            "Safety Compliance"
         ],
         "Procurement Engineer": [
             "SAP",
             "Oracle",
             "Excel",
             "ERP Systems",
-            "Vendor Management Software"
+            "Vendor Management Software",
+            "Cost Analysis",
+            "Contract Negotiation",
+            "Supplier Evaluation",
+            "Inventory Planning",
+            "Purchase Optimization"
         ],
         "R&D Engineer": [
             "CAD Software",
             "SolidWorks",
             "ANSYS",
             "MATLAB",
-            "Prototyping Tools"
+            "Prototyping Tools",
+            "Product Development",
+            "Design Validation",
+            "Material Research",
+            "Testing & Analysis",
+            "Innovation Management"
         ],
         "EHS Officer": [
             "Safety Management Software",
             "Risk Assessment Tools",
             "ISO 45001",
             "Incident Management Systems",
-            "Audit Tools"
+            "Audit Tools",
+            "Compliance Monitoring",
+            "Safety Training",
+            "Emergency Response",
+            "Hazard Identification",
+            "Reporting"
         ],
         "Plant Manager": [
             "SAP",
             "Lean Six Sigma",
             "Excel",
             "ERP Systems",
-            "Production Planning Software"
+            "Production Planning Software",
+            "Operations Management",
+            "Cost Control",
+            "Team Leadership",
+            "Performance Monitoring",
+            "Continuous Improvement"
         ]
     },
+
     "Healthcare and Pharmaceuticals": {
         "Physician": [
             "EMR/EHR Systems",
             "Medical Diagnosis",
             "Clinical Procedures",
             "HIPAA Compliance",
-            "Medical Imaging Software"
+            "Medical Imaging Software",
+            "Patient Consultation",
+            "Treatment Planning",
+            "Clinical Documentation",
+            "Evidence-based Practice",
+            "Medical Ethics"
         ],
         "Nurse": [
             "EMR/EHR Systems",
             "IV Administration",
             "Patient Monitoring Systems",
             "Medication Management",
-            "Clinical Procedures"
+            "Clinical Procedures",
+            "Patient Care",
+            "Vital Signs Monitoring",
+            "Wound Care",
+            "Infection Control",
+            "Patient Education"
         ],
         "Pharmacist": [
             "Pharmacy Management Systems",
             "Drug Database Software",
             "Prescription Processing",
             "Inventory Management",
-            "Clinical Knowledge"
+            "Clinical Knowledge",
+            "Medication Counseling",
+            "Drug Interaction Analysis",
+            "Regulatory Compliance",
+            "Quality Assurance",
+            "Pharmacovigilance"
         ],
         "Clinical Research Associate": [
             "GCP Guidelines",
             "Clinical Trial Management Systems",
             "EDC Systems",
             "Regulatory Documentation",
-            "Site Monitoring"
+            "Site Monitoring",
+            "Protocol Adherence",
+            "Data Verification",
+            "Investigator Coordination",
+            "Audit Preparation",
+            "Clinical Reporting"
         ],
         "Biomedical Engineer": [
             "CAD Software",
             "MATLAB",
             "Medical Device Design",
             "FDA Regulations",
-            "Testing Equipment"
+            "Testing Equipment",
+            "Risk Analysis",
+            "Product Validation",
+            "Quality Standards",
+            "Technical Documentation",
+            "System Integration"
         ],
         "Hospital Administrator": [
             "Hospital Information Systems",
             "Excel",
             "SAP",
             "Healthcare Compliance",
-            "Budget Management Software"
+            "Budget Management Software",
+            "Operations Management",
+            "Staff Coordination",
+            "Policy Implementation",
+            "Vendor Management",
+            "Performance Reporting"
         ],
         "Medical Representative": [
             "CRM Software",
             "PowerPoint",
             "Product Knowledge",
             "Excel",
-            "Territory Management Tools"
+            "Territory Management Tools",
+            "Doctor Engagement",
+            "Sales Forecasting",
+            "Market Analysis",
+            "Relationship Building",
+            "Negotiation Skills"
         ],
         "Public Health Officer": [
             "Epidemiological Software",
             "Statistical Analysis Tools",
             "Excel",
             "SPSS",
-            "Health Surveillance Systems"
+            "Health Surveillance Systems",
+            "Data Interpretation",
+            "Policy Implementation",
+            "Program Monitoring",
+            "Public Health Reporting",
+            "Community Engagement"
         ]
     }
 }

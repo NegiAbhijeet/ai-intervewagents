@@ -14,6 +14,8 @@ import { useTranslation } from 'react-i18next';
 import LANGUAGES from '../libs/languages';
 import StreakProgress from '../components/streakProgress';
 import Toast from 'react-native-toast-message';
+import LinearGradient from 'react-native-linear-gradient';
+import SelectInterviewType from '../components/SelectInterviewType';
 
 const HomePage = ({ route }) => {
     const {
@@ -36,9 +38,13 @@ const HomePage = ({ route }) => {
     const [isInterviewStart, setIsInterviewStart] = useState(false)
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [selectedInterviewType, setSelectedInterviewType] = useState("")
+    const [selectedType, setSelectedType] = useState("")
+    const [openSelectInterviewOptions, setOpenSelectInterviewOptions] = useState(false)
+    function streakHandleSubmit() { setSelectedType("Practice"); setOpenSelectInterviewOptions(true) }
+
     useEffect(() => {
         if (route.params?.startInterview) {
-            handleSubmit("practice")
+            streakHandleSubmit()
         }
     }, [route.params?.startInterview]);
 
@@ -189,7 +195,7 @@ const HomePage = ({ route }) => {
             minute,
         };
     };
-    const handleSubmit = async (practiceOrRevise) => {
+    const handleSubmit = async (type, interviewType, difficulty) => {
         try {
             if (!myCandidate?.position) {
                 Toast.show({
@@ -215,11 +221,12 @@ const HomePage = ({ route }) => {
                 role: 'candidate',
                 candidateId: myCandidate?.canId || '',
                 canEmail: userProfile?.email || userProfile?.user_email || '',
-                interviewType: selectedInterviewType || "Technical",
-                type: practiceOrRevise,
+                interviewType: interviewType || "Technical",
+                type: type || "Practice",
                 requiredSkills: myCandidate?.requiredSkills,
                 experience: myCandidate?.experienceYears || 0,
-                language: myLanguage?.label_en || "English"
+                language: myLanguage?.label_en || "English",
+                difficultyLevel: difficulty || "Easy",
             };
 
 
@@ -297,12 +304,16 @@ const HomePage = ({ route }) => {
                     skills={myCandidate?.requiredSkills || []}
                     selectedInterviewType={selectedInterviewType}
                     setSelectedInterviewType={setSelectedInterviewType}
+                    handleSubmit={handleSubmit}
                 />
             )}
 
             <Layout>
                 {
-                    showDailyStreak && firstInterviewObject === null && <StreakProgress currentDay={Math.max(1, leaderboardRank)} setShowDailyStreak={setShowDailyStreak} isHome={true} handleSubmit={handleSubmit} />
+                    showDailyStreak && firstInterviewObject === null && <StreakProgress currentDay={Math.max(1, leaderboardRank)} setShowDailyStreak={setShowDailyStreak} isHome={true} streakHandleSubmit={() => { streakHandleSubmit() }} />
+                }
+                {
+                    openSelectInterviewOptions && selectedType && <SelectInterviewType onClose={() => { setFirstInterviewObject(null); setOpenSelectInterviewOptions(false); }} type={selectedType} setSelectedInterviewType={setSelectedInterviewType} handleSubmit={handleSubmit} />
                 }
                 <ScrollView
                     showsVerticalScrollIndicator={false}
@@ -352,7 +363,7 @@ const HomePage = ({ route }) => {
                                 }}
                             />
                         ) : (
-                            <Pressable onPress={() => { handleSubmit(lastMeeting?.type) }}>
+                            <Pressable onPress={() => { handleSubmit(lastMeeting?.type, lastMeeting?.interviewType, lastMeeting?.difficultyLevel); }}>
                                 <Image
                                     source={require('../assets/images/reload.png')}
                                     style={{ width: 28, height: 28, resizeMode: 'contain' }}
@@ -360,32 +371,48 @@ const HomePage = ({ route }) => {
                             </Pressable>
                         )}
                     </View>
-
-                    <View style={{ marginBottom: 40 }}>
-                        <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: '700', lineHeight: 21, marginBottom: 18, marginTop: 25 }}>
-                            {t('home.chooseMode')}
-                        </Text>
-
-                        {interviews.map(({ title, description, icon, value, bottomLine }, index) => (
-                            <Pressable key={index} onPress={() => handleSubmit(value)} style={{ marginBottom: 8 }}>
-                                <ImageBackground source={require('../assets/images/homeCardWrapper.png')} style={{ width: '100%', aspectRatio: 371 / 209 }} imageStyle={{ resizeMode: 'contain' }}>
-                                    <View style={{ position: 'absolute', height: '100%', width: '100%', top: 0, left: 0, padding: 16, justifyContent: 'center', alignItems: 'center' }}>
-                                        <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-                                            <Image source={icon} />
-                                            <Text style={{ fontSize: 16, fontWeight: '600', lineHeight: 20 }}>
-                                                {title}
-                                            </Text>
+                    <View style={{ paddingHorizontal: 6 }}>
+                        <View style={styles.parent}>
+                            <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: 600, lineHeight: 21, marginBottom: 20 }}>
+                                {t('home.chooseMode')}
+                            </Text>
+                            {interviews.map(
+                                ({ title, description, value }, index) => (
+                                    <View key={index} style={styles.card}>
+                                        <View style={{ flexDirection: "row", alignItems: 'center', marginBottom: 8, gap: 6 }}>
+                                            <Image source={value === 'Revise' ? require("../assets/images/trainer.png") : require("../assets/images/mock.png")} style={{ width: 16, height: 16, }} />
+                                            <Text style={styles.cardTitle}>{title}</Text>
                                         </View>
-                                        <Text style={{ fontSize: 12, fontWeight: '500', lineHeight: 20, marginTop: 16, textAlign: 'center', color: 'rgba(60,60,60,1)' }}>
+
+                                        <Text style={styles.cardDescription}>
                                             {description}
                                         </Text>
+
+                                        <Pressable
+                                            onPress={() => { setSelectedType(value); setOpenSelectInterviewOptions(true); }}
+                                            style={styles.button}
+                                        >
+                                            <LinearGradient
+                                                colors={['rgba(135, 68, 236, 1)', 'rgba(99, 88, 239, 1)']}
+                                                start={{ x: 0, y: 0 }}
+                                                end={{ x: 1, y: 0 }}
+                                                style={{
+                                                    borderRadius: 9999,
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center',
+                                                    paddingVertical: 7,
+                                                    paddingHorizontal: 28,
+                                                }}
+                                            >
+                                                <Text style={styles.buttonText}>
+                                                    {value === 'Revise' ? 'Train Now' : 'Test Now'}
+                                                </Text>
+                                            </LinearGradient>
+                                        </Pressable>
                                     </View>
-                                    <Text style={{ position: 'absolute', bottom: 8, left: '50%', transform: [{ translateX: "-50%" }], color: 'white', fontSize: 12 }}>
-                                        {bottomLine}
-                                    </Text>
-                                </ImageBackground>
-                            </Pressable>
-                        ))}
+                                )
+                            )}
+                        </View>
                     </View>
                 </ScrollView>
             </Layout>
@@ -394,7 +421,6 @@ const HomePage = ({ route }) => {
 };
 
 export default HomePage;
-
 
 const styles = StyleSheet.create({
     modalOverlay: {
@@ -418,5 +444,51 @@ const styles = StyleSheet.create({
     },
     spinner: {
         transform: [{ scale: 1 }]
-    }
+    },
+
+    parent: {
+        backgroundColor: 'rgba(255, 255, 255, 0.5)',
+        borderRadius: 18,
+        padding: 20,
+        marginVertical: 40,
+        boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.15), 0px -1px 4px 0px rgba(0, 0, 0, 0.15)",
+    },
+    heading: {
+        fontSize: 18,
+        fontWeight: '600',
+        textAlign: 'center',
+        marginBottom: 16,
+        color: '#111',
+    },
+    card: {
+        backgroundColor: 'rgba(242, 242, 242, 0.5)',
+        borderRadius: 10,
+        padding: 16,
+        marginBottom: 12,
+        alignItems: 'center',
+        boxShadow: "0px 1px 4px 0px rgba(0, 0, 0, 0.20)",
+    },
+    cardTitle: {
+        fontSize: 16,
+        fontWeight: 500,
+        color: '#111',
+    },
+    cardDescription: {
+        fontSize: 12,
+        textAlign: 'center',
+        color: 'rgba(60, 60, 60, 1)',
+        marginBottom: 16,
+        lineHeight: 18,
+        fontWeight: 400
+    },
+    button: {
+        width: "70%"
+    },
+    buttonText: {
+        color: '#FFF',
+        fontSize: 17,
+        fontWeight: 700,
+        width: '100%',
+        textAlign: 'center'
+    },
 })

@@ -7,11 +7,18 @@ import {
     ScrollView,
     TouchableOpacity,
     Pressable,
+    Modal,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import DifficultyDropdown from "../components/DifficultyDropdown";
+import Layout from "../pages/Layout";
 
-export default function SelectInterviewType({ onClose, setSelectedInterviewType }) {
+const OPTIONS = ["Easy", "Moderate", "Challenging"];
+
+export default function SelectInterviewType({ onClose, setSelectedInterviewType, handleSubmit, type }) {
     const [selectedValue, setSelectedValue] = useState("technical");
+    const [difficulty, setDifficulty] = useState(OPTIONS[0] || "Easy");
+
     const Card = ({
         id,
         title,
@@ -28,10 +35,7 @@ export default function SelectInterviewType({ onClose, setSelectedInterviewType 
             <TouchableOpacity
                 activeOpacity={0.9}
                 onPress={() => setSelectedValue(id)}
-                style={[
-                    styles.card,
-                    // isSelected && styles.cardSelected,
-                ]}
+                style={styles.card}
             >
                 <View style={styles.cardHeader}>
                     <View style={styles.iconBox}>
@@ -43,8 +47,8 @@ export default function SelectInterviewType({ onClose, setSelectedInterviewType 
                         <Text style={styles.cardDuration}>{duration}</Text>
                     </View>
 
-                    <View style={[styles.radio]}>
-                        <View style={isSelected ? styles.radioSelected : { display: "none" }}></View>
+                    <View style={styles.radio}>
+                        <View style={isSelected ? styles.radioSelected : { display: "none" }} />
                     </View>
                 </View>
 
@@ -58,7 +62,7 @@ export default function SelectInterviewType({ onClose, setSelectedInterviewType 
                     ))}
                 </View>
 
-                <View style={{ width: "100%", height: 1, backgroundColor: "rgba(0, 0, 0, 0.1)", marginVertical: 14 }}></View>
+                <View style={{ width: "100%", height: 1, backgroundColor: "rgba(0, 0, 0, 0.1)", marginVertical: 14 }} />
 
                 <View style={styles.badgeRow}>
                     <Text style={styles.badgeIconSmall}>{badgeIcon}</Text>
@@ -69,76 +73,105 @@ export default function SelectInterviewType({ onClose, setSelectedInterviewType 
     };
 
     return (
-        <SafeAreaView style={styles.container}>
-            <Pressable
-                style={{
-                    borderWidth: 0.8,
-                    borderColor: "rgba(217, 217, 217, 1)",
-                    width: 40,
-                    height: 40,
-                    borderRadius: 999,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginTop: 8,
-                }}
-                onPress={onClose}
-            >
-                <Ionicons name="close" size={28} color="#000" />
-            </Pressable>
-            <Text style={styles.title}>Select Interview Type</Text>
-            <Text style={styles.subtitle}>
-                Pick an interview type and start improving.
-            </Text>
+        <Modal visible={true} animationType="slide" presentationStyle="fullScreen">
+            <Layout removePadding={true}>
+                <SafeAreaView style={styles.container}>
+                    <Pressable
+                        style={{
+                            borderWidth: 0.8,
+                            borderColor: "rgba(217, 217, 217, 1)",
+                            width: 40,
+                            height: 40,
+                            borderRadius: 999,
+                            alignItems: "center",
+                            justifyContent: "center",
+                            marginTop: 8,
+                            marginLeft: 16,
+                        }}
+                        onPress={onClose}
+                    >
+                        <Ionicons name="close" size={28} color="#000" />
+                    </Pressable>
 
-            <ScrollView
-                contentContainerStyle={styles.scrollContent}
-                showsVerticalScrollIndicator={false}
-            >
-                <Card
-                    id="technical"
-                    title="Technical"
-                    duration="10–15 mins"
-                    description="Test your coding skills, algorithms, data structures, and system design knowledge with real-world technical challenges."
-                    tags={["Algorithms", "Data Structures", "System Design"]}
-                    badge="Most Challenging"
-                    badgeIcon="⚡"
-                    icon="code"
-                />
-                <Card
-                    id="behavioral"
-                    title="Behavioral"
-                    duration="10–15 mins"
-                    description="Practice answering questions about your past experiences, teamwork, leadership, and problem-solving abilities."
-                    tags={["Leadership", "Teamwork", "Communication"]}
-                    badge="Popular Choice"
-                    badgeIcon="🔥"
-                    icon="people"
-                />
-            </ScrollView>
+                    <ScrollView
+                        contentContainerStyle={styles.scrollContent}
+                        showsVerticalScrollIndicator={false}
+                    >
+                        <Text style={styles.title}>Select Interview Type</Text>
+                        <Text style={styles.subtitle}>
+                            Pick an interview type and start improving.
+                        </Text>
 
-            <TouchableOpacity
-                disabled={!selectedValue}
-                style={[
-                    styles.startButton,
-                    !selectedValue && styles.startButtonDisabled,
-                ]}
-                onPress={() => setSelectedInterviewType(selectedValue)}
-            >
-                <Text style={styles.startButtonText}>Start Interview</Text>
-            </TouchableOpacity>
-        </SafeAreaView>
+                        <View style={{ marginVertical: 32 }}>
+                            <Text
+                                style={{
+                                    fontSize: 14,
+                                    color: "rgba(60, 60, 60, 1)",
+                                    marginBottom: 8,
+                                    fontWeight: 600
+                                }}
+                            >
+                                Choose Difficulty
+                            </Text>
+
+                            <DifficultyDropdown
+                                value={difficulty}
+                                onChange={setDifficulty}
+                                OPTIONS={OPTIONS}
+                            />
+                        </View>
+
+                        <Card
+                            id="technical"
+                            title="Technical"
+                            duration="10–15 mins"
+                            description="Evaluation of your specific skills and problem-solving abilities to ensure you can perform the core tasks of the job. (Popular choice)"
+                            tags={["Algorithms", "Data Structures", "System Design"]}
+                            badge="Most Challenging"
+                            badgeIcon="⚡"
+                            icon="code"
+                        />
+
+                        <Card
+                            id="behavioral"
+                            title="Behavioral"
+                            duration="10–15 mins"
+                            description="Discussion of your past experiences and soft skills to determine how you handle work challenges and fit into the company culture."
+                            tags={["Leadership", "Teamwork", "Communication"]}
+                            badge="Popular Choice"
+                            badgeIcon="🔥"
+                            icon="people"
+                        />
+                    </ScrollView>
+
+                    <TouchableOpacity
+                        disabled={!selectedValue}
+                        style={[
+                            styles.startButton,
+                            !selectedValue && styles.startButtonDisabled,
+                        ]}
+                        onPress={() => { setSelectedInterviewType(selectedValue); handleSubmit(type, selectedValue, difficulty) }}
+                    >
+                        <Text style={styles.startButtonText}>Start Interview</Text>
+                    </TouchableOpacity>
+                </SafeAreaView>
+            </Layout>
+        </Modal>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        width: "100%",
+        height: "100%",
+        // backgroundColor: "#FFFFFF",
+        paddingHorizontal: 12
     },
     title: {
         fontSize: 24,
         fontWeight: "700",
         color: "rgba(60, 60, 60, 1)",
-
         width: "100%",
         textAlign: "center",
     },
@@ -147,12 +180,12 @@ const styles = StyleSheet.create({
         fontWeight: 400,
         color: "rgba(0, 0, 0, 0.8)",
         marginTop: 6,
-        marginBottom: 20,
         textAlign: "center",
     },
     scrollContent: {
         paddingBottom: 24,
-        padding: 16
+        paddingHorizontal: 16,
+        paddingVertical: 4
     },
     card: {
         borderRadius: 16,
@@ -161,11 +194,6 @@ const styles = StyleSheet.create({
         backgroundColor: "rgba(255, 255, 255, 0.2)",
         boxShadow: "0px 8.19px 10.24px -6.14px rgba(0, 0, 0, 0.1), 0px 20.48px 25.6px -5.12px rgba(0, 0, 0, 0.1), 0px -1px 4px 0px rgba(0, 0, 0, 0.2)",
     },
-    cardSelected: {
-        borderWidth: 1.5,
-        borderColor: "#FFFFFF",
-    },
-
     cardHeader: {
         flexDirection: "row",
         alignItems: "center",
@@ -179,10 +207,6 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         marginRight: 12,
-    },
-    iconText: {
-        color: "#FFFFFF",
-        fontSize: 16,
     },
     cardTitle: {
         fontSize: 16,
@@ -202,8 +226,6 @@ const styles = StyleSheet.create({
         borderColor: "#8f8fa3ff",
     },
     radioSelected: {
-        display: "flex",
-        borderColor: "rgba(60, 60, 60, 1)",
         backgroundColor: "rgba(60, 60, 60, 1)",
         width: 16,
         height: 16,
@@ -211,10 +233,11 @@ const styles = StyleSheet.create({
         margin: 2,
     },
     cardDescription: {
-        fontSize: 13,
+        fontSize: 14,
         color: "#3A3A45",
         marginVertical: 10,
         lineHeight: 18,
+        fontWeight: 400
     },
     tagRow: {
         flexDirection: "row",
@@ -252,7 +275,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginBottom: 12,
         width: "85%",
-        marginHorizontal: "auto"
+        alignSelf: "center",
+        marginVertical: 10
     },
     startButtonDisabled: {
         backgroundColor: "rgba(255, 255, 255, 0.25)",

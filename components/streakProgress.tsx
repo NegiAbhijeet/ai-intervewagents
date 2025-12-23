@@ -13,7 +13,7 @@ const INACTIVE_BG = 'rgba(156, 163, 175, 1)'
 const MUTED_TEXT = '#8A8A8A'
 const itemWidth = 70
 
-export default function StreakProgress({ visible = true, daysCount = 100, currentDay = 1, isHome = false, handleSubmit = () => { }, setShowDailyStreak }) {
+export default function StreakProgress({ visible = true, daysCount = 100, currentDay = 1, isHome = false, streakHandleSubmit = () => { }, setShowDailyStreak }) {
     const navigation = useNavigation()
     async function markDailyStreakShown() {
         const key = STREAK_KEY
@@ -32,10 +32,11 @@ export default function StreakProgress({ visible = true, daysCount = 100, curren
     });
     function onStart() {
         if (isHome) {
-            handleSubmit()
+            streakHandleSubmit()
         } else {
             navigation.navigate('index', { startInterview: true })
         }
+        setShowDailyStreak(false)
     }
 
     return (
