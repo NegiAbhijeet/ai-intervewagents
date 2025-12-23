@@ -6,6 +6,7 @@ import {
     TouchableOpacity,
     Modal,
     TouchableWithoutFeedback,
+    StatusBar,
 } from "react-native";
 import Ionicons from "@react-native-vector-icons/ionicons";
 
@@ -17,9 +18,10 @@ export default function DifficultyDropdown({ value, onChange, OPTIONS }) {
     useEffect(() => {
         if (visible && triggerRef.current) {
             triggerRef.current.measure((fx, fy, width, height, px, py) => {
+                const statusBarHeight = StatusBar.currentHeight || 0;
                 setPosition({
                     x: px,
-                    y: py + height + 4,
+                    y: py + height + 4 - statusBarHeight,
                     width,
                 });
             });

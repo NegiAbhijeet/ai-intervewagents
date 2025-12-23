@@ -54,13 +54,13 @@ export default function SelectInterviewType({ onClose, setSelectedInterviewType,
 
                 <Text style={styles.cardDescription}>{description}</Text>
 
-                <View style={styles.tagRow}>
+                {/* <View style={styles.tagRow}>
                     {tags.map(tag => (
                         <View key={tag} style={styles.tag}>
                             <Text style={styles.tagText}>{tag}</Text>
                         </View>
                     ))}
-                </View>
+                </View> */}
 
                 <View style={{ width: "100%", height: 1, backgroundColor: "rgba(0, 0, 0, 0.1)", marginVertical: 14 }} />
 
@@ -73,7 +73,7 @@ export default function SelectInterviewType({ onClose, setSelectedInterviewType,
     };
 
     return (
-        <Modal visible={true} animationType="slide" presentationStyle="fullScreen">
+        <Modal visible={true} animationType="slide" presentationStyle="fullScreen" statusBarTranslucent={true}>
             <Layout removePadding={true}>
                 <SafeAreaView style={styles.container}>
                     <Pressable
@@ -125,7 +125,7 @@ export default function SelectInterviewType({ onClose, setSelectedInterviewType,
                             id="technical"
                             title="Technical"
                             duration="10–15 mins"
-                            description="Evaluation of your specific skills and problem-solving abilities to ensure you can perform the core tasks of the job. (Popular choice)"
+                            description="Evaluation of your specific skills and problem-solving abilities to ensure you can perform the core tasks of the job."
                             tags={["Algorithms", "Data Structures", "System Design"]}
                             badge="Most Challenging"
                             badgeIcon="⚡"
@@ -235,9 +235,9 @@ const styles = StyleSheet.create({
     cardDescription: {
         fontSize: 14,
         color: "#3A3A45",
-        marginVertical: 10,
+        marginTop: 10,
         lineHeight: 18,
-        fontWeight: 400
+        fontWeight: 400,
     },
     tagRow: {
         flexDirection: "row",
