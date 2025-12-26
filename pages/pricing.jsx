@@ -1,31 +1,29 @@
-// CandidatePricing.js
 import React, { useEffect, useState, useContext } from 'react';
 import {
   View,
   Text,
-  FlatList,
   TouchableOpacity,
-  ActivityIndicator,
   StyleSheet,
+  Image,
   Modal,
-  Pressable,
-  Linking,
+  TextInput,
 } from 'react-native';
-import { AppStateContext } from '../components/AppContext';
+import { ScrollView } from 'react-native-gesture-handler';
+import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
+
+import { AppStateContext } from '../components/AppContext';
 import { API_URL } from '../components/config';
-import PaymentPopup from '../components/PaymentPopup';
 import fetchWithAuth from '../libs/fetchWithAuth';
+
+import Layout from './Layout';
 import CustomHeader from '../components/customHeader';
-const formatPrice = p =>
-  p === null || p === undefined ? 'Custom pricing' : `₹ ${p}`;
+import PaymentPopup from '../components/PaymentPopup';
+import { Picker } from '@react-native-picker/picker';
+import Ionicons from '@react-native-vector-icons/ionicons';
 
-const defaultIconLetter = (name = '') => {
-  const n = name.toString().trim().toUpperCase().slice(0, 1);
-  return n || 'P';
-};
+/* ================= skeleton ================= */
 
-// Simple skeleton row
 function SkeletonCard() {
   return (
     <View style={[styles.card, styles.skeletonCard]}>
@@ -38,103 +36,49 @@ function SkeletonCard() {
   );
 }
 
-// Minimal PaymentButton that calls the onPay function
-function PaymentButton({ priceValue, onPay, text = 'Buy Now', disabled }) {
-  return (
-    <TouchableOpacity
-      onPress={() => !disabled && onPay()}
-      style={[styles.button, disabled && styles.buttonDisabled]}
-      activeOpacity={0.8}
-    >
-      <Text style={styles.buttonText}>
-        {text} {priceValue ? `(${formatPrice(priceValue)})` : ''}
-      </Text>
-    </TouchableOpacity>
-  );
-}
+/* ================= main screen ================= */
 
 export default function PricingPage() {
   const { userProfile, setUserProfile } = useContext(AppStateContext);
   const navigation = useNavigation();
-  const [plans, setPlans] = useState([]);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [billingSelected, setBillingSelected] = useState({});
+
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [paymentModalVisible, setPaymentModalVisible] = useState(false);
+  const [selectedPrice, setSelectedPrice] = useState(null);
+  const [referralModalVisible, setReferralModalVisible] = useState(false);
+  const [couponCode, setCouponCode] = useState('');
+  const [myPlan, setMyPlan] = useState(null);
 
   useEffect(() => {
+    console.log("++++++++++++++++++++++++++1")
     const controller = new AbortController();
 
     const fetchPlans = async () => {
       setLoading(true);
       setError(null);
+
       try {
         const res = await fetchWithAuth(`${API_URL}/api/plans`, {
           signal: controller.signal,
         });
 
         if (!res.ok) {
-          const text = await res.text().catch(() => '');
-          throw new Error(`Failed to load plans: ${res.status} ${text}`);
+          throw new Error('Failed to load plans');
         }
 
         const data = await res.json();
-        console.log('raw plans response:', data);
-
-        // support array responses and wrapped responses like { plans: [...] } or { data: [...] }
         const plansArray = Array.isArray(data)
           ? data
           : data.plans ?? data.data ?? [];
-        if (!Array.isArray(plansArray))
-          throw new Error('Unexpected response shape: expected array of plans');
 
-        const filtered = plansArray
-          .filter(p => p && typeof p.id === 'number')
-          .filter(p => p.id !== 6 && p.id !== 7)
-          .filter(p => p.id === 1 || p.id === 2);
-
-        const transformed = filtered.map(p => {
-          const rawPrices =
-            p.prices == null
-              ? []
-              : Array.isArray(p.prices)
-                ? p.prices
-                : [p.prices];
-
-          const prices = rawPrices.map(pr => ({
-            id: pr.id,
-            interval: pr.interval,
-            price: pr.price,
-            features: pr.features ?? null,
-            is_active: pr.is_active,
-            total_seconds: pr.total_seconds ?? 0,
-            free_seconds: pr.free_seconds ?? 0,
-            max_sub_users: pr.max_sub_users ?? 0,
-            plan: pr.plan ?? null,
-          }));
-
-          return {
-            id: p.id,
-            name: p.name,
-            description: p.description ?? p.name,
-            icon:
-              typeof defaultIcon === 'function' ? defaultIcon(p.name) : null,
-            prices,
-            buttonText:
-              p.id === 1
-                ? 'Start Free'
-                : p.id === 5
-                  ? 'Book a Demo'
-                  : 'Buy Now',
-            max_sub_users: p.max_sub_users ?? 0,
-          };
-        });
-
-        setPlans(transformed);
+        const plan = plansArray.find(p => p.id === 2);
+        console.log('My plan:', plan);
+        setMyPlan(plan ?? null);
       } catch (err) {
-        console.error('fetchPlans error:', err);
-        setError(err.message ?? 'Unable to load plans.');
+        setError(err.message);
       } finally {
         setLoading(false);
       }
@@ -143,153 +87,21 @@ export default function PricingPage() {
     fetchPlans();
     return () => controller.abort();
   }, []);
-
-  const handlePerPlanToggle = planId => {
-    setBillingSelected(prev => {
-      const current = prev[planId] === 'yearly' ? 'monthly' : 'yearly';
-      return { ...prev, [planId]: current };
-    });
-  };
-
-  const effectiveBillingFor = plan => {
-    const selected = billingSelected[plan.id];
-    if (selected && plan.prices.some(pr => pr.interval === selected))
-      return selected;
-    if (plan.prices.some(pr => pr.interval === 'monthly')) return 'monthly';
-    if (plan.prices.some(pr => pr.interval === 'yearly')) return 'yearly';
-    return plan.prices[0]?.interval || 'monthly';
-  };
-
-  const onBuyPress = (plan, priceObj, billing) => {
-    // if plan id 1 and user exists, go to dashboard
-    if (plan.id === 1 && userProfile?.uid) {
-      navigation.navigate('Login');
-      return;
+  useEffect(() => {
+    if (myPlan?.prices?.length) {
+      const active = myPlan.prices.find(p => p.is_active);
+      setSelectedPrice(active);
     }
-    // if plan is demo id 5 open calendly link
-    if (plan.id === 5) {
-      Linking.openURL('https://calendly.com/saurabhdocsightai-com/30min');
-      return;
-    }
-    // if not logged in send to login
+  }, [myPlan]);
+
+  const onBuyPress = () => {
     if (!userProfile?.uid) {
       navigation.navigate('Login');
       return;
     }
-    // otherwise open payment modal
-    setSelectedPlan({
-      ...plan,
-      selectedPrice: priceObj,
-      selectedBilling: billing,
-    });
+
+    setSelectedPlan(myPlan);
     setPaymentModalVisible(true);
-  };
-
-  const renderPlan = ({ item: plan }) => {
-    const effectiveBilling = effectiveBillingFor(plan);
-    const priceObj =
-      plan.prices.find(pr => pr.interval === effectiveBilling) ||
-      plan.prices.find(pr => pr.interval === 'monthly') ||
-      plan.prices[0] ||
-      null;
-    const displayPrice = formatPrice(priceObj?.price);
-    const displayPeriodLabel = "/month"
-    // effectiveBilling === 'monthly' ? '/month' : '/year';
-    const features =
-      typeof priceObj?.features === 'string'
-        ? priceObj.features
-          .split(',')
-          .map(f => f.trim())
-          .filter(Boolean)
-        : [];
-
-    const hasMonthly = plan.prices.some(pr => pr.interval === 'monthly');
-    const hasYearly = plan.prices.some(pr => pr.interval === 'yearly');
-    const showToggle = hasMonthly && hasYearly;
-
-    const isCurrentPlan = userProfile?.plan?.id === plan?.id;
-
-    return (
-      <TouchableOpacity activeOpacity={0.95} style={styles.card}>
-        <View style={styles.cardHeader}>
-          <View style={styles.iconCircle}>
-            <Text style={styles.iconLetter}>
-              {defaultIconLetter(plan.name)}
-            </Text>
-          </View>
-          <View style={styles.headerText}>
-            <Text style={styles.planName}>{plan.name}</Text>
-            <Text style={styles.planDesc}>{plan.description}</Text>
-          </View>
-        </View>
-
-        <View style={styles.priceRow}>
-          <Text style={styles.priceLarge}>{displayPrice}</Text>
-          <Text style={styles.pricePeriod}>{displayPeriodLabel}</Text>
-        </View>
-
-        {showToggle && (
-          <View style={styles.toggleRow}>
-            <TouchableOpacity
-              onPress={() => handlePerPlanToggle(plan.id)}
-              style={styles.toggleButton}
-            >
-              <Text style={styles.toggleText}>
-                Billing:{' '}
-                {billingSelected[plan.id] === 'yearly' ? 'Yearly' : 'Monthly'}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        )}
-
-        <View style={styles.features}>
-          {features.length === 0 ? (
-            <Text style={styles.noFeaturesText}>No features listed</Text>
-          ) : (
-            features.map((f, i) => (
-              <View key={i} style={styles.featureRow}>
-                <Text style={styles.bullet}>•</Text>
-                <Text style={styles.featureText}>{f}</Text>
-              </View>
-            ))
-          )}
-        </View>
-
-        <View style={styles.cardFooter}>
-          {isCurrentPlan ? (
-            <View style={[styles.button, styles.disabledPrimary]}>
-              <Text style={styles.buttonText}>Current Plan</Text>
-            </View>
-          ) : plan.id === 5 ? (
-            <TouchableOpacity
-              onPress={() =>
-                Linking.openURL(
-                  'https://calendly.com/saurabhdocsightai-com/30min',
-                )
-              }
-              style={styles.button}
-            >
-              <Text style={styles.buttonText}>{plan.buttonText}</Text>
-            </TouchableOpacity>
-          ) : plan.id === 1 ? (
-            <TouchableOpacity
-              onPress={() => {
-                if (!userProfile?.uid) navigation.navigate('Login');
-              }}
-              style={[styles.button, styles.buttonDisabled]}
-            >
-              <Text style={styles.buttonText}>{plan.buttonText}</Text>
-            </TouchableOpacity>
-          ) : (
-            <PaymentButton
-              priceValue={priceObj?.price}
-              text={plan.buttonText}
-              onPay={() => onBuyPress(plan, priceObj, effectiveBilling)}
-            />
-          )}
-        </View>
-      </TouchableOpacity>
-    );
   };
 
   if (loading) {
@@ -310,178 +122,471 @@ export default function PricingPage() {
   }
 
   return (
-    <View style={styles.container}>
-      <CustomHeader
-        title="Pricing"
-      />
-      <FlatList
-        data={plans}
-        keyExtractor={item => item.id.toString()}
-        renderItem={renderPlan}
-        contentContainerStyle={styles.listContainer}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>No candidate plans available</Text>
+    <Layout>
+      <CustomHeader title="Pricing" removePadding />
+      <Modal
+        transparent
+        visible={referralModalVisible}
+        animationType="fade"
+        onRequestClose={() => setReferralModalVisible(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.modalCard}>
+            <TouchableOpacity
+              style={styles.closeBtn}
+              onPress={() => setReferralModalVisible(false)}
+            >
+              <Text style={styles.closeText}>×</Text>
+            </TouchableOpacity>
+
+            <Text style={styles.modalTitle}>Enter Your Referral code</Text>
+
+            <TextInput
+              value={couponCode}
+              onChangeText={setCouponCode}
+              placeholder="Enter your code (eg. SAVE20)"
+              placeholderTextColor="#999"
+              autoCapitalize="characters"
+              style={styles.input}
+            />
           </View>
-        }
-      />
-      {userProfile?.uid && (
-        <PaymentPopup
-          visible={paymentModalVisible}
-          selectedPlan={selectedPlan}
-          onClose={() => {
-            setPaymentModalVisible(false);
-            setSelectedPlan(null);
-          }}
-          uid={userProfile?.uid}
-          setUserProfile={setUserProfile}
-        />
-      )}
-    </View>
+        </View>
+      </Modal>
+
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.container}>
+          <View style={styles.headerRow}>
+            <View style={styles.brandRow}>
+              <Text style={styles.brandText}>AI Interview Agent</Text>
+              <LinearGradient
+                colors={['rgba(142, 69, 239, 1)', 'rgba(95, 91, 240, 1)']}
+                style={styles.proBadge}
+              >
+                <Text style={styles.proText}>PRO</Text>
+              </LinearGradient>
+            </View>
+          </View>
+
+          <Text style={styles.title}>
+            Unlock Your Interview{'\n'}Success Potential
+          </Text>
+
+          <View style={styles.featureList}>
+            <View style={styles.mascotWrapper}>
+              <Image
+                source={require('../assets/images/pricingPeng.png')}
+                style={styles.mascot}
+              />
+            </View>
+
+
+            {[
+              {
+                title: 'Unlimited AI Interviews',
+                desc: 'Practice with no limits across all industries',
+              },
+              {
+                title: 'Advance performance Analytics',
+                desc: 'Track progress with personalized insights',
+              },
+              {
+                title: 'Priority Support',
+                desc: 'Get help when you need it most',
+              },
+              {
+                title: 'Smart Job Recommendations',
+                desc: 'Job suggestions based on your performance.',
+              },
+            ].map((item, i) => (
+              <View key={i} style={styles.featureRow}>
+                <View style={styles.checkCircle}>
+                  <Text style={styles.check}>✓</Text>
+                </View>
+
+                <View style={styles.featureTextWrap}>
+                  <Text style={styles.featureTitle}>{item.title}</Text>
+                  <Text style={styles.featureDesc}>{item.desc}</Text>
+                </View>
+              </View>
+            ))}
+          </View>
+
+          {selectedPrice && (
+            <View style={styles.bottomCard}>
+              <View style={styles.priceRow}>
+                <View style={styles.priceBox}>
+                  <Text style={styles.priceText}>₹ {selectedPrice.price}</Text>
+                </View>
+
+                <View style={styles.durationBox}>
+                  <View style={styles.pickerWrapper}>
+                    <Picker
+                      selectedValue={selectedPrice.id}
+                      onValueChange={value => {
+                        const priceObj = myPlan.prices.find(p => p.id === value);
+                        setSelectedPrice(priceObj);
+                      }}
+                      style={styles.hiddenPicker}
+                      dropdownIconColor="transparent"
+                    >
+                      {myPlan.prices.map(item => (
+                        <Picker.Item
+                          key={item.id}
+                          label={`${item.interval} MONTHS`}
+                          value={item.id}
+                        />
+                      ))}
+                    </Picker>
+
+                    <View pointerEvents="none" style={styles.pickerOverlay}>
+                      <Text style={styles.pickerText}>
+                        {selectedPrice.interval} MONTHS
+                      </Text>
+                      <Ionicons
+                        name="chevron-down"
+                        color="#fff"
+                        style={styles.customArrow}
+                      />
+
+                    </View>
+                  </View>
+
+                </View>
+              </View>
+
+              <TouchableOpacity onPress={() => setReferralModalVisible(true)}>
+                <Text style={styles.referralText}>Have a referral code?</Text>
+              </TouchableOpacity>
+
+              <View style={styles.subscribeWrap}>
+                <TouchableOpacity
+                  style={styles.bottomSubscribeBtn}
+                  onPress={() => {
+                    setPaymentModalVisible(false);
+                    setSelectedPlan({
+                      ...myPlan,
+                      selectedPrice,
+                    });
+                    onBuyPress();
+                  }}
+                >
+                  <Text style={styles.bottomSubscribeText}>Subscribe Now</Text>
+                </TouchableOpacity>
+              </View>
+
+            </View>
+          )}
+
+
+        </View>
+
+        {userProfile?.uid && paymentModalVisible && (
+          <PaymentPopup
+            visible={paymentModalVisible}
+            selectedPlan={selectedPlan}
+            uid={userProfile.uid}
+            setUserProfile={setUserProfile}
+            selecteMonths={selectedPrice?.interval}
+            onClose={() => {
+              setPaymentModalVisible(false);
+              setSelectedPlan(null);
+            }}
+          />
+        )}
+      </ScrollView>
+    </Layout>
   );
 }
+
+/* ================= styles ================= */
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16,
-    backgroundColor: '#F7F7FA',
+    padding: 8,
   },
-  containerCentered: {
-    flex: 1,
-    justifyContent: 'center',
+  headerRow: {
     alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#F7F7FA',
   },
-  listContainer: {
-    paddingBottom: 40,
-    gap: 12,
+  brandRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
-  card: {
-    backgroundColor: '#ffffff',
+  brandText: {
+    fontSize: 24,
+    fontWeight: '700',
+  },
+  proBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 4,
     borderRadius: 12,
-    padding: 16,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOpacity: 0.06,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 8,
-    marginVertical: 12,
   },
-  skeletonCard: {
-    width: '100%',
-    minHeight: 220,
-    justifyContent: 'space-between',
+  proText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '700',
   },
-  skeletonTitle: {
-    height: 18,
-    backgroundColor: '#E6E6E6',
-    borderRadius: 6,
-    marginBottom: 8,
+  title: {
+    fontSize: 20,
+    textAlign: 'center',
+    marginTop: 8,
   },
-  skeletonSubtitle: {
-    height: 12,
-    backgroundColor: '#E6E6E6',
-    borderRadius: 6,
-    width: '60%',
-    marginBottom: 12,
+  mascotWrapper: {
+    position: 'absolute',
+    top: -108,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
   },
-  skeletonPrice: {
-    height: 28,
-    backgroundColor: '#E6E6E6',
-    borderRadius: 6,
-    width: '40%',
+  mascot: {
+    height: 108,
+  },
+  featureList: {
+    marginBottom: 24,
+    padding: 24,
+    backgroundColor: "rgba(0, 0, 0, 0.03)",
+    borderRadius: 24,
+    position: 'relative',
+    marginTop: 128,
+    borderWidth: 1,
+    borderColor: "rgba(0, 0, 0, 0.1)"
+  },
+  featureRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
     marginBottom: 16,
   },
-  skeletonFeatures: {
-    height: 80,
-    backgroundColor: '#E6E6E6',
-    borderRadius: 6,
-    marginBottom: 16,
-  },
-  skeletonButton: { height: 44, backgroundColor: '#E6E6E6', borderRadius: 10 },
-
-  cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
-  iconCircle: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: '#6B46C1',
+  checkCircle: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#000',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
   },
-  iconLetter: { color: '#fff', fontWeight: '700', fontSize: 20 },
-  headerText: { flex: 1 },
-  planName: { fontSize: 18, fontWeight: '700', color: '#0f172a' },
-  planDesc: { fontSize: 13, color: '#475569', marginTop: 2 },
-
-  priceRow: { flexDirection: 'row', alignItems: 'flex-end', marginBottom: 10 },
-  priceLarge: { fontSize: 26, fontWeight: '800', color: '#0f172a' },
-  pricePeriod: { marginLeft: 8, color: '#6B7280', fontSize: 14 },
-
-  toggleRow: { alignItems: 'flex-start', marginBottom: 10 },
-  toggleButton: {
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 8,
-    backgroundColor: '#EEF2FF',
-    alignSelf: 'flex-start',
+  check: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: '700',
   },
-  toggleText: { color: '#3730A3', fontWeight: '600' },
-
-  features: { marginTop: 8, marginBottom: 14 },
-  featureRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 6,
+  featureTitle: {
+    fontSize: 16,
+    fontWeight: '600',
   },
-  bullet: { marginRight: 8, color: '#10B981', fontSize: 14 },
-  featureText: { color: '#334155', flex: 1 },
-  noFeaturesText: { color: '#9CA3AF' },
-
-  cardFooter: { marginTop: 8 },
-  button: {
-    backgroundColor: '#0f172a',
-    paddingVertical: 12,
-    borderRadius: 10,
+  featureDesc: {
+    fontSize: 14,
+  },
+  subscribeBtn: {
+    width: '85%',
+    alignSelf: 'center',
+    backgroundColor: '#000',
+    paddingVertical: 16,
+    borderRadius: 16,
     alignItems: 'center',
   },
-  buttonDisabled: { opacity: 0.6 },
-  buttonText: { color: '#ffffff', fontWeight: '700' },
-
-  disabledPrimary: { backgroundColor: '#94a3b8' },
-
-  errorText: { color: '#B91C1C' },
-  emptyContainer: { padding: 20, alignItems: 'center' },
-  emptyText: { color: '#475569' },
-
-  // modal styles
-  modalOverlay: {
+  subscribeText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  featureTextWrap: {
     flex: 1,
-    backgroundColor: 'rgba(2,6,23,0.6)',
+    flexShrink: 1,
+  },
+
+
+
+
+  bottomCard: {
+    marginBottom: 32,
+    borderRadius: 20,
+  },
+
+  priceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 10,
+    marginBottom: 12,
+  },
+
+
+
+  priceText: {
+    fontSize: 30,
+    fontWeight: 700,
+  },
+
+  perText: {
+    fontSize: 12,
+    marginLeft: 4,
+  },
+
+
+  durationText: {
+    fontSize: 14,
+    fontWeight: '600',
+    marginRight: 6,
+  },
+
+  dropdownIcon: {
+    fontSize: 12,
+  },
+
+  referralText: {
+    textAlign: 'center',
+    fontSize: 12,
+    marginBottom: 12,
+    textDecorationLine: 'underline',
+    color: "rgba(0, 0, 0, 0.5)"
+  },
+
+  subscribeWrap: {
+    alignItems: 'center',
+  },
+
+  bottomSubscribeBtn: {
+    backgroundColor: '#000',
+    paddingHorizontal: 50,
+    paddingVertical: 14,
+    borderRadius: 14,
+    alignItems: 'center',
+  },
+
+  bottomSubscribeText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+
+
+
+  durationBox: {
+    flex: 1,
+    height: 52,
     alignItems: 'center',
     justifyContent: 'center',
+    borderRadius: 14,
+    backgroundColor: 'rgba(60, 60, 60, 0.5)',
+    borderWidth: 1,
+    borderColor: "rgba(60, 60, 60, 1)"
+  },
+
+  priceBox: {
+    flex: 1,
+    height: 52,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 14,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderColor: "rgba(60, 60, 60, 1)",
+    borderWidth: 1
+  },
+
+
+
+
+  pickerWrapper: {
+    flex: 1,
+    height: 52,
+    borderRadius: 14,
+    justifyContent: 'center',
+  },
+
+  hiddenPicker: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    opacity: 0,
+  },
+
+  pickerOverlay: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  pickerText: {
+    fontSize: 14,
+    fontWeight: 600,
+    marginRight: 6,
+    color: "white"
+  },
+  customArrow: {
+    fontSize: 16,
+  },
+
+
+
+
+
+
+
+
+
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  modalCard: {
+    width: '85%',
+    backgroundColor: '#e5e5e5',
+    borderRadius: 20,
     padding: 20,
   },
-  modalContent: {
-    width: '100%',
-    backgroundColor: '#fff',
+
+  closeBtn: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#ddd',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  closeText: {
+    fontSize: 18,
+    fontWeight: '700',
+  },
+
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+
+  input: {
+    borderWidth: 1,
+    borderColor: '#000',
     borderRadius: 12,
-    padding: 18,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    fontSize: 14,
+    backgroundColor: '#f2f2f2',
+    marginBottom: 20,
   },
-  modalTitle: { fontSize: 18, fontWeight: '800', marginBottom: 8 },
-  modalPlanName: { fontSize: 16, fontWeight: '700', marginBottom: 6 },
-  modalPrice: { fontSize: 16, color: '#374151', marginBottom: 16 },
-  modalActions: { flexDirection: 'row', justifyContent: 'flex-end', gap: 10 },
-  modalButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    marginLeft: 8,
+
+  applyBtn: {
+    alignSelf: 'center',
+    backgroundColor: '#000',
+    paddingHorizontal: 28,
+    paddingVertical: 12,
+    borderRadius: 12,
   },
-  modalButtonPrimary: { backgroundColor: '#0f172a' },
-  modalButtonText: { color: '#0f172a', fontWeight: '700' },
-  modalButtonTextPrimary: { color: '#fff' },
+
+  applyText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+
 });

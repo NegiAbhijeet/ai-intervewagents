@@ -442,7 +442,7 @@ export default function Leaderboard() {
             style={{
               flex: 1,
               marginTop: 24,
-              marginBottom: 72,
+              marginBottom: 100,
               backgroundColor: 'rgba(255, 255, 255, 0.5)',
               borderRadius: 22,
               overflow: "hidden"

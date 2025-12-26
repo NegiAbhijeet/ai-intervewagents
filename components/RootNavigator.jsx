@@ -17,7 +17,7 @@ import SignupScreen from "../pages/signup";
 import IndustryRoleScreen from '../pages/IndustryRoleScreen';
 import ForgotPasswordScreen from '../pages/forgotPwd';
 import LanguageSelectionScreen from '../pages/languageSelect';
-
+import ViewAllCertificates from '../pages/viewAllCertificates';
 const Stack = createNativeStackNavigator();
 
 const AuthStack = () => (
@@ -137,27 +137,26 @@ const RootNavigator = () => {
         <Stack.Screen
           name="notifications"
           component={NotificationsPage}
-          // options={{ headerShown: true, title: 'Notifications' }}
         />
         <Stack.Screen
           name="jobDetails"
           component={JobDetailPage}
-          // options={{ headerShown: true, title: 'Job Details' }}
         />
         <Stack.Screen
           name="ReportDetail"
           component={ReportDetailScreen}
-          // options={{ headerShown: true, title: 'Report Details' }}
         />
         <Stack.Screen
           name="pricing"
           component={PricingPage}
-          // options={{ headerShown: true, title: 'Pricing' }}
+        />
+        <Stack.Screen
+          name="viewAllCertificates"
+          component={ViewAllCertificates}
         />
         <Stack.Screen
           name="othersProfile"
           component={OthersProfile}
-          // options={{ headerShown: true, title: 'Profile' }}
         />
       </Stack.Navigator>
     );

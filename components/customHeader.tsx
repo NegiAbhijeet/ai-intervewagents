@@ -15,6 +15,7 @@ export default function CustomHeader({
     rightComponent,
     style,
     titleStyle,
+    removePadding
 }) {
     const insets = useSafeAreaInsets();
     const navigation = useNavigation()
@@ -23,7 +24,7 @@ export default function CustomHeader({
     }
     return (
         <View style={[styles.container, { paddingTop: insets.top }, style]}>
-            <View style={styles.inner}>
+            <View style={[styles.inner, { paddingHorizontal: removePadding ? 0 : "7.5%", }]}>
                 <TouchableOpacity
                     activeOpacity={0.7}
                     onPress={onBack}
@@ -66,17 +67,16 @@ export default function CustomHeader({
 const styles = StyleSheet.create({
     container: {
         width: '100%',
-        backgroundColor: 'transparent',
-        // visual header height is 56 plus top inset
-        // height: 56,
-        justifyContent: 'flex-end',
-        marginVertical: 10
+        backgroundColor: 'white',
+        alignItems: "center",
+        justifyContent: 'center',
+        flexDirection: "row"
     },
     inner: {
         // height: 56,
         flexDirection: 'row',
         alignItems: 'center',
-        // paddingHorizontal: 12,
+        paddingVertical: 10
     },
     left: {
         width: 56,

@@ -125,9 +125,9 @@ export default function ProfileScreen() {
   async function fetchCertificates() {
     try {
       setCertificateLoading(true)
-      console.log(`${API_URL}/get-certificate/?uid=${userProfile.uid}`)
-      const response = await fetchWithAuth(`${API_URL}/get-certificate/?uid=${userProfile.uid}`);
+      const response = await fetchWithAuth(`${API_URL}/get-certificate/?uid=${userProfile.uid}&userId=${userProfile.uid}`);
       const result = await response.json();
+      console.log(result, "===")
       if (Array.isArray(result?.certificates)) {
         console.log("Certificates fetched:", result.certificates);
         setCertificatesList(result?.certificates)
@@ -484,16 +484,17 @@ export default function ProfileScreen() {
               </View>
 
               <View style={{ width: "100%" }}>
-                <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
-                  <Text style={{ width: "100%", fontSize: 16, fontWeight: 600, marginBottom: 16, color: "rgba(60, 60, 60, 1)", textAlign: "center" }}>
-                    Certificates Issued
+                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 36, marginBottom: 24 }}>
+                  <Text style={{ fontSize: 16, fontWeight: 600, color: "rgba(60, 60, 60, 1)", textAlign: "center" }}>
+                    Top 3 Certificates
                   </Text>
+                  <Pressable onPress={() => navigation.navigate("viewAllCertificates", { uid: userProfile?.uid, userId: userProfile?.uid })}><Text style={{ fontSize: 14, fontWeight: 600, color: "rgba(120, 20, 196, 1)" }}>View All</Text></Pressable>
                 </View>
 
                 {certificateLoading ? (
                   <Text style={{ width: "100%", fontSize: 16, fontWeight: 600, marginBottom: 16, textAlign: "center" }}>Loading certificates...</Text>
                 ) : certificatesList.length > 0 ? (
-                  <CertificateCarousel certificates={certificatesList} LEVELS={LEVELS} />
+                  <CertificateCarousel certificates={certificatesList.slice(0, 3)} LEVELS={LEVELS} />
                 ) : (
                   <View style={{ borderRadius: 10, justifyContent: "center", alignItems: "center", width: "90%", marginHorizontal: "auto", height: 200, backgroundColor: "rgba(217, 217, 217, 0.4)", borderWidth: 1, borderColor: "rgba(217, 217, 217, 1)" }}>
                     <Text style={{ fontSize: 12, fontWeight: 600, color: "rgba(0, 0, 0, 0.5)" }}>No certificates issued.</Text>

@@ -23,6 +23,7 @@ export default function PaymentPopup({
   uid,
   visible,
   setUserProfile,
+  selecteMonths
 }) {
   const navigation = useNavigation();
   const [couponCode, setCouponCode] = useState('');
@@ -84,7 +85,11 @@ export default function PaymentPopup({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedPlan]); // only when selectedPlan changes
-
+  useEffect(() => {
+    if (selecteMonths) {
+      setSelectedInterval(String(selecteMonths));
+    }
+  }, [selecteMonths]);
   // compute base amount for currently selected interval
   const baseAmount = (() => {
     if (!selectedPlan || !selectedInterval) return 0;

@@ -26,7 +26,7 @@ const ARROW_OFFSET = 8
 const leftArrow = require('../assets/images/pricingArrow1.png')
 const rightArrow = require('../assets/images/pricingArrow2.png')
 
-export default function CertificateCarousel({ certificates = [], LEVELS }) {
+export default function CertificateCarousel({ certificates = [], LEVELS, showShareButton = true }) {
     const carouselRef = useRef(null)
     const [index, setIndex] = useState(0)
     const [cardHeight, setCardHeight] = useState(null)
@@ -170,32 +170,33 @@ export default function CertificateCarousel({ certificates = [], LEVELS }) {
                 >
                     <Image source={rightArrow} style={styles.arrowImage} />
                 </TouchableOpacity>
-
             </View>
 
-            <Pressable style={{ marginTop: 10, width: CARD_WIDTH }} onPress={() => { shareOnLinkedIn(certificates[index]?.meeting_id) }} disabled={meetingDetailsLoading}>
-                <LinearGradient
-                    colors={['rgba(59, 130, 246, 1)', 'rgba(14, 165, 233, 1)']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={{
-                        flexDirection: 'row',
-                        borderRadius: 10,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        paddingVertical: 16,
-                        width: "100%",
-                        gap: 8
-                    }}
-                >
-                    {
-                        meetingDetailsLoading ? (
-                            <Text style={{ color: "white", fontWeight: 600 }}>Preparing...</Text>
-                        ) : <><Image source={require("../assets/images/linkedin.png")} /><Text style={{ color: "white", fontWeight: 600 }}>Share on Linkedin</Text></>
-                    }
-
-                </LinearGradient>
-            </Pressable>
+            {
+                showShareButton &&
+                <Pressable style={{ marginTop: 10, width: CARD_WIDTH }} onPress={() => { shareOnLinkedIn(certificates[index]?.meeting_id) }} disabled={meetingDetailsLoading}>
+                    <LinearGradient
+                        colors={['rgba(59, 130, 246, 1)', 'rgba(14, 165, 233, 1)']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                        style={{
+                            flexDirection: 'row',
+                            borderRadius: 10,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            paddingVertical: 16,
+                            width: "100%",
+                            gap: 8
+                        }}
+                    >
+                        {
+                            meetingDetailsLoading ? (
+                                <Text style={{ color: "white", fontWeight: 600 }}>Preparing...</Text>
+                            ) : <><Image source={require("../assets/images/linkedin.png")} /><Text style={{ color: "white", fontWeight: 600 }}>Share on Linkedin</Text></>
+                        }
+                    </LinearGradient>
+                </Pressable>
+            }
         </View>
     )
 }

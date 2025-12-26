@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
   View,
   Image,
@@ -14,95 +14,52 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder'
 
 const { width: SCREEN_W, height: SCREEN_H } = Dimensions.get('window')
-const NotLoadedHeight = 250
+
+const CERT_WIDTH = 1530
+const CERT_HEIGHT = 1024
+const CERT_RATIO = CERT_HEIGHT / CERT_WIDTH
 
 export default function Certificate({
   imageUrl,
   minScale = 1,
   maxScale = 4,
-  thumbHeight = 400,
   parentWidth
 }) {
   const [modalVisible, setModalVisible] = useState(false)
   const [loaded, setLoaded] = useState(false)
   const [loadedThumb, setLoadedThumb] = useState(false)
-  const [naturalWidth, setNaturalWidth] = useState(null)
-  const [naturalHeight, setNaturalHeight] = useState(null)
+
+  const containerWidth = parentWidth || SCREEN_W
+  const calculatedHeight = containerWidth * CERT_RATIO
+  const modalImageHeight = SCREEN_W * CERT_RATIO
+
   const SkeleonComp = () => {
-    return <View style={{ width: parentWidth }}>
-      <Image
-        source={require("../assets/images/skeletonbg.png")}
-        style={{
-          position: "absolute",
-          width: "100%",
-          height: NotLoadedHeight,
-          borderRadius: 6
-        }}
-        resizeMode="cover"
-      />
-
-      <SkeletonPlaceholder>
-        <SkeletonPlaceholder.Item
-          width={parentWidth}
-          height={NotLoadedHeight}
-          borderRadius={6}
+    return (
+      <View style={{ width: containerWidth }}>
+        <Image
+          source={require("../assets/images/skeletonbg.png")}
+          style={{
+            position: "absolute",
+            width: "100%",
+            height: calculatedHeight,
+            borderRadius: 6
+          }}
+          resizeMode="cover"
         />
-      </SkeletonPlaceholder>
-    </View>
 
+        <SkeletonPlaceholder>
+          <SkeletonPlaceholder.Item
+            width={containerWidth}
+            height={calculatedHeight}
+            borderRadius={6}
+          />
+        </SkeletonPlaceholder>
+      </View>
+    )
   }
 
-  // Run hooks unconditionally. Guard inside effect.
-  useEffect(() => {
-    if (!imageUrl) {
-      setNaturalWidth(null)
-      setNaturalHeight(null)
-      return
-    }
-
-    let mounted = true
-    Image.getSize(
-      imageUrl,
-      (w, h) => {
-        if (!mounted) return
-        setNaturalWidth(w)
-        setNaturalHeight(h)
-      },
-      err => {
-        if (!mounted) return
-        console.warn('Image.getSize failed', err)
-      }
-    )
-
-    return () => {
-      mounted = false
-    }
-  }, [imageUrl])
-
-  // assume container uses full screen width. adjust if your parent is narrower.
-  const containerWidth = SCREEN_W
-
-  // compute scaled height for that width while keeping aspect ratio
-  const scaledNaturalHeight =
-    naturalWidth && naturalHeight
-      ? (naturalHeight / naturalWidth) * containerWidth
-      : null
-
-  // clamp the thumbnail height to a sensible maximum
-  // here we use: min(scaled height, 60% of screen height, thumbHeight prop)
-  const displayThumbHeight =
-    scaledNaturalHeight != null
-      ? Math.min(scaledNaturalHeight, SCREEN_H * 0.6, thumbHeight)
-      : thumbHeight
-
-  // for modal view clamp to screen height so it fits. keep aspect ratio.
-  const modalImageHeight =
-    scaledNaturalHeight != null
-      ? Math.min(scaledNaturalHeight, SCREEN_H)
-      : SCREEN_H
-
   if (!imageUrl) {
-    return <View style={[styles.thumb, { height: NotLoadedHeight }]} />
+    return <View style={[styles.thumb, { height: calculatedHeight }]} />
   }
 
   return (
@@ -115,7 +72,7 @@ export default function Certificate({
         }}
         style={[
           styles.thumb,
-          { height: loadedThumb ? displayThumbHeight : NotLoadedHeight }
+          { height: calculatedHeight }
         ]}
       >
         <Image
@@ -131,14 +88,12 @@ export default function Certificate({
           onLoadStart={() => setLoadedThumb(false)}
           onLoadEnd={() => {
             setTimeout(() => {
-              setLoadedThumb(true);
-            }, 1000);
+              setLoadedThumb(true)
+            }, 1000)
           }}
         />
 
-        {!loadedThumb && (
-          <SkeleonComp />
-        )}
+        {!loadedThumb && <SkeleonComp />}
       </TouchableOpacity>
 
       <Modal
@@ -173,8 +128,8 @@ export default function Certificate({
                   {
                     width: SCREEN_W,
                     height: modalImageHeight,
-                    opacity: loaded ? 1 : 0,
-                  },
+                    opacity: loaded ? 1 : 0
+                  }
                 ]}
                 resizeMode="contain"
                 onLoadStart={() => setLoaded(false)}
@@ -182,9 +137,7 @@ export default function Certificate({
               />
             </ImageZoom>
 
-            {!loaded && (
-              <SkeleonComp />
-            )}
+            {!loaded && <SkeleonComp />}
           </View>
         </SafeAreaView>
       </Modal>
@@ -201,11 +154,6 @@ const styles = StyleSheet.create({
   thumbImage: {
     width: '100%',
     height: '100%',
-  },
-  thumbLoading: {
-    ...StyleSheet.absoluteFillObject,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   modalContainer: {
     flex: 1,
@@ -236,10 +184,5 @@ const styles = StyleSheet.create({
   fullImage: {
     width: SCREEN_W,
     height: SCREEN_H,
-  },
-  loading: {
-    ...StyleSheet.absoluteFillObject,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 })

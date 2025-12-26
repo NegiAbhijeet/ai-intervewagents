@@ -178,6 +178,7 @@ export default function JobDetailPage() {
   return (
     <ScrollView className="flex-1 bg-gray-50 px-4">
       <CustomHeader
+        removePadding={true}
         title="Job Details"
       />
       {/* Header */}
