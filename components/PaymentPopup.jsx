@@ -309,6 +309,7 @@ export default function PaymentPopup({
     <Modal
       animationType="slide"
       transparent
+      statusBarTranslucent={true}
       visible={visible}
       onRequestClose={onClose}
     >

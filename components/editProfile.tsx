@@ -60,47 +60,47 @@ export default function EditProfileModal({
 
     // --- SAVE LOGIC ---
     async function handleSave() {
-        if (!name.trim()) {
-            Toast.show({ type: 'error', text1: 'Name is required' })
-            return
-        }
-
-        const nameArray = name.trim().split(' ')
-        const firstName = nameArray[0]
-        const lastName = nameArray.slice(1).join(' ') || ''
-
-        let skills = []
-        if (industry && position && industriesData[industry]) {
-            skills = industriesData[industry][position] || []
-        }
-
-        const payload = {
-            uid,
-            canId,
-            firstName,
-            lastName,
-            industry,
-            position,
-            skills: skills.length > 0 ? skills : undefined,
-            level: level > 0 ? level : undefined
-        }
-
-        const requiredFields = ['uid', 'canId', 'firstName', 'industry', 'position']
-
-        const hasMissingField = requiredFields.some(
-            key => payload[key] === undefined || payload[key] === ''
-        )
-
-        if (hasMissingField) {
-            return
-        }
-
-        setIsLoading(true)
-
         try {
+            if (!name.trim()) {
+                Toast.show({ type: 'error', text1: 'Name is required' })
+                return
+            }
+
+            const nameArray = name.trim().split(' ')
+            const firstName = nameArray[0]
+            const lastName = nameArray.slice(1).join(' ') || ''
+
+            let skills = []
+            if (industry && position && industriesData[industry]) {
+                skills = industriesData[industry][position] || []
+            }
+
+            const payload = {
+                uid,
+                canId,
+                firstName,
+                lastName,
+                industry,
+                position,
+                skills: skills.length > 0 ? skills.slice(0, 5) : undefined,
+                level: level > 0 ? level : undefined
+            }
+
+            const requiredFields = ['uid', 'canId', 'firstName', 'industry', 'position']
+
+            const hasMissingField = requiredFields.some(
+                key => payload[key] === undefined || payload[key] === ''
+            )
+
+            if (hasMissingField) {
+                return
+            }
+
+            setIsLoading(true)
+
             const url = `${API_URL}/candidate/update/`
             const response = await fetchWithAuth(url, {
-                method: 'POST',
+                method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             })
@@ -306,6 +306,7 @@ const styles = StyleSheet.create({
     // Form
     label: { fontSize: 12, fontWeight: '600', color: '#333', marginBottom: 6, marginTop: 12 },
     input: {
+        color: '#000',
         borderWidth: 1.2,
         borderColor: 'rgba(0, 0, 0, 1)',
         borderRadius: 8,

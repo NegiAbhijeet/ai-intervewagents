@@ -10,10 +10,10 @@ import {
     Modal,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import DifficultyDropdown from "../components/DifficultyDropdown";
+// import DifficultyDropdown from "../components/DifficultyDropdown";
 import Layout from "../pages/Layout";
 
-const OPTIONS = ["Easy", "Moderate", "Challenging"];
+const OPTIONS = ["Easy", "Hard"];
 
 export default function SelectInterviewType({ onClose, setSelectedInterviewType, handleSubmit, type }) {
     const [selectedValue, setSelectedValue] = useState("technical");
@@ -114,11 +114,36 @@ export default function SelectInterviewType({ onClose, setSelectedInterviewType,
                                 Choose Difficulty
                             </Text>
 
-                            <DifficultyDropdown
-                                value={difficulty}
-                                onChange={setDifficulty}
-                                OPTIONS={OPTIONS}
-                            />
+                            <View style={styles.difficultyRow}>
+                                {OPTIONS.map(option => {
+                                    const isSelected = difficulty === option;
+
+                                    return (
+                                        <TouchableOpacity
+                                            key={option}
+                                            activeOpacity={0.9}
+                                            onPress={() => setDifficulty(option)}
+                                            style={[
+                                                styles.difficultyCard,
+                                                isSelected && styles.difficultyCardSelected,
+                                            ]}
+                                        >
+                                            <View style={styles.radio}>
+                                                {isSelected && <View style={styles.radioSelected} />}
+                                            </View>
+
+                                            <Text
+                                                style={[
+                                                    styles.difficultyText,
+                                                    isSelected && styles.difficultyTextSelected,
+                                                ]}
+                                            >
+                                                {option}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    );
+                                })}
+                            </View>
                         </View>
 
                         <Card
@@ -286,4 +311,38 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "600",
     },
+    difficultyRow: {
+        flexDirection: "row",
+        gap: 12,
+    },
+
+    difficultyCard: {
+        flex: 1,
+        flexDirection: "row",
+        alignItems: "center",
+        paddingVertical: 12,
+        paddingHorizontal: 14,
+        borderRadius: 12,
+        borderWidth: 1.5,
+        borderColor: "#D1D1D6",
+        backgroundColor: "#FFFFFF",
+    },
+
+    difficultyCardSelected: {
+        borderColor: "rgba(60, 60, 60, 1)",
+        backgroundColor: "rgba(0, 0, 0, 0.03)",
+    },
+
+    difficultyText: {
+        fontSize: 14,
+        fontWeight: "500",
+        color: "#3A3A45",
+        marginLeft: 10,
+    },
+
+    difficultyTextSelected: {
+        fontWeight: "600",
+        color: "rgba(60, 60, 60, 1)",
+    },
+
 });

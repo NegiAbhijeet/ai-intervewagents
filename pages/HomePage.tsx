@@ -266,6 +266,7 @@ const HomePage = ({ route }) => {
                     adminId: userProfile?.uid
                 }
                 setFirstInterviewObject(firstPayload)
+                setOpenSelectInterviewOptions(false)
             }
         } catch (error) {
             console.log(error);

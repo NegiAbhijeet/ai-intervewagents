@@ -48,7 +48,6 @@ export default function PricingPage() {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [paymentModalVisible, setPaymentModalVisible] = useState(false);
   const [selectedPrice, setSelectedPrice] = useState(null);
-  const [referralModalVisible, setReferralModalVisible] = useState(false);
   const [couponCode, setCouponCode] = useState('');
   const [myPlan, setMyPlan] = useState(null);
 
@@ -124,35 +123,6 @@ export default function PricingPage() {
   return (
     <Layout>
       <CustomHeader title="Pricing" removePadding />
-      <Modal
-        transparent
-        visible={referralModalVisible}
-        animationType="fade"
-        onRequestClose={() => setReferralModalVisible(false)}
-      >
-        <View style={styles.modalBackdrop}>
-          <View style={styles.modalCard}>
-            <TouchableOpacity
-              style={styles.closeBtn}
-              onPress={() => setReferralModalVisible(false)}
-            >
-              <Text style={styles.closeText}>×</Text>
-            </TouchableOpacity>
-
-            <Text style={styles.modalTitle}>Enter Your Referral code</Text>
-
-            <TextInput
-              value={couponCode}
-              onChangeText={setCouponCode}
-              placeholder="Enter your code (eg. SAVE20)"
-              placeholderTextColor="#999"
-              autoCapitalize="characters"
-              style={styles.input}
-            />
-          </View>
-        </View>
-      </Modal>
-
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <View style={styles.headerRow}>
@@ -182,20 +152,24 @@ export default function PricingPage() {
 
             {[
               {
-                title: 'Unlimited AI Interviews',
-                desc: 'Practice with no limits across all industries',
+                title: 'Practice Extended Training',
+                desc: 'Unlimited monthly practice, no ums or ahs',
               },
               {
-                title: 'Advance performance Analytics',
-                desc: 'Track progress with personalized insights',
+                title: 'Visibility Top of the Pile',
+                desc: 'Skip the queue with a featured profile',
               },
               {
-                title: 'Priority Support',
-                desc: 'Get help when you need it most',
+                title: 'Networking Unlimited Reach',
+                desc: 'Connect with any professional freely',
               },
               {
                 title: 'Smart Job Recommendations',
-                desc: 'Job suggestions based on your performance.',
+                desc: 'Find skill gaps blocking salary growth',
+              },
+              {
+                title: 'Insights the Gap Report',
+                desc: 'Get certified and prove technical skills',
               },
             ].map((item, i) => (
               <View key={i} style={styles.featureRow}>
@@ -254,7 +228,14 @@ export default function PricingPage() {
                 </View>
               </View>
 
-              <TouchableOpacity onPress={() => setReferralModalVisible(true)}>
+              <TouchableOpacity onPress={() => {
+                setPaymentModalVisible(false);
+                setSelectedPlan({
+                  ...myPlan,
+                  selectedPrice,
+                });
+                onBuyPress();
+              }}>
                 <Text style={styles.referralText}>Have a referral code?</Text>
               </TouchableOpacity>
 
@@ -276,8 +257,6 @@ export default function PricingPage() {
 
             </View>
           )}
-
-
         </View>
 
         {userProfile?.uid && paymentModalVisible && (
@@ -361,10 +340,11 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22,
     borderRadius: 11,
-    backgroundColor: '#000',
+    backgroundColor: 'rgba(142, 69, 239, 1)',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
+    marginTop: 3
   },
   check: {
     color: '#fff',

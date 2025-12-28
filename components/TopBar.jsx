@@ -10,6 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import { API_URL } from './config';
+import LinearGradient from 'react-native-linear-gradient';
 
 const TopBar = () => {
   const {
@@ -72,6 +73,32 @@ const TopBar = () => {
       </TouchableOpacity>
 
       <View className="flex-row items-center gap-2">
+        {
+          userProfile?.plan?.id == 1 &&
+
+          <TouchableOpacity
+            onPress={() => navigation.navigate('pricing')}
+            className=""
+          >
+            <LinearGradient
+              colors={['rgba(131, 102, 6, 1))', 'rgba(233, 181, 11, 1)']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={{
+                borderRadius: 9999,
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderWidth: 2,
+                borderColor: "rgba(233, 181, 11, 0.3)",
+                paddingVertical: 7,
+                paddingHorizontal: 14
+              }}
+            >
+              <Text style={{ color: "#fff", fontSize: 8, fontWeight: 600, lineHeight:8 }}>JOIN</Text>
+              <Text style={{ color: "#fff", fontSize: 10, fontWeight: 800, lineHeight:12 }}>PREMIUM</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        }
         <TouchableOpacity
           onPress={() => navigation.navigate('leaderBoard')}
           className="flex-row items-center gap-2"

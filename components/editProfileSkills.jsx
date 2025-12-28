@@ -7,12 +7,13 @@ import {
     TextInput,
     View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Layout from "../pages/Layout";
 import Ionicons from "@react-native-vector-icons/ionicons";
 import { API_URL } from "./config";
 import fetchWithAuth from "../libs/fetchWithAuth";
 import Toast from "react-native-toast-message";
+import { AppStateContext } from "./AppContext";
 
 const MAX_SKILLS = 5;
 
@@ -22,16 +23,17 @@ const EditProfileSkills = ({
     allSkills,
     searchValue = "",
     onSearchChange,
-    myCandidate,
-    setMyCandidate
 }) => {
-    const [selectedSkills, setSelectedSkills] = useState(
-        myCandidate?.requiredSkills || []
-    );
+    const { myCandidate, setMyCandidate } = useContext(AppStateContext)
+    const [selectedSkills, setSelectedSkills] = useState([]);
     const normalizedInput = searchValue.trim().toLowerCase();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = React.useState("");
-
+    useEffect(() => {
+        if (myCandidate?.requiredSkills) {
+            setSelectedSkills(myCandidate?.requiredSkills)
+        }
+    }, [myCandidate])
     const filteredSkills =
         normalizedInput.length > 0
             ? allSkills.filter(

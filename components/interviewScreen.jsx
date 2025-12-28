@@ -380,7 +380,6 @@ const CallUI = ({
                     style={{
                       flex: 1,
                       justifyContent: 'center',
-                      marginHorizontal: "auto"
                     }}
                   >
                     <View style={styles.preInterviewContainer}>
@@ -689,6 +688,7 @@ const styles = {
   },
 
   skillWrap: {
+    width: "100%",
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,

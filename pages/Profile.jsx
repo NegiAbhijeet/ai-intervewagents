@@ -105,7 +105,7 @@ export default function ProfileScreen() {
       if (Array.isArray(result?.data) && result.data.length > 0) {
         const candidate = result.data[0];
         console.log(candidate)
-        setMyCandidate((prev) => ({ ...prev, firstName: candidate?.firstName }))
+        setMyCandidate(candidate)
         setProfileData({
           avatar: userProfile?.avatar,
           name: `${candidate?.firstName} ${candidate?.lastName}`,
@@ -158,7 +158,8 @@ export default function ProfileScreen() {
   }
   const onRefresh = () => {
     fetchDetails();
-    fetchCandidates()
+    fetchCandidates();
+    fetchCertificates();
   };
   const initials =
     firebaseUser?.displayName
@@ -346,8 +347,6 @@ export default function ProfileScreen() {
         allSkills={allSkills}
         searchValue={search}
         onSearchChange={setSearch}
-        myCandidate={myCandidate}
-        setMyCandidate={setMyCandidate}
       />
 
       <ScrollView
