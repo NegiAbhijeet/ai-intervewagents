@@ -158,8 +158,8 @@ export default function SelectInterviewType({ onClose, setSelectedInterviewType,
                         />
 
                         <Card
-                            id="behavioral"
-                            title="Behavioral"
+                            id="behavioural"
+                            title="Behavioural"
                             duration="10–15 mins"
                             description="Discussion of your past experiences and soft skills to determine how you handle work challenges and fit into the company culture."
                             tags={["Leadership", "Teamwork", "Communication"]}

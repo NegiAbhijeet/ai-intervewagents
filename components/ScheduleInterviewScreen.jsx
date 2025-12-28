@@ -23,7 +23,7 @@ import fetchWithAuth from '../libs/fetchWithAuth';
 import LANGUAGES from '../libs/languages';
 const typeOptions = [
   { label: 'Technical', value: 'Technical' },
-  { label: 'Behavioral', value: 'Behavioral' },
+  { label: 'Behavioural', value: 'Behavioural' },
 ];
 
 export default function ScheduleInterviewScreen({

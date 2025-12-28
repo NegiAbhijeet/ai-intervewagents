@@ -2,39 +2,37 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 const Timer = ({
-  elapsedSeconds,
-  setElapsedSeconds,
+  refValue,
   sessionDurationSeconds,
   terminateSession,
 }) => {
-  const intervalRef = useRef(null);
+
+  const [displaySeconds, setDisplaySeconds] = useState(0);
 
   useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      setElapsedSeconds(prev => {
+    const interval = setInterval(() => {
+      setDisplaySeconds(prev => {
         const next = prev + 1;
+        refValue.current = next; // Update the parent's ref silently
         return next;
       });
     }, 1000);
 
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [elapsedSeconds]);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
-    if (elapsedSeconds > sessionDurationSeconds + 90) {
-      terminateSession(); // Trigger session termination
-      if (intervalRef.current) clearInterval(intervalRef.current); // Stop timer
+    if (displaySeconds > sessionDurationSeconds + 90) {
+      terminateSession();
     }
-  }, [elapsedSeconds, sessionDurationSeconds, terminateSession]);
+  }, [displaySeconds]);
 
-  const hours = String(Math.floor(elapsedSeconds / 3600)).padStart(2, '0');
-  const minutes = String(Math.floor((elapsedSeconds % 3600) / 60)).padStart(
+  const hours = String(Math.floor(displaySeconds / 3600)).padStart(2, '0');
+  const minutes = String(Math.floor((displaySeconds % 3600) / 60)).padStart(
     2,
     '0',
   );
-  const seconds = String(elapsedSeconds % 60).padStart(2, '0');
+  const seconds = String(displaySeconds % 60).padStart(2, '0');
 
   return (
     <View style={styles.container}>

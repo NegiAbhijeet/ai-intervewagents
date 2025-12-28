@@ -53,7 +53,7 @@ const CallUI = ({
   const { t } = useTranslation();
   const initialStartRef = useRef(null);
   const [hasStarted, setHasStarted] = useState(false);
-  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const elapsedSecondsRef = useRef(0);
   const [cameraOn, setCameraOn] = useState(false); // ✅ Camera toggle state
   const [micOn, setMicOn] = useState(true); // ✅ Mic toggle state
   const navigation = useNavigation();
@@ -75,7 +75,7 @@ const CallUI = ({
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ interviewDuration: elapsedSeconds }),
+      body: JSON.stringify({ interviewDuration: elapsedSecondsRef.current }),
     })
       .catch(error => {
         console.error('Error updating meeting:', error);
@@ -88,7 +88,7 @@ const CallUI = ({
           setIsLoading(false);
           setUserProfile(prev => ({
             ...prev,
-            seconds_used: (prev?.seconds_used || 0) + elapsedSeconds,
+            seconds_used: (prev?.seconds_used || 0) + elapsedSecondsRef.current,
           }));
 
           navigation.navigate('reports', { meetingId });
@@ -106,7 +106,7 @@ const CallUI = ({
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ interviewDuration: elapsedSeconds }),
+      body: JSON.stringify({ interviewDuration: elapsedSecondsRef.current }),
     })
       .catch(error => {
         console.error('Error updating meeting:', error);
@@ -474,8 +474,7 @@ const CallUI = ({
               </ScrollView> :
               <View style={{ flex: 1 }}>
                 <Timer
-                  elapsedSeconds={elapsedSeconds}
-                  setElapsedSeconds={setElapsedSeconds}
+                  refValue={elapsedSecondsRef}
                   sessionDurationSeconds={interviewTime - 60}
                   terminateSession={handleInterviewCompletion}
                 />
@@ -495,7 +494,7 @@ const CallUI = ({
                           setIsLoading(false);
                           setUserProfile(prev => ({
                             ...prev,
-                            seconds_used: (prev?.seconds_used || 0) + elapsedSeconds,
+                            seconds_used: (prev?.seconds_used || 0) + elapsedSecondsRef.current,
                           }));
 
                           navigation.navigate('reports', { meetingId });
