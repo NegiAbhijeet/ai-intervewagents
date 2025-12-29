@@ -25,7 +25,7 @@ const AfterGuessModal = ({
     interviewId = '',
     serverScore = null,
     setServerScore,
-    maxTries = 20, // default 20 attempts -> 20 * 3s = 60s
+    maxTries = 10, // default 20 attempts -> 20 * 3s = 60s
     intervalMs = 3000
 }) => {
     const navigation = useNavigation()

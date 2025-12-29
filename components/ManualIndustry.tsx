@@ -7,6 +7,7 @@ import {
     View,
     TextInput,
     Pressable,
+    TouchableOpacity,
 } from "react-native";
 
 const ManualIndustry = ({
@@ -29,12 +30,22 @@ const ManualIndustry = ({
         >
             <View style={styles.overlay}>
                 <View style={styles.modalCard}>
-                    <Pressable
+                    <TouchableOpacity
                         onPress={onClose}
-                        style={{ position: "absolute", top: 8, right: 8, backgroundColor: "rgba(255, 255, 255, 0.25)", borderRadius: 999, padding: 4 }}
+                        activeOpacity={0.7}
+                        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                        style={{
+                            position: "absolute",
+                            top: 8,
+                            right: 8,
+                            zIndex: 100,
+                            backgroundColor: "rgba(255, 255, 255, 0.25)",
+                            borderRadius: 999,
+                            padding: 4,
+                        }}
                     >
                         <Ionicons name="close" size={22} color="gray" />
-                    </Pressable>
+                    </TouchableOpacity>
 
                     <Text style={styles.modalTitle}>{isIndustry ? "Add Industry" : "Add Role"}</Text>
                     {

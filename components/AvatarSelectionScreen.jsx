@@ -210,15 +210,15 @@ export default function AvatarSelectionScreen({ route }) {
           industry: selectedIndustry,
           position: selectedRole
         });
-        const firstPayload = {
-          canId,
-          meetingId,
-          interviewType,
-          interviewTime,
-          candidateName,
-          adminId: userProfile?.uid
-        }
-        setFirstInterviewObject(firstPayload)
+        // const firstPayload = {
+        //   canId,
+        //   meetingId,
+        //   interviewType,
+        //   interviewTime,
+        //   candidateName,
+        //   adminId: userProfile?.uid
+        // }
+        // setFirstInterviewObject(firstPayload)
       } else {
         throw new Error('No meeting URL returned from server.');
       }

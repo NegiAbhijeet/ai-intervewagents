@@ -152,37 +152,42 @@ export default function PricingPage() {
 
             {[
               {
-                title: 'Practice Extended Training',
-                desc: 'Unlimited monthly practice, no ums or ahs',
+                title: '200 Practice Minutes per Month',
+                desc: 'Master your delivery and eliminate filler words with focused practice.',
               },
               {
-                title: 'Visibility Top of the Pile',
-                desc: 'Skip the queue with a featured profile',
+                title: 'Recruiter Spotlight',
+                desc: 'Skip the queue and get featured directly to hiring managers.',
               },
               {
-                title: 'Networking Unlimited Reach',
-                desc: 'Connect with any professional freely',
+                title: 'Verified Candidate Badge',
+                desc: 'Prove your technical competence with a certified profile.',
               },
               {
-                title: 'Smart Job Recommendations',
-                desc: 'Find skill gaps blocking salary growth',
+                title: 'Unlimited Networking',
+                desc: 'Connect with any professional in the community without limits.',
               },
               {
-                title: 'Insights the Gap Report',
-                desc: 'Get certified and prove technical skills',
+                title: 'The Gap Report',
+                desc: 'Get a personal analysis of the skills you need for a higher salary.',
               },
-            ].map((item, i) => (
-              <View key={i} style={styles.featureRow}>
-                <View style={styles.checkCircle}>
-                  <Text style={styles.check}>✓</Text>
-                </View>
+              {
+                title: 'Expert Coaching',
+                desc: 'Unlock mock interviews with personalized performance analytics.',
+              },
+            ]
+              .map((item, i) => (
+                <View key={i} style={styles.featureRow}>
+                  <View style={styles.checkCircle}>
+                    <Text style={styles.check}>✓</Text>
+                  </View>
 
-                <View style={styles.featureTextWrap}>
-                  <Text style={styles.featureTitle}>{item.title}</Text>
-                  <Text style={styles.featureDesc}>{item.desc}</Text>
+                  <View style={styles.featureTextWrap}>
+                    <Text style={styles.featureTitle}>{item.title}</Text>
+                    <Text style={styles.featureDesc}>{item.desc}</Text>
+                  </View>
                 </View>
-              </View>
-            ))}
+              ))}
           </View>
 
           {selectedPrice && (
