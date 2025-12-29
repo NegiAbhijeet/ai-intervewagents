@@ -14,10 +14,13 @@ import GetStartedScreen from '../pages/GetStartedScreen';
 import OnboardingCarousel from '../pages/onboarding';
 import LoginScreen from '../pages/loginPage';
 import SignupScreen from "../pages/signup";
-import IndustryRoleScreen from '../pages/IndustryRoleScreen';
 import ForgotPasswordScreen from '../pages/forgotPwd';
 import LanguageSelectionScreen from '../pages/languageSelect';
 import ViewAllCertificates from '../pages/viewAllCertificates';
+import IndustryPage from '../pages/industryPage';
+import RolePage from '../pages/rolePage';
+import LevelPage from '../pages/levelPage';
+
 const Stack = createNativeStackNavigator();
 
 const AuthStack = () => (
@@ -170,7 +173,9 @@ const RootNavigator = () => {
   )) {
     return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="ChooseRole" component={IndustryRoleScreen} />
+        <Stack.Screen name="industrySelect" component={IndustryPage} />
+        <Stack.Screen name="roleSelect" component={RolePage} />
+        <Stack.Screen name="levelSelect" component={LevelPage} />
         <Stack.Screen
           name="AvatarSelection"
           component={AvatarSelectionScreen}

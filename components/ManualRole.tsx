@@ -10,15 +10,12 @@ import {
     TouchableOpacity,
 } from "react-native";
 
-const ManualIndustry = ({
+const ManualRole = ({
     visible,
     onClose,
     onSave,
-    customIndustry,
-    setCustomIndustry,
     customRole,
     setCustomRole,
-    isIndustry,
     customError,
 }) => {
     return (
@@ -27,6 +24,7 @@ const ManualIndustry = ({
             visible={visible}
             animationType="fade"
             onRequestClose={onClose}
+            statusBarTranslucent={true}
         >
             <View style={styles.overlay}>
                 <View style={styles.modalCard}>
@@ -47,16 +45,7 @@ const ManualIndustry = ({
                         <Ionicons name="close" size={22} color="gray" />
                     </TouchableOpacity>
 
-                    <Text style={styles.modalTitle}>{isIndustry ? "Add Industry" : "Add Role"}</Text>
-                    {
-                        isIndustry && <TextInput
-                            placeholder="Type your Industry name"
-                            value={customIndustry}
-                            onChangeText={setCustomIndustry}
-                            style={styles.input}
-                            placeholderTextColor={"gray"}
-                        />
-                    }
+                    <Text style={styles.modalTitle}>Add Role</Text>
 
                     <TextInput
                         placeholder="Type your Role"
@@ -86,7 +75,7 @@ const ManualIndustry = ({
     );
 };
 
-export default ManualIndustry;
+export default ManualRole;
 
 const styles = StyleSheet.create({
     overlay: {
@@ -100,6 +89,8 @@ const styles = StyleSheet.create({
         backgroundColor: "rgba(217, 217, 217, 1)",
         borderRadius: 16,
         padding: 16,
+        paddingTop: 32,
+
     },
     modalTitle: {
         fontSize: 20,
