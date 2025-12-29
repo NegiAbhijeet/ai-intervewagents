@@ -10,6 +10,7 @@
   "types": {
     "technical": "Technical",
     "behavioural": "Behavioural",
+    "behavioral": "Behavioural",
     "mock": "Mock",
     "trainer": "Trainer",
     "revise": "Revise",

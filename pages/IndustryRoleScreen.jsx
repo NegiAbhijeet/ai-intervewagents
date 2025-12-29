@@ -14,6 +14,9 @@ import { useContext, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import getIndustryData from "../libs/getIndustryData"
 import getLevelData from "../libs/getLevelData"
+import ManualIndustry from '../components/ManualIndustry';
+import fetchWithAuth from '../libs/fetchWithAuth';
+import Toast from 'react-native-toast-message';
 
 const IndustryRoleScreen = () => {
   const navigation = useNavigation()
@@ -26,6 +29,12 @@ const IndustryRoleScreen = () => {
   const [selectedSkills, setSelectedSkills] = useState([])
   const [selectedLevel, setSelectedLevel] = useState(null)
 
+  const [showNotListedModal, setShowNotListedModal] = useState(false);
+  const [customIndustry, setCustomIndustry] = useState("");
+  const [customRole, setCustomRole] = useState("");
+  const [customError, setCustomError] = useState(null)
+  const [loadingSkills, setLoadingSkills] = useState(false)
+
   // return value directly from useMemo
   const industries = useMemo(() => getIndustryData(language) || {}, [language])
   const LEVELS = useMemo(() => getLevelData(language) || {}, [language])
@@ -37,7 +46,78 @@ const IndustryRoleScreen = () => {
   }, [industries])
 
 
-  const onPressNext = () => {
+  const fetchSkillsForPosition = async (selectedRole, selectedLevel) => {
+    setLoadingSkills(true);
+    try {
+      const body = {
+        position: selectedRole,
+        experience: selectedLevel || 0,
+        uid: "userProfile?.uid",
+        interviewType: "technical",
+      };
+      const response = await fetchWithAuth(`https://python.aiinterviewagents.com/generate-skills/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch skills");
+      }
+
+      const data = await response.json();
+      const newSkills = data.skills || [];
+      const limitedSkills = newSkills.slice(0, 5);
+      return limitedSkills
+    } catch (error) {
+      console.error("Error fetching skills:", error);
+    } finally {
+      setLoadingSkills(false); // hide spinner
+    }
+  };
+
+  async function onSave() {
+    setCustomError(null);
+
+    // Step 1: Manual industry
+    if (step === 1) {
+      if (!customIndustry.trim()) {
+        setCustomError("Industry is required");
+        return;
+      }
+      if (!customRole.trim()) {
+        setCustomError("Role is required");
+        return;
+      }
+
+      setSelectedIndustry(customIndustry.trim());
+      setSelectedRole(customRole.trim())
+    }
+
+    // Step 2: Manual role
+    if (step === 2) {
+      if (!customRole.trim()) {
+        setCustomError("Role is required");
+        return;
+      }
+      if (!selectedIndustry) {
+        setStep(1)
+        setShowNotListedModal(false);
+        return
+      }
+
+      setSelectedRole(customRole.trim());
+    }
+
+    setShowNotListedModal(false);
+    setCustomIndustry("");
+    setCustomRole("");
+    setStep(3);
+  }
+
+  const onPressNext = async () => {
     if (step === 1) {
       if (!selectedIndustry) return; // guarded by disabled button, but safe check
       setStep(2);
@@ -50,13 +130,24 @@ const IndustryRoleScreen = () => {
       return;
     }
     if (selectedIndustry && selectedRole && selectedLevel && step === 3) {
-      console.log('===', selectedIndustry, selectedRole, selectedSkills);
+      let skills = []
+      if (selectedSkills.length === 0) {
+        skills = await fetchSkillsForPosition(selectedRole, selectedLevel)
+        if (!skills || skills.length === 0) {
+          Toast.show({
+            type: "error",
+            text1: "Please choose correct industry or role.",
+          });
+          return;
+        }
+        setSelectedSkills(skills)
+      }
 
       navigation.navigate('AvatarSelection', {
         selectedIndustry: selectedIndustry,
         selectedRole: selectedRole,
         selectedLevel: selectedLevel,
-        selectedSkills: selectedSkills
+        selectedSkills: skills
       });
       return;
     }
@@ -74,20 +165,37 @@ const IndustryRoleScreen = () => {
     // }
   };
   const rolesArray =
-    selectedIndustry &&
-      industries &&
-      industries[selectedIndustry]
-      ? Object.keys(industries[selectedIndustry]).map(roleName => ({
-        key: roleName,
-        skills: industries[selectedIndustry][roleName]
-      }))
-      : [];
+    selectedIndustry && industries && industries[selectedIndustry]
+      ? [
+        ...Object.keys(industries[selectedIndustry]).map(roleName => ({
+          key: roleName,
+          skills: industries[selectedIndustry][roleName],
+        })),
+        { key: "__ROLE_NOT_LISTED__", label: "Not listed" },
+      ]
+      : [{ key: "__ROLE_NOT_LISTED__", label: "Not listed" }];
 
+  const listData = [
+    ...data,
+    { key: "__NOT_LISTED__", label: "Not listed" },
+  ];
 
   const renderIndustry = ({ item }) => {
+    const isNotListed = item.key === "__NOT_LISTED__";
     const chosen = selectedIndustry === item.key;
+
+    const onPress = () => {
+      if (isNotListed) {
+        setSelectedIndustry(null)
+        setSelectedRole(null)
+        setShowNotListedModal(true);
+        return;
+      }
+      setSelectedIndustry(item.key);
+    };
+
     return (
-      <Pressable onPress={() => setSelectedIndustry(item.key)}>
+      <Pressable onPress={onPress}>
         <View style={[styles.card, chosen && styles.cardSelected]}>
           <View style={{ flex: 1 }}>
             <View style={styles.row}>
@@ -95,7 +203,7 @@ const IndustryRoleScreen = () => {
                 numberOfLines={1}
                 style={[styles.value, chosen && styles.cardSelected]}
               >
-                {item.key}
+                {isNotListed ? "Not listed" : item.key}
               </Text>
             </View>
           </View>
@@ -103,16 +211,26 @@ const IndustryRoleScreen = () => {
       </Pressable>
     );
   };
-
   const renderRole = ({ item }) => {
+    const isNotListed = item.key === "__ROLE_NOT_LISTED__";
     const chosen = selectedRole === item.key;
+
+    const onPress = () => {
+      if (isNotListed) {
+        setSelectedRole(null)
+        setShowNotListedModal(true);
+        return;
+      }
+      setSelectedRole(item.key);
+      setSelectedSkills(item?.skills || [])
+    }
     return (
-      <Pressable onPress={() => { setSelectedRole(item.key); setSelectedSkills(item?.skills || []) }}>
+      <Pressable onPress={onPress}>
         <View style={[styles.roleRow, chosen && styles.cardSelected]}>
           <View style={{ flex: 1 }}>
             <View style={styles.row}>
               <Text numberOfLines={1} style={[styles.value, chosen && styles.cardSelected]}>
-                {item.key}
+                {isNotListed ? "Not listed" : item.key}
               </Text>
             </View>
           </View>
@@ -144,6 +262,18 @@ const IndustryRoleScreen = () => {
   return (
     <View style={styles.container}>
       <BackgroundGradient2 />
+      <ManualIndustry
+        visible={showNotListedModal}
+        customIndustry={customIndustry}
+        setCustomIndustry={setCustomIndustry}
+        customRole={customRole}
+        setCustomRole={setCustomRole}
+        onClose={() => { setShowNotListedModal(false); setCustomIndustry(null); setCustomRole(null) }}
+        onSave={onSave}
+        isIndustry={step === 1}
+        customError={customError}
+      />
+
       <View style={styles.screenWrap}>
         {step === 1 && (
           <>
@@ -155,7 +285,7 @@ const IndustryRoleScreen = () => {
               {t('onboarding.selectDomain')}
             </Text>
             <FlatList
-              data={data}
+              data={listData}
               renderItem={renderIndustry}
               keyExtractor={(_, index) => index.toString()}
               showsVerticalScrollIndicator={false}
@@ -214,14 +344,18 @@ const IndustryRoleScreen = () => {
 
           <Pressable
             onPress={onPressNext}
-            disabled={!(step === 1 ? selectedIndustry : selectedRole)}
+            disabled={
+              loadingSkills ||
+              !(step === 1 ? selectedIndustry : selectedRole)
+            }
             style={[
               styles.button,
-              !(step === 1 ? selectedIndustry : selectedRole) &&
+              (loadingSkills ||
+                !(step === 1 ? selectedIndustry : selectedRole)) &&
               styles.disabledButton,
             ]}
           >
-            <Text style={styles.buttonText}>{t('onboarding.next')}</Text>
+            <Text style={styles.buttonText}>{loadingSkills ? "please wait..." : t('onboarding.next')}</Text>
           </Pressable>
 
           {/* <View style={styles.bottomBlackLine} /> */}
