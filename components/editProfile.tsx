@@ -19,6 +19,7 @@ import Ionicons from '@react-native-vector-icons/ionicons'
 import Layout from '../pages/Layout'
 import getIndustryData from "../libs/getIndustryData"
 import getLevelData from "../libs/getLevelData"
+import ManualRole from './ManualRole'
 export default function EditProfileModal({
     visible,
     onClose,
@@ -43,6 +44,12 @@ export default function EditProfileModal({
     const industriesData = useMemo(() => getIndustryData(language) || {}, [language])
     const LEVELS = useMemo(() => getLevelData(language) || {}, [language])
 
+    const [showManualRole, setShowManualRole] = useState(false)
+    const [customRole, setCustomRole] = useState('')
+    const [customRoleError, setCustomRoleError] = useState(null)
+    const [generatedSkills, setGeneratedSkills] = useState([])
+    const [loadingSkills, setLoadingSkills] = useState(false)
+
     // Initialize Data
     useEffect(() => {
         if (visible) {
@@ -58,6 +65,63 @@ export default function EditProfileModal({
         }
     }, [visible, currentName, initialIndustry, initialPosition, initialLevel])
 
+    const handleManualRoleSave = async () => {
+        if (!customRole.trim()) {
+            setCustomRoleError('Role is required')
+            return
+        }
+
+        setCustomRoleError(null)
+
+        const skills = await fetchSkillsForPosition({
+            role: customRole.trim(),
+            level
+        })
+
+        if (!skills || skills.length === 0) {
+            Toast.show({
+                type: 'error',
+                text1: 'Please enter a valid role'
+            })
+            return
+        }
+
+        setGeneratedSkills(skills)
+        setPosition(customRole.trim())
+        setShowManualRole(false)
+        setCustomRole(null)
+    }
+    const fetchSkillsForPosition = async ({ role, level }) => {
+        setLoadingSkills(true)
+        try {
+            const body = {
+                position: role,
+                experience: level || 0,
+                uid,
+                interviewType: "technical",
+            }
+
+            const response = await fetchWithAuth(
+                "https://python.aiinterviewagents.com/generate-skills/",
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(body),
+                }
+            )
+
+            if (!response.ok) throw new Error('Failed')
+
+            const data = await response.json()
+            return (data.skills || []).slice(0, 5)
+        } catch (e) {
+            console.error(e)
+            return []
+        } finally {
+            setLoadingSkills(false)
+        }
+    }
+
     // --- SAVE LOGIC ---
     async function handleSave() {
         try {
@@ -71,7 +135,10 @@ export default function EditProfileModal({
             const lastName = nameArray.slice(1).join(' ') || ''
 
             let skills = []
-            if (industry && position && industriesData[industry]) {
+
+            if (generatedSkills.length > 0) {
+                skills = generatedSkills
+            } else if (industry && position && industriesData[industry]) {
                 skills = industriesData[industry][position] || []
             }
 
@@ -224,6 +291,19 @@ export default function EditProfileModal({
                 <View style={styles.backdrop}>
                     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.modalWrap}>
                         <View style={styles.sheet}>
+                            <ManualRole
+                                visible={showManualRole}
+                                onClose={() => {
+                                    setShowManualRole(false)
+                                    setCustomRole('')
+                                    setCustomRoleError(null)
+                                }}
+                                onSave={handleManualRoleSave}
+                                customRole={customRole}
+                                setCustomRole={setCustomRole}
+                                customError={customRoleError}
+                                loadingSkills={loadingSkills}
+                            />
 
                             {/* Header only shows in Form mode */}
                             {viewMode === 'form' && (
@@ -251,11 +331,28 @@ export default function EditProfileModal({
                                 "Select Industry"
                             )}
 
-                            {viewMode === 'role' && renderListSelection(
-                                industry ? Object.keys(industriesData[industry] || {}) : [],
-                                setPosition,
-                                "Select Role"
-                            )}
+                            {viewMode === 'role' &&
+                                renderListSelection(
+                                    industry
+                                        ? [
+                                            ...Object.keys(industriesData[industry] || {}),
+                                            { label: "Not listed", value: "__ROLE_NOT_LISTED__" }
+                                        ]
+                                        : [],
+                                    (item) => {
+                                        if (typeof item === 'object' && item.value === "__ROLE_NOT_LISTED__") {
+                                            setViewMode('form')
+                                            setShowManualRole(true)
+                                            return
+                                        }
+
+                                        setPosition(item)
+                                        setGeneratedSkills([])
+                                        setViewMode('form')
+                                    },
+                                    "Select Role"
+                                )
+                            }
 
                             {viewMode === 'level' && renderListSelection(
                                 LEVELS,

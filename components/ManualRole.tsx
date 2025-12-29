@@ -17,6 +17,7 @@ const ManualRole = ({
     customRole,
     setCustomRole,
     customError,
+    loadingSkills = false
 }) => {
     return (
         <Modal
@@ -67,7 +68,7 @@ const ManualRole = ({
                             onSave();
                         }}
                     >
-                        <Text style={styles.saveText}>Save</Text>
+                        <Text style={styles.saveText}>{loadingSkills ? "Wait..." : "Save"}</Text>
                     </Pressable>
                 </View>
             </View>
