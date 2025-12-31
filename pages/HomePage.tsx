@@ -282,7 +282,7 @@ const HomePage = ({ route }) => {
 
     return (
         <>
-            {isInterviewStart && (
+            {(isInterviewStart || !myCandidate || !myCandidate?.position) && (
                 <Modal transparent visible animationType="fade">
                     <View style={styles.modalOverlay}>
                         <View style={styles.spinnerContainer}>
