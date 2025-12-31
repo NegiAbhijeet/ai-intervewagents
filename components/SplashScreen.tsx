@@ -1,17 +1,14 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { View, Text, StyleSheet, Image } from 'react-native';
+import BackgroundGradient1 from './backgroundGradient1';
 
 const SplashScreen = () => {
   const { t } = useTranslation();
 
   return (
     <View style={styles.container}>
-      <Image
-        source={require('../assets/images/bgGradient.png')}
-        style={styles.backgroundImage}
-        resizeMode="cover"
-      />
+      <BackgroundGradient1 />
       <View style={styles.content}>
         <View style={styles.logoWrapper}>
           <View style={[styles.logo]}>

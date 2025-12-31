@@ -317,6 +317,7 @@ export default function NotificationsPage() {
     <Layout>
       <CustomHeader
         title="Notifications"
+        removePadding={true}
       />
 
       <View style={{ paddingTop: 16, paddingBottom: 48 }}>

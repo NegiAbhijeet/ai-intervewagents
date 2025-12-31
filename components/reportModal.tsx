@@ -28,6 +28,7 @@ import LANGUAGES from '../libs/languages';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import { API_URL } from './config';
 import Toast from 'react-native-toast-message';
+import BackgroundGradient1 from './backgroundGradient1';
 const ReportModal = ({
   visible,
   onClose,
@@ -163,17 +164,7 @@ const ReportModal = ({
         }}
       >
         {/* background image is a sibling of ScrollView, not a child */}
-        <Image
-          source={require('../assets/images/bgGradient.png')}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            transform: 'translateY(250%)',
-            height: '100%',
-          }}
-          resizeMode="cover"
-        />
+        <BackgroundGradient1 />
         <View
           style={{
             position: 'absolute',
