@@ -16,7 +16,7 @@ import CustomAlert from "./CustomAlert"
 const OPTIONS = ["Easy", "Hard"];
 
 export default function SelectInterviewType({ onClose, setSelectedInterviewType, handleSubmit, type, error, setError }) {
-    const [selectedValue, setSelectedValue] = useState("technical");
+    const [selectedValue, setSelectedValue] = useState("Technical");
     const [difficulty, setDifficulty] = useState(OPTIONS[0] || "Easy");
 
     const Card = ({
@@ -152,7 +152,7 @@ export default function SelectInterviewType({ onClose, setSelectedInterviewType,
                         </View>
 
                         <Card
-                            id="technical"
+                            id="Technical"
                             title="Technical"
                             duration="10–15 mins"
                             description="Evaluation of your specific skills and problem-solving abilities to ensure you can perform the core tasks of the job."
@@ -163,7 +163,7 @@ export default function SelectInterviewType({ onClose, setSelectedInterviewType,
                         />
 
                         <Card
-                            id="behavioural"
+                            id="Behavioural"
                             title="Behavioural"
                             duration="10–15 mins"
                             description="Discussion of your past experiences and soft skills to determine how you handle work challenges and fit into the company culture."
