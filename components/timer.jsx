@@ -21,12 +21,6 @@ const Timer = ({
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    if (displaySeconds > sessionDurationSeconds + 90) {
-      terminateSession();
-    }
-  }, [displaySeconds]);
-
   const hours = String(Math.floor(displaySeconds / 3600)).padStart(2, '0');
   const minutes = String(Math.floor((displaySeconds % 3600) / 60)).padStart(
     2,

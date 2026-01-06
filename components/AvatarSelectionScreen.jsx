@@ -55,22 +55,8 @@ export default function AvatarSelectionScreen({ route }) {
   }, []);
 
   const selectedAvatar = selectedIndex !== null ? avatars[selectedIndex] : null;
-  const extractMeetingDateTimeParts = dateTime => {
-    const date = new Date(dateTime);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hour = String(date.getHours()).padStart(2, '0');
-    const minute = String(date.getMinutes()).padStart(2, '0');
 
-    return {
-      date: `${year}-${month}-${day}`,
-      hour,
-      minute,
-    };
-  };
-
-  handleCandidateUpdate = async () => {
+  const handleCandidateUpdate = async () => {
     try {
       const parts = (userName || '').trim().split(/\s+/);
       const firstName = parts[0] || '';
@@ -138,9 +124,6 @@ export default function AvatarSelectionScreen({ route }) {
         return
       }
 
-      const now = new Date();
-      const { date, hour, minute } = extractMeetingDateTimeParts(now);
-
       const parts = (userName || '').trim().split(/\s+/);
       const firstName = parts[0] || '';
       const lastName = parts.length > 1 ? parts.slice(1).join(' ') : '';
@@ -155,20 +138,15 @@ export default function AvatarSelectionScreen({ route }) {
       ).slice(0, 5);
 
       const myLanguage = LANGUAGES.find((item) => item?.code === language)
+
       const payload = {
         uid: userProfile?.uid,
-        hour,
-        minute,
-        date,
         requiredSkills: skillsPayload,
-        position: selectedRole,
-        role: 'candidate',
         experience: selectedLevel,
-        type: 'practice',
-        interviewType: 'Technical',
-        duration: '600',
-        avatar: selectedAvatar,
+        role: 'candidate',
         industry: selectedIndustry,
+        position: selectedRole,
+        avatar: selectedAvatar,
         first_name: firstName,
         last_name: lastName,
         language: myLanguage?.label_en || "English"
@@ -176,7 +154,7 @@ export default function AvatarSelectionScreen({ route }) {
 
       setIsLoading(true);
 
-      const response = await fetchWithAuth(`${API_URL}/interview-agent/`, {
+      const response = await fetchWithAuth(`${API_URL}/candidate/save/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -191,37 +169,15 @@ export default function AvatarSelectionScreen({ route }) {
       }
 
       const result = await response.json().catch(() => ({}));
-      const meetingUrl = result?.meeting_url;
 
-      if (meetingUrl) {
-        const urlParams = new URLSearchParams(meetingUrl.split('?')[1] || '');
-
-        const meetingId = urlParams.get('meetingId');
-        const canId = urlParams.get('canId');
-        const interviewType = urlParams.get('interviewType');
-        const candidateName = urlParams.get('candidateName') || 'User';
-        const interviewTime = urlParams.get('interviewTime');
-
-        setUserProfile({
-          ...userProfile,
-          role: 'candidate',
-          avatar: selectedAvatar,
-          full_name: candidateName,
-          industry: selectedIndustry,
-          position: selectedRole
-        });
-        // const firstPayload = {
-        //   canId,
-        //   meetingId,
-        //   interviewType,
-        //   interviewTime,
-        //   candidateName,
-        //   adminId: userProfile?.uid
-        // }
-        // setFirstInterviewObject(firstPayload)
-      } else {
-        throw new Error('No meeting URL returned from server.');
-      }
+      setUserProfile({
+        ...userProfile,
+        role: 'candidate',
+        avatar: selectedAvatar,
+        full_name: userName,
+        industry: selectedIndustry,
+        position: selectedRole
+      });
     } catch (error) {
       console.log('handleContinue error:', error);
       Toast.show({

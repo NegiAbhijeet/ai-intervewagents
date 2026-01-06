@@ -39,6 +39,8 @@ const HomePage = ({ route }) => {
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [selectedInterviewType, setSelectedInterviewType] = useState("")
     const [selectedType, setSelectedType] = useState("")
+    const [error, setError] = useState("")
+
     const [openSelectInterviewOptions, setOpenSelectInterviewOptions] = useState(false)
     function streakHandleSubmit() { setSelectedType("Practice"); setOpenSelectInterviewOptions(true) }
 
@@ -269,6 +271,7 @@ const HomePage = ({ route }) => {
                 setOpenSelectInterviewOptions(false)
             }
         } catch (error) {
+            setError(error.message || "Something went wrong.")
             console.log(error);
         } finally {
             setIsInterviewStart(false);
@@ -314,7 +317,7 @@ const HomePage = ({ route }) => {
                     showDailyStreak && firstInterviewObject === null && <StreakProgress currentDay={Math.max(1, leaderboardRank)} setShowDailyStreak={setShowDailyStreak} isHome={true} streakHandleSubmit={() => { streakHandleSubmit() }} />
                 }
                 {
-                    openSelectInterviewOptions && selectedType && <SelectInterviewType onClose={() => { setFirstInterviewObject(null); setOpenSelectInterviewOptions(false); }} type={selectedType} setSelectedInterviewType={setSelectedInterviewType} handleSubmit={handleSubmit} />
+                    openSelectInterviewOptions && selectedType && <SelectInterviewType onClose={() => { setFirstInterviewObject(null); setOpenSelectInterviewOptions(false); }} type={selectedType} setSelectedInterviewType={setSelectedInterviewType} handleSubmit={handleSubmit} error={error} setError={setError} />
                 }
                 <ScrollView
                     showsVerticalScrollIndicator={false}

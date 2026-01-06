@@ -12,10 +12,10 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 // import DifficultyDropdown from "../components/DifficultyDropdown";
 import Layout from "../pages/Layout";
-
+import CustomAlert from "./CustomAlert"
 const OPTIONS = ["Easy", "Hard"];
 
-export default function SelectInterviewType({ onClose, setSelectedInterviewType, handleSubmit, type }) {
+export default function SelectInterviewType({ onClose, setSelectedInterviewType, handleSubmit, type, error, setError }) {
     const [selectedValue, setSelectedValue] = useState("technical");
     const [difficulty, setDifficulty] = useState(OPTIONS[0] || "Easy");
 
@@ -74,6 +74,11 @@ export default function SelectInterviewType({ onClose, setSelectedInterviewType,
 
     return (
         <Modal visible={true} animationType="slide" presentationStyle="fullScreen" statusBarTranslucent={true}>
+            <CustomAlert
+                visible={!!error}
+                message={error}
+                onClose={() => setError("")}
+            />
             <Layout removePadding={true}>
                 <SafeAreaView style={styles.container}>
                     <Pressable

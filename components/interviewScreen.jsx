@@ -29,7 +29,6 @@ import ExitReasonsModal from './quitFeedback';
 import ToggleButton from './ToggleButton';
 import Layout from '../pages/Layout';
 import { ScrollView } from 'react-native-gesture-handler';
-import SelectInterviewType from './SelectInterviewType';
 
 const CallUI = ({
   agentId,
@@ -60,57 +59,30 @@ const CallUI = ({
   const [hasCameraPermission, setHasCameraPermission] = useState(false);
   const [hasMicPermission, setHasMicPermission] = useState(false);
   const [quitStep, setQuitStep] = useState(null)
-  const [interviewEnded, setInterviewEnded] = useState(false);
-  const interviewDurationSeconds = Number(interviewTime);
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   function handleInterviewCompletion() {
     setIsLoading(true);
-    setInterviewEnded(true);
     stopAudioRecording();
     stopAudioPlayer();
 
-    fetch(`${JAVA_API_URL}/api/meetings/update/${meetingId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ interviewDuration: elapsedSecondsRef.current }),
-    })
-      .catch(error => {
-        console.error('Error updating meeting:', error);
-      })
-      .finally(() => {
-        setTimeout(() => {
-          sendInterviewCompleted();
-          setHasStarted(false);
-          setShowInterviewScreen(false);
-          setIsLoading(false);
-          setUserProfile(prev => ({
-            ...prev,
-            seconds_used: (prev?.seconds_used || 0) + elapsedSecondsRef.current,
-          }));
+    setTimeout(() => {
+      sendInterviewCompleted();
+      setHasStarted(false);
+      setShowInterviewScreen(false);
+      setIsLoading(false);
+      setUserProfile(prev => ({
+        ...prev,
+        seconds_used: (prev?.seconds_used || 0) + elapsedSecondsRef.current,
+      }));
 
-          navigation.navigate('reports', { meetingId });
-        }, 2000);
-      })
+      navigation.navigate('reports', { meetingId });
+    }, 2000);
   }
   function halfHandleInterviewCompletion() {
     setIsLoading(true);
-    setInterviewEnded(true);
     stopAudioRecording();
     stopAudioPlayer();
-
-    fetch(`${JAVA_API_URL}/api/meetings/update/${meetingId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ interviewDuration: elapsedSecondsRef.current }),
-    })
-      .catch(error => {
-        console.error('Error updating meeting:', error);
-      })
   }
   const { startSession, addUserAudio, sendInterviewCompleted } = useRealTime({
     agentId,
@@ -188,77 +160,7 @@ const CallUI = ({
     return true;
   };
 
-  // Interview timer and wrap-up logic
-  useEffect(() => {
-    if (!hasStarted || interviewEnded || !interviewDurationSeconds) return;
 
-    // Set real start time only once
-    if (!initialStartRef.current) {
-      initialStartRef.current = Date.now();
-    }
-
-    const skipSeconds = 3 * 60;
-    const maxRestarts = Math.floor(
-      (interviewDurationSeconds - 60) / skipSeconds,
-    );
-    let restartCount = 0;
-
-    // Wrap-up control
-    let wrapUpStartTime = null;
-    let wrapUpTriggerCount = 0;
-    const wrapUpMaxTriggers = 3; // Call wrap-up 4 times
-    const wrapUpIntervalSeconds = 5;
-
-    const interval = setInterval(() => {
-      const now = Date.now();
-      const elapsed = Math.floor(
-        (now - (initialStartRef.current || now)) / 1000,
-      );
-      const remaining = interviewDurationSeconds - elapsed;
-
-      if (remaining <= 60) {
-        if (!wrapUpStartTime) {
-          console.log('Entering wrap-up phase: value:3');
-          wrapUpStartTime = now;
-          startSession('3');
-          wrapUpTriggerCount = 1;
-        } else {
-          const wrapUpElapsed = Math.floor((now - wrapUpStartTime) / 1000);
-          if (
-            wrapUpTriggerCount < wrapUpMaxTriggers &&
-            wrapUpElapsed >= wrapUpTriggerCount * wrapUpIntervalSeconds
-          ) {
-            console.log(`Wrap-up repeat #${wrapUpTriggerCount + 1}: value:3`);
-            startSession('3');
-            wrapUpTriggerCount++;
-          }
-        }
-        return; // Don't allow restarts during wrap-up
-      }
-
-      if (
-        elapsed > 0 &&
-        elapsed % skipSeconds === 0 &&
-        restartCount < maxRestarts
-      ) {
-        console.log(
-          `Restarting at ${elapsed}s (restart #${restartCount + 1}) value:2`,
-        );
-        startSession('2');
-        restartCount++;
-      }
-    }, 1000);
-
-    const timeout = setTimeout(() => {
-      console.log('Interview complete finalizing');
-      handleInterviewCompletion();
-    }, (interviewDurationSeconds + 20) * 1000);
-
-    return () => {
-      clearInterval(interval);
-      clearTimeout(timeout);
-    };
-  }, [hasStarted, interviewEnded, interviewDurationSeconds]);
   const handleCameraToggle = async () => {
     if (!hasCameraPermission) {
       const permission = await Camera.requestCameraPermission();
@@ -476,7 +378,6 @@ const CallUI = ({
                 <Timer
                   refValue={elapsedSecondsRef}
                   sessionDurationSeconds={interviewTime - 60}
-                  terminateSession={handleInterviewCompletion}
                 />
                 <AIAgent isAgentSpeaking={true} />
 
