@@ -40,7 +40,7 @@ export default function StreakProgress({ visible = true, daysCount = 100, curren
     }
 
     return (
-        <Modal visible={visible} transparent animationType="fade">
+        <Modal visible={visible} transparent animationType="fade" statusBarTranslucent>
             <View style={styles.backdrop}>
                 <View style={styles.card}>
                     <Pressable onPress={() => { markDailyStreakShown() }} style={styles.closeButton}>

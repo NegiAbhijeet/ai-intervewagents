@@ -90,11 +90,11 @@ const TopBar = () => {
                 alignItems: 'center',
                 borderWidth: 2,
                 borderColor: "rgba(233, 181, 11, 0.3)",
-                paddingVertical: 7,
+                paddingVertical: 8,
                 paddingHorizontal: 14
               }}
             >
-              <Text style={{ color: "#fff", fontSize: 8, fontWeight: 600, lineHeight:8 }}>JOIN</Text>
+              {/* <Text style={{ color: "#fff", fontSize: 8, fontWeight: 600, lineHeight:8 }}>JOIN</Text> */}
               <Text style={{ color: "#fff", fontSize: 10, fontWeight: 800, lineHeight:12 }}>PREMIUM</Text>
             </LinearGradient>
           </TouchableOpacity>

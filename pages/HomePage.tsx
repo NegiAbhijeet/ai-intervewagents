@@ -16,7 +16,7 @@ import StreakProgress from '../components/streakProgress';
 import Toast from 'react-native-toast-message';
 import LinearGradient from 'react-native-linear-gradient';
 import SelectInterviewType from '../components/SelectInterviewType';
-
+import LevelProgress from "../components/LevelProgress"
 const HomePage = ({ route }) => {
     const {
         userProfile,
@@ -343,8 +343,9 @@ const HomePage = ({ route }) => {
                             <HomeTopPenguin />
                         </View>
                     )}
+                    <LevelProgress rating={userProfile?.rating || 0} />
 
-                    <View style={{ backgroundColor: "rgba(103, 86, 239, 0.08)", borderWidth: 1, borderRadius: 14, borderColor: "rgba(239, 239, 239, 1)", marginTop: 15, paddingHorizontal: 24, paddingVertical: 12, alignSelf: 'center', width: '85%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <View style={{ backgroundColor: "rgba(103, 86, 239, 0.08)", borderWidth: 1, borderRadius: 14, borderColor: "rgba(239, 239, 239, 1)", paddingHorizontal: 24, paddingVertical: 12, alignSelf: 'center', width: '85%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                         <View>
                             <Text style={{ fontSize: 12, fontWeight: '700' }}>{lastMeeting?.position || t('home.noInterview')}</Text>
                             <Text style={{ fontSize: 10, fontWeight: '600' }}>
