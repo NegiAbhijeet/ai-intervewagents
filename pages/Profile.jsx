@@ -66,11 +66,9 @@ export default function ProfileScreen() {
   const [search, setSearch] = useState("");
   const [profileData, setProfileData] = useState({
     canId: "",
-    avatar: userProfile?.avatar,
     name: "",
     email: firebaseUser?.email,
     totalMinutes: String(totalMinutes),
-    score: userProfile?.rating,
     level: "",
     role: "",
     industry: ""
@@ -107,11 +105,9 @@ export default function ProfileScreen() {
         console.log(candidate)
         setMyCandidate(candidate)
         setProfileData({
-          avatar: userProfile?.avatar,
           name: `${candidate?.firstName} ${candidate?.lastName}`,
           email: firebaseUser?.email,
           totalMinutes: String(totalMinutes),
-          score: userProfile?.rating,
           level: candidate?.experienceYears,
           role: candidate?.position,
           industry: candidate?.industry,
@@ -238,7 +234,7 @@ export default function ProfileScreen() {
       {
         key: 'rating',
         label: t('profile.stats.rating'),
-        value: safe(profileData.score, 'N/A'),
+        value: safe(userProfile?.rating, 'N/A'),
       },
     ]
   }, [profileData])
@@ -375,9 +371,9 @@ export default function ProfileScreen() {
                     borderRadius: 999,
                   }}
                 >
-                  {profileData?.avatar ? (
+                  {userProfile?.avatar ? (
                     <Image
-                      source={{ uri: profileData?.avatar }}
+                      source={{ uri: userProfile?.avatar }}
                       className="w-full h-full rounded-full"
                       style={{ width: 100, height: 100 }}
                     />
@@ -611,7 +607,7 @@ export default function ProfileScreen() {
           visible={isEditProfile}
           onClose={() => setIsEditProfile(false)}
           currentName={profileData?.name}
-          avatarUrl={profileData?.avatar}
+          avatarUrl={userProfile?.avatar}
           initialEmail={profileData?.email}
           uid={userProfile?.uid}
           canId={profileData?.canId}

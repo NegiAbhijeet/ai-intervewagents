@@ -20,6 +20,7 @@ import Layout from '../pages/Layout'
 import getIndustryData from "../libs/getIndustryData"
 import getLevelData from "../libs/getLevelData"
 import ManualRole from './ManualRole'
+import EditAvatarModal from './editAvatar'
 export default function EditProfileModal({
     visible,
     onClose,
@@ -49,6 +50,8 @@ export default function EditProfileModal({
     const [customRoleError, setCustomRoleError] = useState(null)
     const [generatedSkills, setGeneratedSkills] = useState([])
     const [loadingSkills, setLoadingSkills] = useState(false)
+    const [selectedAvatar, setSelectedAvatar] = useState(avatarUrl || "")
+    const [isEditAvatar, setIsEditAvatar] = useState(false);
 
     // Initialize Data
     useEffect(() => {
@@ -150,7 +153,8 @@ export default function EditProfileModal({
                 industry,
                 position,
                 skills: skills.length > 0 ? skills.slice(0, 5) : undefined,
-                level: level > 0 ? level : undefined
+                level: level > 0 ? level : undefined,
+                avatar: selectedAvatar
             }
 
             const requiredFields = ['uid', 'canId', 'firstName', 'industry', 'position']
@@ -196,12 +200,23 @@ export default function EditProfileModal({
             {/* Avatar */}
             <View style={styles.avatarSection}>
                 <View style={styles.avatarWrapper}>
-                    {avatarUrl && !avatarUrl.includes("profileData") ? (
-                        <Image source={{ uri: avatarUrl }} style={styles.avatarImage} />
+                    {selectedAvatar && !selectedAvatar.includes("profileData") ? (
+                        <Image source={{ uri: selectedAvatar }} style={styles.avatarImage} />
                     ) : (
                         <View style={styles.avatarPlaceholder} />
                     )}
                 </View>
+                <TouchableOpacity onPress={() => setIsEditAvatar(true)} style={{ paddingVertical: 8, }}>
+                    <Text style={{
+                        fontSize: 12,
+                        fontWeight: '500',
+                        color: 'rgba(143, 15, 200, 1)',
+                        alignSelf: 'center',
+                        textDecorationLine: 'underline'
+                    }}>
+                        Edit Avatar
+                    </Text>
+                </TouchableOpacity>
             </View>
 
             {/* Name Input */}
@@ -250,6 +265,13 @@ export default function EditProfileModal({
             </TouchableOpacity>
 
             <View style={{ height: 40 }} />
+            <EditAvatarModal
+                visible={(isEditAvatar)}
+                onClose={() => setIsEditAvatar(false)}
+                currentAvatar={selectedAvatar || ""}
+                uid={uid}
+                setSelectedAvatar={setSelectedAvatar}
+            />
         </ScrollView>
     );
 

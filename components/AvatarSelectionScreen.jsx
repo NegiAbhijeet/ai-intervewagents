@@ -50,7 +50,7 @@ export default function AvatarSelectionScreen({ route }) {
 
   const avatars = useMemo(() => {
     const base =
-      'https://docsightaistorageprod.blob.core.windows.net/avatar/avatar';
+      'https://docsightaistorageprod.blob.core.windows.net/avatar/avatar0';
     return Array.from({ length: 6 }, (_, i) => `${base}${i + 1}.png`);
   }, []);
 

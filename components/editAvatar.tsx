@@ -31,13 +31,13 @@ export default function EditAvatarModal({
     onClose,
     currentAvatar = null,
     uid,
-    onSuccess = () => { },
+    setSelectedAvatar = () => { },
 }) {
     const [isLoading, setIsLoading] = useState(false)
     const [selectedIndex, setSelectedIndex] = useState(null)
 
     const avatars = useMemo(() => {
-        const base = 'https://docsightaistorageprod.blob.core.windows.net/avatar/avatar'
+        const base = 'https://docsightaistorageprod.blob.core.windows.net/avatar/avatar0'
         return Array.from({ length: 6 }, (_, i) => `${base}${i + 1}.png`)
     }, [])
 
@@ -72,7 +72,7 @@ export default function EditAvatarModal({
             }
 
             Toast.show({ type: 'success', text1: 'Avatar updated' })
-            onSuccess({ avatarUrl })
+            setSelectedAvatar(avatarUrl)
             onClose()
         } catch (error) {
             console.error('Error updating avatar:', error)
