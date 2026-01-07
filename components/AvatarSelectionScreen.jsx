@@ -70,16 +70,19 @@ export default function AvatarSelectionScreen({ route }) {
       ).slice(0, 5);
 
       const payload = {
+        uid,
+        canId,
         firstName: firstName,
         lastName: lastName,
         industry: selectedIndustry,
         position: selectedRole,
-        requiredSkills: skillsPayload,
-        experienceYears: selectedLevel,
+        skills: skillsPayload,
+        level: selectedLevel,
+        avatar: selectedAvatar
       };
       setIsLoading(true);
-      const response = await fetchWithAuth(`${JAVA_API_URL}/api/candidates/update/${myCandidate?.canId}`, {
-        method: 'PUT',
+      const response = await fetchWithAuth(`${API_URL}/candidate/update/`, {
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -91,7 +94,7 @@ export default function AvatarSelectionScreen({ route }) {
         throw new Error(message);
       }
       const updatedProfile = await response.json().catch(() => ({}));
-      const newUserProfile = updatedProfile?.data || {}
+      const newUserProfile = updatedProfile || {}
       if (newUserProfile?.canId) {
         console.log('Updated candidate profile:', newUserProfile);
         setMyCandidate(newUserProfile);
@@ -389,8 +392,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#fff',
     overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderWidth: 4,
+    borderColor: 'white',
   },
 
   avatarOuterSelected: {

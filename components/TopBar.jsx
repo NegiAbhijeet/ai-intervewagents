@@ -62,7 +62,7 @@ const TopBar = () => {
   return (
     <View className="flex-row justify-between items-center px-[5%] pt-4 pb-3 bg-white">
       <TouchableOpacity
-        onPress={() => navigation.navigate("index")}
+        onPress={() => navigation.navigate("profile")}
         className="flex-row items-center gap-2"
       >
         <Image
@@ -95,7 +95,7 @@ const TopBar = () => {
               }}
             >
               {/* <Text style={{ color: "#fff", fontSize: 8, fontWeight: 600, lineHeight:8 }}>JOIN</Text> */}
-              <Text style={{ color: "#fff", fontSize: 10, fontWeight: 800, lineHeight:12 }}>PREMIUM</Text>
+              <Text style={{ color: "#fff", fontSize: 10, fontWeight: 800, lineHeight:12 }}>UPGRADE</Text>
             </LinearGradient>
           </TouchableOpacity>
         }

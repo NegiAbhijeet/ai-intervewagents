@@ -45,8 +45,6 @@ const CallUI = ({
 
   skills,
   position,
-  duration = 10,
-
 }) => {
   const { userProfile, setUserProfile, language } = useContext(AppStateContext);
   const { t } = useTranslation();
@@ -292,7 +290,7 @@ const CallUI = ({
                             <Text style={styles.roleTitle} numberOfLines={1}>{position || ''}</Text>
                             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 6 }}>
                               <Ionicons name="time" size={18} color="rgba(0, 0, 0, 0.5)" />
-                              <Text style={styles.durationText}>{duration || 15} minutes</Text>
+                              <Text style={styles.durationText}>{interviewTime || 10} minutes</Text>
                             </View>
                           </View>
                           <View style={styles.briefcaseIcon}>

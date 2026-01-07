@@ -31,6 +31,8 @@ const HomePage = ({ route }) => {
         setMyCandidate,
         language,
         showDailyStreak,
+        totalMinutes,
+        usedMinutes,
         setShowDailyStreak
     } = useContext(AppStateContext);
     const [lastMeeting, setLastMeeting] = useState([]);
@@ -211,14 +213,13 @@ const HomePage = ({ route }) => {
 
             const now = new Date();
             const { date, hour, minute } = extractMeetingDateTimeParts(now);
-            const parsedDuration = parseInt(10);
             const myLanguage = LANGUAGES.find((item) => item?.code === language)
             const payload = {
                 uid: userProfile?.uid,
                 hour,
                 minute,
                 date,
-                duration: parsedDuration * 60,
+                duration: Math.max(0, Math.min(10, totalMinutes - usedMinutes)),
                 position: myCandidate?.position,
                 role: 'candidate',
                 candidateId: myCandidate?.canId || '',
@@ -405,7 +406,7 @@ const HomePage = ({ route }) => {
                                                     borderRadius: 9999,
                                                     justifyContent: 'center',
                                                     alignItems: 'center',
-                                                    paddingVertical: 7,
+                                                    paddingVertical: 8,
                                                     paddingHorizontal: 28,
                                                 }}
                                             >
@@ -452,11 +453,11 @@ const styles = StyleSheet.create({
     },
 
     parent: {
-        backgroundColor: 'rgba(255, 255, 255, 0.5)',
-        borderRadius: 18,
-        padding: 20,
-        marginVertical: 40,
-        boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.15), 0px -1px 4px 0px rgba(0, 0, 0, 0.15)",
+        // backgroundColor: 'rgba(255, 255, 255, 0.5)',
+        // borderRadius: 18,
+        // padding: 20,
+        marginVertical: 16,
+        // boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.15), 0px -1px 4px 0px rgba(0, 0, 0, 0.15)",
     },
     heading: {
         fontSize: 18,
@@ -466,22 +467,23 @@ const styles = StyleSheet.create({
         color: '#111',
     },
     card: {
-        backgroundColor: 'rgba(242, 242, 242, 0.5)',
+        backgroundColor: 'rgba(242, 242, 242, 0.50)',
         borderRadius: 10,
-        padding: 16,
+        paddingVertical: 22,
+        paddingHorizontal: 18,
         marginBottom: 12,
         alignItems: 'center',
-        boxShadow: "0px 1px 4px 0px rgba(0, 0, 0, 0.20)",
+        boxShadow: "0 1px 4px 0 rgba(0, 0, 0, 0.25)",
     },
     cardTitle: {
         fontSize: 16,
         fontWeight: 500,
-        color: '#111',
+        color: '#000',
     },
     cardDescription: {
         fontSize: 12,
         textAlign: 'center',
-        color: 'rgba(60, 60, 60, 1)',
+        color: '#3C3C3C',
         marginBottom: 16,
         lineHeight: 18,
         fontWeight: 400
