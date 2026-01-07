@@ -1,7 +1,11 @@
 [
   {
-    "label": "Entry level",
+    "label": "Intern level",
     "value": 1
+  },
+  {
+    "label": "Entry level",
+    "value": 2
   },
   {
     "label": "Mid-level",

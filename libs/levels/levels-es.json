@@ -1,18 +1,22 @@
 [
-    {
-        "label": "Nivel inicial",
-        "value": 1
-    },
-    {
-        "label": "Nivel medio",
-        "value": 8
-    },
-    {
-        "label": "Senior",
-        "value": 12
-    },
-    {
-        "label": "Ejecutivo",
-        "value": 20
-    }
+  {
+    "label": "Practicante",
+    "value": 1
+  },
+  {
+    "label": "Nivel inicial",
+    "value": 2
+  },
+  {
+    "label": "Nivel medio",
+    "value": 8
+  },
+  {
+    "label": "Senior",
+    "value": 12
+  },
+  {
+    "label": "Ejecutivo",
+    "value": 20
+  }
 ]

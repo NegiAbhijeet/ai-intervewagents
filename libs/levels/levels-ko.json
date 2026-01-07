@@ -1,18 +1,22 @@
 [
-    {
-        "label": "초급",
-        "value": 1
-    },
-    {
-        "label": "중급",
-        "value": 8
-    },
-    {
-        "label": "시니어",
-        "value": 12
-    },
-    {
-        "label": "임원",
-        "value": 20
-    }
+  {
+    "label": "인턴",
+    "value": 1
+  },
+  {
+    "label": "초급",
+    "value": 2
+  },
+  {
+    "label": "중급",
+    "value": 8
+  },
+  {
+    "label": "시니어",
+    "value": 12
+  },
+  {
+    "label": "임원",
+    "value": 20
+  }
 ]
