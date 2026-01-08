@@ -1,6 +1,6 @@
 import Layout from './Layout';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Animated, Easing, Image, ImageBackground, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Animated, Easing, Image, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import { AppStateContext } from '../components/AppContext';
 import { API_URL, JAVA_API_URL } from '../components/config';
@@ -17,7 +17,11 @@ import Toast from 'react-native-toast-message';
 import LinearGradient from 'react-native-linear-gradient';
 import SelectInterviewType from '../components/SelectInterviewType';
 import LevelProgress from "../components/LevelProgress"
+import { useNavigation } from '@react-navigation/native';
+import ExhaustedLimitModal from "../components/ExhaustedLimitModal"
+
 const HomePage = ({ route }) => {
+    const navigation = useNavigation()
     const {
         userProfile,
         setUserProfile,
@@ -42,6 +46,7 @@ const HomePage = ({ route }) => {
     const [selectedInterviewType, setSelectedInterviewType] = useState("")
     const [selectedType, setSelectedType] = useState("")
     const [error, setError] = useState("")
+    const [showExhaustedModal, setShowExhaustedModal] = useState(false)
 
     const [openSelectInterviewOptions, setOpenSelectInterviewOptions] = useState(false)
     function streakHandleSubmit() { setSelectedType("Practice"); setOpenSelectInterviewOptions(true) }
@@ -126,6 +131,14 @@ const HomePage = ({ route }) => {
             console.error('Failed to fetch candidate:', error);
         }
     };
+    const onStartClick = (value) => {
+        const leftMinutes = Math.max(0, Math.min(10, totalMinutes - usedMinutes))
+        if (leftMinutes <= 0) {
+            setShowExhaustedModal(true)
+            return
+        }
+        setSelectedType(value); setOpenSelectInterviewOptions(true);
+    }
     async function fetchMeetings(isRefreshingCall = false) {
         setIsLoading(true);
         if (isRefreshingCall) {
@@ -298,6 +311,11 @@ const HomePage = ({ route }) => {
             {/* <StreakProgress visible={true} currentDay={5} /> */}
 
             <TopBar />
+            <ExhaustedLimitModal
+                visible={showExhaustedModal}
+                onClose={() => setShowExhaustedModal(false)}
+                onUpgradePress={() => { navigation.navigate('pricing'); setShowExhaustedModal(false); }}
+            />
 
             {firstInterviewObject && (
                 <InterviewScreen
@@ -395,7 +413,7 @@ const HomePage = ({ route }) => {
                                         </Text>
 
                                         <Pressable
-                                            onPress={() => { setSelectedType(value); setOpenSelectInterviewOptions(true); }}
+                                            onPress={() => onStartClick(value)}
                                             style={styles.button}
                                         >
                                             <LinearGradient
@@ -497,5 +515,11 @@ const styles = StyleSheet.create({
         fontWeight: 700,
         width: '100%',
         textAlign: 'center'
+    },
+    iconButton: {
+        borderWidth: 1,
+        borderColor: 'rgba(217, 217, 217, 1)',
+        padding: 6,
+        borderRadius: 999,
     },
 })
