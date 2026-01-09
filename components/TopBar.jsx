@@ -95,7 +95,7 @@ const TopBar = () => {
               }}
             >
               {/* <Text style={{ color: "#fff", fontSize: 8, fontWeight: 600, lineHeight:8 }}>JOIN</Text> */}
-              <Text style={{ color: "#fff", fontSize: 10, fontWeight: 800, lineHeight:12 }}>UPGRADE</Text>
+              <Text style={{ color: "#fff", fontSize: 10, fontWeight: 800, lineHeight: 12 }}>UPGRADE</Text>
             </LinearGradient>
           </TouchableOpacity>
         }
@@ -104,8 +104,8 @@ const TopBar = () => {
           className="flex-row items-center gap-2"
         >
           <View
-            className="flex-row items-center justify-center gap-1 border border-transparent rounded-full px-3 py-1"
-            style={{ overflow: 'hidden', backgroundColor: "rgba(209, 209, 209, 0.3)" }}
+            className="flex-row items-center justify-center gap-1 border border-[#EEF0F4] rounded-full px-3 py-1"
+            style={{ overflow: 'hidden', boxShadow: "0 3.839px 5.759px -0.96px rgba(0, 0, 0, 0.10), 0 1.92px 3.839px -1.92px rgba(0, 0, 0, 0.10)" }}
           >
             {/* <Image
               source={require('../assets/images/flame.png')}
@@ -130,8 +130,8 @@ const TopBar = () => {
             navigation.navigate('notifications');
           }}
           accessibilityLabel="Notifications"
-          className="relative"
-          style={{ paddingHorizontal: 6, paddingVertical: 6 }}
+          className="relative border border-[#EEF0F4] rounded-full"
+          style={{ paddingHorizontal: 6, paddingVertical: 6, boxShadow: "0 3.839px 5.759px -0.96px rgba(0, 0, 0, 0.10), 0 1.92px 3.839px -1.92px rgba(0, 0, 0, 0.10)" }}
         >
           <Ionicons name="notifications-outline" size={22} color="#111827" />
           {unreadBadge > 0 && (

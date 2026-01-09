@@ -18,6 +18,10 @@ import TopBar from '../components/TopBar';
 import Layout from './Layout';
 import LinearGradient from 'react-native-linear-gradient';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+import FirstIcon from '../assets/images/first.png';
+import SecondIcon from '../assets/images/second.png';
+import ThirdIcon from '../assets/images/third.png';
+
 const USERSIZEPERPAGE = 50
 const EmptyState = ({ message }) => {
   return (
@@ -160,6 +164,14 @@ export default function Leaderboard() {
       setRefreshing(false);
     }
   };
+  const getRankIcon = (rank) => {
+    if (rank === 1) return FirstIcon;
+    if (rank === 2) return SecondIcon;
+    if (rank === 3) return ThirdIcon;
+    return null;
+  };
+
+  const isTopThree = (rank) => rank === 1 || rank === 2 || rank === 3;
 
   useEffect(() => {
     if (userProfile?.uid) {
@@ -188,105 +200,10 @@ export default function Leaderboard() {
 
 
 
-  const topThree = users.slice(0, 3);
-  const restUsers = activeTab === "friends" ? users : users.slice(3);
-
-
-  const TopUser = ({ user, size }) => {
-    const isMe = user.user_email === userProfile?.user_email;
-    return (
-      <Pressable
-        style={{ width: '30%' }}
-        onPress={() => {
-          if (!isMe) {
-            navigation.navigate('othersProfile', {
-              avatar: user.avatar,
-              name: user.user_name,
-              role: user.last_interview_role || 'No recent role',
-              level: user?.experience || 1,
-              trophies: user.rating,
-              totalInterviews: user.total_interviews ?? 0,
-              bestScore: user?.best_avg_percentage || 0,
-              streak: user?.streak || 1,
-              minutes: Math.floor((user.seconds_used || 0) / 60),
-              myUid: userProfile?.uid,
-              userUid: user?.uid
-            });
-          }
-        }}
-      >
-        <View
-          style={{
-            width: '100%',
-            borderRadius: 20,
-            shadowColor: '#000000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.3,
-            shadowRadius: 4,
-            elevation: 10,
-          }}
-          className="items-center bg-white pt-3 pb-4"
-        >
-
-          <View
-            style={{
-              width: size === 90 ? '70%' : '60%',
-              aspectRatio: 1,
-              borderColor: user.rank === 1 ? "transparent" : getBgColor(user.rank)
-            }}
-            className="rounded-full border-2 border-yellow-400 items-center justify-center bg-white"
-          >
-            {user.rank === 1 && <Image
-              source={require("../assets/images/crown.png")}
-              style={{ width: 22, height: 22, position: "absolute", zIndex: 999, top: -11 }}
-            />}
-            {user.avatar ? (
-              <Image
-                source={{ uri: user.avatar }}
-                className="w-full h-full rounded-full"
-              />
-            ) : (
-              <Text className="font-bold">
-                {getInitials(user.user_name)}
-              </Text>
-            )}
-
-            <View
-              className={`absolute ${user.rank === 1 ? "bottom-2" : "-top-2"} -right-2 w-6 h-6 rounded-full items-center justify-center`}
-              style={{
-                borderWidth: 2,
-                borderColor: "rgba(255, 255, 255, 0.5)",
-                backgroundColor: getBgColor(user.rank)
-              }}
-            >
-              <Text className="text-xs font-bold text-white">
-                {user.rank}
-              </Text>
-            </View>
-          </View>
-
-          <Text
-            className="mt-2 font-semibold text-center w-full"
-            numberOfLines={1}
-            ellipsizeMode="tail"
-          >
-            {getFirstName(user.user_name)}
-          </Text>
-
-          <View className="flex-row items-center mt-1">
-            <Ionicons name="trophy" size={14} color="#FBBF24" />
-            <Text className="ml-1 font-bold">
-              {user.rating.toLocaleString()}
-            </Text>
-          </View>
-        </View>
-      </Pressable>
-    );
-  };
-
-
+  const restUsers = users
   const renderItem = ({ item }) => {
     const isMe = item.user_email === userProfile?.user_email;
+    const topThree = isTopThree(item.rank);
 
     return (
       <TouchableOpacity
@@ -308,20 +225,28 @@ export default function Leaderboard() {
             });
           }
         }}
-        className={`flex-row items-center px-4 py-3 border-b border-gray-200 ${isMe ? 'bg-blue-100' : ''
-          }`}
+        style={{ backgroundColor: topThree ? "rgba(37, 73, 150, 0.08)" : isMe ? "rgba(219, 234, 254, 1)" : "", borderColor: topThree ? "rgba(255, 255, 255, 0.40)" : "rgba(0, 0, 0, 0.11)" }}
+        className={`flex-row items-center px-4 py-4 border-b`}
       >
-        <Text className="w-8 font-bold text-gray-600">
-          {item.rank}
-        </Text>
+        {/* Rank / Icon */}
+        <View className="w-8 items-center mr-1">
+          {getRankIcon(item.rank) ? (
+            <Image
+              source={getRankIcon(item.rank)}
+              style={{ width: 22, height: 22, resizeMode: 'contain' }}
+            />
+          ) : (
+            <Text className="font-bold text-gray-600">
+              {item.rank}
+            </Text>
+          )}
+        </View>
 
+        {/* Avatar + Name */}
         <View className="flex-row items-center flex-1">
           <View className="w-10 h-10 rounded-full overflow-hidden bg-gray-300 items-center justify-center">
             {item.avatar ? (
-              <Image
-                source={{ uri: item.avatar }}
-                className="w-full h-full"
-              />
+              <Image source={{ uri: item.avatar }} className="w-full h-full" />
             ) : (
               <Text className="font-bold">
                 {getInitials(item.user_name)}
@@ -330,15 +255,16 @@ export default function Leaderboard() {
           </View>
 
           <Text
-            className="ml-3 font-semibold flex-1"
+            className={`ml-3 font-semibold flex-1`}
             numberOfLines={1}
           >
             {item.user_name}
           </Text>
         </View>
 
+        {/* Rating */}
         <View className="flex-row items-center">
-          <Text className="font-bold mr-1">
+          <Text className={`font-bold mr-1`}>
             {item.rating.toLocaleString()}
           </Text>
           <Ionicons name="trophy" size={14} color="#FBBF24" />
@@ -346,6 +272,7 @@ export default function Leaderboard() {
       </TouchableOpacity>
     );
   };
+
 
   return (
     <>
@@ -358,11 +285,7 @@ export default function Leaderboard() {
             style={{
               backgroundColor: 'rgba(255, 255, 255, 1)',
               borderRadius: 22,
-              shadowColor: 'rgba(0,0,0,0.8)',
-              shadowOffset: { width: 0, height: 1 },
-              shadowOpacity: 0.3,
-              shadowRadius: 4,
-              elevation: 4
+              boxShadow: "0 9.013px 13.52px -2.704px rgba(0, 0, 0, 0.10), 0 3.605px 5.408px -3.605px rgba(0, 0, 0, 0.10)"
             }}
           >
             <TouchableOpacity
@@ -428,23 +351,14 @@ export default function Leaderboard() {
             </TouchableOpacity>
           </View>
 
-          {/* Top 3 users */}
-          {users.length > 0 && topThree.length === 3 && (
-            <View className="flex-row justify-between items-end px-2 mt-6">
-              <TopUser user={topThree[1]} size={70} />
-              <TopUser user={topThree[0]} size={90} />
-              <TopUser user={topThree[2]} size={70} />
-            </View>
-          )}
-
           {/* Scrollable list container */}
           <View
             style={{
               flex: 1,
-              marginTop: 24,
-              marginBottom: 100,
-              backgroundColor: 'rgba(255, 255, 255, 0.5)',
-              borderRadius: 22,
+              marginTop: 20,
+              marginBottom: 90,
+              // backgroundColor: 'rgba(255, 255, 255, 0.5)',
+              // borderRadius: 22,
               overflow: "hidden"
             }}
           >
@@ -454,8 +368,8 @@ export default function Leaderboard() {
                 // activeOpacity={0.7}
                 onPress={() => {
                 }}
-                className={`flex-row items-center px-4 py-3 border-b border-gray-200 bg-black absolute bottom-0 left-0 right-0`}
-                style={{ zIndex: 111, borderBottomLeftRadius: 22, borderBottomRightRadius: 22 }}
+                className={`flex-row items-center px-4 py-4 border-b border-gray-200 bg-black absolute bottom-0 left-0 right-0`}
+                style={{ zIndex: 111 }}
               >
                 <Text className="w-8 font-bold text-white">
                   {userRankDetails.rank}
