@@ -55,7 +55,21 @@ export default function AvatarSelectionScreen({ route }) {
   }, []);
 
   const selectedAvatar = selectedIndex !== null ? avatars[selectedIndex] : null;
-
+  const fetchCandidatedata = async (uid) => {
+    try {
+      const response = await fetchWithAuth(
+        `${JAVA_API_URL}/api/candidates/uid/${uid}`,
+      );
+      const data = await response.json();
+      if (data?.data && data?.data.length > 0) {
+        const candidate = data.data[0];
+        return candidate;
+      } else { return null }
+    } catch (error) {
+      console.error('Failed to fetch candidate:', error);
+      return null
+    }
+  };
   const handleCandidateUpdate = async () => {
     try {
       const parts = (userName || '').trim().split(/\s+/);
@@ -70,8 +84,8 @@ export default function AvatarSelectionScreen({ route }) {
       ).slice(0, 5);
 
       const payload = {
-        uid,
-        canId,
+        uid: userProfile?.uid,
+        canId: myCandidate?.canId,
         firstName: firstName,
         lastName: lastName,
         industry: selectedIndustry,
@@ -94,12 +108,12 @@ export default function AvatarSelectionScreen({ route }) {
         throw new Error(message);
       }
       const updatedProfile = await response.json().catch(() => ({}));
-      const newUserProfile = updatedProfile || {}
-      if (newUserProfile?.canId) {
+      const newUserProfile = updatedProfile?.data || {}
+      if (newUserProfile) {
         console.log('Updated candidate profile:', newUserProfile);
-        setMyCandidate(newUserProfile);
-        const profile = fetchUserDetails(newUserProfile?.uid)
-        setUserProfile(profile)
+        setUserProfile(newUserProfile);
+        const candidate = await fetchCandidatedata(newUserProfile?.uid)
+        setMyCandidate(candidate)
       }
     } catch (error) {
       console.log('handleCandidateUpdate error:', error);

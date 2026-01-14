@@ -13,6 +13,7 @@ export default async function fetchUserDetails(uid) {
     }
 
     const profileData = await response.json();
+    console.log(profileData, "===")
     return profileData;
   } catch (err) {
     console.error('Error fetching user details:', err);

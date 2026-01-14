@@ -86,7 +86,7 @@ export default function useRealTime({
 }: Parameters) {
   const wsRef = useRef<WebSocket | null>(null);
 
-  const wsEndpoint = `wss://live.aiinterviewagents.com/realtime?meetingId=${meetingId}`;
+  const wsEndpoint = `wss://room.dev.aiinterviewagents.com/realtime?meetingId=${meetingId}`;
 
   useEffect(() => {
     const ws = new WebSocket(wsEndpoint);

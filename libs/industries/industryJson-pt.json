@@ -1,11 +1,26 @@
 {
     "Tecnologia da Informação e Software": {
-        "Engenheiro de Software / Desenvolvedor": [
+        "SWE": [
+            "Arquitetura de software",
+            "Design de sistemas",
+            "Padrões de projeto",
+            "Programação orientada a objetos",
+            "Escalabilidade e desempenho",
+            "Testes unitários",
+            "Metodologias Agile",
+            "Revisão e refatoração de código",
+            "REST APIs"
+        ],
+        "SDE": [
             "Java",
             "Python",
-            "Data Structures and Algorithms",
+            "Estruturas de dados e algoritmos",
             "Git",
-            "SQL"
+            "SQL",
+            "Resolução de problemas",
+            "Integração de APIs",
+            "Depuração",
+            "Fundamentos de design de sistemas"
         ],
         "Desenvolvedor Full Stack": [
             "React",

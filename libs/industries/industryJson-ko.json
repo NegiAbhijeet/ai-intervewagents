@@ -1,11 +1,26 @@
 {
     "IT 및 소프트웨어": {
-        "소프트웨어 엔지니어 / 개발자": [
+        "소프트웨어 엔지니어 (Software Engineer - SWE)": [
+            "소프트웨어 아키텍처",
+            "시스템 설계",
+            "디자인 패턴",
+            "객체 지향 프로그래밍",
+            "확장성과 성능 최적화",
+            "단위 테스트",
+            "Agile 방법론",
+            "코드 리뷰 및 리팩토링",
+            "REST API"
+        ],
+        "소프트웨어 개발 엔지니어 (Software Development Engineer - SDE)": [
             "Java",
             "Python",
-            "Data Structures and Algorithms",
+            "자료구조 및 알고리즘",
             "Git",
-            "SQL"
+            "SQL",
+            "문제 해결",
+            "API 연동",
+            "디버깅",
+            "기본 시스템 설계"
         ],
         "풀스택 개발자": [
             "React",

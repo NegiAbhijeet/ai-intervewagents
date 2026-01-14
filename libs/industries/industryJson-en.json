@@ -1,16 +1,27 @@
 {
     "IT and Software": {
-        "Software Engineer / Developer": [
-            "Java",
-            "Python",
-            "Data Structures & Algorithms",
-            "Git",
-            "SQL",
-            "REST APIs",
+        "Software Engineer (SWE)": [
+            "Software Architecture",
             "System Design",
+            "Design Patterns",
+            "Object-Oriented Programming",
+            "Scalability and Performance",
             "Unit Testing",
             "Agile Methodologies",
-            "Design Patterns"
+            "Code Review and Refactoring",
+            "REST APIs"
+        ],
+        "Software Development Engineer (SDE)": [
+            "Java",
+            "Python",
+            "Data Structures and Algorithms",
+            "Git",
+            "SQL",
+            "Problem Solving",
+            "API Integration",
+            "Debugging",
+            "Competitive Programming Concepts",
+            "Basic System Design"
         ],
         "Full Stack Developer": [
             "React",
@@ -97,7 +108,6 @@
             "A/B Testing"
         ]
     },
-
     "CAT Preparation": {
         "Personal Interview": [
             "Self Introduction",
@@ -130,7 +140,6 @@
             "Summarization Skills"
         ]
     },
-
     "Banking, Finance and Insurance": {
         "Financial Analyst": [
             "Excel",
@@ -229,7 +238,6 @@
             "Client Reporting"
         ]
     },
-
     "Engineering": {
         "Design Engineer": [
             "AutoCAD",
@@ -328,7 +336,6 @@
             "Continuous Improvement"
         ]
     },
-
     "Data Science and Analytics": {
         "Data Scientist": [
             "Python",
@@ -427,7 +434,6 @@
             "Evaluation Metrics"
         ]
     },
-
     "Consulting and Business Strategy": {
         "Management Consultant": [
             "PowerPoint",
@@ -526,7 +532,6 @@
             "Climate Risk Analysis"
         ]
     },
-
     "Aviation and Aerospace": {
         "Commercial Pilot": [
             "CPL License",
@@ -625,7 +630,6 @@
             "Coordination Skills"
         ]
     },
-
     "Shipping, Logistics and Supply Chain": {
         "Supply Chain Manager": [
             "SAP",
@@ -724,7 +728,6 @@
             "Performance Monitoring"
         ]
     },
-
     "Renewable Energy and Solar": {
         "Solar Design Engineer": [
             "PVsyst",
@@ -823,7 +826,6 @@
             "Control Strategies"
         ]
     },
-
     "Manufacturing and Production": {
         "Production Engineer": [
             "AutoCAD",
@@ -922,7 +924,6 @@
             "Continuous Improvement"
         ]
     },
-
     "Healthcare and Pharmaceuticals": {
         "Physician": [
             "EMR/EHR Systems",

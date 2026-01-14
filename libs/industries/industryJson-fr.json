@@ -1,11 +1,26 @@
 {
     "Informatique et logiciels": {
-        "Ingénieur logiciel / Développeur": [
+        "Ingénieur Logiciel (Software Engineer - SWE)": [
+            "Architecture logicielle",
+            "Conception des systèmes",
+            "Patrons de conception",
+            "Programmation orientée objet",
+            "Scalabilité et performance",
+            "Tests unitaires",
+            "Méthodologies Agile",
+            "Revue et refactorisation du code",
+            "APIs REST"
+        ],
+        "Ingénieur Développement Logiciel (Software Development Engineer - SDE)": [
             "Java",
             "Python",
-            "Data Structures and Algorithms",
+            "Structures de données et algorithmes",
             "Git",
-            "SQL"
+            "SQL",
+            "Résolution de problèmes",
+            "Intégration d’API",
+            "Débogage",
+            "Bases de la conception des systèmes"
         ],
         "Développeur full stack": [
             "React",
