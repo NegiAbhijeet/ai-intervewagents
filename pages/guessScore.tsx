@@ -24,7 +24,7 @@ const GuessScoreModal = ({ visible = false, onRequestClose = () => { }, onSelect
   const insets = useSafeAreaInsets()
 
   // options etc...
-  const options = ['32%–33%', '40%–47%', '53%–59%', '20%–30%']
+  const options = ['0%-25%', '25%-50%', '50%-75%', '75%-100%']
 
   const handlePress = (option) => {
     // pass the option string and interviewId to caller
