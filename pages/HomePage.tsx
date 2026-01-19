@@ -19,7 +19,7 @@ import SelectInterviewType from '../components/SelectInterviewType';
 import LevelProgress from "../components/LevelProgress"
 import { useNavigation } from '@react-navigation/native';
 import ExhaustedLimitModal from "../components/ExhaustedLimitModal"
-
+import { minutesToSeconds } from "../libs/getInterviewTime"
 const HomePage = ({ route }) => {
     const navigation = useNavigation()
     const {
@@ -227,12 +227,14 @@ const HomePage = ({ route }) => {
             const now = new Date();
             const { date, hour, minute } = extractMeetingDateTimeParts(now);
             const myLanguage = LANGUAGES.find((item) => item?.code === language)
+            const duration = Math.max(0, Math.min(10, totalMinutes - usedMinutes))
+            const durationInSecond = minutesToSeconds(duration)
             const payload = {
                 uid: userProfile?.uid,
                 hour,
                 minute,
                 date,
-                duration: Math.max(0, Math.min(10, totalMinutes - usedMinutes)),
+                duration: durationInSecond,
                 position: myCandidate?.position,
                 role: 'candidate',
                 candidateId: myCandidate?.canId || '',

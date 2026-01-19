@@ -22,13 +22,13 @@ import Timer from './timer';
 import AIAgent from './AIAgent';
 import { useNavigation } from '@react-navigation/native';
 import { AppStateContext } from './AppContext';
-import { JAVA_API_URL } from './config';
 import { useTranslation } from 'react-i18next';
 import ExitInterviewModal from './quitPopup';
 import ExitReasonsModal from './quitFeedback';
 import ToggleButton from './ToggleButton';
 import Layout from '../pages/Layout';
 import { ScrollView } from 'react-native-gesture-handler';
+import { secondsToMinutes } from '../libs/getInterviewTime';
 
 const CallUI = ({
   agentId,
@@ -290,7 +290,7 @@ const CallUI = ({
                             <Text style={styles.roleTitle} numberOfLines={1}>{position || ''}</Text>
                             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 6 }}>
                               <Ionicons name="time" size={18} color="rgba(0, 0, 0, 0.5)" />
-                              <Text style={styles.durationText}>{interviewTime || 10} minutes</Text>
+                              <Text style={styles.durationText}>{secondsToMinutes(interviewTime) || 10} minutes</Text>
                             </View>
                           </View>
                           <View style={styles.briefcaseIcon}>

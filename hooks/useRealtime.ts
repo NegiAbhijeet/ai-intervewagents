@@ -135,7 +135,7 @@ export default function useRealTime({
           prefix_padding_ms: 300,
           silence_duration_ms: 300,
           create_response: true,
-          interviewTime: String(Number(interviewTime) * 60),
+          interviewTime: interviewTime,
           payload: {
             type: 'server_vad',
             threshold: 0.41,
@@ -147,7 +147,7 @@ export default function useRealTime({
             meetingId,
             interviewType,
             adminId,
-            interviewTime: String(Number(interviewTime) * 60),
+            interviewTime: interviewTime,
             value,
             languageCode: language
           },
