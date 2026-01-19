@@ -13,7 +13,7 @@ import * as Clarity from '@microsoft/react-native-clarity'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { View, Text, Modal, Pressable, StyleSheet, AppState } from 'react-native'
 import { checkForUpdateInfo, startImmediateUpdate } from './libs/inAppUpdate'
-
+import DeviceInfo from 'react-native-device-info'
 export default function App() {
   const routeNameRef = React.useRef<any>()
   const navigationRef = useNavigationContainerRef()
@@ -25,14 +25,14 @@ export default function App() {
   async function runCheck() {
     try {
       setChecking(true)
-      const info = await checkForUpdateInfo()
-      if (info.shouldUpdate) {
-        setUpdateAvailable(true)
-      } else {
-        setUpdateAvailable(false)
-      }
+      const curVersion = Number(DeviceInfo.getBuildNumber())
+
+      const info = await checkForUpdateInfo(curVersion)
+
+      setUpdateAvailable(info.shouldUpdate === true)
     } catch (e) {
       console.warn('update check error', e)
+      setUpdateAvailable(false)
     } finally {
       setChecking(false)
     }

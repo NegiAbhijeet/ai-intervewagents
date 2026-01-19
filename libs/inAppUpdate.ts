@@ -19,7 +19,7 @@ export type UpdateCheckInfo = {
  * Only checks if Play has an update available.
  * Does not start any update flow.
  */
-export async function checkForUpdateInfo(curVersion?: string): Promise<UpdateCheckInfo> {
+export async function checkForUpdateInfo(curVersion?: number): Promise<UpdateCheckInfo> {
     if (Platform.OS !== 'android') return { shouldUpdate: false }
 
     try {

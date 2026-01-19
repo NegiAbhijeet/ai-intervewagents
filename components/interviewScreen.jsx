@@ -1,16 +1,12 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
   Alert,
-  Animated,
-  Button,
-  Easing,
   Modal,
   PermissionsAndroid,
   Platform,
   View,
   TouchableOpacity,
   Text,
-  ActivityIndicator,
 } from 'react-native';
 
 import { Camera, useCameraDevices } from 'react-native-vision-camera'; // ✅ Camera
@@ -48,7 +44,6 @@ const CallUI = ({
 }) => {
   const { userProfile, setUserProfile, language } = useContext(AppStateContext);
   const { t } = useTranslation();
-  const initialStartRef = useRef(null);
   const [hasStarted, setHasStarted] = useState(false);
   const elapsedSecondsRef = useRef(0);
   const [cameraOn, setCameraOn] = useState(false); // ✅ Camera toggle state
