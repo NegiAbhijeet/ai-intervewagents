@@ -377,7 +377,7 @@ const HomePage = ({ route }) => {
                                 {t('home.youScored', { scoreText: getScoreText(lastMeeting?.feedback?.averagePercentage || 0) })}
                             </Text>
                         </View>
-
+{/* new update */}
                         {isLoading ? (
                             <Animated.Image
                                 source={require('../assets/images/reload.png')}
