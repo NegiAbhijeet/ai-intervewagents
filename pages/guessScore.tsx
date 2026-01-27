@@ -37,8 +37,9 @@ const GuessScoreModal = ({ visible = false, onRequestClose = () => { }, onSelect
       transparent={true}
       animationType="fade"
       onRequestClose={onRequestClose}
-      // statusBarTranslucent={true} // Android: allow modal to draw under status bar and then we add padding
-      // presentationStyle="overFullScreen" // iOS: consistent overlay behavior
+      statusBarTranslucent={true}
+    // statusBarTranslucent={true} // Android: allow modal to draw under status bar and then we add padding
+    // presentationStyle="overFullScreen" // iOS: consistent overlay behavior
     >
       <SafeAreaView style={{ flex: 1 }} edges={['bottom', 'left', 'right']}>
         <Layout gradientType="3">

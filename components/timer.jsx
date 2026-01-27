@@ -1,12 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const Timer = ({
-  refValue,
-  sessionDurationSeconds,
-  terminateSession,
-}) => {
-
+const Timer = () => {
+  const refValue = useRef(0)
   const [displaySeconds, setDisplaySeconds] = useState(0);
 
   useEffect(() => {
@@ -29,29 +25,18 @@ const Timer = ({
   const seconds = String(displaySeconds % 60).padStart(2, '0');
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.timerText}>
-        {hours}:{minutes}:{seconds}
-      </Text>
-    </View>
+    <Text style={styles.timerText}>
+      {hours}:{minutes}:{seconds}
+    </Text>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    top: 25,
-    left: 25,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 20,
-    zIndex: 1000,
-  },
   timerText: {
-    color: 'white',
-    fontSize: 20,
     fontFamily: 'monospace',
+    fontSize: 14,
+    color: '#000',
+    fontWeight: 500
   },
 });
 

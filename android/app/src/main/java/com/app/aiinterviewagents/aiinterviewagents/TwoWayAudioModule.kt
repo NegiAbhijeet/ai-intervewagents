@@ -13,7 +13,7 @@ class TwoWayAudioModule(private val reactContext: ReactApplicationContext) :
 
     companion object {
         private const val NAME = "TwoWayAudio"
-        private const val SAMPLE_RATE = 24000 // adjust to match your server (Azure often 24000 or 24000)
+        private const val SAMPLE_RATE = 16000 // adjust to match your server (Azure often 16000 or 16000)
         private const val CHANNEL_CONFIG = AudioFormat.CHANNEL_OUT_MONO
         private const val AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT
 

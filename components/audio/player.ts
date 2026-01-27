@@ -5,7 +5,7 @@ const { PCMPlayer } = NativeModules;
 export class Player {
   private isInitialized = false;
 
-  async init(sampleRate: number = 24000) {
+  async init(sampleRate: number = 16000) {
     console.log('[Player] Initializing PCMPlayer...');
     await PCMPlayer.init(sampleRate, 1);
     this.isInitialized = true;

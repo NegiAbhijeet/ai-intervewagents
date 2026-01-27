@@ -17,7 +17,7 @@ class CustomAudioPlayerModule(private val reactContext: ReactApplicationContext)
 
   companion object { private const val TAG = "CustomAudioPlayer" }
 
-  private var sampleRate: Int = 24000
+  private var sampleRate: Int = 16000
   private var channelCount: Int = 1
   private val audioEncoding: Int = AudioFormat.ENCODING_PCM_16BIT
 

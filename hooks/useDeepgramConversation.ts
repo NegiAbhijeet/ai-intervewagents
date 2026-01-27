@@ -100,10 +100,10 @@ const useDeepgramConversation: UseConversationHook = ({
 
       const settingsConfig = {
         audio: {
-          input: { encoding: 'linear16', sample_rate: 24000 },
+          input: { encoding: 'linear16', sample_rate: 16000 },
           output: {
             encoding: 'linear16',
-            sample_rate: 24000,
+            sample_rate: 16000,
             container: 'none',
             // model: voiceName,
           },

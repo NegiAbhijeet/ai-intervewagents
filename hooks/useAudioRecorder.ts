@@ -42,7 +42,7 @@ export default function useAudioRecorder({ onAudioRecorded }: Parameters) {
     if (!audioRecorder.current) {
       audioRecorder.current = new Recorder(handleAudioData);
     }
-    await audioRecorder.current.start(24000); // Azure expects 24kHz
+    await audioRecorder.current.start(16000); // Azure expects 24kHz
   };
 
   const stop = async () => {

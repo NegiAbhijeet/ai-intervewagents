@@ -119,7 +119,7 @@ const LanguageSelectionScreen = () => {
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1 },
+    container: { flex: 1, backgroundColor: '#fff' },
     header: {
         flexDirection: 'row',
         alignItems: 'center',

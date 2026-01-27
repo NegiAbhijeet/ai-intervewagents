@@ -156,6 +156,7 @@ const AfterGuessModal = ({
             visible={visible}
             transparent={true}
             animationType="fade"
+            statusBarTranslucent={true}
             onRequestClose={() => {
                 stopPolling()
                 onRequestClose()

@@ -21,7 +21,7 @@ class CustomAudioRecorderModule(private val reactContext: ReactApplicationContex
 
   companion object {
     private const val TAG = "CustomAudioRecorder"
-    private const val SAMPLE_RATE = 24000
+    private const val SAMPLE_RATE = 16000
     private const val CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO
     private const val AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT
     private const val MAX_FAILED_READS = 5

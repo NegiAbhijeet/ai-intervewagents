@@ -13,7 +13,7 @@ import com.facebook.react.bridge.ReadableArray;
 
 public class PCMPlayerModule extends ReactContextBaseJavaModule {
     private AudioTrack audioTrack;
-    private int sampleRate = 24000; // default safe rate
+    private int sampleRate = 16000; // default safe rate
 
     public PCMPlayerModule(ReactApplicationContext reactContext) {
         super(reactContext);
