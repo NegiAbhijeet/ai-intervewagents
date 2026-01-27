@@ -2,63 +2,57 @@ import { Buffer } from 'buffer';
 import { useRef, useEffect } from 'react';
 import { Player } from '../components/audio/player';
 
+const SAMPLE_RATE = 16000;
+
 function decodeBase64PCM(base64: string): Int16Array {
   const bytes = Buffer.from(base64, 'base64');
-  return new Int16Array(bytes.buffer, bytes.byteOffset, bytes.length / 2);
+  return new Int16Array(
+    bytes.buffer,
+    bytes.byteOffset,
+    bytes.length / 2
+  );
 }
 
 export default function useAudioPlayer() {
-  const audioPlayer = useRef<Player | null>(null);
-  const queue = useRef<Int16Array[]>([]);
-  const isPlaying = useRef(false);
+  const playerRef = useRef<Player | null>(null);
+  const initializedRef = useRef(false);
 
-  const processQueue = async () => {
-    if (isPlaying.current || queue.current.length === 0 || !audioPlayer.current) {
-      return;
-    }
+  const init = async () => {
+    if (initializedRef.current) return;
 
-    isPlaying.current = true;
+    const player = new Player();
+    await player.init(16000);
 
-    const nextChunk = queue.current.shift();
-    if (!nextChunk || nextChunk.length < 10) {
-      isPlaying.current = false;
-      return;
-    }
-
-    try {
-      await audioPlayer.current.play(nextChunk);
-    } catch (err) {
-      console.error('[useAudioPlayer] Error playing chunk:', err);
-    }
-
-    isPlaying.current = false;
-
-    // Process the next one
-    requestAnimationFrame(processQueue); // non-blocking loop
+    playerRef.current = player;
+    initializedRef.current = true;
   };
 
-  const play = async (base64Audio: string) => {
-    if (!base64Audio || base64Audio.length < 10) {
-      console.warn('[useAudioPlayer] Invalid base64 audio string');
-      return;
+  const play = async (
+    base64Audio: string,
+    opts?: { onEnd?: () => void }
+  ) => {
+    if (!base64Audio || base64Audio.length < 10) return;
+
+    await init();
+
+    const pcm = decodeBase64PCM(base64Audio);
+
+    await playerRef.current!.play(pcm);
+
+    const durationMs = (pcm.length / SAMPLE_RATE) * 1000;
+
+    if (opts?.onEnd) {
+      setTimeout(opts.onEnd, durationMs);
     }
-
-    if (!audioPlayer.current) {
-      const instance = new Player();
-      await instance.init();
-      audioPlayer.current = instance;
-    }
-
-    const pcmData = decodeBase64PCM(base64Audio);
-
-    queue.current.push(pcmData);
-    requestAnimationFrame(processQueue);
   };
 
-  const stop = () => {
-    queue.current = [];
-    isPlaying.current = false;
-    audioPlayer.current?.stop();
+  // 🚨 stop ONLY when interview ends
+  const stop = async () => {
+    if (!initializedRef.current) return;
+
+    await playerRef.current?.stop();
+    playerRef.current = null;
+    initializedRef.current = false;
   };
 
   useEffect(() => {
@@ -67,5 +61,6 @@ export default function useAudioPlayer() {
     };
   }, []);
 
-  return { play, stop };
+  return { init, play, stop };
 }
+
