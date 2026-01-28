@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     fontFamily: 'monospace',
     fontSize: 14,
     color: '#000',
-    fontWeight: 500
+    fontWeight: 800
   },
 });
 

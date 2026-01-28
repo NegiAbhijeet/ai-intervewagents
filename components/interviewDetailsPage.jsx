@@ -127,13 +127,13 @@ const InterviewDetailsPage = ({ interviewTime, skills, handleMicToggle, handleCa
                     }}
                 >
                     <ToggleButton
-                        value={micOn}
+                        isActive={micOn}
                         onToggle={handleMicToggle}
                         iconOn="mic-outline"
                         iconOff="mic-off-outline"
                     />
                     <ToggleButton
-                        value={cameraOn}
+                        isActive={cameraOn}
                         onToggle={handleCameraToggle}
                         iconOn="videocam-outline"
                         iconOff="videocam-off-outline"

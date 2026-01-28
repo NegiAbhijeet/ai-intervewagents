@@ -18,9 +18,10 @@ import BackgroundGradient2 from './backgroundGradient2';
 import ExitInterviewModal from './quitPopup';
 import ExitReasonsModal from './quitFeedback';
 import ChatLoader from "./chatLoader"
+import ToggleButton from './ToggleButton';
 const WS_URL = 'wss://room.aiinterviewagents.com/ws/voice/';
 
-export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, setCameraOn, hasStarted, handleInterviewCompletion, quitStep, setQuitStep, halfHandleInterviewCompletion, uid, candidateName }) {
+export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, setCameraOn, hasStarted, handleInterviewCompletion, quitStep, setQuitStep, halfHandleInterviewCompletion, uid, candidateName, position }) {
     const devices = useCameraDevices();
 
     const cameraDevice = devices.find(d => d.position === 'front');
@@ -266,7 +267,7 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
                 <Text style={styles.header} numberOfLines={1}>
                     <Timer />{" "}
                     <Text style={styles.headerText}>
-                        | Senior Product Designer Interview Senior Product Designer Interview
+                        | {position || "Position not specified"}
                     </Text>
                 </Text>
 
@@ -387,26 +388,12 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
                     </TouchableOpacity>
 
                     {/* Camera Toggle Button */}
-                    <TouchableOpacity
-                        style={[styles.cameraContainer, cameraOn ? { backgroundColor: "#282A2C", borderRadius: 16 } : { backgroundColor: "#9CA3AF", borderRadius: 8 }]}
-                        onPress={handleCameraToggle}
-                    >
-                        <View style={styles.arrowBox}>
-                            <Image
-                                source={cameraOn ? require('../assets/images/3-dots.png') : require('../assets/images/up-arrow.png')}
-                                style={{ width: 8 }}
-                                resizeMode='contain'
-                            />
-                        </View>
-                        <View style={[styles.cameraBox, cameraOn ? { backgroundColor: "#333537", borderRadius: 16 } : { backgroundColor: "#FFFFFF", borderRadius: 8 }]}>
-                            <Image
-                                source={cameraOn ? require('../assets/images/camera-on.png') : require('../assets/images/camera-off.png')}
-                                style={styles.iconSm}
-                                resizeMode='contain'
-                            />
-                        </View>
-                    </TouchableOpacity>
-
+                    <ToggleButton
+                        isActive={cameraOn}
+                        onToggle={handleCameraToggle}
+                        iconOn="videocam-outline"
+                        iconOff="videocam-off-outline"
+                    />
                     {/* Quit Button */}
                     <TouchableOpacity style={styles.quitBtn} onPress={() => setQuitStep(1)}>
                         <Image source={require('../assets/images/logout.png')} style={styles.iconSm} />
@@ -426,15 +413,16 @@ const styles = StyleSheet.create({
 
     header: {
         paddingVertical: 12,
-        alignItems: 'center',
         flexDirection: "row",
+        alignItems: 'center',
         justifyContent: "center",
         paddingHorizontal: 50,
+        textAlign: "center"
     },
     headerText: {
         fontSize: 14,
         color: 'rgba(0, 0, 0, 0.90)',
-        fontWeight: 400
+        fontWeight: 400,
     },
 
     interviewBox: {
@@ -588,31 +576,9 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         marginLeft: 6,
     },
-    // Camera Split Toggle
-    cameraContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        width: 56,
-        height: 30,
-    },
-    arrowBox: {
-        width: 26,
-        height: 30,
-        alignItems: "center",
-        justifyContent: "center"
-    },
-    cameraBox: {
-        height: "100%",
-        width: 30,
-        height: 30,
-        position: "absolute",
-        right: 0,
-        alignItems: "center",
-        justifyContent: "center"
-    },
-    cameraCircle: {
-        borderRadius: 100, // Makes it a perfect circle when on
-    },
+
+
+
     // Quit Pill
     quitBtn: {
         flexDirection: 'row',

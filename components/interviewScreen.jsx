@@ -198,6 +198,7 @@ const CallUI = ({
               halfHandleInterviewCompletion={halfHandleInterviewCompletion}
               uid={userProfile?.uid}
               candidateName={candidateName}
+              position={position}
             />
             :
             <InterviewDetailsPage
