@@ -68,7 +68,10 @@ export default function JobsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
-      if (!res.ok) throw new Error('Failed to fetch jobs');
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.error || 'Error fetching jobs.');
+      }
       const jobResult = await res.json();
       setUserProfile(prev => ({
         ...prev,

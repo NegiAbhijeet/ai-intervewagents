@@ -5,6 +5,7 @@ import SpInAppUpdates, {
     StartUpdateOptions,
     IAUInstallStatus,
 } from 'sp-react-native-in-app-updates'
+import DeviceInfo from 'react-native-device-info'
 
 const inAppUpdates = new SpInAppUpdates(false) // false for production
 
@@ -19,18 +20,23 @@ export type UpdateCheckInfo = {
  * Only checks if Play has an update available.
  * Does not start any update flow.
  */
-export async function checkForUpdateInfo(curVersion?: number): Promise<UpdateCheckInfo> {
+export async function checkForUpdateInfo() {
     if (Platform.OS !== 'android') return { shouldUpdate: false }
 
     try {
-        const result = await inAppUpdates.checkNeedsUpdate({ curVersion })
+        const curVersion = DeviceInfo.getVersion()
+
+        const result = await inAppUpdates.checkNeedsUpdate({
+            curVersion,
+        })
+
         return {
-            shouldUpdate: !!result.shouldUpdate,
-            availableVersion: result?.availableVersion,
+            shouldUpdate: result.shouldUpdate,
+            availableVersion: result?.storeVersion,
             raw: result,
         }
-    } catch (error) {
-        console.warn('in-app update check failed', error)
+    } catch (e) {
+        console.warn('in-app update check failed', e)
         return { shouldUpdate: false }
     }
 }
