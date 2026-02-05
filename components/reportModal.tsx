@@ -321,20 +321,6 @@ const ReportModal = ({
                     setShowImprovementPoints={setShowImprovementPoints}
                   />
 
-                  {/* <AnalysisCards
-                    setShowImprovementPoints={setShowImprovementPoints}
-                    strengths={
-                      Array.isArray(feedback?.report?.strengths)
-                        ? feedback?.report?.strengths
-                        : []
-                    }
-                    weaknesses={
-                      Array.isArray(feedback?.report?.weaknesses)
-                        ? feedback?.report?.weaknesses
-                        : []
-                    }
-                  /> */}
-
                   <View className="items-center justify-center gap-4">
                     <Pressable
                       onPress={() => setShowImprovementPoints(true)}
@@ -362,29 +348,34 @@ const ReportModal = ({
                       onPress={() => {
                         onPress(report);
                       }}
-                      className="flex-row items-center justify-center gap-4"
                       style={{
                         borderWidth: 1,
                         borderColor: 'rgba(60, 60, 60, 1)',
                         borderRadius: 10,
                         paddingHorizontal: 25,
                         paddingVertical: 10,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 16,
                       }}
                     >
-                      {
-                        isInterviewStart ? <ActivityIndicator size="small" color="#fff" /> :
-                          <> <RetryIamge />
-                            <Text
-                              style={{
-                                fontSize: 16,
-                                fontWeight: 700,
-                                color: 'rgba(60, 60, 60, 1)',
-                              }}
-                            >
-                              {t('analysis.tryAgain')}
-                            </Text></>
-                      }
-
+                      {isInterviewStart ? (
+                        <ActivityIndicator size="small" color="#fff" />
+                      ) : (
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                          <RetryIamge />
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              fontWeight: '700',
+                              color: 'rgba(60, 60, 60, 1)',
+                            }}
+                          >
+                            {t('analysis.tryAgain')}
+                          </Text>
+                        </View>
+                      )}
                     </Pressable>
                   </View>
                 </>
