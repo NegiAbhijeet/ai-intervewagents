@@ -4,7 +4,6 @@ import { ActivityIndicator, Animated, Easing, Image, Modal, Pressable, ScrollVie
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import { AppStateContext } from '../components/AppContext';
 import { API_URL, JAVA_API_URL } from '../components/config';
-import TopBar from '../components/TopBar';
 import { useNotification } from '../hooks/useNotifications';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import { RefreshControl } from 'react-native-gesture-handler';
@@ -20,6 +19,7 @@ import LevelProgress from "../components/LevelProgress"
 import { useNavigation } from '@react-navigation/native';
 import ExhaustedLimitModal from "../components/ExhaustedLimitModal"
 import { minutesToSeconds } from "../libs/getInterviewTime"
+
 const HomePage = ({ route }) => {
     const navigation = useNavigation()
     const {
@@ -312,7 +312,6 @@ const HomePage = ({ route }) => {
             )}
             {/* <StreakProgress visible={true} currentDay={5} /> */}
 
-            <TopBar />
             <ExhaustedLimitModal
                 visible={showExhaustedModal}
                 onClose={() => setShowExhaustedModal(false)}
@@ -342,7 +341,7 @@ const HomePage = ({ route }) => {
                 }
                 <ScrollView
                     showsVerticalScrollIndicator={false}
-                    contentContainerStyle={{ paddingBottom: 120 }}
+                    contentContainerStyle={{ paddingBottom: 120, paddingTop: 20 }}
                     refreshControl={
                         <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
                     }
@@ -377,7 +376,7 @@ const HomePage = ({ route }) => {
                                 {t('home.youScored', { scoreText: getScoreText(lastMeeting?.feedback?.averagePercentage || 0) })}
                             </Text>
                         </View>
-{/* new update */}
+                        {/* new update */}
                         {isLoading ? (
                             <Animated.Image
                                 source={require('../assets/images/reload.png')}

@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import Layout from './Layout';
 import ScheduleInterviewScreen from '../components/ScheduleInterviewScreen';
 import { AppStateContext } from '../components/AppContext';
-import TopBar from '../components/TopBar';
 
 const Interview = ({ route }) => {
   const { userProfile, language } = useContext(AppStateContext);
@@ -23,7 +22,6 @@ const Interview = ({ route }) => {
 
   return (
     <>
-      <TopBar />
       <Layout>
         <ScheduleInterviewScreen
           userProfile={userProfile}

@@ -6,7 +6,6 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   FlatList,
-  Pressable,
 } from 'react-native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { useNavigation } from '@react-navigation/native';
@@ -14,7 +13,6 @@ import { useTranslation } from 'react-i18next';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import { AppStateContext } from '../components/AppContext';
 import { API_URL } from '../components/config';
-import TopBar from '../components/TopBar';
 import Layout from './Layout';
 import LinearGradient from 'react-native-linear-gradient';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
@@ -276,7 +274,6 @@ export default function Leaderboard() {
 
   return (
     <>
-      <TopBar />
       <Layout>
         <View style={{ flex: 1 }}>
           {/* Tabs */}

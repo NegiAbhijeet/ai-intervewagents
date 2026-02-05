@@ -60,7 +60,7 @@ const TopBar = () => {
     typeof unreadNotification === 'number' ? unreadNotification : 0;
 
   return (
-    <View className="flex-row justify-between items-center px-[5%] pt-4 pb-3 bg-white">
+    <View className="flex-row justify-between items-center px-[5%] py-2 bg-white">
       <TouchableOpacity
         onPress={() => navigation.navigate("profile")}
         className="flex-row items-center gap-2"

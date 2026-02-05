@@ -15,7 +15,6 @@ import { JAVA_API_URL } from '../components/config';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import Ionicons from '@react-native-vector-icons/ionicons';
-import TopBar from '../components/TopBar';
 import ReportModal from '../components/reportModal';
 import BackgroundGradient2 from '../components/backgroundGradient2';
 import StatusBoxes from '../components/ReportsStatusBoxes';
@@ -175,7 +174,6 @@ const Reports = ({ route }) => {
   }
   return (
     <>
-      <TopBar />
       <Layout>
         {
           showDailyStreak && <StreakProgress currentDay={Math.max(1, leaderboardRank)} setShowDailyStreak={setShowDailyStreak} />

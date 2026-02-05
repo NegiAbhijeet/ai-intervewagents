@@ -5,7 +5,6 @@ import {
   Text,
   Image,
   ActivityIndicator,
-  FlatList,
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
@@ -18,7 +17,6 @@ import JobsFormDetails from '../components/jobsFormDetails'; // ensure RN-compat
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { API_URL, JAVA_API_URL } from '../components/config';
 import { AppStateContext } from '../components/AppContext';
-import TopBar from '../components/TopBar';
 import Layout from './Layout';
 import { RefreshControl } from 'react-native-gesture-handler';
 import { useTranslation } from 'react-i18next';
@@ -225,8 +223,6 @@ export default function JobsPage() {
 
   return (
     <>
-      <TopBar />
-
       <Layout>
         {openPopup ? (
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }} className="py-5">

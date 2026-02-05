@@ -2,14 +2,12 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
   ScrollView,
   Image,
   TouchableOpacity,
   ActivityIndicator,
   Alert,
   Linking,
-  ImageBackground,
   Pressable,
 } from 'react-native';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
@@ -21,14 +19,12 @@ import {
   PRIVACY_POILCY_URL,
   TERMS_OF_USE_URL,
 } from '../components/config';
-import Layout from './Layout';
 import fetchUserDetails from '../libs/fetchUser';
 import { RefreshControl } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import fetchWithAuth from '../libs/fetchWithAuth';
 import { GradientBorderView } from '@good-react-native/gradient-border';
 import BackgroundGradient2 from '../components/backgroundGradient2';
-import TopBar from '../components/TopBar';
 import EditProfileModal from '../components/editProfile';
 import { useTranslation } from 'react-i18next';
 import getLevelData from "../libs/getLevelData"
@@ -336,7 +332,6 @@ export default function ProfileScreen() {
 
   return (
     <>
-      <TopBar />
       <EditProfileSkills
         visible={editSkillVisible}
         onClose={closeModal}

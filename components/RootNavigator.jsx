@@ -20,7 +20,30 @@ import ViewAllCertificates from '../pages/viewAllCertificates';
 import IndustryPage from '../pages/industryPage';
 import RolePage from '../pages/rolePage';
 import LevelPage from '../pages/levelPage';
+import TopBar from './TopBar';
+import { View } from 'react-native';
 
+function NavbarLayout({ children }) {
+  return (
+    <View style={{
+      flex: 1,
+    }}>
+      <TopBar />
+      <View style={{
+        flex: 1,
+      }}>
+        {children}
+      </View>
+    </View>
+  );
+}
+function AppTabsWithNavbar() {
+  return (
+    <NavbarLayout>
+      <AppTabs />
+    </NavbarLayout>
+  );
+}
 const Stack = createNativeStackNavigator();
 
 const AuthStack = () => (
@@ -136,7 +159,7 @@ const RootNavigator = () => {
           borderBottomWidth: 0
         }
       }}>
-        <Stack.Screen name="AppTabs" component={AppTabs} />
+        <Stack.Screen name="AppTabs" component={AppTabsWithNavbar} />
         <Stack.Screen
           name="notifications"
           component={NotificationsPage}
