@@ -21,7 +21,7 @@ import ChatLoader from "./chatLoader"
 import ToggleButton from './ToggleButton';
 const WS_URL = 'wss://room.aiinterviewagents.com/ws/voice/';
 
-export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, setCameraOn, hasStarted, handleInterviewCompletion, quitStep, setQuitStep, halfHandleInterviewCompletion, uid, candidateName, position }) {
+export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, setCameraOn, hasCameraPermission, setHasCameraPermission, hasStarted, handleInterviewCompletion, quitStep, setQuitStep, halfHandleInterviewCompletion, uid, candidateName, position }) {
     const devices = useCameraDevices();
 
     const cameraDevice = devices.find(d => d.position === 'front');
@@ -41,7 +41,6 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
     const [status, setStatus] = useState('idle');
     const [messages, setMessages] = useState([]);
     const [showLoader, setShowLoader] = useState(false);
-    const [hasCameraPermission, setHasCameraPermission] = useState(false);
 
     const {
         init: initAudioPlayer,

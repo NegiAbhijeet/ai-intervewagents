@@ -199,6 +199,8 @@ const CallUI = ({
               uid={userProfile?.uid}
               candidateName={candidateName}
               position={position}
+              hasCameraPermission={hasCameraPermission}
+              setHasCameraPermission={setHasCameraPermission}
             />
             :
             <InterviewDetailsPage
