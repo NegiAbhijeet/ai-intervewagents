@@ -29,8 +29,8 @@ android {
         applicationId "com.app.aiinterviewagents"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 41
-        versionName "2.0.28"
+        versionCode 42
+        versionName "2.0.29"
         missingDimensionStrategy "store", "play"
     }
     signingConfigs {
