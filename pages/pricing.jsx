@@ -5,8 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
-  Modal,
-  TextInput,
+  Pressable,
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
@@ -16,562 +15,371 @@ import { AppStateContext } from '../components/AppContext';
 import { API_URL } from '../components/config';
 import fetchWithAuth from '../libs/fetchWithAuth';
 
-import Layout from './Layout';
 import CustomHeader from '../components/customHeader';
 import PaymentPopup from '../components/PaymentPopup';
-import { Picker } from '@react-native-picker/picker';
-import Ionicons from '@react-native-vector-icons/ionicons';
+import BackgroundGradient1 from '../components/backgroundGradient1';
 
-/* ================= skeleton ================= */
-
-function SkeletonCard() {
+/* ---------------- Plan Card ---------------- */
+function PlanCard({ plan, isActive, onSelect }) {
+  const price = plan.prices;
   return (
-    <View style={[styles.card, styles.skeletonCard]}>
-      <View style={styles.skeletonTitle} />
-      <View style={styles.skeletonSubtitle} />
-      <View style={styles.skeletonPrice} />
-      <View style={styles.skeletonFeatures} />
-      <View style={styles.skeletonButton} />
-    </View>
+    <Pressable
+      onPress={() => onSelect(plan)}
+      style={[
+        styles.planWrapper,
+        {
+          borderWidth: isActive ? 2 : 2,
+          borderColor: isActive ? '#5B21B6' : '#8D4FE5',
+          opacity: isActive ? 1 : 0.6,
+        },
+      ]}
+    >
+      {
+        isActive &&
+        <View
+          style={{
+            position: 'absolute',
+            top: -14,
+            left: 80,
+            transform: [{ translateX: -50 }],
+            backgroundColor: '#8D4FE5',
+            paddingHorizontal: 20,
+            paddingVertical: 4,
+            borderRadius: 100,
+          }}
+        >
+          <Text style={{ color: '#fff', fontWeight: '600' }}>
+            {plan.name} Plan
+          </Text>
+        </View>
+      }
+      <Text style={styles.planPrice}>Rs {price.price}</Text>
+      <Text style={styles.planTitle}>{price.features}</Text>
+      <Text style={styles.planMeta}>Just Rs 20 per Interview</Text>
+    </Pressable>
   );
 }
 
-/* ================= main screen ================= */
+
+/* ---------------- Screen ---------------- */
 
 export default function PricingPage() {
   const { userProfile, setUserProfile } = useContext(AppStateContext);
   const navigation = useNavigation();
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
+  const [plans, setPlans] = useState([]);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [paymentModalVisible, setPaymentModalVisible] = useState(false);
-  const [selectedPrice, setSelectedPrice] = useState(null);
-  const [couponCode, setCouponCode] = useState('');
-  const [myPlan, setMyPlan] = useState(null);
 
   useEffect(() => {
-    console.log("++++++++++++++++++++++++++1")
-    const controller = new AbortController();
-
     const fetchPlans = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const res = await fetchWithAuth(`${API_URL}/api/plans`, {
-          signal: controller.signal,
-        });
-
-        if (!res.ok) {
-          throw new Error('Failed to load plans');
-        }
-
-        const data = await res.json();
-        const plansArray = Array.isArray(data)
-          ? data
-          : data.plans ?? data.data ?? [];
-
-        const plan = plansArray.find(p => p.id === 2);
-        console.log('My plan:', plan);
-        setMyPlan(plan ?? null);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
+      const res = await fetchWithAuth(
+        `${API_URL}/api/plans/?language_code=en&platform=app&interval=1`
+      );
+      const data = await res.json();
+      const finalPlans = data.sort((a, b) => b.id - a.id)
+      console.log(finalPlans)
+      setPlans(finalPlans.filter(p => p.id !== 1));
+      setSelectedPlan(finalPlans[0])
     };
-
     fetchPlans();
-    return () => controller.abort();
   }, []);
-  useEffect(() => {
-    if (myPlan?.prices?.length) {
-      const active = myPlan.prices.find(p => p.is_active);
-      setSelectedPrice(active);
-    }
-  }, [myPlan]);
 
-  const onBuyPress = () => {
-    if (!userProfile?.uid) {
-      navigation.navigate('Login');
-      return;
-    }
-
-    setSelectedPlan(myPlan);
-    setPaymentModalVisible(true);
-  };
-
-  if (loading) {
-    return (
-      <View style={styles.containerCentered}>
-        <SkeletonCard />
-        <SkeletonCard />
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={styles.containerCentered}>
-        <Text style={styles.errorText}>{error}</Text>
-      </View>
-    );
-  }
+  const creditcount = Math.floor((selectedPlan?.prices?.total_seconds ?? 0) / (15 * 60));
 
   return (
-    <Layout>
-      <CustomHeader title="Pricing" removePadding />
+    <View className={`flex-1 bg-white`}>
+      <View className={`px-[5%]`}>
+        <CustomHeader title="Pricing" removePadding />
+      </View>
       <ScrollView showsVerticalScrollIndicator={false}>
+        <BackgroundGradient1 />
         <View style={styles.container}>
-          <View style={styles.headerRow}>
-            <View style={styles.brandRow}>
-              <Text style={styles.brandText}>AI Interview Agent</Text>
-              <LinearGradient
-                colors={['rgba(142, 69, 239, 1)', 'rgba(95, 91, 240, 1)']}
-                style={styles.proBadge}
-              >
-                <Text style={styles.proText}>PRO</Text>
-              </LinearGradient>
-            </View>
+
+          {/* Top Row */}
+          <View style={styles.topRow}>
+            <Image
+              source={require('../assets/images/pro-peng.png')}
+              style={styles.penguin}
+            />
           </View>
 
+          {/* Headline */}
           <Text style={styles.title}>
-            Unlock Your Interview{'\n'}Success Potential
+            One Weak Interview should not{'\n'}cost you your Job
           </Text>
 
-          <View style={styles.featureList}>
-            <View style={styles.mascotWrapper}>
+          <Text style={styles.subtitle}>Practice Now</Text>
+
+          {/* Stats */}
+          <View style={styles.statsRow}>
+            <LinearGradient
+              colors={['rgba(1, 172, 249, 0.60)', 'rgba(160, 0, 215, 0.70)']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.statCard}
+            >
               <Image
-                source={require('../assets/images/pricingPeng.png')}
-                style={styles.mascot}
+                source={require('../assets/images/rounded-check.png')}
+                resizeMode="contain"
+                style={{ width: 25, height: 25, marginBottom: 4 }}
               />
-            </View>
+              <Text style={styles.statTitle}><Text style={{ fontWeight: 800, fontSize: 20, }}>4000+{" "}</Text>candiadtes prepeared </Text>
+            </LinearGradient>
 
-
-            {[
-              {
-                title: '200 Practice Minutes per Month',
-                desc: 'Master your delivery and eliminate filler words with focused practice.',
-              },
-              {
-                title: 'Recruiter Spotlight',
-                desc: 'Skip the queue and get featured directly to hiring managers.',
-              },
-              {
-                title: 'Verified Candidate Badge',
-                desc: 'Prove your technical competence with a certified profile.',
-              },
-              {
-                title: 'Unlimited Networking',
-                desc: 'Connect with any professional in the community without limits.',
-              },
-              {
-                title: 'The Gap Report',
-                desc: 'Get a personal analysis of the skills you need for a higher salary.',
-              },
-              {
-                title: 'Expert Coaching',
-                desc: 'Unlock mock interviews with personalized performance analytics.',
-              },
-            ]
-              .map((item, i) => (
-                <View key={i} style={styles.featureRow}>
-                  <View style={styles.checkCircle}>
-                    <Text style={styles.check}>✓</Text>
-                  </View>
-
-                  <View style={styles.featureTextWrap}>
-                    <Text style={styles.featureTitle}>{item.title}</Text>
-                    <Text style={styles.featureDesc}>{item.desc}</Text>
-                  </View>
-                </View>
-              ))}
+            <LinearGradient
+              colors={['rgba(1, 172, 249, 0.60)', 'rgba(160, 0, 215, 0.70)']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.statCard}
+            >
+              <Image
+                source={require('../assets/images/rounded-check.png')}
+                resizeMode="contain"
+                style={{ width: 25, height: 25, marginBottom: 4 }}
+              />
+              <Text style={styles.statTitle}>Available in <Text style={{ fontWeight: 800, fontSize: 20 }}>7{" "}</Text> different langauge</Text>
+            </LinearGradient>
           </View>
 
-          {selectedPrice && (
-            <View style={styles.bottomCard}>
-              <View style={styles.priceRow}>
-                <View style={styles.priceBox}>
-                  <Text style={styles.priceText}>₹ {selectedPrice.price}</Text>
-                </View>
+          <View style={{ width: "100%", height: "100%", alignItems: "center", paddingBottom: 40, backgroundColor: "white", marginTop: 24, borderColor: "#9CA3AF", borderWidth: 1, borderTopLeftRadius: 40, borderTopRightRadius: 40 }}>
+            {/* Section Header */}
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>AI Interview Agents</Text>
+              <LinearGradient
+                colors={['#8E45EF', '#5F5BF0']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.proPill}
+              >
+                <Text style={styles.proPillText}>PRO</Text>
 
-                <View style={styles.durationBox}>
-                  <View style={styles.pickerWrapper}>
-                    <Picker
-                      selectedValue={selectedPrice.id}
-                      onValueChange={value => {
-                        const priceObj = myPlan.prices.find(p => p.id === value);
-                        setSelectedPrice(priceObj);
-                      }}
-                      style={styles.hiddenPicker}
-                      dropdownIconColor="transparent"
-                    >
-                      {myPlan.prices.map(item => (
-                        <Picker.Item
-                          key={item.id}
-                          label={`${item.interval} MONTHS`}
-                          value={item.id}
-                        />
-                      ))}
-                    </Picker>
-
-                    <View pointerEvents="none" style={styles.pickerOverlay}>
-                      <Text style={styles.pickerText}>
-                        {selectedPrice.interval} MONTHS
-                      </Text>
-                      <Ionicons
-                        name="chevron-down"
-                        color="#fff"
-                        style={styles.customArrow}
-                      />
-
-                    </View>
-                  </View>
-
-                </View>
-              </View>
-
-              <TouchableOpacity onPress={() => {
-                setPaymentModalVisible(false);
-                setSelectedPlan({
-                  ...myPlan,
-                  selectedPrice,
-                });
-                onBuyPress();
-              }}>
-                <Text style={styles.referralText}>Have a referral code?</Text>
-              </TouchableOpacity>
-
-              <View style={styles.subscribeWrap}>
-                <TouchableOpacity
-                  style={styles.bottomSubscribeBtn}
-                  onPress={() => {
-                    setPaymentModalVisible(false);
-                    setSelectedPlan({
-                      ...myPlan,
-                      selectedPrice,
-                    });
-                    onBuyPress();
-                  }}
-                >
-                  <Text style={styles.bottomSubscribeText}>Subscribe Now</Text>
-                </TouchableOpacity>
-              </View>
-
+              </LinearGradient>
             </View>
-          )}
-        </View>
 
-        {userProfile?.uid && paymentModalVisible && (
-          <PaymentPopup
-            visible={paymentModalVisible}
-            selectedPlan={selectedPlan}
-            uid={userProfile.uid}
-            setUserProfile={setUserProfile}
-            selecteMonths={selectedPrice?.interval}
-            onClose={() => {
-              setPaymentModalVisible(false);
-              setSelectedPlan(null);
-            }}
-          />
-        )}
+            {/* Plans */}
+            <View style={styles.plansRow}>
+              {plans.map(plan => (
+                <PlanCard
+                  key={plan.id}
+                  plan={plan}
+                  isActive={selectedPlan?.id === plan.id}
+                  onSelect={p => {
+                    if (!userProfile?.uid) {
+                      navigation.navigate('Login');
+                      return;
+                    }
+                    setSelectedPlan(p);
+                  }}
+                />
+              ))}
+            </View>
+
+
+            {/* CTA */}
+            <TouchableOpacity
+              onPress={() => {
+                if (!selectedPlan) return; // optional: prevent opening without selection
+                setPaymentModalVisible(true);
+              }}
+            >
+              <LinearGradient
+                colors={['#1D94ED', '#8741F2']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.ctaButton}
+              >
+
+                <Text style={styles.ctaText}>Get Credits for {creditcount} Interviews</Text>
+
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        </View>
       </ScrollView>
-    </Layout>
+
+      {paymentModalVisible && selectedPlan && (
+        <PaymentPopup
+          visible={paymentModalVisible}
+          selectedPlan={selectedPlan}
+          uid={userProfile.uid}
+          setUserProfile={setUserProfile}
+          onClose={() => {
+            setPaymentModalVisible(false);
+          }}
+        />
+      )}
+    </View>
   );
 }
 
-/* ================= styles ================= */
+/* ---------------- Styles ---------------- */
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 8,
-  },
-  headerRow: {
     alignItems: 'center',
   },
-  brandRow: {
+
+  topRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    justifyContent: "center",
+    gap: 12,
+    width: "100%",
   },
-  brandText: {
-    fontSize: 24,
-    fontWeight: '700',
+
+  penguin: {
+    width: 300,
+    height: 180,
+    resizeMode: "contain",
   },
-  proBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 4,
+
+  practiceChip: {
+    backgroundColor: '#FACC15',
+    paddingHorizontal: 14,
+    paddingVertical: 6,
     borderRadius: 12,
   },
-  proText: {
-    color: '#fff',
-    fontSize: 12,
+
+  practiceText: {
     fontWeight: '700',
+    fontSize: 12,
   },
+
   title: {
     fontSize: 20,
+    fontWeight: 500,
     textAlign: 'center',
     marginTop: 8,
   },
-  mascotWrapper: {
-    position: 'absolute',
-    top: -108,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-  },
-  mascot: {
-    height: 108,
-  },
-  featureList: {
-    marginBottom: 24,
-    padding: 24,
-    backgroundColor: "rgba(0, 0, 0, 0.03)",
-    borderRadius: 24,
-    position: 'relative',
-    marginTop: 128,
-    borderWidth: 1,
-    borderColor: "rgba(0, 0, 0, 0.1)"
-  },
-  featureRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 16,
-  },
-  checkCircle: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    backgroundColor: 'rgba(142, 69, 239, 1)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-    marginTop: 3
-  },
-  check: {
-    color: '#fff',
-    fontSize: 10,
-    fontWeight: '700',
-  },
-  featureTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  featureDesc: {
+
+  subtitle: {
     fontSize: 14,
+    color: '#000',
+    marginTop: 6,
   },
-  subscribeBtn: {
-    width: '85%',
-    alignSelf: 'center',
-    backgroundColor: '#000',
-    paddingVertical: 16,
-    borderRadius: 16,
-    alignItems: 'center',
-  },
-  subscribeText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  featureTextWrap: {
-    flex: 1,
-    flexShrink: 1,
-  },
-
-
-
-
-  bottomCard: {
-    marginBottom: 32,
-    borderRadius: 20,
-  },
-
-  priceRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 10,
-    marginBottom: 12,
-  },
-
-
-
-  priceText: {
-    fontSize: 30,
-    fontWeight: 700,
-  },
-
-  perText: {
-    fontSize: 12,
-    marginLeft: 4,
-  },
-
-
-  durationText: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginRight: 6,
-  },
-
-  dropdownIcon: {
-    fontSize: 12,
-  },
-
-  referralText: {
-    textAlign: 'center',
-    fontSize: 12,
-    marginBottom: 12,
-    textDecorationLine: 'underline',
-    color: "rgba(0, 0, 0, 0.5)"
-  },
-
-  subscribeWrap: {
-    alignItems: 'center',
-  },
-
-  bottomSubscribeBtn: {
-    backgroundColor: '#000',
-    paddingHorizontal: 50,
-    paddingVertical: 14,
-    borderRadius: 14,
-    alignItems: 'center',
-  },
-
-  bottomSubscribeText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '700',
-  },
-
-
-
-  durationBox: {
-    flex: 1,
-    height: 52,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 14,
-    backgroundColor: 'rgba(60, 60, 60, 0.5)',
-    borderWidth: 1,
-    borderColor: "rgba(60, 60, 60, 1)"
-  },
-
-  priceBox: {
-    flex: 1,
-    height: 52,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 14,
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    borderColor: "rgba(60, 60, 60, 1)",
-    borderWidth: 1
-  },
-
-
-
-
-  pickerWrapper: {
-    flex: 1,
-    height: 52,
-    borderRadius: 14,
-    justifyContent: 'center',
-  },
-
-  hiddenPicker: {
-    position: 'absolute',
+  statsWrapper: {
     width: '100%',
-    height: '100%',
-    opacity: 0,
+    overflow: 'hidden',
   },
 
-  pickerOverlay: {
+  statsRow: {
+    flexDirection: 'row',
+    marginTop: 24,
+    gap: 10,
+    paddingHorizontal: 20
+  },
+
+  statCard: {
+    width: "50%",
+    padding: 12,
+    borderRadius: 14,
+    alignItems: 'center',
+    padding: 16
+  },
+
+  statNumber: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#fff',
+    textAlign: "center"
+  },
+
+  statTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#fff',
+    textAlign: 'center',
+  },
+
+  sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    gap: 8,
+    marginTop: 28,
   },
 
-  pickerText: {
-    fontSize: 14,
-    fontWeight: 600,
-    marginRight: 6,
-    color: "white"
-  },
-  customArrow: {
+  sectionTitle: {
     fontSize: 16,
-  },
-
-
-
-
-
-
-
-
-
-  modalBackdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  modalCard: {
-    width: '85%',
-    backgroundColor: '#e5e5e5',
-    borderRadius: 20,
-    padding: 20,
-  },
-
-  closeBtn: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#ddd',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  closeText: {
-    fontSize: 18,
     fontWeight: '700',
   },
 
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    textAlign: 'center',
-    marginBottom: 16,
+  proPill: {
+    backgroundColor: '#EDE9FE',
+    paddingHorizontal: 10,
+    paddingVertical: 2,
+    borderRadius: 999,
   },
 
-  input: {
-    borderWidth: 1,
-    borderColor: '#000',
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    fontSize: 14,
-    backgroundColor: '#f2f2f2',
-    marginBottom: 20,
-  },
-
-  applyBtn: {
-    alignSelf: 'center',
-    backgroundColor: '#000',
-    paddingHorizontal: 28,
-    paddingVertical: 12,
-    borderRadius: 12,
-  },
-
-  applyText: {
+  proPillText: {
+    fontSize: 11,
+    fontWeight: '800',
     color: '#fff',
+  },
+
+  plansRow: {
+    flexDirection: 'row',
+    gap: 14,
+    marginTop: 32,
+  },
+
+  planWrapper: {
+    width: 160,
+    backgroundColor: '#E1D8F3',
+    borderRadius: 16,
+    padding: 16,
+    alignItems: 'center',
+    elevation: 1,
+    borderColor: "#8D4FE5",
+    position: "relative"
+  },
+
+  planTitle: {
+    fontSize: 14,
+    fontWeight: 500,
+    color: "#5A2C78"
+  },
+
+  planPrice: {
+    fontSize: 22,
+    fontWeight: '800',
+    marginVertical: 6,
+  },
+
+  planMeta: {
     fontSize: 16,
+    color: '#000',
+    textAlign: 'center',
+    fontWeight: 500,
+    marginTop: 4
+  },
+
+  planBuy: {
+    marginTop: 12,
+    backgroundColor: '#2563EB',
+    paddingVertical: 10,
+    paddingHorizontal: 22,
+    borderRadius: 12,
+  },
+
+  planBuyText: {
+    color: '#fff',
     fontWeight: '700',
   },
 
+  ctaButton: {
+    marginTop: 28,
+    width: '100%',
+    backgroundColor: '#2563EB',
+    paddingVertical: 20,
+    borderRadius: 24,
+    alignItems: 'center',
+    paddingHorizontal: 28,
+  },
+
+  ctaText: {
+    color: '#fff',
+    fontWeight: '800',
+    fontSize: 14,
+  },
 });

@@ -23,12 +23,13 @@ export default function PaymentPopup({
   uid,
   visible,
   setUserProfile,
-  selecteMonths
 }) {
+  console.log(selectedPlan)
   const navigation = useNavigation();
   const [couponCode, setCouponCode] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState('');
   const [isRedeemLoading, setIsRedeemLoading] = useState(false);
+
   // discount and amounts
   const [discountPercentage, setDiscountPercentage] = useState(0);
   const [discountAmount, setDiscountAmount] = useState(0);
@@ -36,70 +37,15 @@ export default function PaymentPopup({
   const [loading, setLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  // interval state: this will hold the selected interval string from price.interval
-  const [selectedInterval, setSelectedInterval] = useState(null);
-
-  // build billing options from selectedPlan.prices
-  const billingOptions = (selectedPlan?.prices || [])
-    .filter(p => p) // drop falsy
-    .map(p => {
-      // keep interval as-is (monthly/yearly or numeric string)
-      const label =
-        p.interval === 'yearly' || p.interval === '12' || p.interval === 12
-          ? '1Y'
-          : p.interval === 'monthly' || p.interval === '1' || p.interval === 1
-            ? '1M'
-            : `${String(p.interval)}M`;
-      return {
-        id: p.id,
-        interval: String(p.interval),
-        price: Number(p.price ?? 0),
-        label,
-        raw: p,
-      };
-    });
-
-  // Set initial selected interval and reset coupon state when plan changes
   useEffect(() => {
-    // reset coupon and discount state
     setAppliedCoupon('');
     setDiscountAmount(0);
     setDiscountPercentage(0);
     setCouponCode('');
-    // select first available interval if present
-    if (billingOptions.length > 0) {
-      // choose monthly if available, else first
-      const monthly = billingOptions.find(
-        b => b.interval === 'monthly' || b.interval === '1',
-      );
-      setSelectedInterval(
-        prev =>
-          prev ?? (monthly ? monthly.interval : billingOptions[0].interval),
-      );
-      // set final amount to base of selected
-      const base = (monthly ? monthly.price : billingOptions[0].price) || 0;
-      setFinalAmount(Number(base.toFixed(2)));
-    } else {
-      setSelectedInterval(null);
-      setFinalAmount(0);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedPlan]); // only when selectedPlan changes
-  useEffect(() => {
-    if (selecteMonths) {
-      setSelectedInterval(String(selecteMonths));
-    }
-  }, [selecteMonths]);
-  // compute base amount for currently selected interval
+  }, [selectedPlan]);
+
   const baseAmount = (() => {
-    if (!selectedPlan || !selectedInterval) return 0;
-    const found =
-      (selectedPlan.prices || []).find(
-        pr => String(pr.interval) === String(selectedInterval),
-      ) ||
-      selectedPlan.prices?.[0] ||
-      null;
-    return Number(found?.price ?? 0);
+    return Number(selectedPlan?.prices?.price ?? 0);
   })();
 
   // keep final amount in sync if base or discounts change
@@ -123,7 +69,7 @@ export default function PaymentPopup({
         body: JSON.stringify({
           code: couponCode.trim().toUpperCase(),
           planId: selectedPlan?.id,
-          planInterval: String(selectedInterval ?? 'monthly'),
+          planInterval: 'monthly'
         }),
       });
       if (!res.ok) {
@@ -176,7 +122,7 @@ export default function PaymentPopup({
       const payload = {
         planId: selectedPlan.id,
         uid,
-        planInterval: String(selectedInterval ?? '1'),
+        planInterval: String('1'),
         couponCode: appliedCoupon || '',
       };
 
@@ -345,55 +291,7 @@ export default function PaymentPopup({
             Secure checkout with optional savings
           </Text>
 
-          {/* Interval selection */}
-          {billingOptions.length > 0 && (
-            <View
-              style={{
-                flexDirection: 'row',
-                marginBottom: 18,
-                flexWrap: 'nowrap',
-                gap: 8,
-              }}
-            >
-              {billingOptions.map(opt => {
-                const active =
-                  String(opt.interval) === String(selectedInterval);
-                return (
-                  <TouchableOpacity
-                    key={`${opt.id}-${opt.interval}`}
-                    onPress={() => {
-                      if (active) return;
-                      setAppliedCoupon('');
-                      setDiscountAmount(0);
-                      setDiscountPercentage(0);
-                      setCouponCode('');
-                      setSelectedInterval(opt.interval);
-                      setFinalAmount(Number((opt.price || 0).toFixed(2)));
-                    }}
-                    style={{
-                      flex: 1,
-                      paddingVertical: 8,
-                      paddingHorizontal: 12,
-                      borderRadius: 10,
-                      borderWidth: 1,
-                      borderColor: active ? '#4338CA' : '#E6E6E6',
-                      backgroundColor: active ? '#4338CA' : '#F8FAFF',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color: active ? '#fff' : '#0f172a',
-                        fontWeight: '700',
-                      }}
-                    >
-                      {opt.label}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          )}
+
 
           <View style={styles.couponRow}>
             <TextInput
