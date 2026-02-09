@@ -372,7 +372,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#2563EB',
     paddingVertical: 20,
-    borderRadius: 24,
+    borderRadius: 20,
     alignItems: 'center',
     paddingHorizontal: 28,
   },

@@ -506,7 +506,7 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
                                     source={require('../assets/images/mic-off.png')}
                                     style={styles.micIcon}
                                 />
-                                <Text style={styles.btnText}>Stop Speaking</Text>
+                                <Text style={styles.btnTextBlack}>Stop Speaking</Text>
                             </TouchableOpacity>
                         </View>
 
@@ -672,7 +672,7 @@ const styles = StyleSheet.create({
     },
 
     startBtn: {
-        backgroundColor: '#3b82f6',
+        backgroundColor: '#3B82F6',
         paddingVertical: 12,
         borderRadius: 30,
         flexDirection: 'row',
@@ -684,7 +684,7 @@ const styles = StyleSheet.create({
     },
 
     stopBtn: {
-        backgroundColor: '#ef4444',
+        backgroundColor: '#fff',
         paddingVertical: 12,
         borderRadius: 30,
         flexDirection: 'row',
@@ -701,8 +701,13 @@ const styles = StyleSheet.create({
 
     btnText: {
         color: '#fff',
-        fontSize: 14,
-        fontWeight: '600',
+        fontSize: 12,
+        fontWeight: 600,
+    },
+    btnTextBlack: {
+        color: '#000',
+        fontSize: 12,
+        fontWeight: 600,
     },
 
     visualizer: {

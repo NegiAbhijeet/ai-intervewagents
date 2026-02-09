@@ -69,7 +69,7 @@ export default function PaymentPopup({
         body: JSON.stringify({
           code: couponCode.trim().toUpperCase(),
           planId: selectedPlan?.id,
-          planInterval: 'monthly'
+          planInterval: '1'
         }),
       });
       if (!res.ok) {
