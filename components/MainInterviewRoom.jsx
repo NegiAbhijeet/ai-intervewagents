@@ -19,7 +19,40 @@ import ExitInterviewModal from './quitPopup';
 import ExitReasonsModal from './quitFeedback';
 import ChatLoader from "./chatLoader"
 import ToggleButton from './ToggleButton';
+import { Buffer } from 'buffer';
+
 const WS_URL = 'wss://room.aiinterviewagents.com/ws/voice/';
+
+const getAmplitudeFromPCM = (base64Data) => {
+    const buffer = Buffer.from(base64Data, 'base64');
+    let sumSquares = 0;
+
+    for (let i = 0; i < buffer.length; i += 2) {
+        const sample = buffer.readInt16LE(i);
+        sumSquares += sample * sample;
+    }
+
+    const rms = Math.sqrt(sumSquares / (buffer.length / 2));
+    return rms;
+};
+
+const Visualizer = ({ levels }) => {
+    return (
+        <View style={styles.visualizer}>
+            {levels.map((h, i) => (
+                <View
+                    key={i}
+                    style={[
+                        styles.bar,
+                        {
+                            transform: [{ scaleY: Math.min(1.8, h / 10) }],
+                        },
+                    ]}
+                />
+            ))}
+        </View>
+    );
+};
 
 export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, setCameraOn, hasCameraPermission, setHasCameraPermission, hasStarted, handleInterviewCompletion, quitStep, setQuitStep, halfHandleInterviewCompletion, uid, candidateName, position }) {
     const devices = useCameraDevices();
@@ -41,6 +74,52 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
     const [status, setStatus] = useState('idle');
     const [messages, setMessages] = useState([]);
     const [showLoader, setShowLoader] = useState(false);
+
+    const [levels, setLevels] = useState(Array(20).fill(4));
+    const peakRef = useRef(300);     // dynamic max
+    const smoothRef = useRef(0);
+
+    const animationRef = useRef(null);
+    const analyserRef = useRef(null);
+
+    const updateLevelsFromAmplitude = (amplitude) => {
+        const NOISE_FLOOR = 80;   // very low
+        const DECAY = 0.995;     // slow peak decay
+        const SMOOTHING = 0.7;
+
+        // 1️⃣ Remove noise floor
+        const clean = Math.max(0, amplitude - NOISE_FLOOR);
+
+        // 2️⃣ Track rolling peak (auto gain)
+        peakRef.current = Math.max(
+            clean,
+            peakRef.current * DECAY
+        );
+
+        // 3️⃣ Normalize against learned peak
+        let normalized =
+            peakRef.current > 0
+                ? clean / peakRef.current
+                : 0;
+
+        normalized = Math.min(1, normalized);
+
+        // 4️⃣ Log curve (brings up quiet speech)
+        const boosted = Math.pow(normalized, 0.4);
+
+        // 5️⃣ Smooth movement
+        smoothRef.current =
+            SMOOTHING * smoothRef.current +
+            (1 - SMOOTHING) * boosted;
+
+        const level = Math.max(4, smoothRef.current * 20);
+
+        // 6️⃣ Update bars
+        setLevels(prev =>
+            prev.map(() => level * (0.8 + Math.random() * 0.4))
+        );
+    };
+
 
     const {
         init: initAudioPlayer,
@@ -128,6 +207,55 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
             forceIdleState();
         }
     }
+    const startVisualizer = () => {
+        const analyser = analyserRef.current;
+        if (!analyser) return;
+
+        const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+        const animate = () => {
+            analyser.getByteFrequencyData(dataArray);
+
+            const chunkSize = Math.floor(dataArray.length / 20);
+            const newLevels = [];
+
+            for (let i = 0; i < 20; i++) {
+                let sum = 0;
+                for (let j = 0; j < chunkSize; j++) {
+                    sum += dataArray[i * chunkSize + j];
+                }
+
+                const avg = sum / chunkSize;
+                newLevels.push(Math.max(4, avg / 3)); // 👈 silence stays flat
+            }
+
+            setLevels(newLevels);
+            animationRef.current = requestAnimationFrame(animate);
+        };
+
+        animate();
+    };
+
+    const stopVisualizer = () => {
+        if (animationRef.current) {
+            cancelAnimationFrame(animationRef.current);
+            animationRef.current = null;
+        }
+
+        // reset bars
+        peakRef.current = 300;
+        smoothRef.current = 0;
+        setLevels(Array(20).fill(4));
+    };
+    const handleStartRecording = async () => {
+        await startRecording();
+        startVisualizer();
+    };
+
+    const handleStopRecording = async () => {
+        await stopRecording();
+        stopVisualizer();
+    };
 
     function handleAgentAudio(arrayBuffer) {
         // 1. IMMEDIATELY hide loader when the very first chunk arrives
@@ -200,10 +328,11 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
 
     /* ---------------- AUDIO RECORDING ---------------- */
     const startRecording = async () => {
-        // if (!socketConnected || status !== 'idle') return;
         if (!socketConnected) return;
+
         setStatus('recording');
         setShowLoader(false);
+
         AudioRecord.init({
             sampleRate: 16000,
             channels: 1,
@@ -212,14 +341,18 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
         });
 
         AudioRecord.on('data', data => {
+            // 1️⃣ Send audio to WS
             if (wsRef.current) {
                 wsRef.current.send(base64ToArrayBuffer(data));
             }
+
+            // 2️⃣ Drive visualizer from mic strength
+            const amplitude = getAmplitudeFromPCM(data);
+            updateLevelsFromAmplitude(amplitude);
         });
 
         AudioRecord.start();
     };
-
     const stopRecording = async () => {
         if (status !== 'recording') return;
 
@@ -336,38 +469,48 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
 
                         {/* Speaking Button */}
                         <View style={styles.micWrapper}>
+                            {/* Start Speaking */}
                             <TouchableOpacity
-                                // 1. Disable the button when AI is speaking or loading
-                                disabled={status === 'ai-speaking' || showLoader}
+                                onPress={handleStartRecording}
+                                disabled={status === 'recording' || status === 'ai-speaking' || showLoader}
                                 style={[
-                                    status === 'recording' ? styles.micStop : styles.micStart,
-                                    {
-                                        flexDirection: "row",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        gap: 4,
-                                        width: 220,
-                                        borderRadius: 30,
-                                        paddingVertical: 16,
-                                        // 2. Decrease opacity when disabled
-                                        opacity: (status === 'ai-speaking' || showLoader) ? 0.5 : 1
-                                    }
+                                    styles.startBtn,
+                                    (status === 'recording' || status === 'ai-speaking' || showLoader) &&
+                                    styles.disabledBtn,
                                 ]}
-                                onPress={status === 'recording' ? stopRecording : startRecording}
+                            >
+                                {status === 'recording' ? (
+                                    <Visualizer levels={levels} />
+                                ) : (
+                                    <>
+                                        <Image
+                                            source={require('../assets/images/mic-on.png')}
+                                            style={styles.micIcon}
+                                        />
+                                        <Text style={styles.btnText}>Start Speaking</Text>
+                                    </>
+                                )}
+                            </TouchableOpacity>
+
+                            {/* Stop Speaking */}
+                            <TouchableOpacity
+                                onPress={handleStopRecording}
+                                disabled={status !== 'recording'}
+                                style={[
+                                    styles.stopBtn,
+                                    status !== 'recording' && styles.disabledBtn,
+
+                                ]}
                             >
                                 <Image
-                                    source={
-                                        status === 'recording'
-                                            ? require('../assets/images/mic-off.png')
-                                            : require('../assets/images/mic-on.png')
-                                    }
+                                    source={require('../assets/images/mic-off.png')}
                                     style={styles.micIcon}
                                 />
-                                <Text style={styles.micText}>
-                                    {status === 'recording' ? 'End Speaking' : 'Start Speaking'}
-                                </Text>
+                                <Text style={styles.btnText}>Stop Speaking</Text>
                             </TouchableOpacity>
                         </View>
+
+
                     </View>
                 </View>
                 {/* Bottom Controls */}
@@ -522,20 +665,65 @@ const styles = StyleSheet.create({
     },
 
     micWrapper: {
+        flexDirection: 'row',
+        gap: 8,
         alignItems: 'center',
-        marginBottom: 0,
+        justifyContent: 'center',
     },
+
+    startBtn: {
+        backgroundColor: '#3b82f6',
+        paddingVertical: 12,
+        borderRadius: 30,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: "center",
+        width: "50%",
+        paddingHorizontal: 16,
+        gap: 6
+    },
+
+    stopBtn: {
+        backgroundColor: '#ef4444',
+        paddingVertical: 12,
+        borderRadius: 30,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: "center",
+        width: "50%",
+        paddingHorizontal: 16,
+        gap: 6
+    },
+
+    disabledBtn: {
+        opacity: 0.5,
+    },
+
+    btnText: {
+        color: '#fff',
+        fontSize: 14,
+        fontWeight: '600',
+    },
+
+    visualizer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 2,
+        height: 24,
+        overflow: 'hidden',
+    },
+
+    bar: {
+        width: 3,
+        height: 16,
+        backgroundColor: '#fff',
+        borderRadius: 2,
+    },
+
     micIcon: {
-        height: 20,
+        height: 16,
+        width: 20,
         resizeMode: 'contain',
-    },
-
-    micStart: {
-        backgroundColor: '#111827',
-    },
-
-    micStop: {
-        backgroundColor: '#DC2626',
     },
 
     micText: {
@@ -575,8 +763,6 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         marginLeft: 6,
     },
-
-
 
     // Quit Pill
     quitBtn: {

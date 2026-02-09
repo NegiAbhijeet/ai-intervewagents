@@ -11,9 +11,9 @@ const ToggleButton = ({ isActive, onToggle, iconOn, iconOff }) => {
                 height: 48,
                 borderRadius: 9999,
                 overflow: 'hidden',
-                backgroundColor: isActive ? 'transparent' : 'red',
+                backgroundColor: isActive ? 'black' : '#808080',
                 borderWidth: 1,
-                borderColor: isActive ? 'rgba(255, 255, 255, 1)' : 'rgba(255, 255, 255, 0.4)',
+                borderColor: "transparent",
                 alignItems: "center",
                 justifyContent: "center"
             }}

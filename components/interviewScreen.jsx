@@ -208,6 +208,7 @@ const CallUI = ({
               skills={skills}
               handleMicToggle={handleMicToggle}
               handleCameraToggle={handleCameraToggle}
+              hasCameraPermission={hasCameraPermission}
               cameraOn={cameraOn}
               isFetching={isFetching}
               handleManualStart={handleManualStart}

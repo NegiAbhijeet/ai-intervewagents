@@ -253,7 +253,7 @@ export default function PaymentPopup({
 
   return (
     <Modal
-      animationType="slide"
+      animationType="fade"
       transparent
       statusBarTranslucent={true}
       visible={visible}
