@@ -1,7 +1,12 @@
-import { View, TouchableOpacity } from 'react-native'
-import Ionicons from '@react-native-vector-icons/ionicons'
+import { View, TouchableOpacity, Image } from 'react-native'
 
-const ToggleButton = ({ isActive, onToggle, iconOn, iconOff }) => {
+const ToggleButton = ({
+    isActive,
+    onToggle,
+    imageOn,
+    imageOff,
+    imageSize = 20
+}) => {
     return (
         <TouchableOpacity
             activeOpacity={0.8}
@@ -9,13 +14,11 @@ const ToggleButton = ({ isActive, onToggle, iconOn, iconOff }) => {
             style={{
                 flexDirection: 'row',
                 height: 48,
+                width: 48,
                 borderRadius: 9999,
-                overflow: 'hidden',
                 backgroundColor: isActive ? 'black' : '#808080',
-                borderWidth: 1,
-                borderColor: "transparent",
-                alignItems: "center",
-                justifyContent: "center"
+                alignItems: 'center',
+                justifyContent: 'center'
             }}
         >
             <View
@@ -27,7 +30,14 @@ const ToggleButton = ({ isActive, onToggle, iconOn, iconOff }) => {
                     justifyContent: 'center'
                 }}
             >
-                <Ionicons name={isActive ? iconOn : iconOff} size={18} color={isActive ? '#fff' : '#fff'} />
+                <Image
+                    source={isActive ? imageOn : imageOff}
+                    style={{
+                        width: imageSize,
+                        height: imageSize,
+                        resizeMode: 'contain'
+                    }}
+                />
             </View>
         </TouchableOpacity>
     )

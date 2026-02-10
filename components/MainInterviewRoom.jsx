@@ -475,7 +475,8 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
                                 disabled={status === 'recording' || status === 'ai-speaking' || showLoader}
                                 style={[
                                     styles.startBtn,
-                                    (status === 'recording' || status === 'ai-speaking' || showLoader) &&
+                                    status === 'recording' && { opacity: 0.8 },
+                                    (status === 'ai-speaking' || showLoader) &&
                                     styles.disabledBtn,
                                 ]}
                             >
@@ -503,7 +504,7 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
                                 ]}
                             >
                                 <Image
-                                    source={require('../assets/images/mic-off.png')}
+                                    source={require('../assets/images/pause-black.png')}
                                     style={styles.micIcon}
                                 />
                                 <Text style={styles.btnTextBlack}>Stop Speaking</Text>
@@ -517,11 +518,11 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
                 <View style={styles.bottomRow}>
                     {/* Transcript Button */}
                     <TouchableOpacity
-                        style={[styles.transcriptBtn, { borderColor: showTranscript ? "#fff" : '#53637D', }]}
+                        style={[styles.transcriptBtn, { borderColor: showTranscript ? "#cec8c8ff" : '#F2F2F2', backgroundColor: showTranscript ? "#000" : 'rgba(0, 0, 0, 0.50)', }]}
                         onPress={() => setShowTranscript(v => !v)}
                     >
                         <Image
-                            source={showTranscript ? require('../assets/images/transcript-on.png') : require('../assets/images/transcript-off.png')}
+                            source={require('../assets/images/transcript-on.png')}
                             style={styles.iconSm}
                         />
                         <Text style={showTranscript ? styles.transcriptTextActive : styles.transcriptText}>
@@ -533,8 +534,8 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
                     <ToggleButton
                         isActive={cameraOn}
                         onToggle={handleCameraToggle}
-                        iconOn="videocam-outline"
-                        iconOff="videocam-off-outline"
+                        imageOn={require('../assets/images/camera-on.png')}
+                        imageOff={require('../assets/images/camera-off.png')}
                     />
                     {/* Quit Button */}
                     <TouchableOpacity style={styles.quitBtn} onPress={() => setQuitStep(1)}>
@@ -591,8 +592,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: "center",
         paddingVertical: 12,
-        height: 160,
-        width: 160,
+        height: 130,
+        width: 130,
         borderRadius: 12,
         borderWidth: 1,
         borderColor: 'rgba(0, 0, 0, 0.10)',
@@ -601,14 +602,15 @@ const styles = StyleSheet.create({
     },
 
     avatarCircle: {
-        width: 96,
-        height: 96,
+        width: 80,
+        height: 80,
+        paddingBottom: 4,
         borderRadius: "100%",
         marginBottom: 6,
     },
     avatarImage: {
-        width: 96,
-        height: 96,
+        width: 80,
+        height: 80,
     },
     avatarName: {
         fontWeight: '600',
@@ -673,26 +675,26 @@ const styles = StyleSheet.create({
 
     startBtn: {
         backgroundColor: '#3B82F6',
-        paddingVertical: 12,
         borderRadius: 30,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: "center",
         width: "50%",
         paddingHorizontal: 16,
-        gap: 6
+        gap: 6,
+        height: 50
     },
 
     stopBtn: {
         backgroundColor: '#fff',
-        paddingVertical: 12,
         borderRadius: 30,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: "center",
         width: "50%",
         paddingHorizontal: 16,
-        gap: 6
+        gap: 6,
+        height: 50
     },
 
     disabledBtn: {
@@ -749,7 +751,7 @@ const styles = StyleSheet.create({
     transcriptBtn: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: 'rgba(255, 255, 255, 0.25)', // Glass effect
+        backgroundColor: '#000', // Glass effect
         borderWidth: 1,
         paddingVertical: 8,
         paddingHorizontal: 12,
@@ -757,7 +759,7 @@ const styles = StyleSheet.create({
     },
 
     transcriptText: {
-        color: 'rgba(83, 99, 125, 0.52)',
+        color: '#fff',
         fontSize: 10,
         fontWeight: '600',
         marginLeft: 6,

@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity, View } from 'react-native'
+import { Image, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { ScrollView } from 'react-native-gesture-handler'
 import { secondsToMinutes } from '../libs/getInterviewTime';
@@ -61,7 +61,7 @@ const InterviewDetailsPage = ({
 
                         <View style={styles.instructionRow}>
                             <View style={[styles.iconBubble, { backgroundColor: '#000' }]}>
-                                <Ionicons name="mic" size={16} color="#fff" />
+                                <Image source={require('../assets/images/mic-on.png')} style={styles.micIcon} />
                             </View>
                             <Text style={styles.instructionText}>
                                 Click <Text style={styles.highlightText}>“Start Speaking”</Text> to begin answering a question.
@@ -70,7 +70,7 @@ const InterviewDetailsPage = ({
 
                         <View style={styles.instructionRow}>
                             <View style={[styles.iconBubble, { backgroundColor: '#000' }]}>
-                                <Ionicons name="pause" size={16} color="#fff" />
+                                <Image source={require('../assets/images/pause.png')} style={styles.icon} />
                             </View>
                             <Text style={styles.instructionText}>
                                 Click <Text style={styles.highlightText}>“Stop Speaking”</Text> once you finish the answer.
@@ -96,16 +96,17 @@ const InterviewDetailsPage = ({
                         <View style={styles.bottomBar}>
                             <View style={styles.toggleRow}>
                                 <ToggleButton
-                                    isActive={micOn}
-                                    onToggle={handleMicToggle}
-                                    iconOn="mic-outline"
-                                    iconOff="mic-off-outline"
-                                />
-                                <ToggleButton
                                     isActive={cameraOn}
                                     onToggle={handleCameraToggle}
-                                    iconOn="videocam-outline"
-                                    iconOff="videocam-off-outline"
+                                    imageOn={require('../assets/images/camera-on.png')}
+                                    imageOff={require('../assets/images/camera-off.png')}
+                                />
+
+                                <ToggleButton
+                                    isActive={micOn}
+                                    onToggle={handleMicToggle}
+                                    imageOn={require('../assets/images/mic-on.png')}
+                                    imageOff={require('../assets/images/mic-off.png')}
                                 />
                             </View>
 
@@ -254,7 +255,16 @@ const styles = {
         marginVertical: 20,
         overflow: 'hidden',
     },
-
+    icon: {
+        height: 16,
+        width: 16,
+        resizeMode: 'contain',
+    },
+    micIcon: {
+        height: 14,
+        width: 16,
+        resizeMode: 'contain',
+    },
     bottomIcons: {
         flexDirection: 'row',
         justifyContent: 'center',
