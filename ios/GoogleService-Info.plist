@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>611623329833-7sv354bekagp8fugq047qg8q96cpf29a.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.611623329833-7sv354bekagp8fugq047qg8q96cpf29a</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>611623329833-80n7aoi05g12m4qf7qdgd6uq2ci5ggk5.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyA1nZlRrgcWOFRuE_T4R8SI5Lo2oaet68c</string>
+	<key>GCM_SENDER_ID</key>
+	<string>611623329833</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.aiinterviewagents</string>
+	<key>PROJECT_ID</key>
+	<string>interviewly-ai</string>
+	<key>STORAGE_BUCKET</key>
+	<string>interviewly-ai.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:611623329833:ios:3c68e9317e61c275913c38</string>
+</dict>
+</plist>
