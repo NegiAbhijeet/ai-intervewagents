@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from 'react';
 import {
   ActivityIndicator,
   Image,
+  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -36,10 +37,14 @@ const GoogleLoginButton = ({ isGoogleLoading, setIsGoogleLoading, setFirebaseUse
       } catch (e) {
         console.warn('[Login] GoogleSignin.signOut pre-clean failed', e);
       }
-      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+      
+      // Check Play Services only on Android
+      if (Platform.OS === 'android') {
+        await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+      }
 
       const userInfo = await GoogleSignin.signIn();
-      const idToken = userInfo.idToken || userInfo?.data?.idToken;
+      const idToken = userInfo.data?.idToken || userInfo.idToken;
 
       if (!idToken) throw new Error('No idToken found.');
 
@@ -84,12 +89,29 @@ const GoogleLoginButton = ({ isGoogleLoading, setIsGoogleLoading, setFirebaseUse
     } catch (error) {
       console.error('[Google Sign-In] Error:', error);
 
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        console.log('User cancelled the login flow');
-      } else if (error.code === statusCodes.IN_PROGRESS) {
-        console.log('Sign-in operation is already in progress');
-      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        console.log('Play services not available or outdated');
+      const errorCode = (error as any)?.code;
+      const errorMessage = (error as any)?.message || 'Unknown error';
+
+      // Handle platform-specific error codes
+      if (Platform.OS === 'android') {
+        if (errorCode === statusCodes.SIGN_IN_CANCELLED) {
+          console.log('User cancelled the login flow');
+        } else if (errorCode === statusCodes.IN_PROGRESS) {
+          console.log('Sign-in operation is already in progress');
+        } else if (errorCode === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+          console.log('Play services not available or outdated');
+        }
+      } else if (Platform.OS === 'ios') {
+        // iOS-specific error handling
+        if (errorMessage.includes('cancelled')) {
+          console.log('User cancelled the login flow on iOS');
+        } else if (errorMessage.includes('kGIDSignInErrorCodeCancelled')) {
+          console.log('iOS: User cancelled sign-in');
+        } else if (errorMessage.includes('kGIDSignInErrorCodeNoAppInBundle')) {
+          console.log('iOS: Google Sign-In app not available');
+        } else {
+          console.log(`iOS Error: ${errorMessage}`);
+        }
       }
 
       Toast.show({
