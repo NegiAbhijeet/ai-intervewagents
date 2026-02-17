@@ -285,7 +285,6 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
 
         playAudio(arrayBuffer, {
             onEnd: () => {
-                console.log("onend called")
                 activeAudioChunksRef.current -= 1;
                 tryExitAiSpeaking();
             },

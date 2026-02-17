@@ -82,8 +82,7 @@ export default function App() {
           ref={navigationRef}
           onReady={() => {
             routeNameRef.current = navigationRef.getCurrentRoute()?.name;
-            const clarityConfig = { logLevel: Clarity.LogLevel.Verbose };
-            Clarity.initialize('tlsi9652zl', clarityConfig);
+            Clarity.initialize('tlsi9652zl');
             Clarity.setCurrentScreenName(routeNameRef.current);
           }}
         >
