@@ -425,8 +425,7 @@ const HomePage = ({ route }) => {
                                                     borderRadius: 9999,
                                                     justifyContent: 'center',
                                                     alignItems: 'center',
-                                                    paddingVertical: 8,
-                                                    paddingHorizontal: 28,
+
                                                 }}
                                             >
                                                 <Text style={styles.buttonText}>
@@ -515,7 +514,8 @@ const styles = StyleSheet.create({
         fontSize: 17,
         fontWeight: 700,
         width: '100%',
-        textAlign: 'center'
+        textAlign: 'center',
+        paddingVertical: 8,
     },
     iconButton: {
         borderWidth: 1,

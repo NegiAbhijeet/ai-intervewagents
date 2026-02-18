@@ -364,7 +364,7 @@ const Reports = ({ route }) => {
                       end={{ x: 1, y: 0 }}
                       style={{
                         borderRadius: 9999,
-                        padding: 1,
+                        // padding: 1,
                         justifyContent: 'center',
                         alignItems: 'flex-end'
                       }}

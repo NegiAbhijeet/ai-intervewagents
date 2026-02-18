@@ -180,20 +180,23 @@ export default function CertificateCarousel({ certificates = [], LEVELS, showSha
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 0 }}
                         style={{
-                            flexDirection: 'row',
                             borderRadius: 10,
+                            width: "100%",
+                        }}
+                    >
+                        <View style={{
+                            flexDirection: 'row',
+                            gap: 8,
                             justifyContent: 'center',
                             alignItems: 'center',
                             paddingVertical: 16,
-                            width: "100%",
-                            gap: 8
-                        }}
-                    >
-                        {
-                            meetingDetailsLoading ? (
-                                <Text style={{ color: "white", fontWeight: 600 }}>Preparing...</Text>
-                            ) : <><Image source={require("../assets/images/linkedin.png")} /><Text style={{ color: "white", fontWeight: 600 }}>Share on Linkedin</Text></>
-                        }
+                        }}>
+                            {
+                                meetingDetailsLoading ? (
+                                    <Text style={{ color: "white", fontWeight: 600 }}>Preparing...</Text>
+                                ) : <><Image source={require("../assets/images/linkedin.png")} /><Text style={{ color: "white", fontWeight: 600 }}>Share on Linkedin</Text></>
+                            }
+                        </View>
                     </LinearGradient>
                 </Pressable>
             }

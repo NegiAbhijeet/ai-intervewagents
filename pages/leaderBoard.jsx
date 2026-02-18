@@ -295,11 +295,11 @@ export default function Leaderboard() {
                   colors={['rgba(120, 20, 196, 1)', 'rgba(12, 78, 190, 1)']}
                   style={{
                     borderRadius: 16,
-                    paddingVertical: 12,
+                    // paddingVertical: 12,
                     alignItems: 'center'
                   }}
                 >
-                  <Text className="font-semibold text-white">Global</Text>
+                  <Text className="font-semibold text-white py-3">Global</Text>
                 </LinearGradient>
               ) : (
                 <View
@@ -324,11 +324,11 @@ export default function Leaderboard() {
                   colors={['rgba(120, 20, 196, 1)', 'rgba(12, 78, 190, 1)']}
                   style={{
                     borderRadius: 16,
-                    paddingVertical: 12,
+                    // paddingVertical: 12,
                     alignItems: 'center'
                   }}
                 >
-                  <Text className="font-semibold text-white">
+                  <Text className="font-semibold text-white py-3">
                     Friends Circle
                   </Text>
                 </LinearGradient>
