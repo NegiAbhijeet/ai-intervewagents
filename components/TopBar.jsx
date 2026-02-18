@@ -62,7 +62,9 @@ const TopBar = () => {
   return (
     <View className="flex-row justify-between items-center px-[5%] py-2 bg-white">
       <TouchableOpacity
-        onPress={() => navigation.navigate("profile")}
+        onPress={() => navigation.navigate('AppTabs', {
+          screen: 'index',
+        })}
         className="flex-row items-center gap-2"
       >
         <Image
@@ -88,19 +90,19 @@ const TopBar = () => {
                 borderRadius: 9999,
                 justifyContent: 'center',
                 alignItems: 'center',
-                borderWidth: 2,
+                // borderWidth: 2,
                 borderColor: "rgba(233, 181, 11, 0.3)",
-                paddingVertical: 8,
-                paddingHorizontal: 14
               }}
             >
               {/* <Text style={{ color: "#fff", fontSize: 8, fontWeight: 600, lineHeight:8 }}>JOIN</Text> */}
-              <Text style={{ color: "#fff", fontSize: 10, fontWeight: 800, lineHeight: 12 }}>UPGRADE</Text>
+              <Text style={{ paddingVertical: 8, paddingHorizontal: 14, color: "#fff", fontSize: 10, fontWeight: 800, }}>UPGRADE</Text>
             </LinearGradient>
           </TouchableOpacity>
         }
         <TouchableOpacity
-          onPress={() => navigation.navigate('leaderBoard')}
+          onPress={() => navigation.navigate('AppTabs', {
+            screen: 'leaderBoard',
+          })}
           className="flex-row items-center gap-2"
         >
           <View
