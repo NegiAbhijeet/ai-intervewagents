@@ -4,73 +4,76 @@ import React
 
 @objc(PCMPlayer)
 class PCMPlayer: NSObject {
-    private var audioEngine: AVAudioEngine?
-    private var playerNode: AVAudioPlayerNode?
+    // Keep these alive for the lifetime of the module
+    private let audioEngine = AVAudioEngine()
+    private let playerNode = AVAudioPlayerNode()
     private var audioFormat: AVAudioFormat?
+    private var isInitialized = false
 
     @objc(init:channels:resolver:rejecter:)
-    func initPlayer(sampleRate: NSNumber, channels: NSNumber, resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
-        audioEngine = AVAudioEngine()
-        playerNode = AVAudioPlayerNode()
+    func initPlayer(sampleRate: NSNumber, channels: NSNumber, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
         
-        // Setup format: PCM Int16 to Float32 is standard for iOS AudioEngine
+        if isInitialized {
+            resolve("Already initialized")
+            return
+        }
+
+        let session = AVAudioSession.sharedInstance()
+        do {
+            // Use .playAndRecord to allow transitions between mic and speaker without resetting the engine
+            try session.setCategory(.playAndRecord, mode: .voiceChat, options: [.defaultToSpeaker, .allowBluetooth])
+            try session.setActive(true)
+        } catch {
+            reject("E_SESSION", "Session failed", error)
+            return
+        }
+
         audioFormat = AVAudioFormat(commonFormat: .pcmFormatFloat32,
                                    sampleRate: sampleRate.doubleValue,
                                    channels: channels.uint32Value,
                                    interleaved: false)
         
-        guard let engine = audioEngine, let node = playerNode, let format = audioFormat else {
-            reject("E_INIT", "Failed to create Audio Engine components", nil)
-            return
-        }
-        
-        engine.attach(node)
-        engine.connect(node, to: engine.mainMixerNode, format: format)
+        audioEngine.attach(playerNode)
+        audioEngine.connect(playerNode, to: audioEngine.mainMixerNode, format: audioFormat)
         
         do {
-            try engine.start()
-            node.play()
+            try audioEngine.start()
+            playerNode.play()
+            isInitialized = true
             resolve(nil)
         } catch {
-            reject("E_INIT", "Failed to start Audio Engine: \(error.localizedDescription)", error)
+            reject("E_INIT", "Engine start failed", error)
         }
     }
 
     @objc(play:resolver:rejecter:)
-    func play(data: [Int], resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
-        guard let node = playerNode, let format = audioFormat else {
-            reject("E_NO_INIT", "Audio Engine not initialized", nil)
-            return
+    func play(data: [Int], resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+        guard let format = audioFormat else { return }
+
+        // If engine stopped due to system interruption, restart it
+        if !audioEngine.isRunning {
+            try? audioEngine.start()
+            playerNode.play()
         }
 
-        // Convert Int16 (from JS) to Float32 (iOS Audio Standard)
         let frameCount = UInt32(data.count)
-        guard let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: frameCount) else {
-            reject("E_BUFFER", "Failed to create PCM buffer", nil)
-            return
-        }
+        guard let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: frameCount) else { return }
 
         buffer.frameLength = frameCount
         let channelData = buffer.floatChannelData![0]
         for i in 0..<data.count {
-            // Normalize Int16 (-32768 to 32767) to Float32 (-1.0 to 1.0)
-            channelData[i] = Float(data[i]) / 32767.0
+            channelData[i] = Float(data[i]) / 32768.0
         }
 
-        node.scheduleBuffer(buffer, completionHandler: nil)
+        playerNode.scheduleBuffer(buffer, at: nil, options: [], completionHandler: nil)
         resolve(nil)
     }
 
     @objc(stop:rejecter:)
     func stop(resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
-        playerNode?.stop()
-        audioEngine?.stop()
-        audioEngine = nil
-        playerNode = nil
+        // Just stop the sound, don't kill the engine or set to nil
+        playerNode.stop()
+        // We keep the engine running so it's ready for the next "AI turn"
         resolve(nil)
-    }
-
-    @objc static func requiresMainQueueSetup() -> Bool {
-        return true
     }
 }

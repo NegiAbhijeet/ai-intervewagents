@@ -33,20 +33,18 @@ const CallUI = ({
   const [hasCameraPermission, setHasCameraPermission] = useState(false);
   const [hasMicPermission, setHasMicPermission] = useState(false);
   const [quitStep, setQuitStep] = useState(null)
-  const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   function handleInterviewCompletion() {
-    setShowInterviewScreen(false);
     setUserProfile(prev => ({
       ...prev,
       seconds_used: (prev?.seconds_used || 0) + elapsedSecondsRef.current,
     }));
+    setTimeout(() => {
+      navigation.navigate('reports', { meetingId });
+    }, 1000);
+    setShowInterviewScreen(false);
+  }
 
-    navigation.navigate('reports', { meetingId });
-  }
-  async function halfHandleInterviewCompletion() {
-    setIsLoading(true);
-  }
   useEffect(() => {
     const requestPermissions = async () => {
       const micPermission = await requestMicrophonePermission();
@@ -195,7 +193,6 @@ const CallUI = ({
               handleInterviewCompletion={handleInterviewCompletion}
               quitStep={quitStep}
               setQuitStep={setQuitStep}
-              halfHandleInterviewCompletion={halfHandleInterviewCompletion}
               uid={userProfile?.uid}
               candidateName={candidateName}
               position={position}

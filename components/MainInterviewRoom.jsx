@@ -54,7 +54,7 @@ const Visualizer = ({ levels }) => {
     );
 };
 
-export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, setCameraOn, hasCameraPermission, setHasCameraPermission, hasStarted, handleInterviewCompletion, quitStep, setQuitStep, halfHandleInterviewCompletion, uid, candidateName, position }) {
+export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, setCameraOn, hasCameraPermission, setHasCameraPermission, hasStarted, handleInterviewCompletion, quitStep, setQuitStep, uid, candidateName, position }) {
     const devices = useCameraDevices();
 
     const cameraDevice = devices.find(d => d.position === 'front');
@@ -373,7 +373,7 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
         return buffer;
     };
 
-    const terminateInterview = () => {
+    const terminateInterview = async () => {
         wsRef.current?.close();
         handleInterviewCompletion()
         stopAudioPlayer();
@@ -383,7 +383,7 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
         <Modal transparent animationType="slide" visible statusBarTranslucent>
             {
                 quitStep === 1 ?
-                    <ExitInterviewModal onContinue={() => setQuitStep(null)} onQuit={async () => { await halfHandleInterviewCompletion(); setQuitStep(2) }} />
+                    <ExitInterviewModal onContinue={() => setQuitStep(null)} onQuit={async () => { await terminateInterview(); setQuitStep(2) }} />
                     : (quitStep === 2 ?
                         <ExitReasonsModal
                             uid={uid}

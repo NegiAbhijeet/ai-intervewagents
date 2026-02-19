@@ -39,18 +39,22 @@ const Reports = ({ route }) => {
   const [guessStage, setGuessStage] = useState(null)
   // small animated rotation for the refresh icon when active
   const rotateAnim = useRef(new Animated.Value(0)).current;
-  const [meetingId, setMeetingId] = useState(route.params?.meetingId ?? '');
   const [guessRange, setGuessRange] = useState(null)
   const [serverScore, setServerScore] = useState(null)
+  const meetingId = route.params?.meetingId;
+  const reportParam = route.params?.report;
 
   useEffect(() => {
-    if (route.params?.meetingId) {
-      setMeetingId(route.params?.meetingId)
-      setGuessStage(1)
-    } else if (route.params?.report) {
-      setCurrentReport(route.params?.report)
+    if (meetingId) {
+      setGuessStage(1);
     }
-  }, [route.params]);
+  }, [meetingId]);
+
+  useEffect(() => {
+    if (reportParam) {
+      setCurrentReport(reportParam);
+    }
+  }, [reportParam]);
 
 
   const startRotate = () => {
@@ -187,29 +191,27 @@ const Reports = ({ route }) => {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
         >
-          {
-            guessStage === 1 ?
-              <GuessScoreModal visible={true} onRequestClose={() => setGuessStage(null)} onSelectGuess={onSelectGuess} />
-              : (
-                guessStage === 2 ? <AfterGuessModal
-                  visible={true}
-                  onRequestClose={() => setGuessStage(null)}
-                  onNext={() => {
-                    setGuessStage(3)
-                  }}
-                  serverScore={serverScore}
-                  setServerScore={setServerScore}
-                  guessedRange={guessRange}
-                  interviewId={meetingId}
-                /> :
-                  (guessStage === 3 ? <SharePage
-                    visible={true}
-                    onRequestClose={() => setGuessStage(null)}
-                    meetingId={meetingId}
-                    score={serverScore}
-                  />
-                    : <></>))
-          }
+
+          <GuessScoreModal visible={guessStage === 1} onRequestClose={() => setGuessStage(null)} onSelectGuess={onSelectGuess} />
+          <AfterGuessModal
+            visible={guessStage === 2}
+            onRequestClose={() => setGuessStage(null)}
+            onNext={() => {
+              setGuessStage(3)
+            }}
+            serverScore={serverScore}
+            setServerScore={setServerScore}
+            guessedRange={guessRange}
+            interviewId={meetingId}
+          />
+          <SharePage
+            visible={guessStage === 3}
+            onRequestClose={() => setGuessStage(null)}
+            meetingId={meetingId}
+            score={serverScore}
+          />
+
+
 
           <View style={{ width: "100%" }}>
             <StatusBoxes

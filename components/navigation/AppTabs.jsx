@@ -1,7 +1,6 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import BottomTabBar from '../BottomBar';
-import Interview from '../../pages/Interview';
 import Reports from '../../pages/Reports';
 import JobsPage from '../../pages/jobs';
 import Leaderboard from '../../pages/leaderBoard';
@@ -19,7 +18,6 @@ const AppTabs = () => {
     >
       <Tab.Screen name="index" component={HomePage} />
       <Tab.Screen name="jobs" component={JobsPage} />
-      <Tab.Screen name="interview" component={Interview} />
       <Tab.Screen name="reports" component={Reports} />
       <Tab.Screen name="leaderBoard" component={Leaderboard} />
       <Tab.Screen name="profile" component={ProfileScreen} />
