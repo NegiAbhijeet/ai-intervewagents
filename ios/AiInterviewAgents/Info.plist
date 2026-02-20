@@ -10,6 +10,8 @@
 	<string>This app uses the microphone to record audio.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app requires access to your photo library to select and upload photos and videos.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app uses your location while you are using the app to provide location-based features.</string>
 
 	<key>CFBundleDisplayName</key>
 	<string>AiInterviewAgents</string>
