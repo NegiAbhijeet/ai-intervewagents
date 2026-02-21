@@ -84,7 +84,6 @@ export default function LoginScreen() {
       }
 
       // user is verified, continue with your profile creation flow
-      setFirebaseUser(user)
       const token = await user.getIdToken()
       const response = await fetchWithAuth(`${API_URL}/profiles/`, {
         method: 'POST',
@@ -104,19 +103,23 @@ export default function LoginScreen() {
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}))
-        throw new Error(data?.error || 'Profile creation failed')
+        throw new Error(data?.error || 'Something went wrong.')
       }
 
       const final = await fetchUserDetails(user.uid)
-      setUserProfile(final)
-      setOnboardingComplete(true)
+      if (final?.role === 'hr') {
+        throw new Error('HR accounts must use web login.')
+      } else {
+        setFirebaseUser(user)
+        setUserProfile(final)
+        setOnboardingComplete(true)
+      }
     } catch (err) {
       // log the whole error object for better debugging
       console.error('Login error:', err)
       Toast.show({
         type: 'error',
-        text1: 'Login failed',
-        text2: 'Please check your credentials and try again.'
+        text1: err.error || err.message || 'Please check your credentials and try again.'
       })
     } finally {
       setLoading(false)
@@ -239,7 +242,7 @@ export default function LoginScreen() {
           </View>
         </KeyboardAvoidingView>
 
-        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 8 }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginVertical: 8 }}>
           <Pressable onPress={() => Linking.openURL(TERMS_OF_USE_URL)}>
             <Text style={{ color: 'black', textDecorationLine: 'underline' }}>
               {t('legal.terms')}

@@ -22,9 +22,55 @@ const ContextGate = ({ children }) => {
     setUnreadNotification,
     setLanguage,
     setLangSelected,
-    setShowDailyStreak
+    setShowDailyStreak,
+    resetAppState
   } = useContext(AppStateContext);
   const [authLoading, setAuthLoading] = useState(true);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const logout = async () => {
+    try {
+      setIsLoggingOut(true);
+
+      const currentUser = auth().currentUser;
+
+      if (currentUser) {
+        const isGoogleProvider = Array.isArray(currentUser.providerData) &&
+          currentUser.providerData.some(p => p.providerId === 'google.com');
+
+        if (isGoogleProvider) {
+          // revoke and sign out from Google on device — safe to call even if it fails
+          try {
+            await GoogleSignin.revokeAccess();
+          } catch (e) {
+            console.warn('[Logout] revokeAccess failed:', e);
+          }
+          try {
+            await GoogleSignin.signOut();
+          } catch (e) {
+            console.warn('[Logout] GoogleSignin.signOut failed:', e);
+          }
+        }
+      }
+
+      // sign out from Firebase (native)
+      await auth().signOut();
+      resetAppState();
+      console.log('[Logout] User successfully logged out');
+    } catch (err) {
+      console.error('Error signing out:', err);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
+  useEffect(() => {
+    if (!userProfile || isLoggingOut) return;
+
+    if (userProfile?.role && userProfile.role !== "candidate") {
+      console.log("Unauthorized role detected:", userProfile.role);
+      logout();
+    }
+  }, [userProfile, isLoggingOut]);
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -220,7 +266,7 @@ const ContextGate = ({ children }) => {
         console.log('Error fetching user details:', err);
       }
 
-      if (profile) setUserProfile(profile);
+      if (profile && profile.role === "candidate") setUserProfile(profile);
       else setUserProfile(null);
 
       setAuthLoading(false);

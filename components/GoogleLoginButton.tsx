@@ -37,7 +37,7 @@ const GoogleLoginButton = ({ isGoogleLoading, setIsGoogleLoading, setFirebaseUse
       } catch (e) {
         console.warn('[Login] GoogleSignin.signOut pre-clean failed', e);
       }
-      
+
       // Check Play Services only on Android
       if (Platform.OS === 'android') {
         await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
@@ -51,7 +51,6 @@ const GoogleLoginButton = ({ isGoogleLoading, setIsGoogleLoading, setFirebaseUse
       const credential = auth.GoogleAuthProvider.credential(idToken);
       const firebaseUser = await auth().signInWithCredential(credential);
       const user = firebaseUser.user;
-      setFirebaseUser(user)
       const displayName = user.displayName || '';
       const parts = displayName.trim().split(/\s+/);
       const first_name = parts[0] || '';
@@ -79,44 +78,22 @@ const GoogleLoginButton = ({ isGoogleLoading, setIsGoogleLoading, setFirebaseUse
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
-        throw new Error(data?.error || 'Profile creation failed');
+        throw new Error(data?.error || 'Something went wrong.');
       }
 
       const final = await fetchUserDetails(user.uid);
-      setUserProfile(final);
-      setOnboardingComplete(true);
-
+      if (final.role === 'hr') {
+        throw new Error('HR accounts must use web login.')
+      } else {
+        setFirebaseUser(user)
+        setUserProfile(final);
+        setOnboardingComplete(true);
+      }
     } catch (error) {
       console.error('[Google Sign-In] Error:', error);
-
-      const errorCode = (error as any)?.code;
-      const errorMessage = (error as any)?.message || 'Unknown error';
-
-      // Handle platform-specific error codes
-      if (Platform.OS === 'android') {
-        if (errorCode === statusCodes.SIGN_IN_CANCELLED) {
-          console.log('User cancelled the login flow');
-        } else if (errorCode === statusCodes.IN_PROGRESS) {
-          console.log('Sign-in operation is already in progress');
-        } else if (errorCode === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-          console.log('Play services not available or outdated');
-        }
-      } else if (Platform.OS === 'ios') {
-        // iOS-specific error handling
-        if (errorMessage.includes('cancelled')) {
-          console.log('User cancelled the login flow on iOS');
-        } else if (errorMessage.includes('kGIDSignInErrorCodeCancelled')) {
-          console.log('iOS: User cancelled sign-in');
-        } else if (errorMessage.includes('kGIDSignInErrorCodeNoAppInBundle')) {
-          console.log('iOS: Google Sign-In app not available');
-        } else {
-          console.log(`iOS Error: ${errorMessage}`);
-        }
-      }
-
       Toast.show({
         type: 'error',
-        text1: 'Google Sign-In failed. Please try again.',
+        text1: error.error || error.message || 'Please check your credentials and try again.'
       });
     } finally {
       setIsGoogleLoading(false);

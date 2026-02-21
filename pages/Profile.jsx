@@ -189,9 +189,6 @@ export default function ProfileScreen() {
       // sign out from Firebase (native)
       await auth().signOut();
       resetAppState();
-
-
-
       console.log('[Logout] User successfully logged out');
     } catch (err) {
       console.error('Error signing out:', err);
@@ -199,7 +196,8 @@ export default function ProfileScreen() {
     } finally {
       setIsLoggingOut(false);
     }
-  }; const safe = (v, fallback = 'N/A') => {
+  }; 
+  const safe = (v, fallback = 'N/A') => {
     if (v === null || v === undefined || v === '') return fallback
     return v
   }
