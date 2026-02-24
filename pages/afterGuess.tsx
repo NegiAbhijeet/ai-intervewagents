@@ -296,3 +296,4 @@ const styles = StyleSheet.create({
     nextButton: { backgroundColor: '#6b46ff', paddingVertical: 12, paddingHorizontal: 22, borderRadius: 12, marginRight: 12 },
     secondaryButton: { backgroundColor: 'transparent', paddingVertical: 12, paddingHorizontal: 22, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(107,70,255,0.12)' }
 })
+ 
