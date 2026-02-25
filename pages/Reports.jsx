@@ -24,9 +24,10 @@ import GuessScoreModal from './guessScore';
 import AfterGuessModal from './afterGuess';
 import SharePage from './sharePage';
 import StreakProgress from '../components/streakProgress';
+import PricingPopup from '../components/PricingPopup';
 const Reports = ({ route }) => {
   const { t } = useTranslation();
-  const { userProfile, showDailyStreak, setShowDailyStreak, leaderboardRank, setFirstInterviewObject, language, myCandidate } = useContext(AppStateContext);
+  const { userProfile, showDailyStreak, setShowDailyStreak, leaderboardRank, setFirstInterviewObject, language, myCandidate, isNeedToShowAd } = useContext(AppStateContext);
   const [meetings, setMeetings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -37,6 +38,8 @@ const Reports = ({ route }) => {
   const [pendingReports, setPendindReports] = useState(0)
   const [activeFilter, setActiveFilter] = useState('all');
   const [guessStage, setGuessStage] = useState(null)
+  const [showPricingPopup, setShowPricingPopup] = useState(false)
+
   // small animated rotation for the refresh icon when active
   const rotateAnim = useRef(new Animated.Value(0)).current;
   const [guessRange, setGuessRange] = useState(null)
@@ -53,6 +56,9 @@ const Reports = ({ route }) => {
   useEffect(() => {
     if (reportParam) {
       setCurrentReport(reportParam);
+      setTimeout(() => {
+        setShowPricingPopup(true)
+      }, 0);
     }
   }, [reportParam]);
 
@@ -191,7 +197,13 @@ const Reports = ({ route }) => {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
         >
-
+          {
+            showPricingPopup && isNeedToShowAd &&
+            <PricingPopup
+              visible={showPricingPopup}
+              onClose={() => setShowPricingPopup(false)}
+            />
+          }
           <GuessScoreModal visible={guessStage === 1} onRequestClose={() => setGuessStage(null)} onSelectGuess={onSelectGuess} />
           <AfterGuessModal
             visible={guessStage === 2}
@@ -509,7 +521,14 @@ const Reports = ({ route }) => {
                           alignItems: "center"
                         }}
                         disabled={!report?.feedback}
-                        onPress={() => report?.feedback && setCurrentReport(report)}
+                        onPress={() => {
+                          if (report?.feedback) {
+                            setCurrentReport(report)
+                            setTimeout(() => {
+                              setShowPricingPopup(true)
+                            }, 0);
+                          }
+                        }}
                       >
                         <Text style={{ color: "white", fontWeight: "600", fontSize: 14 }}>
                           {t('reports.viewReport')}

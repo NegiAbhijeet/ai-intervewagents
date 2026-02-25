@@ -92,8 +92,8 @@ export default function PricingPage() {
       <View className={`px-[5%]`}>
         <CustomHeader title="Pricing" removePadding />
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <BackgroundGradient1 />
+      <BackgroundGradient1 />
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 20 }}>
         <View style={styles.container}>
 
           {/* Top Row */}
@@ -141,62 +141,63 @@ export default function PricingPage() {
               <Text style={styles.statTitle}>Available in <Text style={{ fontWeight: 800, fontSize: 20 }}>7{" "}</Text> different langauge</Text>
             </LinearGradient>
           </View>
-
-          <View style={{ width: "100%", height: "100%", alignItems: "center", paddingBottom: 40, backgroundColor: "white", marginTop: 24, borderColor: "#9CA3AF", borderWidth: 1, borderTopLeftRadius: 40, borderTopRightRadius: 40 }}>
-            {/* Section Header */}
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>AI Interview Agents</Text>
-              <LinearGradient
-                colors={['#8E45EF', '#5F5BF0']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.proPill}
-              >
-                <Text style={styles.proPillText}>PRO</Text>
-
-              </LinearGradient>
-            </View>
-
-            {/* Plans */}
-            <View style={styles.plansRow}>
-              {plans.map(plan => (
-                <PlanCard
-                  key={plan.id}
-                  plan={plan}
-                  isActive={selectedPlan?.id === plan.id}
-                  onSelect={p => {
-                    if (!userProfile?.uid) {
-                      navigation.navigate('Login');
-                      return;
-                    }
-                    setSelectedPlan(p);
-                  }}
-                />
-              ))}
-            </View>
-
-
-            {/* CTA */}
-            <TouchableOpacity
-              onPress={() => {
-                if (!selectedPlan) return; // optional: prevent opening without selection
-                setPaymentModalVisible(true);
-              }}
-            >
-              <LinearGradient
-                colors={['#1D94ED', '#8741F2']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.ctaButton}
-              >
-
-                <Text style={styles.ctaText}>Get Credits for {creditcount} Interviews</Text>
-
-              </LinearGradient>
-            </TouchableOpacity>
-          </View>
         </View>
       </ScrollView>
+
+      {/* Bottom Sticky Section */}
+      <View style={styles.stickyFooter}>
+        {/* Section Header */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>AI Interview Agents</Text>
+          <LinearGradient
+            colors={['#8E45EF', '#5F5BF0']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.proPill}
+          >
+            <Text style={styles.proPillText}>PRO</Text>
+
+          </LinearGradient>
+        </View>
+
+        {/* Plans */}
+        <View style={styles.plansRow}>
+          {plans.map(plan => (
+            <PlanCard
+              key={plan.id}
+              plan={plan}
+              isActive={selectedPlan?.id === plan.id}
+              onSelect={p => {
+                if (!userProfile?.uid) {
+                  navigation.navigate('Login');
+                  return;
+                }
+                setSelectedPlan(p);
+              }}
+            />
+          ))}
+        </View>
+
+
+        {/* CTA */}
+        <TouchableOpacity
+          onPress={() => {
+            if (!selectedPlan) return; // optional: prevent opening without selection
+            setPaymentModalVisible(true);
+          }}
+        >
+          <LinearGradient
+            colors={['#1D94ED', '#8741F2']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.ctaButton}
+          >
+
+            <Text style={styles.ctaText}>Get Credits for {creditcount} Interviews</Text>
+
+          </LinearGradient>
+        </TouchableOpacity>
+      </View>
 
       {paymentModalVisible && selectedPlan && (
         <PaymentPopup
@@ -381,5 +382,21 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '800',
     fontSize: 14,
+  },
+
+  stickyFooter: {
+    width: "100%",
+    alignItems: "center",
+    paddingBottom: 20,
+    backgroundColor: "white",
+    borderColor: "#9CA3AF",
+    borderWidth: 1,
+    borderTopLeftRadius: 40,
+    borderTopRightRadius: 40,
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
   },
 });

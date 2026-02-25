@@ -19,6 +19,7 @@ import LevelProgress from "../components/LevelProgress"
 import { useNavigation } from '@react-navigation/native';
 import ExhaustedLimitModal from "../components/ExhaustedLimitModal"
 import { minutesToSeconds } from "../libs/getInterviewTime"
+import PricingPopup from '../components/PricingPopup';
 
 const HomePage = ({ route }) => {
     const navigation = useNavigation()
@@ -37,8 +38,11 @@ const HomePage = ({ route }) => {
         showDailyStreak,
         totalMinutes,
         usedMinutes,
-        setShowDailyStreak
+        setShowDailyStreak,
+        isNeedToShowAd
     } = useContext(AppStateContext);
+    const [showPricingPopup, setShowPricingPopup] = useState(false)
+
     const [lastMeeting, setLastMeeting] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isInterviewStart, setIsInterviewStart] = useState(false)
@@ -137,7 +141,12 @@ const HomePage = ({ route }) => {
             setShowExhaustedModal(true)
             return
         }
-        setSelectedType(value); setOpenSelectInterviewOptions(true);
+        // show pricing popup on every action click, then open interview options
+        setSelectedType(value);
+        setOpenSelectInterviewOptions(true);
+        setTimeout(() => {
+            setShowPricingPopup(true);
+        }, 0);
     }
     async function fetchMeetings(isRefreshingCall = false) {
         setIsLoading(true);
@@ -317,6 +326,13 @@ const HomePage = ({ route }) => {
                 onClose={() => setShowExhaustedModal(false)}
                 onUpgradePress={() => { navigation.navigate('pricing'); setShowExhaustedModal(false); }}
             />
+            {
+                showPricingPopup && isNeedToShowAd &&
+                <PricingPopup
+                    visible={showPricingPopup}
+                    onClose={() => setShowPricingPopup(false)}
+                />
+            }
 
             {firstInterviewObject && (
                 <InterviewScreen

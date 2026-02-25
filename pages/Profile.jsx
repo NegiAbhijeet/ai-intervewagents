@@ -581,7 +581,7 @@ export default function ProfileScreen() {
                   {isLoggingOut ? <ActivityIndicator color="white" /> : <Text style={{ color: 'white', fontWeight: '700' }}>{t('profile.danger.logout')}</Text>}
                 </TouchableOpacity>
 
-                <Text style={{ fontWeight: '600', marginBottom: 6 }}>{t('profile.danger.deleteTitle')}</Text>
+                {/* <Text style={{ fontWeight: '600', marginBottom: 6 }}>{t('profile.danger.deleteTitle')}</Text>
                 <Text style={{ fontSize: 14, color: '#6B7280', marginBottom: 12 }}>{t('profile.danger.deleteDesc')}</Text>
 
                 <TouchableOpacity
@@ -590,7 +590,7 @@ export default function ProfileScreen() {
                   disabled={loading}
                 >
                   {loading ? <ActivityIndicator color="white" /> : <Text style={{ color: 'white', fontWeight: '700' }}>{t('profile.danger.deleteButton')}</Text>}
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
             </View>
           </View>

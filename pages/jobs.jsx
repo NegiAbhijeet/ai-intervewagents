@@ -20,6 +20,7 @@ import { AppStateContext } from '../components/AppContext';
 import Layout from './Layout';
 import { RefreshControl } from 'react-native-gesture-handler';
 import { useTranslation } from 'react-i18next';
+import PricingPopup from '../components/PricingPopup';
 
 export default function JobsPage() {
   const navigation = useNavigation();
@@ -30,8 +31,11 @@ export default function JobsPage() {
     setJobsFetched,
     jobs,
     setJobs,
+    isNeedToShowAd
   } = useContext(AppStateContext);
   const { t } = useTranslation();
+  const [showPricingPopup, setShowPricingPopup] = useState(false)
+
   const [loading, setLoading] = useState(false);
   const [loaderText, setLoaderText] = useState('Finding jobs');
   const [showSavedOnly, setShowSavedOnly] = useState(false);
@@ -130,6 +134,7 @@ export default function JobsPage() {
   useEffect(() => {
     if (userProfile?.uid && !jobsFetched) {
       handleFetch();
+      setShowPricingPopup(true);
     }
   }, []);
 
@@ -227,6 +232,13 @@ export default function JobsPage() {
   return (
     <>
       <Layout>
+        {
+          showPricingPopup && isNeedToShowAd &&
+          <PricingPopup
+            visible={showPricingPopup}
+            onClose={() => setShowPricingPopup(false)}
+          />
+        }
         {openPopup ? (
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }} className="py-5">
             <View className="flex-1 items-center justify-center w-full">

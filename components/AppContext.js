@@ -37,6 +37,8 @@ const AppStateProvider = ({ children }) => {
 
   const mainUsedMinutes = Math.ceil(mainUsedSeconds / 60);
 
+  const isNeedToShowAd = userProfile?.plan?.id == 1 && userProfile?.showAd
+
   const [onboardingComplete, setOnboardingComplete] = useState(false);
   // Reset all app states to default when logging out
   const resetAppState = () => {
@@ -92,7 +94,8 @@ const AppStateProvider = ({ children }) => {
       language,
       setLanguage,
       showDailyStreak,
-      setShowDailyStreak
+      setShowDailyStreak,
+      isNeedToShowAd
     }),
     [
       userProfile,
@@ -113,7 +116,8 @@ const AppStateProvider = ({ children }) => {
       myCandidate,
       langSelected,
       language,
-      showDailyStreak
+      showDailyStreak,
+      isNeedToShowAd
     ],
   );
 
