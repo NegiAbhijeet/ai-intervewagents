@@ -73,7 +73,7 @@ export default function SelectInterviewType({ onClose, setSelectedInterviewType,
     };
 
     return (
-        <Modal visible={true} animationType="slide" presentationStyle="fullScreen" statusBarTranslucent={true}>
+        <Modal visible={true} animationType="slide" presentationStyle="fullScreen" statusBarTranslucent={true} onRequestClose={onClose}>
             <CustomAlert
                 visible={!!error}
                 message={error}
