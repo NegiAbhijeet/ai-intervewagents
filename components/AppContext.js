@@ -37,7 +37,7 @@ const AppStateProvider = ({ children }) => {
 
   const mainUsedMinutes = Math.ceil(mainUsedSeconds / 60);
 
-  const isNeedToShowAd = userProfile?.plan?.id == 1 && userProfile?.showAd
+  const isNeedToShowAd = userProfile?.plan?.id == 1 && !userProfile?.showAd
 
   const [onboardingComplete, setOnboardingComplete] = useState(false);
   // Reset all app states to default when logging out
