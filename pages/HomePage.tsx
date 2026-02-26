@@ -144,9 +144,7 @@ const HomePage = ({ route }) => {
         // show pricing popup on every action click, then open interview options
         setSelectedType(value);
         setOpenSelectInterviewOptions(true);
-        setTimeout(() => {
-            setShowPricingPopup(true);
-        }, 0);
+
     }
     async function fetchMeetings(isRefreshingCall = false) {
         setIsLoading(true);
@@ -294,6 +292,9 @@ const HomePage = ({ route }) => {
                 }
                 setFirstInterviewObject(firstPayload)
                 setOpenSelectInterviewOptions(false)
+                setTimeout(() => {
+                    setShowPricingPopup(true);
+                }, 0);
             }
         } catch (error) {
             setError(error.message || "Something went wrong.")

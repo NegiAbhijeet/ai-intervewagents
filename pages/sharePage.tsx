@@ -243,9 +243,7 @@ Always open to learning, feedback, and new opportunities.`
             visible={visible}
             transparent={true}
             animationType="fade"
-            onRequestClose={() => {
-                onRequestClose()
-            }}
+            onRequestClose={onRequestClose}
         >
             <View className="flex-1 bg-white pb-8">
                 <BackgroundGradient3 />
@@ -283,7 +281,7 @@ Always open to learning, feedback, and new opportunities.`
                                 <Text style={styles.scoreNumber}>{score}%</Text>
                             </View>
 
-                            <TouchableOpacity style={styles.analysisButton} onPress={() => { navigation.navigate("reports", { report: meetingReport }) }}>
+                            <TouchableOpacity style={styles.analysisButton} onPress={() => { navigation.navigate("reports", { report: meetingReport }); onRequestClose() }}>
                                 <Image
                                     source={require('../assets/images/growth.png')}
                                     resizeMode="contain"

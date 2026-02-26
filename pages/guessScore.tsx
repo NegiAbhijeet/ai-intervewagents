@@ -14,16 +14,16 @@ import {
 } from 'react-native'
 import Layout from './Layout'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
-import PricingPopup from '../components/PricingPopup'
-import { AppStateContext } from '../components/AppContext'
+// import PricingPopup from '../components/PricingPopup'
+// import { AppStateContext } from '../components/AppContext'
 
 const { width: SCREEN_W } = Dimensions.get('window')
 const PENG_WIDTH = Math.min(320, Math.round(SCREEN_W * 0.30))
 const CLOUD_WIDTH = Math.min(320, Math.round(SCREEN_W * 0.70 * 0.85))
 
 const GuessScoreModal = ({ visible = false, onRequestClose = () => { }, onSelectGuess = () => { }, interviewId = '' }) => {
-  const { isNeedToShowAd } = useContext(AppStateContext)
-  const [showPricingPopup, setShowPricingPopup] = useState(false)
+  // const { isNeedToShowAd } = useContext(AppStateContext)
+  // const [showPricingPopup, setShowPricingPopup] = useState(false)
   const { t } = useTranslation()
   const insets = useSafeAreaInsets()
 
@@ -34,13 +34,13 @@ const GuessScoreModal = ({ visible = false, onRequestClose = () => { }, onSelect
     // pass the option string and interviewId to caller
     onSelectGuess(option, interviewId)
   }
-  useEffect(() => {
-    if (visible) {
-      setTimeout(() => {
-        setShowPricingPopup(true);
-      }, 0);
-    }
-  }, [visible])
+  // useEffect(() => {
+  //   if (visible) {
+  //     setTimeout(() => {
+  //       setShowPricingPopup(true);
+  //     }, 0);
+  //   }
+  // }, [visible])
 
   return (
     <Modal
@@ -53,13 +53,13 @@ const GuessScoreModal = ({ visible = false, onRequestClose = () => { }, onSelect
     // presentationStyle="overFullScreen" // iOS: consistent overlay behavior
     >
       <SafeAreaView style={{ flex: 1 }} edges={['bottom', 'left', 'right']}>
-        {
+        {/* {
           showPricingPopup && isNeedToShowAd &&
           <PricingPopup
             visible={showPricingPopup}
             onClose={() => setShowPricingPopup(false)}
           />
-        }
+        } */}
         <Layout gradientType="3">
           <View style={[styles.bg, { paddingTop: insets.top || (Platform.OS === 'android' ? 0 : 0) }]}>
             <View style={styles.wrapper}>

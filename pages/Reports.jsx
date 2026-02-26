@@ -205,23 +205,29 @@ const Reports = ({ route }) => {
             />
           }
           <GuessScoreModal visible={guessStage === 1} onRequestClose={() => setGuessStage(null)} onSelectGuess={onSelectGuess} />
-          <AfterGuessModal
-            visible={guessStage === 2}
-            onRequestClose={() => setGuessStage(null)}
-            onNext={() => {
-              setGuessStage(3)
-            }}
-            serverScore={serverScore}
-            setServerScore={setServerScore}
-            guessedRange={guessRange}
-            interviewId={meetingId}
-          />
-          <SharePage
-            visible={guessStage === 3}
-            onRequestClose={() => setGuessStage(null)}
-            meetingId={meetingId}
-            score={serverScore}
-          />
+          {
+            guessStage === 2 && <AfterGuessModal
+              visible={true}
+              onRequestClose={() => setGuessStage(null)}
+              onNext={() => {
+                setGuessStage(3)
+              }}
+              serverScore={serverScore}
+              setServerScore={setServerScore}
+              guessedRange={guessRange}
+              interviewId={meetingId}
+            />
+          }
+          {
+            guessStage === 3 &&
+
+            <SharePage
+              visible={true}
+              onRequestClose={() => setGuessStage(null)}
+              meetingId={meetingId}
+              score={serverScore}
+            />
+          }
 
 
 

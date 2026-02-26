@@ -8,6 +8,7 @@ import {
     StyleSheet,
     Animated,
 } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
 
 export default function StepPaywallPopup({
@@ -41,70 +42,116 @@ export default function StepPaywallPopup({
             onRequestClose={onClose}
         >
             <View style={styles.overlay}>
-                <Animated.View style={[styles.container, { transform: [{ scale: scaleValue }] }]}>
-                    {/* Gradient Lock Icon */}
-                    <LinearGradient
-                        colors={['#6366F1', '#8B5CF6']}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                        style={styles.lockIconContainer}
-                    >
-                        <Text style={styles.lockIcon}>🔒</Text>
-                    </LinearGradient>
-
-                    <Text style={styles.title}>
-                        Don't Stop Your Momentum
-                    </Text>
-
-                    <Text style={styles.subtitle}>
-                        Unlock unlimited AI interviews, real-time feedback,{' '}
-                        <Text style={styles.subtitleBold}>and performance insights</Text>{' '}
-                        to ace your next job interview.
-                    </Text>
-
-                    <View style={styles.benefitsBox}>
-                        <View style={styles.benefitRow}>
-                            <View style={styles.checkIcon} />
-                            <Text style={styles.benefit}>Unlimited Practice Interviews</Text>
-                        </View>
-                        <View style={styles.benefitRow}>
-                            <View style={styles.checkIcon} />
-                            <Text style={styles.benefit}>Instant AI Feedback</Text>
-                        </View>
-                        <View style={styles.benefitRow}>
-                            <View style={styles.checkIcon} />
-                            <Text style={styles.benefit}>Detailed Performance Analytics</Text>
-                        </View>
-                        <View style={styles.benefitRow}>
-                            <View style={styles.checkIcon} />
-                            <Text style={styles.benefit}>Multi-Language Practice</Text>
-                        </View>
-                    </View>
-
-                    {/* Primary CTA Button */}
-                    <TouchableOpacity 
-                        style={styles.ctaButtonWrapper}
-                        onPress={() => navigation.navigate('pricing')}
-                        activeOpacity={0.9}
-                    >
-                        <LinearGradient
-                            colors={['#6366F1', '#8B5CF6', '#EC4899']}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 1 }}
-                            style={styles.ctaGradient}
-                        >
-                            <Text style={styles.ctaText}>Unlock Unlimited Access 🚀</Text>
-                        </LinearGradient>
-                    </TouchableOpacity>
-
-                    {/* Secondary Button */}
-                    <TouchableOpacity 
-                        style={styles.cancelButton}
+                <Animated.View
+                    style={[
+                        styles.container,
+                        { transform: [{ scale: scaleValue }] },
+                    ]}
+                >
+                    <TouchableOpacity
+                        style={styles.closeButton}
                         onPress={onClose}
                         activeOpacity={0.7}
                     >
-                        <Text style={styles.cancel}>Continue with Limits</Text>
+                        <Text style={styles.closeIcon}>✕</Text>
                     </TouchableOpacity>
+                    <ScrollView
+                        showsVerticalScrollIndicator={false}
+                        contentContainerStyle={{ paddingBottom: 20, alignItems: "center" }}
+                        style={{ width: '100%' }}
+                        bounces={false}
+                    >
+                        <LinearGradient
+                            colors={['#6366F1', '#8B5CF6']}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 1 }}
+                            style={styles.lockIconContainer}
+                        >
+                            <Text style={styles.lockIcon}>🔒</Text>
+                        </LinearGradient>
+
+                        {/* Title */}
+                        <Text style={styles.title}>
+                            Keep Improving{"\n"}
+                            Don't Stop Now
+                        </Text>
+                        {/* Subtitle */}
+
+                        <Text style={styles.sectionTitle}>
+                            Go Premium and Get:
+                        </Text>
+
+                        {/* Benefits */}
+                        <View style={styles.benefitsBox}>
+                            <View style={styles.benefitRow}>
+                                <View style={styles.checkIcon} />
+                                <Text style={styles.benefit}>
+                                    AI Mock Interviews
+                                </Text>
+                            </View>
+
+                            <View style={styles.benefitRow}>
+                                <View style={styles.checkIcon} />
+                                <Text style={styles.benefit}>
+                                    Real time AI Trainer with Answer Guidance
+                                </Text>
+                            </View>
+
+                            <View style={styles.benefitRow}>
+                                <View style={styles.checkIcon} />
+                                <Text style={styles.benefit}>
+                                    Instant Detailed Feedback
+                                </Text>
+                            </View>
+
+                            <View style={styles.benefitRow}>
+                                <View style={styles.checkIcon} />
+                                <Text style={styles.benefit}>
+                                    Advanced Performance Analytics
+                                </Text>
+                            </View>
+
+                            <View style={styles.benefitRow}>
+                                <View style={styles.checkIcon} />
+                                <Text style={styles.benefit}>
+                                    Multi language Practice
+                                </Text>
+                            </View>
+                        </View>
+
+                        {/* Secondary CTA */}
+                        <TouchableOpacity
+                            style={styles.cancelButton}
+                            onPress={onClose}
+                            activeOpacity={0.7}
+                        >
+                            <Text style={styles.cancel}>
+                                Continue with Limited Access
+                            </Text>
+                        </TouchableOpacity>
+                        {/* Primary CTA */}
+                        <TouchableOpacity
+                            style={styles.ctaButtonWrapper}
+                            onPress={() => {
+                                navigation.navigate('pricing');
+                                onClose();
+                            }}
+                            activeOpacity={0.9}
+                        >
+                            <LinearGradient
+                                colors={['rgba(131, 102, 6, 1))', 'rgba(233, 181, 11, 1)']}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 1 }}
+                                style={styles.ctaGradient}
+                            >
+                                <Text style={styles.ctaText}>
+                                    Upgrade to Premium
+                                </Text>
+                            </LinearGradient>
+                        </TouchableOpacity>
+
+                    </ScrollView>
+
                 </Animated.View>
             </View>
         </Modal>
@@ -124,7 +171,7 @@ const styles = StyleSheet.create({
         width: '100%',
         backgroundColor: '#fff',
         borderRadius: 28,
-        padding: 32,
+        padding: 16,
         alignItems: 'center',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 20 },
@@ -163,7 +210,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         lineHeight: 22,
         color: '#6B7280',
-        marginBottom: 24,
+        marginBottom: 12,
         paddingHorizontal: 12,
     },
     subtitleBold: {
@@ -200,12 +247,7 @@ const styles = StyleSheet.create({
         width: '100%',
         borderRadius: 20,
         overflow: 'hidden',
-        marginBottom: 16,
-        shadowColor: '#6366F1',
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.35,
-        shadowRadius: 12,
-        elevation: 10,
+        elevation: 2,
     },
     ctaGradient: {
         paddingVertical: 18,
@@ -226,10 +268,43 @@ const styles = StyleSheet.create({
         borderWidth: 1.5,
         borderColor: '#E5E7EB',
         backgroundColor: '#F9FAFB',
+        marginBottom: 16,
+
     },
     cancel: {
         fontSize: 15,
         color: '#6B7280',
         fontWeight: '700',
+    },
+    closeButton: {
+        position: 'absolute',
+        top: 16,
+        right: 16,
+        zIndex: 20,
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        backgroundColor: '#F3F4F6',
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.15,
+        shadowRadius: 4,
+        elevation: 6,
+    },
+    closeIcon: {
+        fontSize: 20,
+        fontWeight: '900',
+        color: '#374151',
+        lineHeight: 22,
+    },
+    sectionTitle: {
+        fontSize: 16,
+        fontWeight: '900',
+        color: '#111827',
+        marginBottom: 12,
+        marginTop: 0,
+        alignSelf: 'flex-start',
     },
 });

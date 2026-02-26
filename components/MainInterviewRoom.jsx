@@ -8,7 +8,7 @@ import {
     Modal,
     Image,
 } from 'react-native';
-import { Camera, useCameraDevices } from 'react-native-vision-camera'; // ✅ Camera
+import { Camera, useCameraDevices } from 'react-native-vision-camera';
 import Timer from "../components/timer"
 import AudioRecord from 'react-native-audio-record';
 import useAudioPlayer from '../hooks/useAudioPlayer';
@@ -18,8 +18,10 @@ import BackgroundGradient2 from './backgroundGradient2';
 import ExitInterviewModal from './quitPopup';
 import ExitReasonsModal from './quitFeedback';
 import ChatLoader from "./chatLoader"
-import ToggleButton from './ToggleButton';
 import { Buffer } from 'buffer';
+import Ionicons from '@react-native-vector-icons/ionicons';
+import ReactNativeHapticFeedback from "react-native-haptic-feedback";
+const VISULIZER_LINES_COUNT = 6
 
 const WS_URL = 'wss://room.aiinterviewagents.com/ws/voice/';
 
@@ -35,7 +37,14 @@ const getAmplitudeFromPCM = (base64Data) => {
     const rms = Math.sqrt(sumSquares / (buffer.length / 2));
     return rms;
 };
+const triggerHaptic = (type = "impactMedium") => {
+    const options = {
+        enableVibrateFallback: true,
+        ignoreAndroidSystemSettings: false,
+    };
 
+    ReactNativeHapticFeedback.trigger(type, options);
+};
 const Visualizer = ({ levels }) => {
     return (
         <View style={styles.visualizer}>
@@ -45,7 +54,7 @@ const Visualizer = ({ levels }) => {
                     style={[
                         styles.bar,
                         {
-                            transform: [{ scaleY: Math.min(1.8, h / 10) }],
+                            transform: [{ scaleY: Math.min(1.5, h / 10) }],
                         },
                     ]}
                 />
@@ -71,20 +80,20 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
     const [showTranscript, setShowTranscript] = useState(true);
     const [socketConnected, setSocketConnected] = useState(false);
     const [socketConnecting, setSocketConnecting] = useState(false);
-    const [status, setStatus] = useState('idle');
+    const [status, setStatus] = useState('agent-speaking');
     const [messages, setMessages] = useState([]);
     const [showLoader, setShowLoader] = useState(false);
 
-    const [levels, setLevels] = useState(Array(3).fill(4));
-    const peakRef = useRef(300);     // dynamic max
+    const [levels, setLevels] = useState(Array(VISULIZER_LINES_COUNT).fill(4));
+    const peakRef = useRef(300);
     const smoothRef = useRef(0);
 
     const animationRef = useRef(null);
     const analyserRef = useRef(null);
 
     const updateLevelsFromAmplitude = (amplitude) => {
-        const NOISE_FLOOR = 80;   // very low
-        const DECAY = 0.995;     // slow peak decay
+        const NOISE_FLOOR = 80;
+        const DECAY = 0.995;
         const SMOOTHING = 0.7;
 
         // 1️⃣ Remove noise floor
@@ -144,7 +153,16 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
             return () => wsRef.current?.close();
         }
     }, [hasStarted, meetingId]);
-
+    useEffect(() => {
+        if (
+            socketConnected &&
+            status === 'idle' &&
+            !showLoader &&
+            !ttsDoneRef.current
+        ) {
+            handleStartRecording();
+        }
+    }, [socketConnected, status, showLoader]);
     async function handleCameraToggle() {
         if (!hasCameraPermission) {
             const permission = await Camera.requestCameraPermission();
@@ -178,7 +196,7 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
 
         ws.onerror = () => {
             setSocketConnecting(false);
-            Alert.alert('Connection error');
+            // Alert.alert('Connection error');
         };
 
         ws.onmessage = handleWsMessage;
@@ -245,14 +263,16 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
         // reset bars
         peakRef.current = 300;
         smoothRef.current = 0;
-        setLevels(Array(3).fill(4));
+        setLevels(Array(VISULIZER_LINES_COUNT).fill(4));
     };
     const handleStartRecording = async () => {
+        triggerHaptic("notificationSuccess");
         await startRecording();
         startVisualizer();
     };
 
     const handleStopRecording = async () => {
+        triggerHaptic("notificationSuccess");
         await stopRecording();
         stopVisualizer();
     };
@@ -383,12 +403,15 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
         <Modal transparent animationType="slide" visible statusBarTranslucent>
             {
                 quitStep === 1 ?
-                    <ExitInterviewModal onContinue={() => setQuitStep(null)} onQuit={async () => { await terminateInterview(); setQuitStep(2) }} />
+                    <ExitInterviewModal onContinue={() => setQuitStep(null)} onQuit={async () => { setQuitStep(2) }} />
                     : (quitStep === 2 ?
                         <ExitReasonsModal
                             uid={uid}
                             name={candidateName}
-                            onContinue={terminateInterview} />
+                            onContinue={async () => {
+                                await terminateInterview();
+                            }}
+                        />
                         : <></>
                     )
             }
@@ -468,36 +491,24 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
 
                         {/* Speaking Button */}
                         <View style={styles.micWrapper}>
+                            {status === 'recording' && (
+                                <Visualizer levels={levels} />
+                            )}
+
                             <TouchableOpacity
-                                onPress={
-                                    status === 'recording'
-                                        ? handleStopRecording
-                                        : handleStartRecording
-                                }
-                                disabled={status === 'ai-speaking' || showLoader}
+                                onPress={handleStopRecording}
+                                disabled={status !== 'recording'}
                                 style={[
-                                    styles.toggleBtn,
-                                    status === 'recording'
-                                        ? styles.stopBtn
-                                        : styles.startBtn,
-                                    (status === 'ai-speaking' || showLoader) &&
-                                    styles.disabledBtn,
+                                    styles.stopBtn,
+                                    status !== 'recording' && styles.disabledBtn,
                                 ]}
                             >
-                                {status === 'recording' ? (
-                                    <>
-                                        <Visualizer levels={levels} />
-                                        <Text style={styles.btnTextBlack}>Stop Speaking</Text>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Image
-                                            source={require('../assets/images/mic-on.png')}
-                                            style={styles.micIcon}
-                                        />
-                                        <Text style={styles.btnText}>Start Speaking</Text>
-                                    </>
-                                )}
+                                <Image
+                                    source={require('../assets/images/pause.png')}
+                                    style={styles.micIcon}
+                                />
+
+                                <Text style={styles.btnText}>Stop Speaking</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -511,11 +522,12 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
 
                             {/* Transcript Button (Icon Only) */}
                             <TouchableOpacity
-                                style={styles.circleBtn}
+                                style={[styles.circleBtn, showTranscript && styles.circleBtnActive]}
                                 onPress={() => setShowTranscript(v => !v)}
                             >
                                 <Image
-                                    source={require('../assets/images/transcript-on.png')}
+                                    source={
+                                        require('../assets/images/transcript-on.png')}
                                     style={styles.iconMd}
                                 />
                             </TouchableOpacity>
@@ -542,13 +554,13 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
 
                         {/* Quit Button */}
                         <TouchableOpacity style={styles.quitBtn} onPress={() => setQuitStep(1)}>
-                            <Image
-                                source={require('../assets/images/logout.png')}
-                                style={styles.iconSmWhite}
+                            <Ionicons
+                                name="call-sharp"
+                                size={22}
+                                color="#fff"
+                                style={{ transform: [{ rotate: '135deg' }] }} // phone cut style
                             />
-                            <Text style={styles.quitText}>Quit</Text>
                         </TouchableOpacity>
-
                     </View>
                 </View>
             </SafeAreaView>
@@ -677,7 +689,7 @@ const styles = StyleSheet.create({
     },
 
     micWrapper: {
-        flexDirection: 'row',
+        // flexDirection: 'row',
         gap: 8,
         alignItems: 'center',
         justifyContent: 'center',
@@ -689,20 +701,22 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: "center",
-        width: "50%",
-        paddingHorizontal: 16,
+        minWidth: "50%",
+        paddingHorizontal: 32,
         gap: 6,
         height: 50
     },
 
     stopBtn: {
-        backgroundColor: '#fff',
-        borderRadius: 30,
+        backgroundColor: '#3C3C3C',
+        borderColor: 'rgba(242, 242, 242, 0.50)',
+        borderWidth: 2,
+        borderRadius: 1000,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: "center",
-        width: "50%",
-        paddingHorizontal: 16,
+        minWidth: "50%",
+        paddingHorizontal: 32,
         gap: 6,
         height: 50
     },
@@ -713,12 +727,12 @@ const styles = StyleSheet.create({
 
     btnText: {
         color: '#fff',
-        fontSize: 12,
+        fontSize: 14,
         fontWeight: 600,
     },
     btnTextBlack: {
         color: '#000',
-        fontSize: 12,
+        fontSize: 14,
         fontWeight: 600,
     },
 
@@ -726,19 +740,23 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 2,
-        height: 24,
+        // height: 24,
+        paddingHorizontal: 24,
+        paddingVertical: 8,
         overflow: 'hidden',
+        backgroundColor: '#fff',
+        borderRadius: 1000
     },
 
     bar: {
-        width: 3,
+        width: 4,
         height: 16,
-        backgroundColor: '#000',
+        backgroundColor: '#5C5CEF',
         borderRadius: 2,
     },
 
     micIcon: {
-        height: 16,
+        height: 20,
         width: 20,
         resizeMode: 'contain',
     },
@@ -786,7 +804,7 @@ const styles = StyleSheet.create({
     },
 
     circleBtnActive: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'gray',
     },
 
     iconMd: {
@@ -799,16 +817,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: '#E54848',
-        paddingVertical: 12,
-        paddingHorizontal: 22,
-        borderRadius: 28,
+        padding: 12,
+        borderRadius: 100,
         gap: 8,
-    },
-
-    quitText: {
-        color: '#FFF',
-        fontSize: 16,
-        fontWeight: '600',
     },
 
     iconSmWhite: {
