@@ -22,7 +22,7 @@ import { Buffer } from 'buffer';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import ReactNativeHapticFeedback from "react-native-haptic-feedback";
 import AnimatedActionButton from './AnimatedActionButton';
-const VISULIZER_LINES_COUNT = 6
+const VISULIZER_LINES_COUNT = 16
 
 const WS_URL = 'wss://room.aiinterviewagents.com/ws/voice/';
 
@@ -55,7 +55,7 @@ const Visualizer = ({ levels }) => {
                     style={[
                         styles.bar,
                         {
-                            transform: [{ scaleY: Math.min(1.5, h / 10) }],
+                            height: 2 + Math.min(20, h * 2),
                         },
                     ]}
                 />
@@ -97,16 +97,13 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
         const DECAY = 0.995;
         const SMOOTHING = 0.7;
 
-        // 1️⃣ Remove noise floor
         const clean = Math.max(0, amplitude - NOISE_FLOOR);
 
-        // 2️⃣ Track rolling peak (auto gain)
         peakRef.current = Math.max(
             clean,
             peakRef.current * DECAY
         );
 
-        // 3️⃣ Normalize against learned peak
         let normalized =
             peakRef.current > 0
                 ? clean / peakRef.current
@@ -114,20 +111,25 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
 
         normalized = Math.min(1, normalized);
 
-        // 4️⃣ Log curve (brings up quiet speech)
         const boosted = Math.pow(normalized, 0.4);
 
-        // 5️⃣ Smooth movement
         smoothRef.current =
             SMOOTHING * smoothRef.current +
             (1 - SMOOTHING) * boosted;
 
-        const level = Math.max(4, smoothRef.current * 20);
+        const baseLevel = Math.max(4, smoothRef.current * 20);
 
-        // 6️⃣ Update bars
-        setLevels(prev =>
-            prev.map(() => level * (0.8 + Math.random() * 0.4))
-        );
+        setLevels(prev => {
+            const newLevels = [...prev];
+
+            for (let i = newLevels.length - 1; i > 0; i--) {
+                newLevels[i] = prev[i - 1] * 0.9;
+            }
+
+            newLevels[0] = baseLevel;
+
+            return newLevels;
+        });
     };
 
 
@@ -445,7 +447,7 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
                         <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
                             <View style={styles.novaCard}>
                                 <View style={styles.avatarCircle}>
-                                    <Image source={require('../assets/images/nova-avatar.png')} style={styles.avatarImage} resizeMode="cover" />
+                                    <Image source={require('../assets/images/nova-avatar.jpeg')} style={styles.avatarImage} resizeMode="cover" />
                                 </View>
                                 <Text style={styles.avatarName}>Nova</Text>
                                 <Text style={styles.speakingText}>
@@ -499,15 +501,7 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
                             <AnimatedActionButton
                                 enabled={status === 'recording'}
                                 onPress={handleStopRecording}
-                                style={styles.stopBtn}
-                                disabledStyle={styles.disabledBtn}
-                            >
-                                <Image
-                                    source={require('../assets/images/pause.png')}
-                                    style={styles.micIcon}
-                                />
-                                <Text style={styles.btnText}>Stop Speaking</Text>
-                            </AnimatedActionButton>
+                            />
                         </View>
                     </View>
                 </View>
@@ -631,6 +625,7 @@ const styles = StyleSheet.create({
     avatarImage: {
         width: 80,
         height: 80,
+        borderRadius: 100
     },
     avatarName: {
         fontWeight: '600',
@@ -736,21 +731,17 @@ const styles = StyleSheet.create({
 
     visualizer: {
         flexDirection: 'row',
-        alignItems: 'center',
-        gap: 2,
-        // height: 24,
-        paddingHorizontal: 24,
-        paddingVertical: 8,
-        overflow: 'hidden',
-        backgroundColor: '#fff',
-        borderRadius: 1000
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+        gap: 3,
+        height: 30,
+        marginBottom: 12,
     },
 
     bar: {
-        width: 4,
-        height: 16,
-        backgroundColor: '#5C5CEF',
-        borderRadius: 2,
+        width: 3,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 3,
     },
 
     micIcon: {
