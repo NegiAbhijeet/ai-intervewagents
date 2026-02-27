@@ -29,7 +29,7 @@ function PlanCard({ plan, isActive, onSelect }) {
         styles.planWrapper,
         {
           borderWidth: isActive ? 2 : 2,
-          borderColor: isActive ? '#5B21B6' : '#8D4FE5',
+          borderColor: isActive ? 'rgba(233, 181, 11, 1)' : 'rgba(131, 102, 6, 1))',
           opacity: isActive ? 1 : 0.6,
         },
       ]}
@@ -42,7 +42,7 @@ function PlanCard({ plan, isActive, onSelect }) {
             top: -14,
             left: 80,
             transform: [{ translateX: -50 }],
-            backgroundColor: '#8D4FE5',
+            backgroundColor: 'rgba(233, 181, 11, 1)',
             paddingHorizontal: 20,
             paddingVertical: 4,
             borderRadius: 100,
@@ -150,13 +150,17 @@ export default function PricingPage() {
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>AI Interview Agents</Text>
           <LinearGradient
-            colors={['#8E45EF', '#5F5BF0']}
+            colors={['rgba(131, 102, 6, 1)', 'rgba(233, 181, 11, 1)']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.proPill}
           >
-            <Text style={styles.proPillText}>PRO</Text>
-
+            <View style={{
+              paddingHorizontal: 10,
+              paddingVertical: 2,
+            }}>
+              <Text style={styles.proPillText}>PRO</Text>
+            </View>
           </LinearGradient>
         </View>
 
@@ -187,17 +191,20 @@ export default function PricingPage() {
           }}
         >
           <LinearGradient
-            colors={['#1D94ED', '#8741F2']}
+            colors={['rgba(131, 102, 6, 1))', 'rgba(233, 181, 11, 1)']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.ctaButton}
           >
-
-            <Text style={styles.ctaText}>Get Credits for {creditcount} Interviews</Text>
-
+            <View style={{
+              paddingHorizontal: 28,
+              paddingVertical: 20,
+            }}>
+              <Text style={styles.ctaText}>Get Credits for {creditcount} Interviews</Text>
+            </View>
           </LinearGradient>
         </TouchableOpacity>
-      </View>
+      </View >
 
       {paymentModalVisible && selectedPlan && (
         <PaymentPopup
@@ -209,8 +216,9 @@ export default function PricingPage() {
             setPaymentModalVisible(false);
           }}
         />
-      )}
-    </View>
+      )
+      }
+    </View >
   );
 }
 
@@ -306,9 +314,6 @@ const styles = StyleSheet.create({
   },
 
   proPill: {
-    backgroundColor: '#EDE9FE',
-    paddingHorizontal: 10,
-    paddingVertical: 2,
     borderRadius: 999,
   },
 
@@ -326,7 +331,7 @@ const styles = StyleSheet.create({
 
   planWrapper: {
     width: 160,
-    backgroundColor: '#E1D8F3',
+    backgroundColor: 'rgba(233, 181, 11, 0.3)',
     borderRadius: 16,
     padding: 16,
     alignItems: 'center',
@@ -372,10 +377,8 @@ const styles = StyleSheet.create({
     marginTop: 28,
     width: '100%',
     backgroundColor: '#2563EB',
-    paddingVertical: 20,
     borderRadius: 20,
     alignItems: 'center',
-    paddingHorizontal: 28,
   },
 
   ctaText: {

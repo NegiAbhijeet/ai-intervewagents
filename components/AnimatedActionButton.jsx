@@ -5,6 +5,7 @@ import {
     Text,
     Image,
     StyleSheet,
+    View,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -60,11 +61,20 @@ const AnimatedActionButton = ({
                     end={{ x: 1, y: 0 }}
                     style={styles.button}
                 >
-                    <Image
-                        source={require('../assets/images/pause.png')}
-                        style={styles.icon}
-                    />
-                    <Text style={styles.text}>{text}</Text>
+                    <View style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 8,
+                        paddingVertical: 14,
+                        paddingHorizontal: 32,
+                    }}>
+                        <Image
+                            source={require('../assets/images/pause.png')}
+                            style={styles.icon}
+                        />
+                        <Text style={styles.text}>{text}</Text>
+                    </View>
                 </LinearGradient>
             </TouchableOpacity>
         </Animated.View>
@@ -80,13 +90,7 @@ const styles = StyleSheet.create({
     },
 
     button: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 14,
-        paddingHorizontal: 32,
         borderRadius: 40,
-        gap: 8,
         elevation: 5, // Android shadow
         shadowColor: '#3A6BFF', // iOS shadow
         shadowOffset: { width: 0, height: 4 },

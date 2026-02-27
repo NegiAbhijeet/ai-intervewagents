@@ -22,6 +22,7 @@ import { Buffer } from 'buffer';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import ReactNativeHapticFeedback from "react-native-haptic-feedback";
 import AnimatedActionButton from './AnimatedActionButton';
+import NovaAvatar from "./NovaAvatar";
 const VISULIZER_LINES_COUNT = 16
 
 const WS_URL = 'wss://room.aiinterviewagents.com/ws/voice/';
@@ -444,18 +445,8 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
                     <View style={styles.overlay}>
 
                         {/* Nova Card */}
-                        <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-                            <View style={styles.novaCard}>
-                                <View style={styles.avatarCircle}>
-                                    <Image source={require('../assets/images/nova-avatar.jpeg')} style={styles.avatarImage} resizeMode="cover" />
-                                </View>
-                                <Text style={styles.avatarName}>Nova</Text>
-                                <Text style={styles.speakingText}>
-                                    {status === 'recording' ? 'Listening...' :
-                                        status === 'ai-speaking' ? 'Nova Speaking...' : ''}
-                                </Text>
-                            </View>
-                        </View>
+                        <NovaAvatar status={"ai-speaking"} />
+
                         {/* Transcript */}
                         {showTranscript && (
                             <View style={styles.transcriptBox}>

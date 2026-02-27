@@ -83,7 +83,7 @@ const TopBar = () => {
             className=""
           >
             <LinearGradient
-              colors={['rgba(131, 102, 6, 1))', 'rgba(233, 181, 11, 1)']}
+              colors={['rgba(131, 102, 6, 1)', 'rgba(233, 181, 11, 1)']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={{
