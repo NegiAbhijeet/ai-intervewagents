@@ -65,7 +65,6 @@ const SkillsInput = ({
 
   const handlePositionChange = value => {
     setSelectedPosition(value);
-    // debouncedFetch(value);
   };
 
   const addSkill = () => {

@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { API_URL } from './config';
 import Toast from 'react-native-toast-message';
+import fetchWithAuth from '../libs/fetchWithAuth';
 
 export type NotificationItem = {
   id: number | string;
@@ -55,7 +56,7 @@ function NotificationRow({ item, timeLabel, expanded, onToggle, type = "normal",
     try {
       setIsLoading(true)
 
-      await fetch(`${API_URL}/connections/respond/`, {
+      await fetchWithAuth(`${API_URL}/connections/respond/`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

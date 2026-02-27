@@ -3,6 +3,7 @@ import { Linking } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
 import Toast from 'react-native-toast-message'
 import { API_URL } from '../components/config'
+import fetchWithAuth from '../libs/fetchWithAuth'
 export function useLinkedInCertificateShare(LEVELS) {
     const [linkedinloading, setLinkedinloading] = useState(false)
 
@@ -17,7 +18,7 @@ export function useLinkedInCertificateShare(LEVELS) {
                 return
             }
 
-            const res = await fetch(`${API_URL}/congratulations/${meetingId}/`)
+            const res = await fetchWithAuth(`${API_URL}/congratulations/${meetingId}/`)
             const json = await res.json()
             const meetingReport = json?.meetingData ?? {}
             const score = meetingReport?.feedback?.averagePercentage ?? 0

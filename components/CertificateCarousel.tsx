@@ -15,6 +15,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import Toast from 'react-native-toast-message'
 import Clipboard from '@react-native-clipboard/clipboard'
 import { API_URL } from './config'
+import fetchWithAuth from '../libs/fetchWithAuth'
 
 const { width: SCREEN_W } = Dimensions.get('window')
 
@@ -53,7 +54,7 @@ export default function CertificateCarousel({ certificates = [], LEVELS, showSha
     const shareOnLinkedIn = async (meetingId) => {
         try {
             setMeetingDetailsLoading(true)
-            const res = await fetch(`${API_URL}/congratulations/${meetingId}/`)
+            const res = await fetchWithAuth(`${API_URL}/congratulations/${meetingId}/`)
             const json = await res.json()
             const meetingReport = json?.meetingData ?? {}
             const score = meetingReport?.feedback?.averagePercentage ?? 0

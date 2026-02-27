@@ -11,6 +11,7 @@ import {
     ActivityIndicator,
 } from 'react-native';
 import { JAVA_API_URL } from './config';
+import fetchWithAuth from '../libs/fetchWithAuth';
 
 const REASONS = [
     { id: 'time', label: 'Not enough time right now', icon: 'time-outline' },
@@ -36,7 +37,7 @@ export default function ExitReasonsModal({ uid, name, initialSelected = 'time', 
         };
         setLoading(true);
         try {
-            const res = await fetch(`${JAVA_API_URL}/api/feedback/save`, {
+            const res = await fetchWithAuth(`${JAVA_API_URL}/api/feedback/save`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

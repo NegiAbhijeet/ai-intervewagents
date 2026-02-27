@@ -203,7 +203,7 @@ export default function NotificationsPage() {
 
     try {
       const url = `${JAVA_API_URL}/api/meetings/${meetingId}`
-      const res = await fetch(url)
+      const res = await fetchWithAuth(url)
       if (!res.ok) throw new Error(`Request failed with status ${res.status}`)
       const result = await res.json()
       report = result.data ?? {}

@@ -12,6 +12,7 @@ import { AppStateContext } from './AppContext';
 import Layout from '../pages/Layout';
 import MainInterviewRoom from "./MainInterviewRoom"
 import InterviewDetailsPage from "./interviewDetailsPage"
+import fetchWithAuth from '../libs/fetchWithAuth';
 
 const CallUI = ({
   agentId,
@@ -118,7 +119,7 @@ const CallUI = ({
     try {
       setIsFetching(true);
 
-      const res = await fetch(
+      const res = await fetchWithAuth(
         'https://python.backend.aiinterviewagents.com/api/verify-meeting/',
         {
           method: 'POST',

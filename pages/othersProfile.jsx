@@ -154,7 +154,7 @@ export default function OthersProfile({ route }) {
     try {
       setLoading(true)
 
-      await fetch(`${API_URL}/connections/respond/`, {
+      await fetchWithAuth(`${API_URL}/connections/respond/`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

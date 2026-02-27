@@ -44,7 +44,7 @@ export default function SharePage({ visible = false, onRequestClose = () => { },
         if (!meetingId) return
         async function fetchMeetingDetails(meetingId) {
             try {
-                const res = await fetch(`${API_URL}/congratulations/${meetingId}/`)
+                const res = await fetchWithAuth(`${API_URL}/congratulations/${meetingId}/`)
                 const json = await res.json()
                 const data = json?.meetingData ?? {}
                 setCertificateData((s) => ({
@@ -67,7 +67,7 @@ export default function SharePage({ visible = false, onRequestClose = () => { },
         async function fetchMeeting(id) {
             try {
                 const url = `${JAVA_API_URL}/api/meetings/${id}`
-                const res = await fetch(url)
+                const res = await fetchWithAuth(url)
                 const result = await res.json()
 
                 const report = result.data || {}
