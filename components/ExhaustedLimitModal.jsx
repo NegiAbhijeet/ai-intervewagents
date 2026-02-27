@@ -56,8 +56,7 @@ const ExhaustedLimitModal = ({
                                 alignItems: 'center',
                                 borderWidth: 1,
                                 borderColor: "#E9B50B",
-                                paddingVertical: 8,
-                                paddingHorizontal: 14
+
                             }}
                         >
                             <Text style={styles.buttonText}>Unlock Premium</Text>
@@ -129,6 +128,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 16,
+        paddingVertical: 8,
+        paddingHorizontal: 14
         // overflow: "hidden"
     },
 

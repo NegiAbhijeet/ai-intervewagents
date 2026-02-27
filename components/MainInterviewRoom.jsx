@@ -21,6 +21,7 @@ import ChatLoader from "./chatLoader"
 import { Buffer } from 'buffer';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import ReactNativeHapticFeedback from "react-native-haptic-feedback";
+import AnimatedActionButton from './AnimatedActionButton';
 const VISULIZER_LINES_COUNT = 6
 
 const WS_URL = 'wss://room.aiinterviewagents.com/ws/voice/';
@@ -495,21 +496,18 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
                                 <Visualizer levels={levels} />
                             )}
 
-                            <TouchableOpacity
+                            <AnimatedActionButton
+                                enabled={status === 'recording'}
                                 onPress={handleStopRecording}
-                                disabled={status !== 'recording'}
-                                style={[
-                                    styles.stopBtn,
-                                    status !== 'recording' && styles.disabledBtn,
-                                ]}
+                                style={styles.stopBtn}
+                                disabledStyle={styles.disabledBtn}
                             >
                                 <Image
                                     source={require('../assets/images/pause.png')}
                                     style={styles.micIcon}
                                 />
-
                                 <Text style={styles.btnText}>Stop Speaking</Text>
-                            </TouchableOpacity>
+                            </AnimatedActionButton>
                         </View>
                     </View>
                 </View>
