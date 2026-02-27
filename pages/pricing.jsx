@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     alignItems: 'center',
-    elevation: 1,
+    // elevation: 1,
     borderColor: "#8D4FE5",
     position: "relative"
   },

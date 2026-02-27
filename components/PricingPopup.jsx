@@ -14,6 +14,7 @@ import LinearGradient from 'react-native-linear-gradient';
 export default function StepPaywallPopup({
     visible,
     onClose,
+    showContinueButton = true
 }) {
     const navigation = useNavigation();
     const scaleValue = new Animated.Value(1);
@@ -120,15 +121,18 @@ export default function StepPaywallPopup({
                         </View>
 
                         {/* Secondary CTA */}
-                        <TouchableOpacity
-                            style={styles.cancelButton}
-                            onPress={onClose}
-                            activeOpacity={0.7}
-                        >
-                            <Text style={styles.cancel}>
-                                Continue with Limited Access
-                            </Text>
-                        </TouchableOpacity>
+                        {
+                            showContinueButton && <TouchableOpacity
+                                style={styles.cancelButton}
+                                onPress={onClose}
+                                activeOpacity={0.7}
+                            >
+                                <Text style={styles.cancel}>
+                                    Continue with Limited Access
+                                </Text>
+                            </TouchableOpacity>
+                        }
+
                         {/* Primary CTA */}
                         <TouchableOpacity
                             style={styles.ctaButtonWrapper}
