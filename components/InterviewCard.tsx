@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 export default function InterviewCard({
   title = 'Name of Interview',
   duration,
-  total = 1800, // default 30 minutes in seconds
+  total = 900, // default 15 minutes in seconds
   interviewType = 'mock',
 }) {
   const { t } = useTranslation();
