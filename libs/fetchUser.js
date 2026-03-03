@@ -3,7 +3,6 @@ import fetchWithAuth from './fetchWithAuth';
 
 export default async function fetchUserDetails(uid) {
   try {
-    console.log(`${API_URL}/profiles/${uid}/`)
     const profileUrl = `${API_URL}/profiles/${uid}/`;
 
     const response = await fetchWithAuth(profileUrl);
