@@ -23,6 +23,7 @@ import getLevelData from '../libs/getLevelData'
 import { InModalBanner } from '../components/InModalBanner'
 import Clipboard from '@react-native-clipboard/clipboard'
 import BackgroundGradient3 from '../components/backgroundGradient3';
+import { minutesToSeconds } from '../libs/getInterviewTime'
 
 const { width: SCREEN_W } = Dimensions.get('window')
 const parentWidth = SCREEN_W * 0.9
@@ -30,7 +31,8 @@ const CIRCLESIZE = 120
 
 
 export default function SharePage({ visible = false, onRequestClose = () => { }, meetingId, score }) {
-    const { setFirstInterviewObject, userProfile, language, myCandidate, setLeaderboardRank } = useContext(AppStateContext)
+    const { setFirstInterviewObject, userProfile, language, myCandidate, setLeaderboardRank, totalMinutes,
+        usedMinutes, } = useContext(AppStateContext)
     const navigation = useNavigation()
     const { t } = useTranslation()
     const [meetingReport, setMeetingReport] = useState(null)
@@ -105,17 +107,18 @@ export default function SharePage({ visible = false, onRequestClose = () => { },
     const onPress = async () => {
         try {
             if (!meetingId) return
+            onRequestClose();
             const now = new Date()
             const { date, hour, minute } = extractMeetingDateTimeParts(now)
             const myLanguage = LANGUAGES.find((item) => item?.code === language)
-            const parsedDuration = parseInt(10)
-
+            const duration = Math.max(0, Math.min(10, totalMinutes - usedMinutes))
+            const durationInSecond = minutesToSeconds(duration)
             const payload = {
                 uid: userProfile?.uid,
                 hour,
                 minute,
                 date,
-                duration: parsedDuration * 60,
+                duration: durationInSecond,
                 position: myCandidate?.position,
                 role: 'candidate',
                 candidateId: myCandidate?.canId || '',
@@ -267,58 +270,84 @@ Always open to learning, feedback, and new opportunities.`
                         </Modal>
                     )}
                     <View style={styles.container}>
-                        <Text style={styles.title}>Congratulations!</Text>
-                        <Text style={styles.subtitle}>Great job on your score.</Text>
+                        {score === 0 || score === '0' ? (
+                            <>
+                                <Text style={styles.title}>Report Not Generated</Text>
+                                <Text style={[styles.subtitle, { paddingHorizontal: 20 }]}>Please reattempt the interview to generate your report and certificate.</Text>
 
-                        <View style={styles.scoreWrap}>
-                            <View style={styles.scoreCircle}>
-                                <Image
-                                    source={require('../assets/images/element.png')}
-                                    resizeMode="contain"
-                                    style={{ position: 'absolute', top: 0, left: 0, width: CIRCLESIZE, height: CIRCLESIZE }}
-                                />
-                                <Text style={{ fontSize: 8, transform: "translateY(3px)" }}>Your Score</Text>
-                                <Text style={styles.scoreNumber}>{score}%</Text>
-                            </View>
+                                <View style={styles.scoreWrap}>
+                                    <TouchableOpacity style={[styles.takeAgain, { marginTop: 30, backgroundColor: 'rgba(114, 28, 197, 0.1)', paddingHorizontal: 20, paddingVertical: 15, borderRadius: 12 }]} onPress={onPress}>
+                                        <Image
+                                            source={require('../assets/images/retry.png')}
+                                            resizeMode="contain"
+                                            style={styles.retryIcon}
+                                        />
+                                        <Text style={[styles.takeAgainText, { fontWeight: '600' }]}>Reattempt Interview</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={{ backgroundColor: "black", marginHorizontal: "auto", paddingHorizontal: 24, paddingVertical: 12, borderRadius: 24, marginTop: 16 }}
+                                        onPress={() => { onRequestClose(); navigation.navigate("index") }}
+                                    >
+                                        <Text style={{ color: "white" }}>Go to Home</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </>
+                        ) : (
+                            <>
+                                <Text style={styles.title}>Congratulations!</Text>
+                                <Text style={styles.subtitle}>Great job on your score.</Text>
 
-                            <TouchableOpacity style={styles.analysisButton} onPress={() => { navigation.navigate("reports", { report: meetingReport }); onRequestClose() }}>
-                                <Image
-                                    source={require('../assets/images/growth.png')}
-                                    resizeMode="contain"
-                                    style={styles.analysisIcon}
-                                />
-                                <Text style={styles.analysisText}>View detailed analysis</Text>
-                            </TouchableOpacity>
+                                <View style={styles.scoreWrap}>
+                                    <View style={styles.scoreCircle}>
+                                        <Image
+                                            source={require('../assets/images/element.png')}
+                                            resizeMode="contain"
+                                            style={{ position: 'absolute', top: 0, left: 0, width: CIRCLESIZE, height: CIRCLESIZE }}
+                                        />
+                                        <Text style={{ fontSize: 8, transform: "translateY(3px)" }}>Your Score</Text>
+                                        <Text style={styles.scoreNumber}>{score}%</Text>
+                                    </View>
 
-                            <Text style={styles.issued}>Issued Certificate</Text>
+                                    <TouchableOpacity style={styles.analysisButton} onPress={() => { navigation.navigate("reports", { report: meetingReport }); onRequestClose() }}>
+                                        <Image
+                                            source={require('../assets/images/growth.png')}
+                                            resizeMode="contain"
+                                            style={styles.analysisIcon}
+                                        />
+                                        <Text style={styles.analysisText}>View detailed analysis</Text>
+                                    </TouchableOpacity>
 
-                            <View style={styles.certificateBox}>
-                                <Certificate imageUrl={certificateUrl} parentWidth={parentWidth} />
-                                <TouchableOpacity style={styles.linkedin} onPress={shareOnLinkedIn}>
-                                    <Image
-                                        source={require('../assets/images/linkedin.png')}
-                                        resizeMode="contain"
-                                        style={styles.linkedinIcon}
-                                    />
-                                    <Text style={styles.linkedinText}>Share on Linkedin</Text>
-                                </TouchableOpacity>
-                            </View>
+                                    <Text style={styles.issued}>Issued Certificate</Text>
 
-                            <TouchableOpacity style={styles.takeAgain} onPress={onPress}>
-                                <Image
-                                    source={require('../assets/images/retry.png')}
-                                    resizeMode="contain"
-                                    style={styles.retryIcon}
-                                />
-                                <Text style={styles.takeAgainText}>Take Another Interview</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={{ backgroundColor: "black", marginHorizontal: "auto", paddingHorizontal: 24, paddingVertical: 12, borderRadius: 24, marginTop: 10 }}
-                                onPress={() => { onRequestClose(); navigation.navigate("index") }}
-                            >
-                                <Text style={{ color: "white" }}>Go to Home</Text>
-                            </TouchableOpacity>
-                        </View>
+                                    <View style={styles.certificateBox}>
+                                        <Certificate imageUrl={certificateUrl} parentWidth={parentWidth} />
+                                        <TouchableOpacity style={styles.linkedin} onPress={shareOnLinkedIn}>
+                                            <Image
+                                                source={require('../assets/images/linkedin.png')}
+                                                resizeMode="contain"
+                                                style={styles.linkedinIcon}
+                                            />
+                                            <Text style={styles.linkedinText}>Share on Linkedin</Text>
+                                        </TouchableOpacity>
+                                    </View>
+
+                                    <TouchableOpacity style={styles.takeAgain} onPress={onPress}>
+                                        <Image
+                                            source={require('../assets/images/retry.png')}
+                                            resizeMode="contain"
+                                            style={styles.retryIcon}
+                                        />
+                                        <Text style={styles.takeAgainText}>Take Another Interview</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={{ backgroundColor: "black", marginHorizontal: "auto", paddingHorizontal: 24, paddingVertical: 12, borderRadius: 24, marginTop: 10 }}
+                                        onPress={() => { onRequestClose(); navigation.navigate("index") }}
+                                    >
+                                        <Text style={{ color: "white" }}>Go to Home</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </>
+                        )}
                     </View>
                 </ScrollView>
             </View>

@@ -24,7 +24,6 @@ import GuessScoreModal from './guessScore';
 import AfterGuessModal from './afterGuess';
 import SharePage from './sharePage';
 import StreakProgress from '../components/streakProgress';
-import PricingPopup from '../components/PricingPopup';
 const Reports = ({ route }) => {
   const { t } = useTranslation();
   const { userProfile, showDailyStreak, setShowDailyStreak, leaderboardRank, setFirstInterviewObject, language, myCandidate, isNeedToShowAd } = useContext(AppStateContext);
@@ -38,7 +37,6 @@ const Reports = ({ route }) => {
   const [pendingReports, setPendindReports] = useState(0)
   const [activeFilter, setActiveFilter] = useState('all');
   const [guessStage, setGuessStage] = useState(null)
-  const [showPricingPopup, setShowPricingPopup] = useState(false)
 
   // small animated rotation for the refresh icon when active
   const rotateAnim = useRef(new Animated.Value(0)).current;
@@ -56,9 +54,7 @@ const Reports = ({ route }) => {
   useEffect(() => {
     if (reportParam) {
       setCurrentReport(reportParam);
-      setTimeout(() => {
-        setShowPricingPopup(true)
-      }, 0);
+
     }
   }, [reportParam]);
 
@@ -197,16 +193,10 @@ const Reports = ({ route }) => {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
         >
+
+          {/* <GuessScoreModal visible={guessStage === 1} onRequestClose={() => setGuessStage(null)} onSelectGuess={onSelectGuess} /> */}
           {
-            showPricingPopup && isNeedToShowAd &&
-            <PricingPopup
-              visible={showPricingPopup}
-              onClose={() => setShowPricingPopup(false)}
-            />
-          }
-          <GuessScoreModal visible={guessStage === 1} onRequestClose={() => setGuessStage(null)} onSelectGuess={onSelectGuess} />
-          {
-            guessStage === 2 && <AfterGuessModal
+            guessStage === 1 && <AfterGuessModal
               visible={true}
               onRequestClose={() => setGuessStage(null)}
               onNext={() => {
@@ -530,9 +520,6 @@ const Reports = ({ route }) => {
                         onPress={() => {
                           if (report?.feedback) {
                             setCurrentReport(report)
-                            setTimeout(() => {
-                              setShowPricingPopup(true)
-                            }, 0);
                           }
                         }}
                       >

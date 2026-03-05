@@ -1,10 +1,12 @@
 import { Image, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { ScrollView } from 'react-native-gesture-handler'
 import { secondsToMinutes } from '../libs/getInterviewTime';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import ToggleButton from './ToggleButton';
 import { Camera, useCameraDevices } from 'react-native-vision-camera';
+import PricingPopup from './PricingPopup';
+import { AppStateContext } from './AppContext';
 
 const InterviewDetailsPage = ({
     interviewTime,
@@ -16,13 +18,30 @@ const InterviewDetailsPage = ({
     isFetching,
     handleManualStart,
     position,
-    micOn
+    micOn,
+    onClose
 }) => {
+    const { isNeedToShowAd } = useContext(AppStateContext)
     const devices = useCameraDevices();
     const cameraDevice = devices.find(d => d.position === 'front');
-
+    const [showPricingPopup, setShowPricingPopup] = useState(false)
+    useEffect(() => {
+        if (isNeedToShowAd) {
+            setShowPricingPopup(true)
+        }
+        return () => {
+            setShowPricingPopup(false)
+        }
+    }, [isNeedToShowAd])
     return (
         <View style={{ flex: 1, }}>
+            {
+                showPricingPopup && isNeedToShowAd &&
+                <PricingPopup
+                    visible={showPricingPopup}
+                    onClose={() => { setShowPricingPopup(false); onClose(); }}
+                />
+            }
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.preInterviewContainer}>
 
@@ -33,7 +52,7 @@ const InterviewDetailsPage = ({
                                 <Text style={styles.roleTitle} numberOfLines={1}>
                                     {position || ''}
                                 </Text>
-                                <Text style={styles.subTitle}>Technical Interview</Text>
+                                {/* <Text style={styles.subTitle}>Technical Interview</Text> */}
                             </View>
 
                             <View style={styles.timePill}>
@@ -120,6 +139,16 @@ const InterviewDetailsPage = ({
                             >
                                 <Text style={styles.startButtonText}>
                                     {isFetching ? 'Please wait...' : 'Let’s start'}
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={onClose}
+                                style={[
+                                    styles.cancelButton,
+                                ]}
+                            >
+                                <Text style={styles.cancelButtonText}>
+                                    Cancel
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -295,9 +324,22 @@ const styles = {
         paddingVertical: 18,
         borderRadius: 16,
     },
+    cancelButton: {
+        backgroundColor: '#fff',
+        paddingVertical: 18,
+        borderRadius: 16,
+        borderColor: "black",
+        borderWidth: 2
+    },
 
     startButtonText: {
         color: '#FFF',
+        fontWeight: '600',
+        textAlign: 'center',
+        fontSize: 16,
+    },
+    cancelButtonText: {
+        color: '#000',
         fontWeight: '600',
         textAlign: 'center',
         fontSize: 16,

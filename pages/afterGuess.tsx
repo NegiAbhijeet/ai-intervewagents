@@ -120,6 +120,7 @@ const AfterGuessModal = ({
             clearInterval(pollingRef.current)
             pollingRef.current = null
         }
+        onNext()
     }
 
     // open / close effects
@@ -169,13 +170,13 @@ const AfterGuessModal = ({
             >
                 <Layout gradientType="3">
                     <View style={styles.container}>
-                        <View style={styles.guessChipWrapper}>
+                        {/* <View style={styles.guessChipWrapper}>
                             <View style={styles.guessChip}>
                                 <Text style={styles.guessChipText}>
                                     Your Guess: <Text style={styles.guessValue}>{guessedRange || '—'}</Text>
                                 </Text>
                             </View>
-                        </View>
+                        </View> */}
 
                         <View style={styles.headerWrap}>
                             <Image source={require('../assets/images/afterGuessPeng.png')} style={styles.penguin} resizeMode="contain" />
@@ -189,7 +190,7 @@ const AfterGuessModal = ({
 
 
                             <Text style={styles.subtitle}>
-                                {status === 'ready' ? 'Here is your final score' : "We're calculating your real score..."}
+                                {status === 'ready' ? 'Here is your final score' : "We're calculating your score..."}
                             </Text>
                         </View>
                         {
@@ -279,7 +280,7 @@ const styles = StyleSheet.create({
     headerWrap: { width: '85%', alignItems: 'center', marginTop: 6, marginBottom: 8 },
     penguin: { width: 170, height: 176, zIndex: 1, marginTop: 6 },
     title: { fontSize: 36, fontWeight: '700', marginTop: 6, color: "rgba(60, 60, 60, 1)" },
-    subtitle: { fontSize: 18, color: 'rgba(60, 60, 60, 1)', marginTop: 6, fontWeight: '500' },
+    subtitle: { fontSize: 18, color: 'rgba(60, 60, 60, 1)', marginTop: 6, fontWeight: '500', textAlign: 'center' },
     progressWrap: { width: '100%', alignItems: 'center', marginTop: 12, position: 'relative', height: 200, justifyContent: 'center' },
     progressRing: { width: 160, height: 160, position: 'absolute' },
     progressCenter: { alignItems: 'center' },
@@ -296,4 +297,3 @@ const styles = StyleSheet.create({
     nextButton: { backgroundColor: '#6b46ff', paddingVertical: 12, paddingHorizontal: 22, borderRadius: 12, marginRight: 12 },
     secondaryButton: { backgroundColor: 'transparent', paddingVertical: 12, paddingHorizontal: 22, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(107,70,255,0.12)' }
 })
- 

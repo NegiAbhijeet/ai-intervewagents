@@ -53,9 +53,9 @@ function PlanCard({ plan, isActive, onSelect }) {
           </Text>
         </View>
       }
-      <Text style={styles.planPrice}>Rs {price.price}</Text>
+      <Text style={styles.planPrice}>Rs. {price.price}</Text>
       <Text style={styles.planTitle}>{price.features}</Text>
-      <Text style={styles.planMeta}>Just Rs 20 per Interview</Text>
+      <Text style={styles.planMeta}>Just Rs. 20 per Interview</Text>
     </Pressable>
   );
 }

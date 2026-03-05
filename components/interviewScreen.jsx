@@ -24,6 +24,7 @@ const CallUI = ({
   setShowInterviewScreen,
   skills,
   position,
+  onClose
 }) => {
   const { userProfile, setUserProfile } = useContext(AppStateContext);
   const [hasStarted, setHasStarted] = useState(false);
@@ -212,6 +213,7 @@ const CallUI = ({
               handleManualStart={handleManualStart}
               position={position}
               micOn={micOn}
+              onClose={onClose}
             />
         }
       </Layout>

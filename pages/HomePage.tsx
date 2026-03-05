@@ -38,19 +38,16 @@ const HomePage = ({ route }) => {
         setShowDailyStreak,
         isNeedToShowAd
     } = useContext(AppStateContext);
-    const [showPricingPopup, setShowPricingPopup] = useState(false)
 
     const [lastMeeting, setLastMeeting] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isInterviewStart, setIsInterviewStart] = useState(false)
     const [isRefreshing, setIsRefreshing] = useState(false);
-    const [selectedInterviewType, setSelectedInterviewType] = useState("")
-    const [selectedType, setSelectedType] = useState("")
-    const [error, setError] = useState("")
     const [showExhaustedModal, setShowExhaustedModal] = useState(false)
 
-    const [openSelectInterviewOptions, setOpenSelectInterviewOptions] = useState(false)
-    function streakHandleSubmit() { setSelectedType("Practice"); setOpenSelectInterviewOptions(true) }
+    function streakHandleSubmit() {
+        handleSubmit("Practice");
+    }
 
     useEffect(() => {
         if (route.params?.startInterview) {
@@ -138,9 +135,7 @@ const HomePage = ({ route }) => {
             setShowExhaustedModal(true)
             return
         }
-        // show pricing popup on every action click, then open interview options
-        setSelectedType(value);
-        setOpenSelectInterviewOptions(true);
+        handleSubmit(value);
 
     }
     async function fetchMeetings(isRefreshingCall = false) {
@@ -216,7 +211,7 @@ const HomePage = ({ route }) => {
             minute,
         };
     };
-    const handleSubmit = async (type, interviewType, difficulty) => {
+    const handleSubmit = async (type) => {
         try {
             if (!myCandidate?.position) {
                 Toast.show({
@@ -227,7 +222,8 @@ const HomePage = ({ route }) => {
                 return
             }
             setIsInterviewStart(true);
-
+            const interviewType = "Behavioral"
+            const difficulty = "Easy"
             const now = new Date();
             const { date, hour, minute } = extractMeetingDateTimeParts(now);
             const myLanguage = LANGUAGES.find((item) => item?.code === language)
@@ -243,14 +239,13 @@ const HomePage = ({ route }) => {
                 role: 'candidate',
                 candidateId: myCandidate?.canId || '',
                 canEmail: userProfile?.email || userProfile?.user_email || '',
-                interviewType: interviewType || "Technical",
+                interviewType: interviewType || "Behavioral",
                 type: type || "Practice",
                 requiredSkills: myCandidate?.requiredSkills,
                 experience: myCandidate?.experienceYears || 0,
                 language: myLanguage?.label_en || "English",
                 difficultyLevel: difficulty || "Easy",
             };
-
 
             const response = await fetchWithAuth(`${API_URL}/interview-agent/`, {
                 method: 'POST',
@@ -288,13 +283,12 @@ const HomePage = ({ route }) => {
                     adminId: userProfile?.uid
                 }
                 setFirstInterviewObject(firstPayload)
-                setOpenSelectInterviewOptions(false)
-                setTimeout(() => {
-                    setShowPricingPopup(true);
-                }, 0);
             }
         } catch (error) {
-            setError(error.message || "Something went wrong.")
+            Toast.show({
+                type: 'error',
+                text1: error.message || "Something went wrong.",
+            })
             console.log(error);
         } finally {
             setIsInterviewStart(false);
@@ -308,7 +302,7 @@ const HomePage = ({ route }) => {
 
     return (
         <>
-            {(isInterviewStart || !myCandidate || !myCandidate?.position) && (
+            {(!myCandidate || !myCandidate?.position) && (
                 <Modal transparent visible animationType="fade">
                     <View style={styles.modalOverlay}>
                         <View style={styles.spinnerContainer}>
@@ -323,37 +317,27 @@ const HomePage = ({ route }) => {
                     showContinueButton={false}
                     visible={showExhaustedModal}
                     onClose={() => setShowExhaustedModal(false)}
+                    isExhausted={true}
                 />
             }
-            {
-                showPricingPopup && isNeedToShowAd &&
-                <PricingPopup
-                    visible={showPricingPopup}
-                    onClose={() => setShowPricingPopup(false)}
-                />
-            }
-
-            {firstInterviewObject && (
-                <InterviewScreen
-                    {...firstInterviewObject}
-                    showInterviewScreen={true}
-                    setShowInterviewScreen={() => { setFirstInterviewObject(null); setSelectedInterviewType("") }}
-
-                    position={myCandidate?.position || ""}
-                    skills={myCandidate?.requiredSkills || []}
-                    selectedInterviewType={selectedInterviewType}
-                    setSelectedInterviewType={setSelectedInterviewType}
-                    handleSubmit={handleSubmit}
-                />
-            )}
 
             <Layout>
                 {
                     showDailyStreak && firstInterviewObject === null && <StreakProgress currentDay={Math.max(1, leaderboardRank)} setShowDailyStreak={setShowDailyStreak} isHome={true} streakHandleSubmit={() => { streakHandleSubmit() }} />
                 }
-                {
-                    openSelectInterviewOptions && selectedType && <SelectInterviewType onClose={() => { setFirstInterviewObject(null); setOpenSelectInterviewOptions(false); }} type={selectedType} setSelectedInterviewType={setSelectedInterviewType} handleSubmit={handleSubmit} error={error} setError={setError} />
-                }
+
+                {firstInterviewObject && (
+                    <InterviewScreen
+                        {...firstInterviewObject}
+                        showInterviewScreen={true}
+                        setShowInterviewScreen={() => { setFirstInterviewObject(null); }}
+                        onClose={() => { setFirstInterviewObject(null); }}
+
+                        position={myCandidate?.position || ""}
+                        skills={myCandidate?.requiredSkills || []}
+                        handleSubmit={handleSubmit}
+                    />
+                )}
                 <ScrollView
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{ paddingBottom: 120, paddingTop: 20 }}
@@ -403,7 +387,7 @@ const HomePage = ({ route }) => {
                                 }}
                             />
                         ) : (
-                            <Pressable onPress={() => { handleSubmit(lastMeeting?.type, lastMeeting?.interviewType, lastMeeting?.difficultyLevel); }}>
+                            <Pressable onPress={() => { handleSubmit(lastMeeting?.type); }}>
                                 <Image
                                     source={require('../assets/images/reload.png')}
                                     style={{ width: 28, height: 28, resizeMode: 'contain' }}
@@ -431,6 +415,7 @@ const HomePage = ({ route }) => {
                                         <Pressable
                                             onPress={() => onStartClick(value)}
                                             style={styles.button}
+                                            disabled={isInterviewStart}
                                         >
                                             <LinearGradient
                                                 colors={['rgba(135, 68, 236, 1)', 'rgba(99, 88, 239, 1)']}
@@ -440,12 +425,21 @@ const HomePage = ({ route }) => {
                                                     borderRadius: 9999,
                                                     justifyContent: 'center',
                                                     alignItems: 'center',
-
+                                                    flexDirection: "row",
+                                                    gap: 8
                                                 }}
                                             >
-                                                <Text style={styles.buttonText}>
-                                                    {value === 'Revise' ? 'Train Now' : 'Test Now'}
-                                                </Text>
+                                                {
+                                                    isInterviewStart ? (
+                                                        <View style={{ paddingVertical: 8 }}>
+                                                            <ActivityIndicator color="white" />
+                                                        </View>
+                                                    )
+                                                        :
+                                                        <Text style={styles.buttonText}>
+                                                            {value === 'Revise' ? 'Train Now' : 'Test Now'}
+                                                        </Text>
+                                                }
                                             </LinearGradient>
                                         </Pressable>
                                     </View>
@@ -528,7 +522,7 @@ const styles = StyleSheet.create({
         color: '#FFF',
         fontSize: 17,
         fontWeight: 700,
-        width: '100%',
+        // width: '100%',
         textAlign: 'center',
         paddingVertical: 8,
     },

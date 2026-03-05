@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Modal,
   View,
@@ -29,6 +29,9 @@ import fetchWithAuth from '../libs/fetchWithAuth';
 import { API_URL } from './config';
 import Toast from 'react-native-toast-message';
 import BackgroundGradient1 from './backgroundGradient1';
+import { AppStateContext } from './AppContext';
+import PricingPopup from '../components/PricingPopup';
+
 const ReportModal = ({
   visible,
   onClose,
@@ -42,6 +45,7 @@ const ReportModal = ({
   myCandidate,
   language
 }) => {
+  const { isNeedToShowAd } = useContext(AppStateContext)
   const { t } = useTranslation();
   const feedback = report?.feedback || null;
   const navigation = useNavigation();
@@ -49,6 +53,13 @@ const ReportModal = ({
   const [showImprovementPoints, setShowImprovementPoints] = useState(false);
   const [activeTab, setActiveTab] = useState('details'); //details or transcript
   const [isInterviewStart, setIsInterviewStart] = useState(false)
+  const [showPricingPopup, setShowPricingPopup] = useState(false)
+
+  useEffect(() => {
+    if (isNeedToShowAd && visible) {
+      setShowPricingPopup(true)
+    }
+  }, [visible, isNeedToShowAd])
 
   function getScoreText(score) {
     if (score <= 25) return t('home.score.bad');
@@ -155,6 +166,13 @@ const ReportModal = ({
       animationType="fade"
       onRequestClose={onClose}
     >
+      {
+        showPricingPopup && isNeedToShowAd &&
+        <PricingPopup
+          visible={showPricingPopup}
+          onClose={() => { setShowPricingPopup(false); onClose(); }}
+        />
+      }
       <SafeAreaView
         style={{
           flex: 1,

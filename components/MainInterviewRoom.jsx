@@ -406,18 +406,18 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
     return (
         <Modal transparent animationType="slide" visible statusBarTranslucent>
             {
-                quitStep === 1 ?
-                    <ExitInterviewModal onContinue={() => setQuitStep(null)} onQuit={async () => { setQuitStep(2) }} />
-                    : (quitStep === 2 ?
-                        <ExitReasonsModal
-                            uid={uid}
-                            name={candidateName}
-                            onContinue={async () => {
-                                await terminateInterview();
-                            }}
-                        />
-                        : <></>
-                    )
+                quitStep === 1 &&
+                <ExitInterviewModal onContinue={() => setQuitStep(null)} onQuit={terminateInterview} />
+                // : (quitStep === 2 ?
+                //     <ExitReasonsModal
+                //         uid={uid}
+                //         name={candidateName}
+                //         onContinue={async () => {
+                //             await terminateInterview();
+                //         }}
+                //     />
+                //     : <></>
+                // )
             }
             <SafeAreaView style={styles.container}>
                 <BackgroundGradient2 />
