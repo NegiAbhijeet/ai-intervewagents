@@ -44,7 +44,7 @@ const HomePage = ({ route }) => {
     const [isInterviewStart, setIsInterviewStart] = useState(false)
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [showExhaustedModal, setShowExhaustedModal] = useState(false)
-
+    const [selectedType, setSelectedType] = useState("")
     function streakHandleSubmit() {
         handleSubmit("Practice");
     }
@@ -135,6 +135,7 @@ const HomePage = ({ route }) => {
             setShowExhaustedModal(true)
             return
         }
+        setSelectedType(value)
         handleSubmit(value);
 
     }
@@ -303,7 +304,7 @@ const HomePage = ({ route }) => {
     return (
         <>
             {(!myCandidate || !myCandidate?.position) && (
-                <Modal transparent visible animationType="fade">
+                <Modal transparent visible animationType="fade" statusBarTranslucent={true}>
                     <View style={styles.modalOverlay}>
                         <View style={styles.spinnerContainer}>
                             <ActivityIndicator size="large" style={styles.spinner} />
@@ -316,7 +317,7 @@ const HomePage = ({ route }) => {
                 showExhaustedModal && <PricingPopup
                     showContinueButton={false}
                     visible={showExhaustedModal}
-                    onPartialClose={()=>setShowExhaustedModal(false)}
+                    onPartialClose={() => setShowExhaustedModal(false)}
                     onClose={() => setShowExhaustedModal(false)}
                     isExhausted={true}
                 />
@@ -431,7 +432,7 @@ const HomePage = ({ route }) => {
                                                 }}
                                             >
                                                 {
-                                                    isInterviewStart ? (
+                                                    isInterviewStart && selectedType === value ? (
                                                         <View style={{ paddingVertical: 8 }}>
                                                             <ActivityIndicator color="white" />
                                                         </View>

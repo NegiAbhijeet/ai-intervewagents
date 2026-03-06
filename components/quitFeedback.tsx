@@ -97,7 +97,7 @@ export default function ExitReasonsModal({ uid, name, initialSelected = 'time', 
     return (
         <View style={styles.overlay}>
             {loading && (
-                <Modal transparent visible animationType="fade">
+                <Modal transparent visible animationType="fade" statusBarTranslucent={true}>
                     <View style={styles.modalOverlay}>
                         <View style={styles.spinnerContainer}>
                             <ActivityIndicator size="large" style={styles.spinner} />

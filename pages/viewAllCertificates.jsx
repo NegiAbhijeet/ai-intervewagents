@@ -78,7 +78,7 @@ const ViewAllCertificates = ({ route }) => {
     return (
         <Layout>
             {
-                linkedinloading && <Modal transparent visible animationType="fade">
+                linkedinloading && <Modal transparent visible animationType="fade" statusBarTranslucent={true}>
                     <View style={styles.modalOverlay}>
                         <View style={styles.spinnerContainer}>
                             <ActivityIndicator size="large" style={styles.spinner} />

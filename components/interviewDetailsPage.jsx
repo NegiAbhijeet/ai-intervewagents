@@ -330,7 +330,7 @@ const styles = {
         paddingVertical: 18,
         borderRadius: 16,
         borderColor: "black",
-        borderWidth: 2
+        borderWidth: 1
     },
 
     startButtonText: {

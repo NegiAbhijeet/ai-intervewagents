@@ -261,7 +261,7 @@ Always open to learning, feedback, and new opportunities.`
                     contentContainerStyle={{ paddingBottom: 120 }}
                 >
                     {isInterviewStart && (
-                        <Modal transparent visible animationType="fade">
+                        <Modal transparent visible animationType="fade" statusBarTranslucent={true}>
                             <View style={styles.modalOverlay}>
                                 <View style={styles.spinnerContainer}>
                                     <ActivityIndicator size="large" style={styles.spinner} />

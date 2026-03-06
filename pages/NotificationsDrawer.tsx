@@ -322,7 +322,7 @@ export default function NotificationsPage() {
 
       <View style={{ paddingTop: 16, paddingBottom: 48 }}>
         {isLoading && (
-          <Modal transparent visible animationType="fade">
+          <Modal transparent visible animationType="fade" statusBarTranslucent={true}>
             <View style={styles.modalOverlay}>
               <View style={styles.spinnerContainer}>
                 <ActivityIndicator size="large" style={styles.spinner} />

@@ -1,33 +1,41 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, Modal } from 'react-native';
 import BackgroundGradient1 from './backgroundGradient1';
 
 const SplashScreen = () => {
   const { t } = useTranslation();
 
   return (
-    <View style={styles.container}>
-      <BackgroundGradient1 />
-      <View style={styles.content}>
-        <View style={styles.logoWrapper}>
-          <View style={[styles.logo]}>
-            <View style={styles.logoInner}>
-              <Image
-                source={require('../assets/images/logo.png')}
-                style={styles.logoImage}
-                resizeMode="contain"
-              />
+    <Modal
+      transparent
+      visible={true}
+      animationType="fade"
+      // onRequestClose={onClose}
+      statusBarTranslucent={true}
+    >
+      <View style={styles.container}>
+        <BackgroundGradient1 />
+        <View style={styles.content}>
+          <View style={styles.logoWrapper}>
+            <View style={[styles.logo]}>
+              <View style={styles.logoInner}>
+                <Image
+                  source={require('../assets/images/logo.png')}
+                  style={styles.logoImage}
+                  resizeMode="contain"
+                />
+              </View>
             </View>
           </View>
-        </View>
 
-        <View style={[styles.textContainer, { opacity: 1 }]}>
-          <Text style={styles.title}>{t('brand')}</Text>
-          <Text style={styles.subtitle}>{t('splash.tagline')}</Text>
+          <View style={[styles.textContainer, { opacity: 1 }]}>
+            <Text style={styles.title}>{t('brand')}</Text>
+            <Text style={styles.subtitle}>{t('splash.tagline')}</Text>
+          </View>
         </View>
       </View>
-    </View>
+    </Modal>
   );
 };
 
