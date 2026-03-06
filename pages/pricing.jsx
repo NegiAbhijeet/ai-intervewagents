@@ -28,14 +28,23 @@ function PlanCard({ plan, isActive, onSelect }) {
       style={[
         styles.planWrapper,
         {
-          borderWidth: isActive ? 2 : 2,
-          borderColor: isActive ? 'rgba(233, 181, 11, 1)' : 'rgba(131, 102, 6, 1))',
+          borderWidth: 2,
+          borderColor: isActive
+            ? 'rgba(233, 181, 11, 1)'
+            : 'rgba(131, 102, 6, 1)',
           opacity: isActive ? 1 : 0.6,
         },
       ]}
     >
-      {
-        isActive &&
+
+      {/* 25% OFF Badge */}
+      {plan.name === "Pro" && (
+        <View style={styles.discountBadge}>
+          <Text style={styles.discountText}>20% OFF</Text>
+        </View>
+      )}
+
+      {isActive && (
         <View
           style={{
             position: 'absolute',
@@ -52,7 +61,8 @@ function PlanCard({ plan, isActive, onSelect }) {
             {plan.name} Plan
           </Text>
         </View>
-      }
+      )}
+
       <Text style={styles.planPrice}>Rs. {price.price}</Text>
       <Text style={styles.planTitle}>{price.features}</Text>
       <Text style={styles.planMeta}>Only Rs. 20 per Interview</Text>
@@ -401,5 +411,20 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: -3 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
+  },
+  discountBadge: {
+    // position: "absolute",
+  
+    backgroundColor: "#FF3B30",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    zIndex: 2,
+  },
+
+  discountText: {
+    color: "#fff",
+    fontSize: 10,
+    fontWeight: "700",
   },
 });
