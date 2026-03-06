@@ -28,7 +28,7 @@ import { useTranslation } from 'react-i18next';
 const { width: screenWidth } = Dimensions.get('window');
 
 export default function LoginScreen() {
-  const { setUserProfile, setOnboardingComplete, setFirebaseUser } =
+  const { setUserProfile, setOnboardingComplete } =
     useContext(AppStateContext);
   const { t } = useTranslation();
   const navigation = useNavigation()
@@ -110,7 +110,6 @@ export default function LoginScreen() {
       if (final?.role === 'hr') {
         throw new Error('HR accounts must use web login.')
       } else {
-        setFirebaseUser(user)
         setUserProfile(final)
         setOnboardingComplete(true)
       }
@@ -226,7 +225,6 @@ export default function LoginScreen() {
             <GoogleLoginButton
               setIsGoogleLoading={setIsGoogleLoading}
               isGoogleLoading={isGoogleLoading}
-              setFirebaseUser={setFirebaseUser}
             />
           </View>
 

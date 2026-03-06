@@ -17,7 +17,6 @@ import getISTDateString from './getStreakDate';
 const ContextGate = ({ children }) => {
   const {
     setUserProfile,
-    setFirebaseUser,
     userProfile,
     setUnreadNotification,
     setLanguage,
@@ -254,7 +253,6 @@ const ContextGate = ({ children }) => {
 
     const unsubscribe = auth().onAuthStateChanged(async user => {
       console.log('Auth state changed', user);
-      setFirebaseUser(user || null);
 
       let profile = null;
       try {
@@ -276,7 +274,7 @@ const ContextGate = ({ children }) => {
       unsubscribe && unsubscribe();
     };
     // empty deps: attach listener once on mount
-  }, [setFirebaseUser, setUserProfile]);
+  }, [setUserProfile]);
 
 
   useEffect(() => {

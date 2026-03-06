@@ -58,7 +58,6 @@ const AuthStack = () => (
 
 const RootNavigator = () => {
   const {
-    firebaseUser,
     userProfile,
     onboardingComplete,
     setOnboardingComplete,
@@ -143,7 +142,6 @@ const RootNavigator = () => {
 
   // If user is logged in and has a profile with a role, show the main app tabs
   if (
-    firebaseUser &&
     userProfile &&
     userProfile.role &&
     userProfile.position &&
@@ -189,7 +187,7 @@ const RootNavigator = () => {
   }
 
   // If user is logged in but has no role yet or avatar, show onboarding avatar selection
-  if (firebaseUser && userProfile && (
+  if (userProfile && (
     !userProfile?.role ||
     !userProfile?.position ||
     !userProfile?.industry

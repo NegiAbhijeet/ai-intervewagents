@@ -4,7 +4,6 @@ const AppStateContext = createContext();
 
 const AppStateProvider = ({ children }) => {
   const [userProfile, setUserProfile] = useState(null);
-  const [firebaseUser, setFirebaseUser] = useState(null);
   const [notifications, setNotifications] = useState(null);
   const [isNotificationDraweron, setIsNotificationDrawerOn] = useState(false);
   const [jobs, setJobs] = useState([]);
@@ -43,7 +42,6 @@ const AppStateProvider = ({ children }) => {
   // Reset all app states to default when logging out
   const resetAppState = () => {
     setUserProfile(null);
-    setFirebaseUser(null);
     setNotifications(null);
     setIsNotificationDrawerOn(false);
     setJobs([]);
@@ -64,8 +62,6 @@ const AppStateProvider = ({ children }) => {
       setUserProfile,
       totalMinutes,
       usedMinutes,
-      firebaseUser,
-      setFirebaseUser,
       jobs,
       setJobs,
       isFreePlan,
@@ -101,7 +97,6 @@ const AppStateProvider = ({ children }) => {
       userProfile,
       totalMinutes,
       usedMinutes,
-      firebaseUser,
       jobs,
       isFreePlan,
       isNotificationDraweron,

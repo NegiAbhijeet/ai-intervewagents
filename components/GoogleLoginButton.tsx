@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next';
 
 const WEB_CLIENT_ID = '611623329833-4t054i14kdj2u7ccdvtb4b5tsev1jgfr.apps.googleusercontent.com';
 
-const GoogleLoginButton = ({ isGoogleLoading, setIsGoogleLoading, setFirebaseUser }) => {
+const GoogleLoginButton = ({ isGoogleLoading, setIsGoogleLoading }) => {
   const { setUserProfile, setOnboardingComplete } = useContext(AppStateContext);
   const { t } = useTranslation();
   useEffect(() => {
@@ -85,7 +85,6 @@ const GoogleLoginButton = ({ isGoogleLoading, setIsGoogleLoading, setFirebaseUse
       if (final.role === 'hr') {
         throw new Error('HR accounts must use web login.')
       } else {
-        setFirebaseUser(user)
         setUserProfile(final);
         setOnboardingComplete(true);
       }

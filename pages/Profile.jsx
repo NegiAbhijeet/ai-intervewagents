@@ -36,7 +36,6 @@ export default function ProfileScreen() {
     userProfile,
     totalMinutes,
     usedMinutes,
-    firebaseUser,
     setUserProfile,
     resetAppState,
     setMyCandidate,
@@ -63,7 +62,7 @@ export default function ProfileScreen() {
   const [profileData, setProfileData] = useState({
     canId: "",
     name: "",
-    email: firebaseUser?.email,
+    email: userProfile?.email,
     totalMinutes: String(totalMinutes),
     level: "",
     role: "",
@@ -102,7 +101,7 @@ export default function ProfileScreen() {
         setMyCandidate(candidate)
         setProfileData({
           name: `${candidate?.firstName} ${candidate?.lastName}`,
-          email: firebaseUser?.email,
+          email: userProfile?.email,
           totalMinutes: String(totalMinutes),
           level: candidate?.experienceYears,
           role: candidate?.position,
@@ -153,13 +152,14 @@ export default function ProfileScreen() {
     fetchCandidates();
     fetchCertificates();
   };
-  const initials =
-    firebaseUser?.displayName
-      ?.split(' ')
-      .slice(0, 2)
-      .map(n => n[0])
-      .join('')
-      .toUpperCase() || '';
+  const initials = [userProfile?.first_name, userProfile?.last_name]
+    .join(' ')
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map(n => n[0])
+    .join('')
+    .toUpperCase();
 
   const logout = async () => {
     try {
@@ -196,7 +196,7 @@ export default function ProfileScreen() {
     } finally {
       setIsLoggingOut(false);
     }
-  }; 
+  };
   const safe = (v, fallback = 'N/A') => {
     if (v === null || v === undefined || v === '') return fallback
     return v
@@ -447,7 +447,7 @@ export default function ProfileScreen() {
                     gap: 8,
                   }}
                 >
-                  {(myCandidate?.requiredSkills || []).map((tag, i) => (
+                  {(myCandidate?.requiredSkills || []).filter((tag) => tag).map((tag, i) => (
                     <View
                       key={i}
                       style={{
