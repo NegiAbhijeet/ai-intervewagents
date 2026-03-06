@@ -5,12 +5,14 @@ const ToggleButton = ({
     onToggle,
     imageOn,
     imageOff,
-    imageSize = 20
+    imageSize = 20,
+    disabled = false
 }) => {
     return (
         <TouchableOpacity
             activeOpacity={0.8}
             onPress={onToggle}
+            disabled={disabled}
             style={{
                 flexDirection: 'row',
                 height: 48,

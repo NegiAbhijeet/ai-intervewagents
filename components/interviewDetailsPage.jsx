@@ -116,6 +116,7 @@ const InterviewDetailsPage = ({
                         <View style={styles.bottomBar}>
                             <View style={styles.toggleRow}>
                                 <ToggleButton
+                                    disabled={isFetching}
                                     isActive={cameraOn}
                                     onToggle={handleCameraToggle}
                                     imageOn={require('../assets/images/camera-on.png')}
@@ -123,6 +124,7 @@ const InterviewDetailsPage = ({
                                 />
 
                                 <ToggleButton
+                                    disabled={isFetching}
                                     isActive={micOn}
                                     onToggle={handleMicToggle}
                                     imageOn={require('../assets/images/mic-on.png')}
@@ -143,6 +145,7 @@ const InterviewDetailsPage = ({
                                 </Text>
                             </TouchableOpacity>
                             <TouchableOpacity
+                                disabled={isFetching}
                                 onPress={onClose}
                                 style={[
                                     styles.cancelButton,
