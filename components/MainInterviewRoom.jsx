@@ -399,8 +399,8 @@ export default function MainInterviewRoom({ meetingId, interviewTime, cameraOn, 
 
     const terminateInterview = async () => {
         wsRef.current?.close();
-        handleInterviewCompletion()
         stopAudioPlayer();
+        handleInterviewCompletion()
     };
 
     return (

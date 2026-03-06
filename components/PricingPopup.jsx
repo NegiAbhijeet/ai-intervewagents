@@ -65,7 +65,7 @@ export default function StepPaywallPopup({
                     {/* Close Button */}
                     <TouchableOpacity
                         style={styles.closeButton}
-                        onPress={onClose}
+                        onPress={onPartialClose}
                         activeOpacity={0.7}
                     >
                         <Text style={styles.closeIcon}>✕</Text>

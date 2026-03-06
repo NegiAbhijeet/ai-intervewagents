@@ -21,16 +21,15 @@ const AfterGuessModal = ({
     visible = false,
     onRequestClose = () => { },
     onNext = () => { },
-    guessedRange = '',
     interviewId = '',
     serverScore = null,
     setServerScore,
     maxTries = 10, // default 20 attempts -> 20 * 3s = 60s
     intervalMs = 3000
 }) => {
+    console.log("AfterGuessModal props", { visible, interviewId, serverScore })
     const navigation = useNavigation()
     const rotateAnim = useRef(new Animated.Value(0)).current
-    const guessed = parseRange(guessedRange)
 
     const [status, setStatus] = useState('polling') // polling | ready | error | timeout
     const pollingRef = useRef(null)
@@ -147,11 +146,6 @@ const AfterGuessModal = ({
         outputRange: ['0deg', '360deg']
     })
 
-    const isGuessCorrect = () => {
-        if (serverScore == null || !guessed) return false
-        return serverScore >= guessed.low && serverScore <= guessed.high
-    }
-
     return (
         <Modal
             visible={visible}
@@ -170,22 +164,13 @@ const AfterGuessModal = ({
             >
                 <Layout gradientType="3">
                     <View style={styles.container}>
-                        {/* <View style={styles.guessChipWrapper}>
-                            <View style={styles.guessChip}>
-                                <Text style={styles.guessChipText}>
-                                    Your Guess: <Text style={styles.guessValue}>{guessedRange || '—'}</Text>
-                                </Text>
-                            </View>
-                        </View> */}
 
                         <View style={styles.headerWrap}>
                             <Image source={require('../assets/images/afterGuessPeng.png')} style={styles.penguin} resizeMode="contain" />
                             <Text style={styles.title}>
                                 {status !== 'ready'
                                     ? 'Keep going'
-                                    : isGuessCorrect()
-                                        ? 'Great guess'
-                                        : 'Wrong guess'}
+                                    : 'Here is your score'}
                             </Text>
 
 
@@ -221,9 +206,7 @@ const AfterGuessModal = ({
 
                             {status === 'ready' && (
                                 <View style={{ marginTop: 12, alignItems: 'center' }}>
-                                    <Text style={{ fontWeight: '700', marginBottom: 8 }}>
-                                        {isGuessCorrect() ? 'Nice job. Your guess was correct.' : `Your guess was not correct. Final score ${serverScore}%`}
-                                    </Text>
+                                    
 
                                     <View style={{ flexDirection: 'row' }}>
                                         <TouchableOpacity onPress={() => {

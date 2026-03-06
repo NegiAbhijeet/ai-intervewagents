@@ -316,6 +316,7 @@ const HomePage = ({ route }) => {
                 showExhaustedModal && <PricingPopup
                     showContinueButton={false}
                     visible={showExhaustedModal}
+                    onPartialClose={()=>setShowExhaustedModal(false)}
                     onClose={() => setShowExhaustedModal(false)}
                     isExhausted={true}
                 />

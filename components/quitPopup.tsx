@@ -1,139 +1,107 @@
 import React from 'react'
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native'
-import { Shadow } from 'react-native-shadow-2'
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 
-const PENGUIN = require('../assets/images/quitPeng.png')
+export default function ExitInterviewModal({  onContinue, onQuit }) {
 
-export default function ExitInterviewModal({ onContinue, onQuit }) {
+
     return (
         <View style={styles.overlay}>
             <View style={styles.container}>
-                <View style={styles.topBar} />
-                <Image source={PENGUIN} style={styles.penguin} resizeMode="contain" />
 
-                <Text style={styles.title}>Leaving already?</Text>
-                <Text style={styles.subtitle}>Do you want to continue your interview or exit?</Text>
+                <Text style={styles.title}>Do you want to exit now?</Text>
 
-                <Shadow
-                    distance={5}
-                    startColor="rgba(255,255,255,0.08)"
-                    finalColor="rgba(0,0,0,0)"
-                    offset={[0, 1]}
-                    radius={12}
-                    style={styles.shadowWrapper}
-                >
-                    <TouchableOpacity style={styles.primaryButton} onPress={onContinue}>
-                        <Text style={styles.primaryText}>Continue Interview</Text>
+                <View style={styles.buttonRow}>
+                    <TouchableOpacity
+                        style={styles.primaryButton}
+                        onPress={onQuit}
+                    >
+                        <Text style={styles.primaryText}>
+                            Yes
+                        </Text>
                     </TouchableOpacity>
-                </Shadow>
 
-                <TouchableOpacity style={styles.ghostButton} onPress={onQuit}>
-                    <Text style={styles.ghostText}>Quit Interview</Text>
-                </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.secondaryButton}
+                        onPress={onContinue}
+                    >
+                        <Text style={styles.secondaryText}>
+                            No
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+
             </View>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
+
     overlay: {
-        flex: 1,
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0,0,0,0.7)',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 20,
-        position: 'absolute',
-        bottom: 0,
-        left: '50%',
-        transform: [{ translateX: '-50%' }],
-        zIndex: 1111,
-        width: "110%"
+        padding: 24,
+        zIndex: 999
     },
+
     container: {
         width: '100%',
         maxWidth: 360,
+        backgroundColor: '#ffffff',
         borderRadius: 18,
         paddingVertical: 28,
-        paddingHorizontal: 22,
-        paddingTop: 0,
-        alignItems: 'stretch', // allow children to use full width
-
-        // New styling from Figma
-        backgroundColor: 'rgba(0, 0, 0, 1)',
-        borderWidth: 1,
-        borderColor: 'rgba(60, 60, 60, 1)',
-        shadowColor: 'rgba(0, 0, 0, 1)',
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.12,
-        shadowRadius: 20,
-        elevation: 20,
-    },
-    topBar: {
-        height: 3,
-        width: 30,
-        backgroundColor: 'white',
-        alignSelf: 'center',
-        borderRadius: 2,
-        marginTop: 5,
-        marginBottom: 16
-    },
-    penguin: {
-        width: 76,
-        height: 76,
-        marginBottom: 12,
-        marginHorizontal: "auto"
-    },
-    title: {
-        color: '#fff',
-        fontSize: 20,
-        fontWeight: '700',
-        marginBottom: 8,
-        textAlign: 'center'
-    },
-    subtitle: {
-        color: '#cfcfcf',
-        fontSize: 14,
-        textAlign: 'center',
-        marginBottom: 20,
-        paddingHorizontal: 20
+        paddingHorizontal: 24,
+        alignItems: 'center',
+        elevation: 10
     },
 
-    // Shadow wrapper style. Width 100 percent plus borderRadius keeps shadow aligned with button
-    shadowWrapper: {
+    buttonRow: {
+        flexDirection: 'row',
         width: '100%',
-        marginBottom: 12,
-        borderRadius: 12,
-        // no padding here so shadow matches the button box exactly
+        gap: 12
+    },
+
+    title: {
+        fontSize: 20,
+        fontWeight: '500',
+        color: '#111',
+        marginBottom: 20,
+        textAlign: 'center'
     },
 
     primaryButton: {
-        width: '100%',
-        backgroundColor: 'rgba(156, 163, 175, 1)',
+        flex: 1,
+        backgroundColor: '#2563EB',
         borderRadius: 12,
         paddingVertical: 14,
         alignItems: 'center'
     },
+
+    secondaryButton: {
+        flex: 1,
+        borderWidth: 2,
+        borderColor: '#e5e7eb',
+        borderRadius: 12,
+        paddingVertical: 14,
+        alignItems: 'center'
+    },
+
     primaryText: {
         color: '#fff',
         fontSize: 16,
         fontWeight: '600'
     },
-    ghostButton: {
-        width: '100%',
-        borderRadius: 12,
-        paddingVertical: 14,
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: 'rgba(156, 163, 175, 1)'
-    },
-    ghostText: {
-        color: '#fff',
-        opacity: 0.9,
+
+    secondaryText: {
+        color: '#374151',
         fontSize: 16,
         fontWeight: '600'
-    },
-
-    // helper to center a few items while keeping parent allow full width
-    centered: {
-        alignSelf: 'center'
     }
+
 })

@@ -26,7 +26,7 @@ import BackgroundGradient3 from '../components/backgroundGradient3';
 import { minutesToSeconds } from '../libs/getInterviewTime'
 
 const { width: SCREEN_W } = Dimensions.get('window')
-const parentWidth = SCREEN_W * 0.9
+const parentWidth = SCREEN_W * 1
 const CIRCLESIZE = 120
 
 
@@ -314,7 +314,7 @@ Always open to learning, feedback, and new opportunities.`
                                             resizeMode="contain"
                                             style={styles.analysisIcon}
                                         />
-                                        <Text style={styles.analysisText}>View detailed analysis</Text>
+                                        <Text style={styles.analysisText}>View detailed report</Text>
                                     </TouchableOpacity>
 
                                     <Text style={styles.issued}>Issued Certificate</Text>
@@ -398,7 +398,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#6b46ff',
         paddingVertical: 12,
         paddingHorizontal: 24,
-        borderRadius: 12
+        borderRadius: 12,
+        borderWidth: 2,
+        borderColor: "rgba(233, 181, 11, 1)"
     },
     analysisIcon: {
         width: 18,
@@ -424,7 +426,7 @@ const styles = StyleSheet.create({
     linkedin: {
         marginTop: 18,
         backgroundColor: 'rgba(29, 78, 216, 1)',
-        width: '100%',
+        width: '90%',
         alignSelf: 'stretch',
         paddingVertical: 16,
         paddingHorizontal: 16,
