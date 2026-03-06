@@ -39,6 +39,7 @@ const InterviewDetailsPage = ({
                 showPricingPopup && isNeedToShowAd &&
                 <PricingPopup
                     visible={showPricingPopup}
+                    onPartialClose={() => { setShowPricingPopup(false); }}
                     onClose={() => { setShowPricingPopup(false); onClose(); }}
                 />
             }

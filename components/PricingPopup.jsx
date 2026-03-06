@@ -14,6 +14,7 @@ import LinearGradient from 'react-native-linear-gradient';
 export default function StepPaywallPopup({
     visible,
     onClose,
+    onPartialClose,
     showContinueButton = true,
     isExhausted = false
 }) {
@@ -151,7 +152,7 @@ export default function StepPaywallPopup({
                         {showContinueButton && !isExhausted && (
                             <TouchableOpacity
                                 style={styles.cancelButton}
-                                onPress={onClose}
+                                onPress={onPartialClose}
                                 activeOpacity={0.7}
                             >
                                 <Text style={styles.cancel}>
