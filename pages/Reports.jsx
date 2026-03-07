@@ -49,7 +49,7 @@ const Reports = ({ route }) => {
     if (meetingId) {
       setGuessStage(1);
     }
-  }, [meetingId]);
+  }, [meetingId, reportParam]);
 
   useEffect(() => {
     if (reportParam) {
