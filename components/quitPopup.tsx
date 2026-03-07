@@ -1,9 +1,7 @@
 import React from 'react'
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 
-export default function ExitInterviewModal({  onContinue, onQuit }) {
-
-
+export default function ExitInterviewModal({ onContinue, onQuit }) {
     return (
         <View style={styles.overlay}>
             <View style={styles.container}>
@@ -11,23 +9,21 @@ export default function ExitInterviewModal({  onContinue, onQuit }) {
                 <Text style={styles.title}>Do you want to exit now?</Text>
 
                 <View style={styles.buttonRow}>
+
                     <TouchableOpacity
-                        style={styles.primaryButton}
+                        style={styles.yesButton}
                         onPress={onQuit}
                     >
-                        <Text style={styles.primaryText}>
-                            Yes
-                        </Text>
+                        <Text style={styles.yesText}>Yes</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={styles.secondaryButton}
+                        style={styles.noButton}
                         onPress={onContinue}
                     >
-                        <Text style={styles.secondaryText}>
-                            No
-                        </Text>
+                        <Text style={styles.noText}>No</Text>
                     </TouchableOpacity>
+
                 </View>
 
             </View>
@@ -43,65 +39,65 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(0,0,0,0.7)',
+        backgroundColor: 'rgba(0,0,0,0.65)',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 24,
+        padding: 20,
         zIndex: 999
     },
 
     container: {
-        width: '100%',
+        width: '85%',
         maxWidth: 360,
-        backgroundColor: '#ffffff',
+        backgroundColor: '#071426',   // dark navy like screenshot
         borderRadius: 18,
-        paddingVertical: 28,
-        paddingHorizontal: 24,
-        alignItems: 'center',
-        elevation: 10
+        paddingVertical: 32,
+        paddingHorizontal: 16,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.15)',
+    },
+
+    title: {
+        fontSize: 22,
+        color: '#FFFFFF',
+        textAlign: 'center',
+        marginBottom: 28,
+        fontWeight: '500'
     },
 
     buttonRow: {
         flexDirection: 'row',
-        width: '100%',
-        gap: 12
+        justifyContent: 'space-between',
     },
 
-    title: {
-        fontSize: 20,
-        fontWeight: '500',
-        color: '#111',
-        marginBottom: 20,
-        textAlign: 'center'
-    },
-
-    primaryButton: {
+    yesButton: {
         flex: 1,
-        backgroundColor: '#2563EB',
+        borderWidth: 1.5,
+        borderColor: '#8AA4C8',
         borderRadius: 12,
-        paddingVertical: 14,
-        alignItems: 'center'
+        paddingVertical: 12,
+        alignItems: 'center',
+        marginRight: 12,
     },
 
-    secondaryButton: {
+    noButton: {
         flex: 1,
-        borderWidth: 2,
-        borderColor: '#e5e7eb',
+        backgroundColor: '#E5E7EB',
         borderRadius: 12,
-        paddingVertical: 14,
-        alignItems: 'center'
+        paddingVertical: 12,
+        alignItems: 'center',
     },
 
-    primaryText: {
-        color: '#fff',
+    yesText: {
+        color: '#FFFFFF',
         fontSize: 16,
-        fontWeight: '600'
+        fontWeight: '500'
     },
 
-    secondaryText: {
-        color: '#374151',
+    noText: {
+        color: '#111827',
         fontSize: 16,
-        fontWeight: '600'
+        fontWeight: '500'
     }
 
 })

@@ -42,7 +42,10 @@ const CallUI = ({
       seconds_used: (prev?.seconds_used || 0) + elapsedSecondsRef.current,
     }));
     setTimeout(() => {
-      navigation.navigate('reports', { meetingId });
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'reports', params: { meetingId } }],
+      });
     }, 1000);
     setShowInterviewScreen(false);
   }
