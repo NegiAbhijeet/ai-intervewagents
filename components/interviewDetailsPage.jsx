@@ -7,6 +7,7 @@ import ToggleButton from './ToggleButton';
 import { Camera, useCameraDevices } from 'react-native-vision-camera';
 import PricingPopup from './PricingPopup';
 import { AppStateContext } from './AppContext';
+import { getPaywallTrigger } from '../libs/remoteConfig'
 
 const InterviewDetailsPage = ({
     interviewTime,
@@ -21,12 +22,13 @@ const InterviewDetailsPage = ({
     micOn,
     onClose
 }) => {
+    const trigger = getPaywallTrigger()
     const { isNeedToShowAd } = useContext(AppStateContext)
     const devices = useCameraDevices();
     const cameraDevice = devices.find(d => d.position === 'front');
     const [showPricingPopup, setShowPricingPopup] = useState(false)
     useEffect(() => {
-        if (isNeedToShowAd) {
+        if (isNeedToShowAd && trigger === "before_interview") {
             setShowPricingPopup(true)
         }
         return () => {

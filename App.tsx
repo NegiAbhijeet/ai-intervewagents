@@ -13,6 +13,8 @@ import * as Clarity from '@microsoft/react-native-clarity'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { View, Text, Modal, Pressable, StyleSheet, AppState } from 'react-native'
 import { checkForUpdateInfo, startImmediateUpdate } from './libs/inAppUpdate'
+import { initRemoteConfig } from './libs/remoteConfig'
+
 export default function App() {
   const routeNameRef = React.useRef<any>()
   const navigationRef = useNavigationContainerRef()
@@ -36,6 +38,7 @@ export default function App() {
 
   React.useEffect(() => {
     runCheck()
+    initRemoteConfig()
 
     const sub = AppState.addEventListener('change', next => {
       if (

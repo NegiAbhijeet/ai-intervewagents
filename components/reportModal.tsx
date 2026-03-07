@@ -31,6 +31,7 @@ import Toast from 'react-native-toast-message';
 import BackgroundGradient1 from './backgroundGradient1';
 import { AppStateContext } from './AppContext';
 import PricingPopup from '../components/PricingPopup';
+import { getPaywallTrigger } from '../libs/remoteConfig'
 
 const ReportModal = ({
   visible,
@@ -45,6 +46,7 @@ const ReportModal = ({
   myCandidate,
   language
 }) => {
+  const trigger = getPaywallTrigger()
   const { isNeedToShowAd } = useContext(AppStateContext)
   const { t } = useTranslation();
   const feedback = report?.feedback || null;
@@ -56,8 +58,11 @@ const ReportModal = ({
   const [showPricingPopup, setShowPricingPopup] = useState(false)
 
   useEffect(() => {
-    if (isNeedToShowAd && visible) {
+    if (isNeedToShowAd && visible && trigger === "report_open") {
       setShowPricingPopup(true)
+    }
+    return () => {
+      setShowPricingPopup(false)
     }
   }, [visible, isNeedToShowAd])
 
