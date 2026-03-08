@@ -108,68 +108,7 @@ export default function SharePage({ visible = false, onRequestClose = () => { },
         try {
             if (!meetingId) return
             onRequestClose();
-            const now = new Date()
-            const { date, hour, minute } = extractMeetingDateTimeParts(now)
-            const myLanguage = LANGUAGES.find((item) => item?.code === language)
-            const duration = Math.max(0, Math.min(10, totalMinutes - usedMinutes))
-            const durationInSecond = minutesToSeconds(duration)
-            const payload = {
-                uid: userProfile?.uid,
-                hour,
-                minute,
-                date,
-                duration: durationInSecond,
-                position: myCandidate?.position,
-                role: 'candidate',
-                candidateId: myCandidate?.canId || '',
-                canEmail: userProfile?.email || userProfile?.user_email || '',
-                interviewType: "Technical",
-                type: meetingReport?.interviewType || 'practice',
-                requiredSkills: myCandidate?.requiredSkills,
-                experience: myCandidate?.experienceYears || 0,
-                language: myLanguage?.label_en || "English"
-            }
-
-            setIsInterviewStart(true)
-
-            const response = await fetchWithAuth(`${API_URL}/interview-agent/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload),
-            })
-
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}))
-                const message = errorData?.error || 'Failed to create interview.'
-                throw new Error(message)
-            }
-
-            const result = await response.json().catch(() => ({}))
-            const meetingUrl = result?.meeting_url
-
-            if (meetingUrl) {
-                const urlParams = new URLSearchParams(meetingUrl.split('?')[1] || '')
-                const meetingId = urlParams.get('meetingId')
-                const canId = urlParams.get('canId')
-                const interviewType = urlParams.get('interviewType')
-                const candidateName = urlParams.get('candidateName') || 'User'
-                const interviewTime = urlParams.get('interviewTime')
-
-                const firstPayload = {
-                    canId,
-                    meetingId,
-                    interviewType,
-                    interviewTime,
-                    candidateName,
-                    adminId: userProfile?.uid
-                }
-                setFirstInterviewObject(firstPayload)
-                navigation.navigate("index")
-            } else {
-                throw new Error('No meeting URL returned from server.')
-            }
+            navigation.navigate('index', { startInterview: true })
         } catch (error) {
             console.log('handleContinue error:', error)
             Toast.show({
@@ -177,8 +116,6 @@ export default function SharePage({ visible = false, onRequestClose = () => { },
                 text1: 'Error',
                 text2: error?.message || 'Something went wrong',
             })
-        } finally {
-            setIsInterviewStart(false)
         }
     }
 

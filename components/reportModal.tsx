@@ -87,72 +87,8 @@ const ReportModal = ({
   }
   const onPress = async (report = null) => {
     try {
-      if (!report) return
-      const now = new Date()
-      const { date, hour, minute } = extractMeetingDateTimeParts(now)
-      const myLanguage = LANGUAGES.find((item) => item?.code === language)
-      const parsedDuration = parseInt(10)
-
-      const payload = {
-        uid: userProfile?.uid,
-        hour,
-        minute,
-        date,
-        duration: parsedDuration * 60,
-        position: myCandidate?.position,
-        role: 'candidate',
-        candidateId: myCandidate?.canId || '',
-        canEmail: userProfile?.email || userProfile?.user_email || '',
-        interviewType: report?.interviewType || "Technical",
-        type: report?.type || 'practice',
-        requiredSkills: myCandidate?.requiredSkills,
-        experience: myCandidate?.experienceYears || 0,
-        language: myLanguage?.label_en || "English",
-        difficultyLevel: report?.difficultyLevel
-      }
-
-      setIsInterviewStart(true)
-
-      const response = await fetchWithAuth(`${API_URL}/interview-agent/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
-        const message = errorData?.error || 'Failed to create interview.'
-        throw new Error(message)
-      }
-
-      const result = await response.json().catch(() => ({}))
-      const meetingUrl = result?.meeting_url
-
-      if (meetingUrl) {
-        const urlParams = new URLSearchParams(meetingUrl.split('?')[1] || '')
-        const meetingId = urlParams.get('meetingId')
-        const canId = urlParams.get('canId')
-        const interviewType = urlParams.get('interviewType')
-        const candidateName = urlParams.get('candidateName') || 'User'
-        const interviewTime = urlParams.get('interviewTime')
-
-        const firstPayload = {
-          canId,
-          meetingId,
-          interviewType,
-          interviewTime,
-          candidateName,
-          adminId: userProfile?.uid
-        }
-        setFirstInterviewObject(firstPayload)
-        onClose();
-        navigation.navigate("index")
-
-      } else {
-        throw new Error('No meeting URL returned from server.')
-      }
+      onClose()
+      navigation.navigate('index', { startInterview: true })
     } catch (error) {
       console.log('handleContinue error:', error)
       Toast.show({
@@ -160,8 +96,6 @@ const ReportModal = ({
         text1: 'Error',
         text2: error?.message || 'Something went wrong',
       })
-    } finally {
-      setIsInterviewStart(false)
     }
   }
   return (

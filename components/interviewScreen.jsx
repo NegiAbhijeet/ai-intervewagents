@@ -36,18 +36,15 @@ const CallUI = ({
   const [hasMicPermission, setHasMicPermission] = useState(false);
   const [quitStep, setQuitStep] = useState(null)
   const [isFetching, setIsFetching] = useState(false);
+
   function handleInterviewCompletion() {
-    setUserProfile(prev => ({
-      ...prev,
-      seconds_used: (prev?.seconds_used || 0) + elapsedSecondsRef.current,
-    }));
     setTimeout(() => {
       navigation.reset({
         index: 0,
         routes: [{ name: 'reports', params: { meetingId } }],
       });
-    }, 1000);
-    setShowInterviewScreen(false);
+      setShowInterviewScreen(false);
+    }, 0);
   }
 
   useEffect(() => {
